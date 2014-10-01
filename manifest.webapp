@@ -1,0 +1,23 @@
+{
+    "version": "0.1",
+    "name": "Standard Deviation Outlier Analysis",
+    "description": "Standard Deviation Outlier Analysis",
+    "icons": {
+            "48": "img/icons/export.png"
+    },
+    "developer": {
+        "url": "http://dhis2.org",
+        "name": "Olav Poppe",
+        "company": "University of Oslo",
+        "email": null
+    },
+    "activities": {
+        "dhis": {
+            "href": "*"
+        }
+    },
+    "launchUrl": null,
+    "launch_path": "index.html",
+    "installs_allowed_from": null,
+    "default_locale": "en"
+}
