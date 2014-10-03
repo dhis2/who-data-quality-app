@@ -1,14 +1,14 @@
 {
     "version": "0.1",
-    "name": "Standard Deviation Outlier Analysis",
-    "description": "Standard Deviation Outlier Analysis",
+    "name": "Data Quality Tool",
+    "description": "WHO Data Quality Analysis Tool",
     "icons": {
             "48": "img/icons/export.png"
     },
     "developer": {
         "url": "http://dhis2.org",
         "name": "Olav Poppe",
-        "company": "University of Oslo",
+        "company": null,
         "email": null
     },
     "activities": {

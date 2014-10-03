@@ -1,0 +1,38 @@
+<div ng-controller="ParamterController as paramCtrl">
+
+	
+	<div class="floatLeft">
+		<div>
+			Data element or indicator:<br>
+			<select class="selector" 
+				ng-disabled="paramCtrl.dataOptions.length === 1" 
+				ng-model="paramCtrl.dataSelected" 
+				ng-options="obj.name for obj in paramCtrl.dataOptions track by obj.id">
+			</select><br>
+		</div>
+		<div>
+			Organisation unit:<br>
+			<select class="selector" 
+				ng-disabled="paramCtrl.orgunits.length === 1"  
+				ng-model="paramCtrl.orgunitSelected" 
+				ng-options="obj.name for obj in paramCtrl.orgunits track by obj.id">
+			</select><br>
+		</div>
+		<div>
+			Period:<br>
+			<input class="selector" date-range-picker class="form-control date-picker" type="text" ng-model="paramCtrl.date" options="paramCtrl.datePickerOpts"/><br>
+			Period type:<br>
+			Based on frequency of dataset?
+			<br>
+		</div>
+		
+	</div>
+	<div class="floatRight">
+		<br><br>
+		<strong>Current selection:</strong><br>
+		Data: <span ng-show="paramCtrl.dataSelected.id != 0">{{paramCtrl.dataSelected.name}} ({{paramCtrl.dataSelected.id}})</span><br>
+		Orgunit: <span ng-show="paramCtrl.orgunitSelected.id != 0">{{paramCtrl.orgunitSelected.name}} ({{paramCtrl.orgunitSelected.id}})</span><br>
+		Date range: <span>{{paramCtrl.date.startDate | date: "yyyy-MM-dd"}} to {{paramCtrl.date.endDate | date: "yyyy-MM-dd"}}</span><br>
+		
+	</div>
+</div>

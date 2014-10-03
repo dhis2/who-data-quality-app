@@ -1,17 +1,70 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html>
+<html >
 <head>
-		
+	
+	<!-- Bower stuff -->
+	<script src="bower_components/jquery/dist/jquery.js"></script>
+	<script src="bower_components/angular/angular.js"></script>
+	<script src="bower_components/moment/moment.js"></script>
+	<script src="bower_components/bootstrap-daterangepicker/daterangepicker.js"></script>
+	<script src="bower_components/angular-daterangepicker/js/angular-daterangepicker.js"></script>
+	<script src="bower_components/angular-ui-select/dist/select.min.js"></script>
+	
+	<link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css"/>
+	<link rel="stylesheet" href="bower_components/bootstrap-daterangepicker/daterangepicker-bs3.css"/>
+	<link rel="stylesheet" href="bower_components/angular-ui-select/dist/select.min.css">
+	
 	<!-- App -->
 	<script lang="javascript" src="js/app.js"></script>
-	<script lang="javascript" src="js/math.js"></script>
+	<script lang="javascript" src="js/completeness.js"></script>
 	<link type="text/css" rel="stylesheet" media="screen" href="css/style.css">		
 	
 </head>
 
-<body>
+<body ng-app="dataQualityApp">
+<div class="container" ng-controller="NavigationController as navCtrl">
+	<!-- Static navbar -->
+	<div class="navbar navbar-default" role="navigation">
+		<div class="container-fluid">
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-collapse">
+				              <span class="sr-only">Toggle navigation</span>
+				              <span class="icon-bar"></span>
+				              <span class="icon-bar"></span>
+				              <span class="icon-bar"></span>
+				</button>
+				<a class="navbar-brand" href="#">WHO Data Quality Analysis Tool</a>
+			</div>
+			<div class="navbar-collapse collapse">
+				<ul class="nav navbar-nav">
+					<li ng-class="{selected: navCtrl.current === 'completeness'}"><a href ng-click="navCtrl.menuClicked('completeness');">Completeness</a></li>
+					<li ng-class="{selected: navCtrl.current === 'outliers'}"><a href ng-click="navCtrl.menuClicked('outliers');">Outliers</a></li>
+					<li class="dropdown">
+						<a href="#" class="dropdown-toggle" data-toggle="dropdown">More<span class="caret"></span></a>
+						<ul class="dropdown-menu" role="menu">
+							<li><a href="#">About data quality</a></li>
+							<li><a href="#">Using the data quality app</a></li>
+							<li class="divider"></li>
+							<li><a href="#">Data Quality Report Card tool</a></li>
+							<li class="divider"></li>
+							<li><a href="#">Indicator setup</a></li>
+						</ul>
+					</li>
+				</ul>
+			</div><!--/.nav-collapse -->
+		</div><!--/.container-fluid -->
+	</div>
 	
-	<div class="headerBar" id="dhisDropDownMenu"></div>
+	<div id="completeness" ng-show="navCtrl.current === 'completeness'">
+		<h3>Completeness Analysis</h3>
+		<completeness-parameters></completeness-parameters>
+	</div>
 	
+	<div id="outliers" ng-show="navCtrl.current === 'outliers'">
+		<h3>Outlier Analysis</h3>
+	</div>
+			
+	
+</div> <!-- /container -->	
 </body>
 </html>
