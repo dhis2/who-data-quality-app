@@ -1,32 +1,9 @@
 
-/**
-Start the app
-*/
-//$(document).ready(function() {
-//
-//	$.ajax({
-//		type: "GET",
-//		url: 'manifest.webapp',
-//		cache: false,
-//		success: function(data){
-//		   		     
-//			baseURL = data.activities.dhis.href;
-//			
-//		},
-//		error: function (xhr, ajaxOptions, thrownError) {
-//			console.log("Error fetching ou levels");	
-//		}
-//	});
-//	
-//	
-//});
-
-
 (function(){
-  var app = angular.module('dataQualityApp', ['completenessAnalysis', 'ui.select']);
+  var app = angular.module('dataQualityApp', ['completenessAnalysis', 'ui.select', 'ngSanitize']);
   
   app.config(function(uiSelectConfig) {
-  	uiSelectConfig.theme = 'select2';
+  	uiSelectConfig.theme = 'bootstrap';
   });
     
   app.controller("NavigationController", function() {
@@ -63,7 +40,8 @@ Start the app
   	
   	return self;
   
-  });		              
+  });
+  		              
 })();
 
 

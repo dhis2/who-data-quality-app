@@ -5,6 +5,10 @@
 	margin-bottom: 10px;
 }
 
+input.ng-dirty.ng-invalid {
+  border-color: red;
+}
+
 #result {
 	font-family: sans-serif;
 }

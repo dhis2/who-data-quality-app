@@ -9,10 +9,16 @@
 	<script src="bower_components/bootstrap-daterangepicker/daterangepicker.js"></script>
 	<script src="bower_components/angular-daterangepicker/js/angular-daterangepicker.js"></script>
 	<script src="bower_components/angular-ui-select/dist/select.min.js"></script>
+	<script src="bower_components/angular-sanitize/angular-sanitize.js"></script>
+	<script src="bower_components/jstree/dist/jstree.js"></script>
+	<script src="bower_components/jquery-ui/jquery-ui.js"></script>
+	<script src="bower_components/periodTypeNoDep.js"></script>
 	
 	<link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css"/>
 	<link rel="stylesheet" href="bower_components/bootstrap-daterangepicker/daterangepicker-bs3.css"/>
 	<link rel="stylesheet" href="bower_components/angular-ui-select/dist/select.min.css">
+	<link rel="stylesheet" href="bower_components/jstree/dist/themes/default/style.css">
+	<link rel="stylesheet" href="bower_components/jquery-ui/themes/cupertino/theme.css">
 	
 	<!-- App -->
 	<script lang="javascript" src="js/app.js"></script>
@@ -23,6 +29,10 @@
 
 <body ng-app="dataQualityApp">
 <div class="container" ng-controller="NavigationController as navCtrl">
+	
+	
+	
+	
 	<!-- Static navbar -->
 	<div class="navbar navbar-default" role="navigation">
 		<div class="container-fluid">
@@ -55,9 +65,13 @@
 		</div><!--/.container-fluid -->
 	</div>
 	
+	
+	
 	<div id="completeness" ng-show="navCtrl.current === 'completeness'">
 		<h3>Completeness Analysis</h3>
 		<completeness-parameters></completeness-parameters>
+		<br><br>
+		<completeness-result></completeness-result>
 	</div>
 	
 	<div id="outliers" ng-show="navCtrl.current === 'outliers'">

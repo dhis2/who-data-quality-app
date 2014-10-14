@@ -1,38 +1,34 @@
 <div ng-controller="ParamterController as paramCtrl">
-
+	<h5>Data sets</h5>
+	<div >
+		<ui-select multiple ng-model="paramCtrl.dataSelected" theme="bootstrap" style="width: 400px;">
+		  <ui-select-match placeholder="Select data sets...">
+		  	{{$item.name}}
+		  </ui-select-match>
+		  <ui-select-choices 
+		  	repeat="obj in paramCtrl.dataOptions">
+		   		<div ng-bind-html="obj.name | highlight: $select.search"></div>
+		  </ui-select-choices>
+		</ui-select>
+	</div>
 	
-	<div class="floatLeft">
-		<div>
-			Data element or indicator:<br>
-			<select class="selector" 
-				ng-disabled="paramCtrl.dataOptions.length === 1" 
-				ng-model="paramCtrl.dataSelected" 
-				ng-options="obj.name for obj in paramCtrl.dataOptions track by obj.id">
-			</select><br>
-		</div>
-		<div>
-			Organisation unit:<br>
-			<select class="selector" 
-				ng-disabled="paramCtrl.orgunits.length === 1"  
-				ng-model="paramCtrl.orgunitSelected" 
-				ng-options="obj.name for obj in paramCtrl.orgunits track by obj.id">
-			</select><br>
-		</div>
-		<div>
-			Period:<br>
-			<input class="selector" date-range-picker class="form-control date-picker" type="text" ng-model="paramCtrl.date" options="paramCtrl.datePickerOpts"/><br>
-			Period type:<br>
-			Based on frequency of dataset?
-			<br>
-		</div>
-		
+	<h5>Period</h5>
+	<div >
+		<input class="selector" date-range-picker class="form-control date-picker" type="text" ng-model="paramCtrl.date" options="paramCtrl.datePickerOpts"/><br>
 	</div>
-	<div class="floatRight">
-		<br><br>
-		<strong>Current selection:</strong><br>
-		Data: <span ng-show="paramCtrl.dataSelected.id != 0">{{paramCtrl.dataSelected.name}} ({{paramCtrl.dataSelected.id}})</span><br>
-		Orgunit: <span ng-show="paramCtrl.orgunitSelected.id != 0">{{paramCtrl.orgunitSelected.name}} ({{paramCtrl.orgunitSelected.id}})</span><br>
-		Date range: <span>{{paramCtrl.date.startDate | date: "yyyy-MM-dd"}} to {{paramCtrl.date.endDate | date: "yyyy-MM-dd"}}</span><br>
-		
+	
+	<h5>Reporting rate threshold(%)</h5>
+	<div >
+		<input class="selector" type="number" min="0" max="100" ng-model="paramCtrl.threshold"/><br>
 	</div>
+	
+	<h5>Organisation unit</h5>
+	<div>
+		<div  style="height: 250px; width: 300px; border: 1px solid #gray; overflow: auto;">
+			<div id="orgunitTree"></div>
+		</div>
+		Include children: <input type="checkbox" ng-model="paramCtrl.includeChildren"><br/>
+	</div>
+	<br><br>
+	<button ng-click="paramCtrl.doAnalysis();">Do analysis</button>	
 </div>
