@@ -9,6 +9,13 @@ input.ng-dirty.ng-invalid {
   border-color: red;
 }
 
+.treeHolder {
+	max-height: 300px;
+	max-width: 300px;
+	overflow: auto;
+	border: 1px solid gray;
+}
+
 #result {
 	font-family: sans-serif;
 }

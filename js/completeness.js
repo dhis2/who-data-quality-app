@@ -24,7 +24,7 @@
 	
 	
 	
-	app.controller("ParamterController", function(commService, completenessDataService, $http) {
+	app.controller("ParamterController", function(commService, completenessDataService, $http, $sce) {
 	    
 	    var self = this;
 	    
@@ -35,8 +35,14 @@
 	    	self.onlyNumbers = /^\d+$/;
 	    	self.threshold = 80;
 	    	
-	    	self.dataOptions = [];
-	    	self.dataSelected = [];
+	    	self.dataSets = [];
+	    	self.dataSetsSelected = [];
+	    	
+	    	self.dataElements = [];
+	    	self.dataElementsSelected = [];
+	    	
+	    	self.indicators = [];
+	    	self.indicatorsSelected = [];
 	    	
 	    	self.orgunits = [];
 	    	
@@ -60,12 +66,14 @@
 	    	self.isoPeriods = [];
 	    		    	
 	    	initOrgunitTree();
-	    	getdataSets();
+	    	getDataSets();
+	    	getDataElements();
+	    	getIndicators();
 	    }
 	    
 	    
-	    //Get list of of data element - currently just some random DEs
-	    function getdataSets() {
+	    //Get list of of data sets
+	    function getDataSets() {
 	    
 			//request dataSets. To-do: decide what should be selected
 		    var requestURL = commService.baseURL + '/api/dataSets.json?'; 
@@ -73,11 +81,50 @@
 		    
 		    var response = $http.get(requestURL);
 			response.success(function(data) {
-				self.dataOptions = [];
-				self.dataOptions.push.apply(self.dataOptions, data.dataSets);
+				self.dataSets = [];
+				self.dataSets.push.apply(self.dataSets, data.dataSets);
+				console.log("Got " + self.dataSets.length + " data sets");
+			});
+			response.error(function() {
+				console.log("Error fetching data set list");
+			});
+		};
+		
+		
+		//Get list of of data elements
+		function getDataElements() {
+		
+			//request dataSets. To-do: decide what should be selected
+		    var requestURL = commService.baseURL + '/api/dataElements.json?'; 
+		    requestURL += 'fields=id,name,dataSets[name,id]&paging=false';
+		    
+		    var response = $http.get(requestURL);
+			response.success(function(data) {
+				self.dataElements = [];
+				self.dataSets.push.apply(self.dataElements, data.dataElements);
+				console.log("Got " + self.dataElements.length + " data elements");
 			});
 			response.error(function() {
 				console.log("Error fetching data element list");
+			});
+		};
+		
+		
+		//Get list of of data indicators
+		function getIndicators() {
+		
+			//request dataSets. To-do: decide what should be selected
+		    var requestURL = commService.baseURL + '/api/indicators.json?'; 
+		    requestURL += 'fields=id,name,numerator,denominator&paging=false';
+		    
+		    var response = $http.get(requestURL);
+			response.success(function(data) {
+				self.indicators = [];
+				self.dataSets.push.apply(self.indicators, data.indicators);
+				console.log("Got " + self.indicators.length + " indicators");
+			});
+			response.error(function() {
+				console.log("Error fetching indicatr list");
 			});
 		};
 		
@@ -118,6 +165,7 @@
 				
 
 		function initOrgunitTree() {
+			console.log("Tree loading");
 			$('#orgunitTree').jstree({
 				"plugins" : [ "wholerow", "ui"],
 			    'core': {
@@ -213,7 +261,7 @@
 		
 		self.doAnalysis = function() {
 			
-			completenessDataService.setParameters(self.dataSelected, self.date.startDate, self.date.endDate,
+			completenessDataService.setParameters(self.dataElements, self.dataSetsSelected, self.dataElementsSelected, self.indicatorsSelected, self.date.startDate, self.date.endDate,
 				self.orgunits, self.includeChildren);
 				
 			completenessDataService.fetchData();
@@ -239,7 +287,10 @@
 		var self = this;
 		
 		self.analysisParameters = {
+			'allDataElements': [],
 			'dataSets': [],
+			'dataElements': [],
+			'indicators': [],
 			'startDate': "",
 			'endDate:': "",
 			'orgunits': [],
@@ -249,8 +300,11 @@
 		self.periodTool = new PeriodType();
 		
 				
-		self.setParameters = function (dataSets, startDate, endDate, orgunits, threshold, includeChildren) {
+		self.setParameters = function (allDataElements, dataSets, dataElements, indicators, startDate, endDate, orgunits, threshold, includeChildren) {
+			self.analysisParameters.allDataElements = allDataElements;
 			self.analysisParameters.dataSets = dataSets; 
+			self.analysisParameters.dataElements = dataElements; 
+			self.analysisParameters.indicators = indicators; 
 			self.analysisParameters.startDate = startDate;
 			self.analysisParameters.endDate = endDate;
 			self.analysisParameters.orgunits = orgunits;
@@ -285,6 +339,32 @@
 						
 			
 			
+		}
+		
+		function getDataSetFromDataElements(dataElements) {
+			var dataSets = [];
+			
+			for (var i = 0; i < dataElements.length; i++) {
+				
+				if (dataElements[0].dataSets) {
+					for (var j = 0; j < dataElements[i].dataSets.length; i++) {
+						dataSets.push(dataElements[i].dataSets[j]);
+						console.log("Data element " + dataElements[i].name + " from " + dataElements[i].dataSets[j].name);
+					}			
+				}
+			}
+			
+			return dataSets;
+		}
+		
+		
+		function getDataSetsFromIndicators(indicators, allDataElements) {
+		
+			var dataElementIDs = [];
+			var dataElements = [];
+		
+		
+		
 		}
 		
 		

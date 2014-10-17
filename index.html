@@ -8,6 +8,9 @@
 	<script src="bower_components/moment/moment.js"></script>
 	<script src="bower_components/bootstrap-daterangepicker/daterangepicker.js"></script>
 	<script src="bower_components/angular-daterangepicker/js/angular-daterangepicker.js"></script>
+	<script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
+	<script src="bower_components/angular-bootstrap/ui-bootstrap.js"></script>
+	<script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
 	<script src="bower_components/angular-ui-select/dist/select.min.js"></script>
 	<script src="bower_components/angular-sanitize/angular-sanitize.js"></script>
 	<script src="bower_components/jstree/dist/jstree.js"></script>
@@ -31,41 +34,38 @@
 <div class="container" ng-controller="NavigationController as navCtrl">
 	
 	
-	
-	
-	<!-- Static navbar -->
-	<div class="navbar navbar-default" role="navigation">
-		<div class="container-fluid">
-			<div class="navbar-header">
-				<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-collapse">
-				              <span class="sr-only">Toggle navigation</span>
-				              <span class="icon-bar"></span>
-				              <span class="icon-bar"></span>
-				              <span class="icon-bar"></span>
-				</button>
-				<a class="navbar-brand" href="#">WHO Data Quality Analysis Tool</a>
-			</div>
-			<div class="navbar-collapse collapse">
-				<ul class="nav navbar-nav">
-					<li ng-class="{selected: navCtrl.current === 'completeness'}"><a href ng-click="navCtrl.menuClicked('completeness');">Completeness</a></li>
-					<li ng-class="{selected: navCtrl.current === 'outliers'}"><a href ng-click="navCtrl.menuClicked('outliers');">Outliers</a></li>
+	<nav id="navbar-example" class="navbar navbar-default navbar-static" role="navigation">
+	      <div class="container-fluid">
+	        <div class="navbar-header">
+	          <button class="navbar-toggle" type="button" ng-click="navCtrl.isCollapsed = !navCtrl.isCollapsed">
+	            <span class="sr-only">Toggle navigation</span>
+	            <span class="icon-bar"></span>
+	            <span class="icon-bar"></span>
+	            <span class="icon-bar"></span>
+	          </button>
+	          <a class="navbar-brand" href="#">WHO Data Quality Analysis Tool</a>
+	        </div>
+	        <div collapse="navCtrl.isCollapsed" class="navbar-collapse bs-js-navbar-collapse">
+	          <ul class="nav navbar-nav">
+					<li ng-class="{active: navCtrl.current === 'completeness'}"><a href ng-click="navCtrl.menuClicked('completeness');">Completeness</a></li>
+					<li ng-class="{active: navCtrl.current === 'consistency'}"><a href ng-click="navCtrl.menuClicked('consistency');">Consistency</a></li>
 					<li class="dropdown">
 						<a href="#" class="dropdown-toggle" data-toggle="dropdown">More<span class="caret"></span></a>
 						<ul class="dropdown-menu" role="menu">
 							<li><a href="#">About data quality</a></li>
 							<li><a href="#">Using the data quality app</a></li>
 							<li class="divider"></li>
-							<li><a href="#">Data Quality Report Card tool</a></li>
-							<li class="divider"></li>
-							<li><a href="#">Indicator setup</a></li>
+							<li><a href="#">Data Quality Report Card Excel tool</a></li>
 						</ul>
 					</li>
-				</ul>
-			</div><!--/.nav-collapse -->
-		</div><!--/.container-fluid -->
-	</div>
-	
-	
+
+	          </ul>
+	          <ul class="nav navbar-nav navbar-right">
+	            <li><a href="#">Exit</a></li>
+	          </ul>
+	        </div><!-- /.nav-collapse -->
+	      </div><!-- /.container-fluid -->
+	    </nav>
 	
 	<div id="completeness" ng-show="navCtrl.current === 'completeness'">
 		<h3>Completeness Analysis</h3>
@@ -74,8 +74,8 @@
 		<completeness-result></completeness-result>
 	</div>
 	
-	<div id="outliers" ng-show="navCtrl.current === 'outliers'">
-		<h3>Outlier Analysis</h3>
+	<div id="consistency" ng-show="navCtrl.current === 'consistency'">
+		<h3>Data Consistency Analysis</h3>
 	</div>
 			
 	

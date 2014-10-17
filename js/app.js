@@ -1,6 +1,6 @@
 
 (function(){
-  var app = angular.module('dataQualityApp', ['completenessAnalysis', 'ui.select', 'ngSanitize']);
+  var app = angular.module('dataQualityApp', ['completenessAnalysis', 'ui.select', 'ngSanitize', 'ui.bootstrap']);
   
   app.config(function(uiSelectConfig) {
   	uiSelectConfig.theme = 'bootstrap';
@@ -8,11 +8,16 @@
     
   app.controller("NavigationController", function() {
   	this.current = "completeness";
+  	this.isCollapsed = false;
   	
   	this.menuClicked = function(pageClicked) {	
   		this.current = pageClicked;
   	};
-    
+  	
+  	this.collapse = function() {
+  		if (this.isCollapsed) this.isCollapsed = false;
+  		else this.isCollapsed = true;
+  	}
   });
   
     
