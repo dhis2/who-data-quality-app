@@ -24,32 +24,57 @@
 	
 	
 	
-	app.controller("ParamterController", function(commService, completenessDataService, $http, $sce) {
+	app.controller("ParamterController", function(completenessDataService, metaDataService, BASE_URL, $http, $q, $sce) {
 	    
 	    var self = this;
 	    
-	    initSelects();
+	    self.dataSets = [];
+	    self.dataSetsSelected = [];
+	    
+	    self.dataElements = [];
+	    self.dataElementsSelected = [];
+	    	    
+	    self.indicators = [];
+	    self.indicatorsSelected = [];
+	    
+	    self.orgunits = [];
+	    
+	    self.isoPeriods = [];
+	    
+	    self.date = {
+	    	"startDate": "", 
+	    	"endDate": ""
+	    };
+	    
+
+	    
+	    initSelects();	 
+    	initOrgunitTree();  	
 	    
 	    //Initialisation
 	    function initSelects() {
-	    	self.onlyNumbers = /^\d+$/;
-	    	self.threshold = 80;
-	    	
-	    	self.dataSets = [];
-	    	self.dataSetsSelected = [];
-	    	
-	    	self.dataElements = [];
-	    	self.dataElementsSelected = [];
-	    	
-	    	self.indicators = [];
-	    	self.indicatorsSelected = [];
-	    	
-	    	self.orgunits = [];
-	    	
-	    	self.date = {
-	    		"startDate": "", 
-	    		"endDate": ""
-	    		};
+
+			var dataSetPromise = metaDataService.getDataSets();
+			dataSetPromise.then(function(data) { 
+				self.dataSets = data;
+			});
+			
+			var dataElementPromise = metaDataService.getDataElements();
+			dataElementPromise.then(function(data) { 
+				self.dataElements = data;
+			});
+			
+			var indicatorPromise = metaDataService.getIndicators();
+			indicatorPromise.then(function(data) { 
+				self.indicators = data;
+			});
+
+			//Options
+			self.onlyNumbers = /^\d+$/;
+			self.threshold = 80;
+			
+			
+			//Date initialisation
 	    	self.datePickerOpts = {
 	    		locale: {
     	            applyClass: 'btn-blue',
@@ -62,80 +87,16 @@
 	    	};
 	    	
 	    	self.includeChildren = false;
-	    	
-	    	self.isoPeriods = [];
-	    		    	
-	    	initOrgunitTree();
-	    	getDataSets();
-	    	getDataElements();
-	    	getIndicators();
 	    }
 	    
 	    
-	    //Get list of of data sets
-	    function getDataSets() {
-	    
-			//request dataSets. To-do: decide what should be selected
-		    var requestURL = commService.baseURL + '/api/dataSets.json?'; 
-		    requestURL += 'fields=id,name&paging=false';
-		    
-		    var response = $http.get(requestURL);
-			response.success(function(data) {
-				self.dataSets = [];
-				self.dataSets.push.apply(self.dataSets, data.dataSets);
-				console.log("Got " + self.dataSets.length + " data sets");
-			});
-			response.error(function() {
-				console.log("Error fetching data set list");
-			});
-		};
-		
-		
-		//Get list of of data elements
-		function getDataElements() {
-		
-			//request dataSets. To-do: decide what should be selected
-		    var requestURL = commService.baseURL + '/api/dataElements.json?'; 
-		    requestURL += 'fields=id,name,dataSets[name,id]&paging=false';
-		    
-		    var response = $http.get(requestURL);
-			response.success(function(data) {
-				self.dataElements = [];
-				self.dataSets.push.apply(self.dataElements, data.dataElements);
-				console.log("Got " + self.dataElements.length + " data elements");
-			});
-			response.error(function() {
-				console.log("Error fetching data element list");
-			});
-		};
-		
-		
-		//Get list of of data indicators
-		function getIndicators() {
-		
-			//request dataSets. To-do: decide what should be selected
-		    var requestURL = commService.baseURL + '/api/indicators.json?'; 
-		    requestURL += 'fields=id,name,numerator,denominator&paging=false';
-		    
-		    var response = $http.get(requestURL);
-			response.success(function(data) {
-				self.indicators = [];
-				self.dataSets.push.apply(self.indicators, data.indicators);
-				console.log("Got " + self.indicators.length + " indicators");
-			});
-			response.error(function() {
-				console.log("Error fetching indicatr list");
-			});
-		};
-		
-		
-		function sortNodeByName(a, b) {
-			var aName = a.text.toLowerCase();
-			var bName = b.text.toLowerCase(); 
-			return ((aName < bName) ? -1 : ((aName > bName) ? 1 : 0));
-		
-		}
-		
+    	function sortNodeByName(a, b) {
+    		var aName = a.text.toLowerCase();
+    		var bName = b.text.toLowerCase(); 
+    		return ((aName < bName) ? -1 : ((aName > bName) ? 1 : 0));
+    	
+    	}
+	   		
 		
 		function getAnalysisPeriods() {
 		
@@ -151,7 +112,11 @@
 			var periodsInYear;
 			for (var startYear = startDateParts[0]; startYear <= endDateParts[0] && currentYear; startYear++) {
 				
-				periodsInYear = periodTool.get($('#periodType').val()).generatePeriods({'offset': startYear - currentYear, 'filterFuturePeriods': true, 'reversePeriods': false});
+				periodsInYear = periodTool.get(periodType).generatePeriods({
+					'offset': startYear - currentYear,
+					'filterFuturePeriods': true,
+					'reversePeriods': false
+				});
 				
 				for (var i = 0; i < periodsInYear.length; i++) {
 					if (periodsInYear[i].endDate >= startDate && periodsInYear[i].endDate <= endDate) {
@@ -173,7 +138,7 @@
 		            	
 		            	//Tree is empty - get first two levels right away
 		            	if (node.parent === null) {
-		            		var requestURL = commService.baseURL + "/api/organisationUnits.json?filter=level:eq:1&fields=id,name,children[id,name]";
+		            		var requestURL = BASE_URL + "/api/organisationUnits.json?filter=level:eq:1&fields=id,name,children[id,name]";
 		            		console.log("Empty tree");
 		            		$.ajax({
 		            			type: "GET",
@@ -220,7 +185,7 @@
 			                	
 	                	//A leaf was clicked, need to get the next level
 	                	else {
-	                		var requestURL = commService.baseURL + "/api/organisationUnits/" + node.id + ".json?fields=children[id,name]";
+	                		var requestURL = BASE_URL + "/api/organisationUnits/" + node.id + ".json?fields=children[id,name]";
 	                		
 	                		console.log("Fetching children");
 	                		                		
@@ -274,7 +239,7 @@
 	
 	
 	
-	app.controller("ResultsController", function(commService, $http) {
+	app.controller("ResultsController", function($http) {
 	    var self = this;
 	   
 	   	return self;
@@ -282,10 +247,12 @@
 	 
 	
 	
-	app.factory('completenessDataService', function (commService, $http, $q) {
+	app.factory('completenessDataService', function ($http, $q) {
 		
 		var self = this;
 		
+		self.analysisObjects = [];
+		self.dataSetIDs = [];
 		self.analysisParameters = {
 			'allDataElements': [],
 			'dataSets': [],
@@ -314,6 +281,8 @@
 		
 		
 		self.fetchData = function () {
+
+			prepareData();
 			
 			var startDateISO = moment(self.analysisParameters.startDate).format('YYYY-MM-DD');
 			var endDateISO = moment(self.analysisParameters.endDate).format('YYYY-MM-DD');
@@ -323,8 +292,10 @@
 			
 			//To-do: need to get children of orgunits if true.
 			
-			var requestURL = commService.baseURL + "/api/analytics.json?";
-			requestURL += "dimension=dx:" + getIDsFromArray(self.analysisParameters.dataSets).join(";");
+			
+
+			var requestURL = instanceURL + "/api/analytics.json?";
+			requestURL += "dimension=dx:" + self.dataSetIDs.join(";");
 			requestURL += "&dimension=ou:" + self.analysisParameters.orgunits.join(";");
 			requestURL += "&dimension=pe:" + periods.join(";");
 			
@@ -335,35 +306,133 @@
 			});
 			response.error(function() {
 				console.log("Error fetching data");
-			});
-						
-			
+			});	
 			
 		}
 		
-		function getDataSetFromDataElements(dataElements) {
-			var dataSets = [];
-			
-			for (var i = 0; i < dataElements.length; i++) {
+		
+		function prepareData() {
+						
+			var analysisObject;
+			for (var i = 0; i < self.analysisParameters.dataSets.length; i++) {
 				
-				if (dataElements[0].dataSets) {
-					for (var j = 0; j < dataElements[i].dataSets.length; i++) {
-						dataSets.push(dataElements[i].dataSets[j]);
-						console.log("Data element " + dataElements[i].name + " from " + dataElements[i].dataSets[j].name);
-					}			
-				}
+				analysisObject = {
+					'type': 'dataset',
+					'id': self.analysisParameters.dataSets[i].id,
+					'dataElements': [],
+					'dataSets': [self.analysisParameters.dataSets[i]]
+				};
+
+				self.analysisObjects.push(analysisObject);
+							
 			}
 			
+			for (var i = 0; i < self.analysisParameters.dataElements.length; i++) {
+				
+				analysisObject = {
+					'type': 'dataelement',
+					'id': self.analysisParameters.dataElements[i].id,
+					'dataElements': [self.analysisParameters.dataElements[i]],
+					'dataSets': getDataSetFromDataElement(self.analysisParameters.dataElements[i])
+				};
+				
+				self.analysisObjects.push(analysisObject);
+							
+			}
+			
+			
+			for (var i = 0; i < self.analysisParameters.indicators.length; i++) {
+				
+				var dataElements = removeDuplicateIDs(getDataElementsFromIndicator(self.analysisParameters.indicators[i]));
+				var dataSets = [];
+				for (var j = 0; j < dataElements.length; j++) {
+					dataSets.push.apply(dataSets, getDataSetFromDataElement(dataElements[j]));
+				}
+				
+				
+				analysisObject = {
+					'type': 'indicator',
+					'id': self.analysisParameters.indicators[i].id,
+					'dataElements': dataElements,
+					'dataSets': removeDuplicateIDs(dataSets)
+				};
+				
+				self.analysisObjects.push(analysisObject);
+							
+			}
+			
+			getAllDataSetIDs();
+			
+		}
+			
+		
+		function getAllDataSetIDs() {
+			var dataSets = [];
+			var analysisObj;
+			for (var i = 0; i < self.analysisObjects.length; i++) {
+				analysisObj = self.analysisObjects[i];
+				
+				for (var j = 0; j < analysisObj.dataSets.length; j++) {
+					
+					dataSets.push(analysisObj.dataSets[j]);
+					
+				}
+				
+			}
+			
+			var uniqueDataSets = removeDuplicateIDs(dataSets);
+			self.dataSetIDs = getIDsFromArray(uniqueDataSets);
+		
+		}
+		
+		
+		function getDataSetFromDataElement(dataElement) {
+			
+			var dataSets = [];
+			
+			if (dataElement.dataSets) {
+				for (var j = 0; j < dataElement.dataSets.length; j++) {
+					dataSets.push(dataElement.dataSets[j]);
+				}			
+			}
+			
+			console.log(dataSets);
 			return dataSets;
 		}
 		
 		
-		function getDataSetsFromIndicators(indicators, allDataElements) {
+		function getDataElementsFromIndicator(indicator) {
 		
-			var dataElementIDs = [];
+			var dataElementIDs = [];			
+			dataElementIDs.push.apply(dataElementIDs, formulaToID(indicator.numerator));
+			dataElementIDs.push.apply(dataElementIDs, formulaToID(indicator.denominator));				
+			
+			
 			var dataElements = [];
+			for (var i = 0; i < dataElementIDs.length; i++) {
+				
+				for (var j = 0; j < self.analysisParameters.allDataElements.length; j++) {
+					if (self.analysisParameters.allDataElements[j].id === dataElementIDs[i]) {
+						dataElements.push(self.analysisParameters.allDataElements[j]);
+						break;
+					}
+				}
+			}
+					
+			return dataElements;
+		}
 		
 		
+		function formulaToID(indicatorFormula) {
+		
+			var IDs = [];
+			var matches = indicatorFormula.match(/#{(.*?)}/g);
+						
+			for (var i = 0; i < matches.length; i++) {
+				IDs.push(matches[i].slice(2, -1).split('.')[0]);
+			}
+			
+			return IDs;		
 		
 		}
 		
@@ -376,6 +445,23 @@
 			}
 			
 			return idArray;
+		}
+	
+		
+		function removeDuplicateIDs(identifiableObjectsArray) {
+		
+			var uniqueObjects = [];
+			var existingIDs = {};	
+		
+			for (var i = 0; i < identifiableObjectsArray.length; i++) {
+				if (!existingIDs[identifiableObjectsArray[i].id]) {
+					uniqueObjects.push(identifiableObjectsArray[i]);
+					existingIDs[identifiableObjectsArray[i].id] = true;
+				}
+			}
+			
+			return uniqueObjects;
+		
 		}
 	
 		

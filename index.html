@@ -30,7 +30,7 @@
 	
 </head>
 
-<body ng-app="dataQualityApp">
+<body>
 <div class="container" ng-controller="NavigationController as navCtrl">
 	
 	
@@ -66,7 +66,6 @@
 	        </div><!-- /.nav-collapse -->
 	      </div><!-- /.container-fluid -->
 	    </nav>
-	
 	<div id="completeness" ng-show="navCtrl.current === 'completeness'">
 		<h3>Completeness Analysis</h3>
 		<completeness-parameters></completeness-parameters>
@@ -74,7 +73,7 @@
 		<completeness-result></completeness-result>
 	</div>
 	
-	<div id="consistency" ng-show="navCtrl.current === 'consistency'">
+	<div ng-cloak id="consistency" ng-show="navCtrl.current === 'consistency'">
 		<h3>Data Consistency Analysis</h3>
 	</div>
 			
