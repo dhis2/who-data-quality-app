@@ -13,7 +13,6 @@
 	});
 	
 	
-	
 	app.directive("completenessResult", function() {
 		return {
 			restrict: "E",
@@ -21,7 +20,6 @@
 		};
 	  
 	});
-	
 	
 	
 	app.controller("ParamterController", function(completenessDataService, metaDataService, BASE_URL, $http, $q, $sce) {
@@ -96,37 +94,6 @@
     		return ((aName < bName) ? -1 : ((aName > bName) ? 1 : 0));
     	
     	}
-	   		
-		
-		function getAnalysisPeriods() {
-		
-			var periodType = "Monthly";
-			var startDate = $('#startDatePicker').val();
-			var endDate = $('#endDatePicker').val();
-		
-			var startDateParts = startDate.split('-');
-			var endDateParts = endDate.split('-');
-			var currentYear = new Date().getFullYear();
-			
-			var periods = [];
-			var periodsInYear;
-			for (var startYear = startDateParts[0]; startYear <= endDateParts[0] && currentYear; startYear++) {
-				
-				periodsInYear = periodTool.get(periodType).generatePeriods({
-					'offset': startYear - currentYear,
-					'filterFuturePeriods': true,
-					'reversePeriods': false
-				});
-				
-				for (var i = 0; i < periodsInYear.length; i++) {
-					if (periodsInYear[i].endDate >= startDate && periodsInYear[i].endDate <= endDate) {
-						periods.push(periodsInYear[i]);
-					}
-				}
-			}
-			
-			return periods;
-		}
 				
 
 		function initOrgunitTree() {
@@ -226,7 +193,7 @@
 		
 		self.doAnalysis = function() {
 			
-			completenessDataService.setParameters(self.dataElements, self.dataSetsSelected, self.dataElementsSelected, self.indicatorsSelected, self.date.startDate, self.date.endDate,
+			completenessDataService.setParameters(self.dataSetsSelected, self.dataElementsSelected, self.indicatorsSelected, self.date.startDate, self.date.endDate,
 				self.orgunits, self.includeChildren);
 				
 			completenessDataService.fetchData();
@@ -238,7 +205,6 @@
 	});
 	
 	
-	
 	app.controller("ResultsController", function($http) {
 	    var self = this;
 	   
@@ -247,28 +213,32 @@
 	 
 	
 	
-	app.factory('completenessDataService', function ($http, $q) {
+	app.service('completenessDataService', function (metaDataService, BASE_URL, $http, $q) {
 		
 		var self = this;
 		
-		self.analysisObjects = [];
-		self.dataSetIDs = [];
+		self.metaData = {};
+		
+		self.periodTool = new PeriodType();
+		self.dataSetsToCheck = [];
 		self.analysisParameters = {
-			'allDataElements': [],
 			'dataSets': [],
 			'dataElements': [],
 			'indicators': [],
 			'startDate': "",
-			'endDate:': "",
+			'endDate': "",
 			'orgunits': [],
 			'threshold': 0,
 			'includeChildren': false
 		};
-		self.periodTool = new PeriodType();
+		self.analysisObjects = [];
+		self.requestList = [];
 		
-				
-		self.setParameters = function (allDataElements, dataSets, dataElements, indicators, startDate, endDate, orgunits, threshold, includeChildren) {
-			self.analysisParameters.allDataElements = allDataElements;
+		
+		self.setParameters = function (dataSets, dataElements, indicators, startDate, endDate, orgunits, threshold, includeChildren) {
+			
+			resetParameters();
+			
 			self.analysisParameters.dataSets = dataSets; 
 			self.analysisParameters.dataElements = dataElements; 
 			self.analysisParameters.indicators = indicators; 
@@ -277,42 +247,89 @@
 			self.analysisParameters.orgunits = orgunits;
 			self.analysisParameters.threshold = threshold;
 			self.analysisParameters.includeChildren = includeChildren;
+			
+			
 		}
 		
 		
 		self.fetchData = function () {
-
-			prepareData();
 			
-			var startDateISO = moment(self.analysisParameters.startDate).format('YYYY-MM-DD');
-			var endDateISO = moment(self.analysisParameters.endDate).format('YYYY-MM-DD');
-			
-			//To-Do: need to get periodicity of dataset
-			var periods = getISOPeriods(startDateISO, endDateISO, 'Monthly');
-			
+			processMetaData();	
+			prepareRequests();
 			//To-do: need to get children of orgunits if true.
 			
-			
-
-			var requestURL = instanceURL + "/api/analytics.json?";
-			requestURL += "dimension=dx:" + self.dataSetIDs.join(";");
-			requestURL += "&dimension=ou:" + self.analysisParameters.orgunits.join(";");
-			requestURL += "&dimension=pe:" + periods.join(";");
-			
-			
-			var response = $http.get(requestURL);
-			response.success(function(data) {
-				console.log(data);
-			});
-			response.error(function() {
-				console.log("Error fetching data");
-			});	
-			
+		
+			for (var i = 0; i < self.requestList.length; i++) {
+				var response = $http.get(self.requestList[i]);
+				response.success(function(data) {
+					console.log(data);
+				});
+				response.error(function() {
+					console.log("Error fetching data");
+				});	
+			}
 		}
 		
 		
-		function prepareData() {
-						
+		function resetParameters() {
+			self.dataSetsToCheck = [];
+			self.analysisObjects = [];
+			self.requestList = [];
+		}
+		
+		
+		//Need to make one request per periodtype
+		function prepareRequests() {
+			
+			
+			var periodTypes = {};
+			for (var i = 0; i < self.dataSetsToCheck.length; i++) {
+				console.log(self.dataSetsToCheck[i]);
+				periodTypes[self.dataSetsToCheck[i].periodType] = true;
+			}
+			
+			
+			var periods, dataSets;
+			for (var pType in periodTypes) {
+			    if (periodTypes.hasOwnProperty(pType)) {
+					periods = getISOPeriods(self.analysisParameters.startDate, self.analysisParameters.endDate, pType);
+					dataSets = getDataSetsWithPeriodType(pType);
+					
+					var requestURL = BASE_URL + "/api/analytics.json?";
+					requestURL += "dimension=dx:" + getIDsFromArray(dataSets).join(";");
+					requestURL += "&dimension=ou:" + self.analysisParameters.orgunits.join(";");
+					requestURL += "&dimension=pe:" + periods.join(";");
+					
+					self.requestList.push(requestURL);				
+				}
+			}
+		
+		}
+		
+		function getDataSetsWithPeriodType(periodType) {
+			
+			var matches = [];
+			for (var i = 0; i < self.dataSetsToCheck.length; i++) {
+				if (self.dataSetsToCheck[i].periodType === periodType) {
+					matches.push(self.dataSetsToCheck[i]);
+				}
+			}
+			
+			return matches;
+		
+		}
+		
+		function processMetaData() {
+			self.analysisParameters.startDate = moment(self.analysisParameters.startDate).format('YYYY-MM-DD');
+			self.analysisParameters.endDate = moment(self.analysisParameters.endDate).format('YYYY-MM-DD');
+			
+			if (metaDataService.metaDataReady()) {
+				self.metaData = metaDataService.allMetaData();				
+			}
+			else {
+				console.log("To-Do: fetch metadata");
+			}		
+					
 			var analysisObject;
 			for (var i = 0; i < self.analysisParameters.dataSets.length; i++) {
 				
@@ -362,9 +379,18 @@
 			}
 			
 			getAllDataSetIDs();
-			
 		}
-			
+		
+		
+		function dataSetFromID(dataSetID) {
+			for (var j = 0; j < self.metaData.dataSets.length; j++) {
+				if (dataSetID === self.metaData.dataSets[j].id) {
+					return self.metaData.dataSets[j];
+				}			
+			}
+						
+		}
+		
 		
 		function getAllDataSetIDs() {
 			var dataSets = [];
@@ -380,8 +406,7 @@
 				
 			}
 			
-			var uniqueDataSets = removeDuplicateIDs(dataSets);
-			self.dataSetIDs = getIDsFromArray(uniqueDataSets);
+			self.dataSetsToCheck = removeDuplicateIDs(dataSets);
 		
 		}
 		
@@ -392,17 +417,16 @@
 			
 			if (dataElement.dataSets) {
 				for (var j = 0; j < dataElement.dataSets.length; j++) {
-					dataSets.push(dataElement.dataSets[j]);
+					
+					dataSets.push(dataSetFromID(dataElement.dataSets[j].id));
 				}			
 			}
-			
-			console.log(dataSets);
 			return dataSets;
 		}
 		
 		
 		function getDataElementsFromIndicator(indicator) {
-		
+						
 			var dataElementIDs = [];			
 			dataElementIDs.push.apply(dataElementIDs, formulaToID(indicator.numerator));
 			dataElementIDs.push.apply(dataElementIDs, formulaToID(indicator.denominator));				
@@ -411,9 +435,9 @@
 			var dataElements = [];
 			for (var i = 0; i < dataElementIDs.length; i++) {
 				
-				for (var j = 0; j < self.analysisParameters.allDataElements.length; j++) {
-					if (self.analysisParameters.allDataElements[j].id === dataElementIDs[i]) {
-						dataElements.push(self.analysisParameters.allDataElements[j]);
+				for (var j = 0; j < self.metaData.dataElements.length; j++) {
+					if (self.metaData.dataElements[j].id === dataElementIDs[i]) {
+						dataElements.push(self.metaData.dataElements[j]);
 						break;
 					}
 				}
@@ -476,7 +500,7 @@
 			for (var startYear = startDateParts[0]; startYear <= endDateParts[0] && currentYear; startYear++) {
 				
 				periodsInYear = self.periodTool.get(periodType).generatePeriods({'offset': startYear - currentYear, 'filterFuturePeriods': true, 'reversePeriods': false});
-				
+								
 				for (var i = 0; i < periodsInYear.length; i++) {
 					if (periodsInYear[i].endDate >= startDate && periodsInYear[i].endDate <= endDate) {
 						periods.push(periodsInYear[i]);
@@ -489,6 +513,7 @@
 				isoPeriods.push(periods[i].iso);
 			}
 			
+			//To-do: yearly = duplicates
 			return isoPeriods;
 		}
 		

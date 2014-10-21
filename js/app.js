@@ -66,6 +66,17 @@
   		getIndicators();
   	}
   	
+  	self.metaDataReady = function () {
+  		return (dataSets.available && dataElements.available && indicators.available);
+  	}
+  	
+  	self.allMetaData = function () {
+  		return {
+  			'dataSets': dataSets.data,
+  			'dataElements': dataElements.data,
+  			'indicators': indicators.data
+  		};
+  	}
   	
   	self.getDataSets = function() { 
   	
@@ -85,7 +96,7 @@
 		else {
 			console.log("Requesting data sets");
   			var requestURL = BASE_URL + '/api/dataSets.json?'; 
-  			requestURL += 'fields=id,name&paging=false';
+  			requestURL += 'fields=id,name,periodType&paging=false';
   			  
   			$http.get(requestURL)
 		       .success(function(data) { 
@@ -158,7 +169,7 @@
 		else {
 			console.log("Requesting data elements");
 				var requestURL = BASE_URL + '/api/dataElements.json?'; 
-				  requestURL += 'fields=id,name,dataSets[name,id]&paging=false';
+				  requestURL += 'fields=id,name,dataSets[id]&paging=false';
 				  
 			$http.get(requestURL)
 		       .success(function(data) { 
