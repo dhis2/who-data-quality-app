@@ -25,29 +25,30 @@
 	app.controller("ParamterController", function(completenessDataService, metaDataService, BASE_URL, $http, $q, $sce) {
 	    
 	    var self = this;
-	    
-	    self.dataSets = [];
-	    self.dataSetsSelected = [];
-	    
-	    self.dataElements = [];
-	    self.dataElementsSelected = [];
-	    	    
-	    self.indicators = [];
-	    self.indicatorsSelected = [];
-	    
-	    self.orgunits = [];
-	    
-	    self.isoPeriods = [];
-	    
-	    self.date = {
-	    	"startDate": "", 
-	    	"endDate": ""
-	    };
-	    
-
-	    
+	        
+	    init();
 	    initSelects();	 
     	initOrgunitTree();  	
+	    
+		function init() {
+	    	self.dataSets = [];
+	    	self.dataSetsSelected = [];
+	    	
+	    	self.dataElements = [];
+	    	self.dataElementsSelected = [];
+	    		    
+	    	self.indicators = [];
+	    	self.indicatorsSelected = [];
+	    	
+	    	self.orgunits = [];
+	    	
+	    	self.isoPeriods = [];
+	    	
+	    	self.date = {
+	    		"startDate": "", 
+	    		"endDate": ""
+	    	};
+	    }
 	    
 	    //Initialisation
 	    function initSelects() {
@@ -88,15 +89,7 @@
 	    	
 	    	self.includeChildren = false;
 	    }
-	    
-	    
-    	function sortNodeByName(a, b) {
-    		var aName = a.text.toLowerCase();
-    		var bName = b.text.toLowerCase(); 
-    		return ((aName < bName) ? -1 : ((aName > bName) ? 1 : 0));
-    	
-    	}
-				
+	    				
 
 		function initOrgunitTree() {
 			console.log("Tree loading");
@@ -193,14 +186,25 @@
 		}
 		
 		
-		self.doAnalysis = function() {
-
-			completenessDataService.setParameters(self.dataSetsSelected, self.dataElementsSelected, self.indicatorsSelected, self.date.startDate, self.date.endDate,
-				self.orgunits, self.threshold, self.includeChildren);
-				
-			completenessDataService.fetchData();
+		function sortNodeByName(a, b) {
+			var aName = a.text.toLowerCase();
+			var bName = b.text.toLowerCase(); 
+			return ((aName < bName) ? -1 : ((aName > bName) ? 1 : 0));
+		
 		}
 		
+		self.doAnalysis = function() {
+
+			completenessDataService.analyseData(self.dataSetsSelected, 
+												self.dataElementsSelected, 
+												self.indicatorsSelected, 
+												self.date.startDate, 
+												self.date.endDate,
+												self.orgunits, 
+												self.threshold, 
+												self.includeChildren);
+				
+		}
 		
 		return self;
 		
@@ -214,31 +218,31 @@
 	});
 	 
 	
-	
-	app.service('completenessDataService', function (metaDataService, BASE_URL, $http, $q) {
+	app.service('completenessDataService', function (metaDataService, periodService, BASE_URL, $http, $q) {
 		
 		var self = this;
+		init();
+			
+		function init() {
+			self.metaData = {};
+			self.dataSetsToCheck = [];
+			self.orgunitsToCheck = [];
+			self.analysisObjects = [];
+			self.requestList = [];
+			self.param = {
+				'dataSets': [],
+				'dataElements': [],
+				'indicators': [],
+				'startDate': "",
+				'endDate': "",
+				'orgunits': [],
+				'threshold': 0,
+				'includeChildren': false
+			};
+		}
 		
-		self.metaData = {};
 		
-		self.periodTool = new PeriodType();
-		self.dataSetsToCheck = [];
-		self.orgunitsToCheck = [];
-		self.param = {
-			'dataSets': [],
-			'dataElements': [],
-			'indicators': [],
-			'startDate': "",
-			'endDate': "",
-			'orgunits': [],
-			'threshold': 0,
-			'includeChildren': false
-		};
-		self.analysisObjects = [];
-		self.requestList = [];
-		
-		
-		self.setParameters = function (dataSets, dataElements, indicators, startDate, endDate, orgunits, threshold, includeChildren) {
+		self.analyseData = function (dataSets, dataElements, indicators, startDate, endDate, orgunits, threshold, includeChildren) {
 			
 			resetParameters();
 			
@@ -251,25 +255,7 @@
 			self.param.threshold = threshold;
 			self.param.includeChildren = includeChildren;
 			
-			
-		}
-		
-		
-		self.fetchData = function () {
-			
-			processMetaData();	
-			prepareRequests();
-			
-		
-			for (var i = 0; i < self.requestList.length; i++) {
-				var response = $http.get(self.requestList[i]);
-				response.success(function(data) {
-					console.log(data);
-				});
-				response.error(function() {
-					console.log("Error fetching data");
-				});	
-			}
+			fetchData();
 		}
 		
 		
@@ -278,39 +264,11 @@
 			self.analysisObjects = [];
 			self.requestList = [];
 		}
-		
-		
-		//Need to make one request per periodtype
-		function prepareRequests() {
 			
 			
-			var periodTypes = {};
-			for (var i = 0; i < self.dataSetsToCheck.length; i++) {
-				periodTypes[self.dataSetsToCheck[i].periodType] = true;
-			}
-			
-			
-			var periods, dataSets;
-			for (var pType in periodTypes) {
-			    if (periodTypes.hasOwnProperty(pType)) {
-					periods = getISOPeriods(self.param.startDate, self.param.endDate, pType);
-					dataSets = getDataSetsWithPeriodType(pType);
-					
-					var requestURL = BASE_URL + "/api/analytics.json?";
-					requestURL += "dimension=dx:" + getIDsFromArray(dataSets).join(";");
-					requestURL += "&dimension=ou:" + self.param.orgunits.join(";");
-					requestURL += "&dimension=pe:" + periods.join(";");
-					
-					self.requestList.push(requestURL);				
-				}
-			}
-		
-		}
-
-		
 		function processMetaData() {
-			self.param.startDate = moment(self.param.startDate).format('YYYY-MM-DD');
-			self.param.endDate = moment(self.param.endDate).format('YYYY-MM-DD');
+			self.param.startDate = periodService.dateToISOdate(self.param.startDate);
+			self.param.endDate = periodService.dateToISOdate(self.param.endDate);
 			
 			if (metaDataService.metaDataReady()) {
 				self.metaData = metaDataService.allMetaData();				
@@ -321,14 +279,14 @@
 			
 			var orgunits = [];
 			for (var i = 0; i < self.param.orgunits.length; i++) {
-				console.log(self.param);
 				if (self.param.includeChildren) {
-					orgunits.push.apply(orgunits, getOrgunitChildren(self.param.orgunits[i]));
+					orgunits.push.apply(orgunits, metaDataService.orgunitChildrenFromParentID(self.param.orgunits[i]));
 				}
-				orgunits.push(getOrgunit(self.param.orgunits[i]));
+				orgunits.push(metaDataService.orgunitFromID(self.param.orgunits[i]));
 			}
-			self.orgunitsToCheck = getIDsFromArray(removeDuplicateIDs(orgunits));
-			console.log(self.orgunitsToCheck.length);
+			console.log(orgunits);
+			self.orgunitsToCheck = getIDsFromArray(metaDataService.removeDuplicateObjects(orgunits));
+
 					
 			var analysisObject;
 			for (var i = 0; i < self.param.dataSets.length; i++) {
@@ -350,7 +308,7 @@
 					'type': 'dataelement',
 					'id': self.param.dataElements[i].id,
 					'dataElements': [self.param.dataElements[i]],
-					'dataSets': getDataSetFromDataElement(self.param.dataElements[i])
+					'dataSets': metaDataService.getDataSetsFromDataElement(self.param.dataElements[i])
 				};
 				
 				self.analysisObjects.push(analysisObject);
@@ -360,18 +318,18 @@
 			
 			for (var i = 0; i < self.param.indicators.length; i++) {
 				
-				var dataElements = removeDuplicateIDs(getDataElementsFromIndicator(self.param.indicators[i]));
+				var dataElements = metaDataService.getDataElementsFromIndicator(self.param.indicators[i]);
 				var dataSets = [];
 				for (var j = 0; j < dataElements.length; j++) {
-					dataSets.push.apply(dataSets, getDataSetFromDataElement(dataElements[j]));
+					dataSets.push.apply(dataSets, metaDataService.getDataSetsFromDataElement(dataElements[j]));
 				}
 				
-				
+								
 				analysisObject = {
 					'type': 'indicator',
 					'id': self.param.indicators[i].id,
 					'dataElements': dataElements,
-					'dataSets': removeDuplicateIDs(dataSets)
+					'dataSets': metaDataService.removeDuplicateObjects(dataSets)
 				};
 				
 				self.analysisObjects.push(analysisObject);
@@ -382,15 +340,51 @@
 		}
 		
 		
-		function dataSetFromID(dataSetID) {
-			for (var j = 0; j < self.metaData.dataSets.length; j++) {
-				if (dataSetID === self.metaData.dataSets[j].id) {
-					return self.metaData.dataSets[j];
-				}			
+		function prepareRequests() {
+			
+			
+			var periodTypes = {};
+			for (var i = 0; i < self.dataSetsToCheck.length; i++) {
+				periodTypes[self.dataSetsToCheck[i].periodType] = true;
 			}
-						
+			
+			
+			var periods, dataSets;
+			for (var pType in periodTypes) {
+			    if (periodTypes.hasOwnProperty(pType)) {
+					periods = periodService.getISOPeriods(self.param.startDate, self.param.endDate, pType);
+					dataSets = getDataSetsWithPeriodType(pType);
+					
+					var requestURL = BASE_URL + "/api/analytics.json?";
+					requestURL += "dimension=dx:" + getIDsFromArray(dataSets).join(";");
+					requestURL += "&dimension=ou:" + self.param.orgunits.join(";");
+					requestURL += "&dimension=pe:" + periods.join(";");
+					
+					self.requestList.push(requestURL);				
+				}
+			}
+		
 		}
 		
+	
+		function fetchData() {
+			
+			processMetaData();	
+			prepareRequests();
+			
+			
+			//Change to q all?
+			for (var i = 0; i < self.requestList.length; i++) {
+				var response = $http.get(self.requestList[i]);
+				response.success(function(data) {
+					console.log(data);
+				});
+				response.error(function() {
+					console.log("Error fetching data");
+				});	
+			}
+		}
+				
 		
 		function getAllDataSetIDs() {
 			var dataSets = [];
@@ -406,9 +400,10 @@
 				
 			}
 			
-			self.dataSetsToCheck = removeDuplicateIDs(dataSets);
+			self.dataSetsToCheck = metaDataService.removeDuplicateObjects(dataSets);
 		
 		}
+		
 		
 		function getDataSetsWithPeriodType(periodType) {
 			
@@ -423,55 +418,6 @@
 		
 		}
 		
-		function getDataSetFromDataElement(dataElement) {
-			
-			var dataSets = [];
-			
-			if (dataElement.dataSets) {
-				for (var j = 0; j < dataElement.dataSets.length; j++) {
-					
-					dataSets.push(dataSetFromID(dataElement.dataSets[j].id));
-				}			
-			}
-			return dataSets;
-		}
-		
-		
-		function getDataElementsFromIndicator(indicator) {
-						
-			var dataElementIDs = [];			
-			dataElementIDs.push.apply(dataElementIDs, formulaToID(indicator.numerator));
-			dataElementIDs.push.apply(dataElementIDs, formulaToID(indicator.denominator));				
-			
-			
-			var dataElements = [];
-			for (var i = 0; i < dataElementIDs.length; i++) {
-				
-				for (var j = 0; j < self.metaData.dataElements.length; j++) {
-					if (self.metaData.dataElements[j].id === dataElementIDs[i]) {
-						dataElements.push(self.metaData.dataElements[j]);
-						break;
-					}
-				}
-			}
-					
-			return dataElements;
-		}
-		
-		
-		function formulaToID(indicatorFormula) {
-		
-			var IDs = [];
-			var matches = indicatorFormula.match(/#{(.*?)}/g);
-						
-			for (var i = 0; i < matches.length; i++) {
-				IDs.push(matches[i].slice(2, -1).split('.')[0]);
-			}
-			
-			return IDs;		
-		
-		}
-		
 		
 		function getIDsFromArray(array) {
 			
@@ -482,79 +428,7 @@
 			
 			return idArray;
 		}
-	
-		
-		function removeDuplicateIDs(identifiableObjectsArray) {
-		
-			var uniqueObjects = [];
-			var existingIDs = {};	
-		
-			for (var i = 0; i < identifiableObjectsArray.length; i++) {
-				if (!existingIDs[identifiableObjectsArray[i].id]) {
-					uniqueObjects.push(identifiableObjectsArray[i]);
-					existingIDs[identifiableObjectsArray[i].id] = true;
-				}
-			}
-			
-			return uniqueObjects;
-		
-		}
-	
-		
-		function getISOPeriods(startDate, endDate, periodType) {
 				
-			var startDateParts = startDate.split('-');
-			var endDateParts = endDate.split('-');
-			var currentYear = new Date().getFullYear();
-			
-			var periods = [];
-			var periodsInYear;
-			for (var startYear = startDateParts[0]; startYear <= endDateParts[0] && currentYear; startYear++) {
-				
-				periodsInYear = self.periodTool.get(periodType).generatePeriods({'offset': startYear - currentYear, 'filterFuturePeriods': true, 'reversePeriods': false});
-								
-				for (var i = 0; i < periodsInYear.length; i++) {
-					if (periodsInYear[i].endDate >= startDate && periodsInYear[i].endDate <= endDate) {
-						periods.push(periodsInYear[i]);
-					}
-				}
-			}
-			
-			var isoPeriods = [];
-			for (var i = 0; i < periods.length; i++) {
-				isoPeriods.push(periods[i].iso);
-			}
-			
-			//To-do: yearly = duplicates
-			return isoPeriods;
-		}
-		
-		//Returns array of orgunit child objects based on parent ID
-		function getOrgunitChildren(parentID) {
-			
-			console.log("Parent: " + parentID);
-			var children = [];
-			for (var i = 0; i < self.metaData.orgunits.length ; i++) {
-				if (self.metaData.orgunits[i].id === parentID) {
-					children.push.apply(children, self.metaData.orgunits[i].children);
-				}
-			}
-			console.log(children.length + " children");
-			return children;
-		
-		}
-		
-		
-		//Returns orgunit-object based on ID (string)
-		function getOrgunit(orgunitID) {
-			
-			for (var i = 0; i < self.metaData.orgunits.length ; i++) {
-				if (self.metaData.orgunits[i].id === orgunitID) {
-					return self.metaData.orgunits[i];
-				}
-			}
-		
-		}
 		
 				
 		return self;

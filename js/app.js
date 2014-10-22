@@ -66,7 +66,7 @@
 		'data': []
 	};
   	
-  	//Triggered initially to start the download
+  	/**General*/
   	self.fetchMetaData = function () {
   		self.getDataSets();
   		self.getDataElements();
@@ -87,6 +87,38 @@
   		};
   	}
   	
+  	self.removeDuplicateObjects = function(objects) {
+  	
+  		var uniqueObjects = [];
+  		var existingIDs = {};	
+  	
+  		for (var i = 0; i < objects.length; i++) {
+  			if (!existingIDs[objects[i].id]) {
+  				uniqueObjects.push(objects[i]);
+  				existingIDs[objects[i].id] = true;
+  			}
+  		}
+  		
+  		return uniqueObjects;  	
+  	}
+  	
+  	
+  	self.removeDuplicateIDs = function(stringArray) {
+  		
+  			var uniqueObjects = [];
+  			var existingIDs = {};	
+  		
+  			for (var i = 0; i < stringArray.length; i++) {
+  				if (!existingIDs[stringArray[i]]) {
+  					uniqueObjects.push(stringArray[i]);
+  					existingIDs[stringArray[i]] = true;
+  				}
+  			}
+  			
+  			return uniqueObjects;  	
+  		}
+  	
+  	/**Data sets*/
   	self.getDataSets = function() { 
   	
   		var deferred = $q.defer();
@@ -123,6 +155,26 @@
   		return deferred.promise; 
   	}
   	
+  	
+  	self.getDataSetsFromDataElement = function(dataElement) {
+  		var dataSetsFound = [];
+  		if (dataElement.dataSets) {
+  			for (var j = 0; j < dataElement.dataSets.length; j++) {
+  				dataSetsFound.push(self.dataSetFromID(dataElement.dataSets[j].id));
+  			}			
+  		}
+  		return dataSetsFound;
+  	}
+  	
+  	self.dataSetFromID = function(dataSetID) {
+  		for (var j = 0; j < dataSets.data.length; j++) {
+  			if (dataSetID === dataSets.data[j].id) {
+  				return dataSets.data[j];
+  			}			
+  		}
+  	}
+  	
+  	/**Indicators*/
 	self.getIndicators = function() { 
 		
 			var deferred = $q.defer();
@@ -159,6 +211,21 @@
 			return deferred.promise; 
 	}
 	
+	
+	function indicatorFormulaToDataElementIDs(indicatorFormula) {
+	
+		var IDs = [];
+		var matches = indicatorFormula.match(/#{(.*?)}/g);
+					
+		for (var i = 0; i < matches.length; i++) {
+			IDs.push(matches[i].slice(2, -1).split('.')[0]);
+		}
+		
+		return self.removeDuplicateIDs(IDs);		
+	
+	}
+	
+	/**Data elements*/
 	self.getDataElements = function() { 
 		
 			var deferred = $q.defer();
@@ -195,6 +262,33 @@
 			return deferred.promise; 
 	}
 	
+	
+	self.getDataElementsFromIndicator = function(indicator) {
+					
+		var dataElementIDs = [];			
+		dataElementIDs.push.apply(dataElementIDs, indicatorFormulaToDataElementIDs(indicator.numerator));
+		dataElementIDs.push.apply(dataElementIDs, indicatorFormulaToDataElementIDs(indicator.denominator));				
+		
+		
+		var dataElementsFound = [];
+		for (var i = 0; i < dataElementIDs.length; i++) {
+			dataElementsFound.push(self.dataElementFromID(dataElementIDs[i]));
+		}
+						
+		return self.removeDuplicateObjects(dataElementsFound);
+	}
+	
+	
+	self.dataElementFromID = function(dataSetID) {
+		for (var j = 0; j < dataElements.data.length; j++) {
+			if (dataSetID === dataElements.data[j].id) {
+				return dataElements.data[j];
+			}			
+		}
+	}
+	
+	
+	/**Orgunits*/
 	self.getOrgunits = function() { 
 		
 		var deferred = $q.defer();
@@ -232,7 +326,78 @@
 	}
 	
 	
+	//Returns array of orgunit child objects based on parent ID
+	self.orgunitChildrenFromParentID = function(parentID) {
+		
+		var children = [];
+		for (var i = 0; i < orgunits.data.length ; i++) {
+			if (orgunits.data[i].id === parentID) {
+				children.push.apply(children, orgunits.data[i].children);
+			}
+		}
+		
+		var childrenOrgunits = [];
+		for (var i = 0; i < children.length; i++) {
+			childrenOrgunits.push(self.orgunitFromID(children[i].id));
+		}
+		console.log(childrenOrgunits);
+		return childrenOrgunits;
 	
+	}
+	
+	
+	self.orgunitFromID = function(orgunitID) {
+		for (var j = 0; j < orgunits.data.length; j++) {
+			if (orgunitID === orgunits.data[j].id) {
+				return orgunits.data[j];
+			}			
+		}
+	}
+	
+	
+  	return self;
+  
+  }]);
+  
+  
+  app.service('periodService', [function () {
+  	
+  	var self = this;
+	self.periodTool = new PeriodType();
+	
+	self.getISOPeriods = function(startDate, endDate, periodType) {
+			
+		var startDateParts = startDate.split('-');
+		var endDateParts = endDate.split('-');
+		var currentYear = new Date().getFullYear();
+		
+		var periods = [];
+		var periodsInYear;
+		for (var startYear = startDateParts[0]; startYear <= endDateParts[0] && currentYear; startYear++) {
+			
+			periodsInYear = self.periodTool.get(periodType).generatePeriods({'offset': startYear - currentYear, 'filterFuturePeriods': true, 'reversePeriods': false});
+							
+			for (var i = 0; i < periodsInYear.length; i++) {
+				if (periodsInYear[i].endDate >= startDate && periodsInYear[i].endDate <= endDate) {
+					periods.push(periodsInYear[i]);
+				}
+			}
+		}
+		
+		var isoPeriods = [];
+		for (var i = 0; i < periods.length; i++) {
+			isoPeriods.push(periods[i].iso);
+		}
+		
+		//To-do: yearly = duplicates
+		return isoPeriods;
+	}
+  	
+  	
+  	self.dateToISOdate = function(date) {
+  		return moment(date).format('YYYY-MM-DD');
+  	}
+  	
   	return self;
   
   }]);
