@@ -218,17 +218,12 @@
 	});
 	 
 	
-	app.service('completenessDataService', function (metaDataService, periodService, BASE_URL, $http, $q) {
+	app.service('completenessDataService', function (metaDataService, periodService, requestService) {
 		
 		var self = this;
 		init();
 			
 		function init() {
-			self.metaData = {};
-			self.dataSetsToCheck = [];
-			self.orgunitsToCheck = [];
-			self.analysisObjects = [];
-			self.requestList = [];
 			self.param = {
 				'dataSets': [],
 				'dataElements': [],
@@ -239,6 +234,15 @@
 				'threshold': 0,
 				'includeChildren': false
 			};
+			resetParameters();
+		}
+		
+			
+		function resetParameters() {
+			self.dataSetsToRequest = [];
+			self.orgunitsToRequest = [];
+			self.analysisObjects = [];
+			self.requests = [];
 		}
 		
 		
@@ -255,39 +259,17 @@
 			self.param.threshold = threshold;
 			self.param.includeChildren = includeChildren;
 			
+			
+			processMetaData();	
+			dataSetsForAnalysis();
+			orgunitsForAnalysis();
+			prepareRequests();
 			fetchData();
 		}
-		
-		
-		function resetParameters() {
-			self.dataSetsToCheck = [];
-			self.analysisObjects = [];
-			self.requestList = [];
-		}
-			
+					
 			
 		function processMetaData() {
-			self.param.startDate = periodService.dateToISOdate(self.param.startDate);
-			self.param.endDate = periodService.dateToISOdate(self.param.endDate);
-			
-			if (metaDataService.metaDataReady()) {
-				self.metaData = metaDataService.allMetaData();				
-			}
-			else {
-				console.log("To-Do: wait for metadata");
-			}	
-			
-			var orgunits = [];
-			for (var i = 0; i < self.param.orgunits.length; i++) {
-				if (self.param.includeChildren) {
-					orgunits.push.apply(orgunits, metaDataService.orgunitChildrenFromParentID(self.param.orgunits[i]));
-				}
-				orgunits.push(metaDataService.orgunitFromID(self.param.orgunits[i]));
-			}
-			console.log(orgunits);
-			self.orgunitsToCheck = getIDsFromArray(metaDataService.removeDuplicateObjects(orgunits));
-
-					
+								
 			var analysisObject;
 			for (var i = 0; i < self.param.dataSets.length; i++) {
 				
@@ -323,7 +305,6 @@
 				for (var j = 0; j < dataElements.length; j++) {
 					dataSets.push.apply(dataSets, metaDataService.getDataSetsFromDataElement(dataElements[j]));
 				}
-				
 								
 				analysisObject = {
 					'type': 'indicator',
@@ -332,35 +313,38 @@
 					'dataSets': metaDataService.removeDuplicateObjects(dataSets)
 				};
 				
-				self.analysisObjects.push(analysisObject);
-							
+				self.analysisObjects.push(analysisObject);				
 			}
-			
-			getAllDataSetIDs();
 		}
 		
 		
 		function prepareRequests() {
 			
-			
 			var periodTypes = {};
-			for (var i = 0; i < self.dataSetsToCheck.length; i++) {
-				periodTypes[self.dataSetsToCheck[i].periodType] = true;
+			for (var i = 0; i < self.dataSetsToRequest.length; i++) {
+				periodTypes[self.dataSetsToRequest[i].periodType] = true;
 			}
 			
 			
-			var periods, dataSets;
+			var periods, dataSets, request;
 			for (var pType in periodTypes) {
 			    if (periodTypes.hasOwnProperty(pType)) {
 					periods = periodService.getISOPeriods(self.param.startDate, self.param.endDate, pType);
-					dataSets = getDataSetsWithPeriodType(pType);
+					dataSets = dataSetsWithPeriodType(pType);
 					
-					var requestURL = BASE_URL + "/api/analytics.json?";
-					requestURL += "dimension=dx:" + getIDsFromArray(dataSets).join(";");
-					requestURL += "&dimension=ou:" + self.param.orgunits.join(";");
+					var requestURL = "/api/analytics.json?";
+					requestURL += "dimension=dx:" + IDsFromObjects(dataSets).join(";");
+					requestURL += "&dimension=ou:" + IDsFromObjects(self.orgunitsToRequest).join(";");
 					requestURL += "&dimension=pe:" + periods.join(";");
 					
-					self.requestList.push(requestURL);				
+					request = {
+						'URL': requestURL,
+						'periodType': pType,
+						'dataSets': dataSets,
+						'periods': periods
+					}
+					
+					self.requests.push(request);				
 				}
 			}
 		
@@ -369,63 +353,66 @@
 	
 		function fetchData() {
 			
-			processMetaData();	
-			prepareRequests();
 			
-			
-			//Change to q all?
-			for (var i = 0; i < self.requestList.length; i++) {
-				var response = $http.get(self.requestList[i]);
-				response.success(function(data) {
-					console.log(data);
-				});
-				response.error(function() {
-					console.log("Error fetching data");
-				});	
+			var requestURLs = [];
+			for (var i = 0; i < self.requests.length; i++) {
+				requestURLs.push(self.requests[i].URL);
 			}
+			
+			
+			requestService.getMultiple(requestURLs).then(function(data) { 
+				console.log(data.length);
+				console.log(data);
+			});
+			
 		}
-				
 		
-		function getAllDataSetIDs() {
+		
+		function orgunitsForAnalysis() {
+			var orgunits = [];
+			for (var i = 0; i < self.param.orgunits.length; i++) {
+				if (self.param.includeChildren) {
+					orgunits.push.apply(orgunits, metaDataService.orgunitChildrenFromParentID(self.param.orgunits[i]));
+				}
+				orgunits.push(metaDataService.orgunitFromID(self.param.orgunits[i]));
+			}
+			self.orgunitsToRequest = metaDataService.removeDuplicateObjects(orgunits);
+		}
+			
+		
+		
+		function dataSetsForAnalysis() {
 			var dataSets = [];
 			var analysisObj;
 			for (var i = 0; i < self.analysisObjects.length; i++) {
 				analysisObj = self.analysisObjects[i];
 				
 				for (var j = 0; j < analysisObj.dataSets.length; j++) {
-					
-					dataSets.push(analysisObj.dataSets[j]);
-					
+					dataSets.push(analysisObj.dataSets[j]);	
 				}
-				
 			}
-			
-			self.dataSetsToCheck = metaDataService.removeDuplicateObjects(dataSets);
-		
+			self.dataSetsToRequest = metaDataService.removeDuplicateObjects(dataSets);
 		}
 		
 		
-		function getDataSetsWithPeriodType(periodType) {
+		function dataSetsWithPeriodType(periodType) {
 			
 			var matches = [];
-			for (var i = 0; i < self.dataSetsToCheck.length; i++) {
-				if (self.dataSetsToCheck[i].periodType === periodType) {
-					matches.push(self.dataSetsToCheck[i]);
+			for (var i = 0; i < self.dataSetsToRequest.length; i++) {
+				if (self.dataSetsToRequest[i].periodType === periodType) {
+					matches.push(self.dataSetsToRequest[i]);
 				}
 			}
-			
 			return matches;
-		
 		}
 		
 		
-		function getIDsFromArray(array) {
+		function IDsFromObjects(array) {
 			
 			var idArray = [];
 			for (var i = 0; i < array.length; i++) {
 				idArray.push(array[i].id);
 			}
-			
 			return idArray;
 		}
 				

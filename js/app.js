@@ -27,8 +27,7 @@
   app.controller("NavigationController", function(BASE_URL) {
   	this.current = "completeness";
   	this.isCollapsed = true;
-  	
-  	console.log(BASE_URL);
+
   	
   	this.menuClicked = function(pageClicked) {	
   		this.current = pageClicked;
@@ -39,6 +38,23 @@
   		else this.isCollapsed = true;
   	}
   });
+  
+  
+  app.service('requestService', ['BASE_URL', '$http', '$q', function (BASE_URL, $http, $q) {
+  
+	var self = this;
+	      
+	self.getMultiple = function(requestURLs) {
+		
+		var promises = requestURLs.map(function(request) {
+			var fullURL = BASE_URL + request;
+	    	return $http.get(fullURL);
+	    });
+	  	
+	  	return $q.all(promises);
+	}	
+	  
+  }]);
       
       
   app.service('metaDataService', ['BASE_URL', '$http', '$q', function (BASE_URL, $http, $q) {
@@ -216,7 +232,9 @@
 	
 		var IDs = [];
 		var matches = indicatorFormula.match(/#{(.*?)}/g);
-					
+		
+		if (!matches) return null;
+		
 		for (var i = 0; i < matches.length; i++) {
 			IDs.push(matches[i].slice(2, -1).split('.')[0]);
 		}
@@ -367,6 +385,9 @@
 	
 	self.getISOPeriods = function(startDate, endDate, periodType) {
 			
+		var startDate = dateToISOdate(startDate);
+		var endDate = dateToISOdate(endDate);
+			
 		var startDateParts = startDate.split('-');
 		var endDateParts = endDate.split('-');
 		var currentYear = new Date().getFullYear();
@@ -394,7 +415,7 @@
 	}
   	
   	
-  	self.dateToISOdate = function(date) {
+  	function dateToISOdate(date) {
   		return moment(date).format('YYYY-MM-DD');
   	}
   	
