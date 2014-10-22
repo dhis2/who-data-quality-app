@@ -51,7 +51,9 @@
 	    
 	    //Initialisation
 	    function initSelects() {
-
+			
+			metaDataService.fetchMetaData();
+			
 			var dataSetPromise = metaDataService.getDataSets();
 			dataSetPromise.then(function(data) { 
 				self.dataSets = data;
@@ -192,9 +194,9 @@
 		
 		
 		self.doAnalysis = function() {
-			
+
 			completenessDataService.setParameters(self.dataSetsSelected, self.dataElementsSelected, self.indicatorsSelected, self.date.startDate, self.date.endDate,
-				self.orgunits, self.includeChildren);
+				self.orgunits, self.threshold, self.includeChildren);
 				
 			completenessDataService.fetchData();
 		}
@@ -221,7 +223,8 @@
 		
 		self.periodTool = new PeriodType();
 		self.dataSetsToCheck = [];
-		self.analysisParameters = {
+		self.orgunitsToCheck = [];
+		self.param = {
 			'dataSets': [],
 			'dataElements': [],
 			'indicators': [],
@@ -239,14 +242,14 @@
 			
 			resetParameters();
 			
-			self.analysisParameters.dataSets = dataSets; 
-			self.analysisParameters.dataElements = dataElements; 
-			self.analysisParameters.indicators = indicators; 
-			self.analysisParameters.startDate = startDate;
-			self.analysisParameters.endDate = endDate;
-			self.analysisParameters.orgunits = orgunits;
-			self.analysisParameters.threshold = threshold;
-			self.analysisParameters.includeChildren = includeChildren;
+			self.param.dataSets = dataSets; 
+			self.param.dataElements = dataElements; 
+			self.param.indicators = indicators; 
+			self.param.startDate = startDate;
+			self.param.endDate = endDate;
+			self.param.orgunits = orgunits;
+			self.param.threshold = threshold;
+			self.param.includeChildren = includeChildren;
 			
 			
 		}
@@ -256,7 +259,6 @@
 			
 			processMetaData();	
 			prepareRequests();
-			//To-do: need to get children of orgunits if true.
 			
 		
 			for (var i = 0; i < self.requestList.length; i++) {
@@ -284,7 +286,6 @@
 			
 			var periodTypes = {};
 			for (var i = 0; i < self.dataSetsToCheck.length; i++) {
-				console.log(self.dataSetsToCheck[i]);
 				periodTypes[self.dataSetsToCheck[i].periodType] = true;
 			}
 			
@@ -292,12 +293,12 @@
 			var periods, dataSets;
 			for (var pType in periodTypes) {
 			    if (periodTypes.hasOwnProperty(pType)) {
-					periods = getISOPeriods(self.analysisParameters.startDate, self.analysisParameters.endDate, pType);
+					periods = getISOPeriods(self.param.startDate, self.param.endDate, pType);
 					dataSets = getDataSetsWithPeriodType(pType);
 					
 					var requestURL = BASE_URL + "/api/analytics.json?";
 					requestURL += "dimension=dx:" + getIDsFromArray(dataSets).join(";");
-					requestURL += "&dimension=ou:" + self.analysisParameters.orgunits.join(";");
+					requestURL += "&dimension=ou:" + self.param.orgunits.join(";");
 					requestURL += "&dimension=pe:" + periods.join(";");
 					
 					self.requestList.push(requestURL);				
@@ -305,52 +306,51 @@
 			}
 		
 		}
-		
-		function getDataSetsWithPeriodType(periodType) {
-			
-			var matches = [];
-			for (var i = 0; i < self.dataSetsToCheck.length; i++) {
-				if (self.dataSetsToCheck[i].periodType === periodType) {
-					matches.push(self.dataSetsToCheck[i]);
-				}
-			}
-			
-			return matches;
-		
-		}
+
 		
 		function processMetaData() {
-			self.analysisParameters.startDate = moment(self.analysisParameters.startDate).format('YYYY-MM-DD');
-			self.analysisParameters.endDate = moment(self.analysisParameters.endDate).format('YYYY-MM-DD');
+			self.param.startDate = moment(self.param.startDate).format('YYYY-MM-DD');
+			self.param.endDate = moment(self.param.endDate).format('YYYY-MM-DD');
 			
 			if (metaDataService.metaDataReady()) {
 				self.metaData = metaDataService.allMetaData();				
 			}
 			else {
-				console.log("To-Do: fetch metadata");
-			}		
+				console.log("To-Do: wait for metadata");
+			}	
+			
+			var orgunits = [];
+			for (var i = 0; i < self.param.orgunits.length; i++) {
+				console.log(self.param);
+				if (self.param.includeChildren) {
+					orgunits.push.apply(orgunits, getOrgunitChildren(self.param.orgunits[i]));
+				}
+				orgunits.push(getOrgunit(self.param.orgunits[i]));
+			}
+			self.orgunitsToCheck = getIDsFromArray(removeDuplicateIDs(orgunits));
+			console.log(self.orgunitsToCheck.length);
 					
 			var analysisObject;
-			for (var i = 0; i < self.analysisParameters.dataSets.length; i++) {
+			for (var i = 0; i < self.param.dataSets.length; i++) {
 				
 				analysisObject = {
 					'type': 'dataset',
-					'id': self.analysisParameters.dataSets[i].id,
+					'id': self.param.dataSets[i].id,
 					'dataElements': [],
-					'dataSets': [self.analysisParameters.dataSets[i]]
+					'dataSets': [self.param.dataSets[i]]
 				};
 
 				self.analysisObjects.push(analysisObject);
 							
 			}
 			
-			for (var i = 0; i < self.analysisParameters.dataElements.length; i++) {
+			for (var i = 0; i < self.param.dataElements.length; i++) {
 				
 				analysisObject = {
 					'type': 'dataelement',
-					'id': self.analysisParameters.dataElements[i].id,
-					'dataElements': [self.analysisParameters.dataElements[i]],
-					'dataSets': getDataSetFromDataElement(self.analysisParameters.dataElements[i])
+					'id': self.param.dataElements[i].id,
+					'dataElements': [self.param.dataElements[i]],
+					'dataSets': getDataSetFromDataElement(self.param.dataElements[i])
 				};
 				
 				self.analysisObjects.push(analysisObject);
@@ -358,9 +358,9 @@
 			}
 			
 			
-			for (var i = 0; i < self.analysisParameters.indicators.length; i++) {
+			for (var i = 0; i < self.param.indicators.length; i++) {
 				
-				var dataElements = removeDuplicateIDs(getDataElementsFromIndicator(self.analysisParameters.indicators[i]));
+				var dataElements = removeDuplicateIDs(getDataElementsFromIndicator(self.param.indicators[i]));
 				var dataSets = [];
 				for (var j = 0; j < dataElements.length; j++) {
 					dataSets.push.apply(dataSets, getDataSetFromDataElement(dataElements[j]));
@@ -369,7 +369,7 @@
 				
 				analysisObject = {
 					'type': 'indicator',
-					'id': self.analysisParameters.indicators[i].id,
+					'id': self.param.indicators[i].id,
 					'dataElements': dataElements,
 					'dataSets': removeDuplicateIDs(dataSets)
 				};
@@ -410,6 +410,18 @@
 		
 		}
 		
+		function getDataSetsWithPeriodType(periodType) {
+			
+			var matches = [];
+			for (var i = 0; i < self.dataSetsToCheck.length; i++) {
+				if (self.dataSetsToCheck[i].periodType === periodType) {
+					matches.push(self.dataSetsToCheck[i]);
+				}
+			}
+			
+			return matches;
+		
+		}
 		
 		function getDataSetFromDataElement(dataElement) {
 			
@@ -515,6 +527,33 @@
 			
 			//To-do: yearly = duplicates
 			return isoPeriods;
+		}
+		
+		//Returns array of orgunit child objects based on parent ID
+		function getOrgunitChildren(parentID) {
+			
+			console.log("Parent: " + parentID);
+			var children = [];
+			for (var i = 0; i < self.metaData.orgunits.length ; i++) {
+				if (self.metaData.orgunits[i].id === parentID) {
+					children.push.apply(children, self.metaData.orgunits[i].children);
+				}
+			}
+			console.log(children.length + " children");
+			return children;
+		
+		}
+		
+		
+		//Returns orgunit-object based on ID (string)
+		function getOrgunit(orgunitID) {
+			
+			for (var i = 0; i < self.metaData.orgunits.length ; i++) {
+				if (self.metaData.orgunits[i].id === orgunitID) {
+					return self.metaData.orgunits[i];
+				}
+			}
+		
 		}
 		
 				

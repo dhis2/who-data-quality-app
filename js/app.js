@@ -18,9 +18,11 @@
 	    }
 	);
 	
+	
   app.config(function(uiSelectConfig) {
   	uiSelectConfig.theme = 'bootstrap';
   });
+
 
   app.controller("NavigationController", function(BASE_URL) {
   	this.current = "completeness";
@@ -58,23 +60,30 @@
   		'promise': null,
   		'data': []
   	};
+	var orgunits = {
+		'available': false,
+		'promise': null,
+		'data': []
+	};
   	
   	//Triggered initially to start the download
   	self.fetchMetaData = function () {
-  		getDataSets();
-  		getDataElements();
-  		getIndicators();
+  		self.getDataSets();
+  		self.getDataElements();
+  		self.getIndicators();
+  		self.getOrgunits();
   	}
   	
   	self.metaDataReady = function () {
-  		return (dataSets.available && dataElements.available && indicators.available);
+  		return (dataSets.available && dataElements.available && indicators.available && orgunits.available);
   	}
   	
   	self.allMetaData = function () {
   		return {
   			'dataSets': dataSets.data,
   			'dataElements': dataElements.data,
-  			'indicators': indicators.data
+  			'indicators': indicators.data,
+  			'orgunits': orgunits.data
   		};
   	}
   	
@@ -114,7 +123,6 @@
   		return deferred.promise; 
   	}
   	
-
 	self.getIndicators = function() { 
 		
 			var deferred = $q.defer();
@@ -186,7 +194,45 @@
 			dataElements.promise = deferred.promise;
 			return deferred.promise; 
 	}
-	    	  	
+	
+	self.getOrgunits = function() { 
+		
+		var deferred = $q.defer();
+		
+		//available locally
+		if (orgunits.available) {
+			console.log("Orgunits available locally");
+			deferred.resolve(self.orgunits.data);
+		}
+		//waiting for server
+		else if (!orgunits.available && orgunits.promise) {
+			console.log("Orgunits already requested");
+			return orgunits.promise;
+		}
+		//need to be fetched
+		else {
+			console.log("Requesting orgunits");
+				var requestURL = BASE_URL + '/api/organisationUnits.json?'; 
+				  requestURL += 'fields=id,name,children[id]&paging=false';
+				  
+			$http.get(requestURL)
+		       .success(function(data) { 
+		       	  orgunits.data = data.organisationUnits;
+		       	 
+		          deferred.resolve(orgunits.data);
+		          orgunits.available = true;
+		       })
+		       .error(function(msg, code) {
+		          deferred.reject("Error fetching orgunits");
+		          console.log(msg, code);
+		       });
+		}
+		orgunits.promise = deferred.promise;
+		return deferred.promise; 
+	}
+	
+	
+	
   	return self;
   
   }]);
