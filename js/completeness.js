@@ -50,7 +50,7 @@
 	    	};
 	    }
 	    
-	    //Initialisation
+	    
 	    function initSelects() {
 			
 			metaDataService.fetchMetaData();
@@ -193,6 +193,7 @@
 		
 		}
 		
+		
 		self.doAnalysis = function() {
 
 			completenessDataService.analyseData(self.dataSetsSelected, 
@@ -205,6 +206,7 @@
 												self.includeChildren);
 				
 		}
+		
 		
 		return self;
 		
@@ -361,6 +363,9 @@
 			
 			
 			requestService.getMultiple(requestURLs).then(function(data) { 
+				
+				//1 - Match data and requestList
+				
 				console.log(data.length);
 				console.log(data);
 			});

@@ -2,19 +2,18 @@
 (function(){
   var app = angular.module('dataQualityApp', ['completenessAnalysis', 'ui.select', 'ngSanitize', 'ui.bootstrap']);
     
-    //Load base URL
+    //Load base URL and bootstrap
 	angular.element(document).ready( 
-	  function() {
-	      var initInjector = angular.injector(['ng']);
-	      var $http = initInjector.get('$http');
-       	console.log("Ready");
-	      $http.get('manifest.webapp').then(
-	        function(data) {
-	          	console.log("Done");
-	          app.constant("BASE_URL", data.data.activities.dhis.href);
-	          angular.bootstrap(document, ['dataQualityApp']);
-	        }
-	      );
+		function() {
+	  		var initInjector = angular.injector(['ng']);
+	      	var $http = initInjector.get('$http');
+       		
+	      	$http.get('manifest.webapp').then(
+	        	function(data) {
+	          		app.constant("BASE_URL", data.data.activities.dhis.href);
+	          		angular.bootstrap(document, ['dataQualityApp']);
+	        	}
+	      	);
 	    }
 	);
 	
@@ -22,6 +21,7 @@
   app.config(function(uiSelectConfig) {
   	uiSelectConfig.theme = 'bootstrap';
   });
+
 
 
   app.controller("NavigationController", function(BASE_URL) {
@@ -40,6 +40,7 @@
   });
   
   
+  
   app.service('requestService', ['BASE_URL', '$http', '$q', function (BASE_URL, $http, $q) {
   
 	var self = this;
@@ -53,11 +54,67 @@
 	  	
 	  	return $q.all(promises);
 	}	
-	  
+	
+	self.getSingle = function(requestURL) {
+		var fullURL = BASE_URL + requestURL;	  	
+	  	return $http.get(fullURL);
+	}
+	      
+	return self;
+  
   }]);
+  
+  
+  
+  app.service('periodService', [function () {
+  	
+  	var self = this;
+  	self.periodTool = new PeriodType();
+  	
+  	self.getISOPeriods = function(startDate, endDate, periodType) {
+  			
+  		var startDate = dateToISOdate(startDate);
+  		var endDate = dateToISOdate(endDate);
+  			
+  		var startDateParts = startDate.split('-');
+  		var endDateParts = endDate.split('-');
+  		var currentYear = new Date().getFullYear();
+  		
+  		var periods = [];
+  		var periodsInYear;
+  		for (var startYear = startDateParts[0]; startYear <= endDateParts[0] && currentYear; startYear++) {
+  			
+  			periodsInYear = self.periodTool.get(periodType).generatePeriods({'offset': startYear - currentYear, 'filterFuturePeriods': true, 'reversePeriods': false});
+  							
+  			for (var i = 0; i < periodsInYear.length; i++) {
+  				if (periodsInYear[i].endDate >= startDate && periodsInYear[i].endDate <= endDate) {
+  					periods.push(periodsInYear[i]);
+  				}
+  			}
+  		}
+  		
+  		var isoPeriods = [];
+  		for (var i = 0; i < periods.length; i++) {
+  			isoPeriods.push(periods[i].iso);
+  		}
+  		
+  		//To-do: yearly = duplicates
+  		return isoPeriods;
+  	}
+  	
+  	
+  	function dateToISOdate(date) {
+  		return moment(date).format('YYYY-MM-DD');
+  	}
+  	
+  	
+  	return self;
+  
+  }]);
+    
       
       
-  app.service('metaDataService', ['BASE_URL', '$http', '$q', function (BASE_URL, $http, $q) {
+  app.service('metaDataService', ['$q', 'requestService', function ($q, requestService) {
   	
   	var self = this;
   	
@@ -90,9 +147,11 @@
   		self.getOrgunits();
   	}
   	
+  	
   	self.metaDataReady = function () {
   		return (dataSets.available && dataElements.available && indicators.available && orgunits.available);
   	}
+  	
   	
   	self.allMetaData = function () {
   		return {
@@ -102,6 +161,7 @@
   			'orgunits': orgunits.data
   		};
   	}
+  	
   	
   	self.removeDuplicateObjects = function(objects) {
   	
@@ -134,6 +194,7 @@
   			return uniqueObjects;  	
   		}
   	
+  	
   	/**Data sets*/
   	self.getDataSets = function() { 
   	
@@ -152,21 +213,23 @@
   		//need to be fetched
 		else {
 			console.log("Requesting data sets");
-  			var requestURL = BASE_URL + '/api/dataSets.json?'; 
+  			var requestURL = '/api/dataSets.json?'; 
   			requestURL += 'fields=id,name,periodType&paging=false';
   			  
-  			$http.get(requestURL)
-		       .success(function(data) { 
-		       	  dataSets.data = data.dataSets;
-		       	 
-		          deferred.resolve(dataSets.data);
-		          dataSets.available = true;
-		       })
-		       .error(function(msg, code) {
-		          deferred.reject("Error fetching datasets");
-		          console.log(msg, code);
-		       });
-		}
+  			requestService.getSingle(requestURL).then(
+  				function(response) { //success
+  			    	var data = response.data;
+  			    	dataSets.data = data.dataSets;
+  			    	deferred.resolve(dataSets.data);
+  			    	dataSets.available = true;
+  				}, 
+  				function(response) { //error
+  			    	var data = response.data;
+  			    	deferred.reject("Error fetching datasets");
+  			    	console.log(msg, code);
+  			    }
+  			);
+  		}
   		dataSets.promise = deferred.promise;
   		return deferred.promise; 
   	}
@@ -182,6 +245,7 @@
   		return dataSetsFound;
   	}
   	
+  	
   	self.dataSetFromID = function(dataSetID) {
   		for (var j = 0; j < dataSets.data.length; j++) {
   			if (dataSetID === dataSets.data[j].id) {
@@ -189,6 +253,7 @@
   			}			
   		}
   	}
+  	
   	
   	/**Indicators*/
 	self.getIndicators = function() { 
@@ -208,20 +273,22 @@
 			//need to be fetched
 		else {
 			console.log("Requesting indicators");
-				var requestURL = BASE_URL + '/api/indicators.json?'; 
-				requestURL += 'fields=id,name,numerator,denominator&paging=false';
-				  
-				$http.get(requestURL)
-		       .success(function(data) { 
-		       	  indicators.data = data.indicators;
-		       	 
-		          deferred.resolve(indicators.data);
-		          indicators.available = true;
-		       })
-		       .error(function(msg, code) {
-		          deferred.reject("Error fetching indicators");
-		          console.log(msg, code);
-		       });
+			var requestURL = '/api/indicators.json?'; 
+			requestURL += 'fields=id,name,numerator,denominator&paging=false';
+			
+			requestService.getSingle(requestURL).then(
+				function(response) { //success
+			    	var data = response.data;
+			    	indicators.data = data.indicators;
+			    	deferred.resolve(indicators.data);
+			    	indicators.available = true;
+				}, 
+				function(response) { //error
+			    	var data = response.data;
+			    	deferred.reject("Error fetching indicators");
+			    	console.log(msg, code);
+			    }
+			);
 		}
 			indicators.promise = deferred.promise;
 			return deferred.promise; 
@@ -243,6 +310,7 @@
 	
 	}
 	
+	
 	/**Data elements*/
 	self.getDataElements = function() { 
 		
@@ -261,20 +329,22 @@
 			//need to be fetched
 		else {
 			console.log("Requesting data elements");
-				var requestURL = BASE_URL + '/api/dataElements.json?'; 
-				  requestURL += 'fields=id,name,dataSets[id]&paging=false';
+			var requestURL = '/api/dataElements.json?'; 
+			requestURL += 'fields=id,name,dataSets[id]&paging=false';
 				  
-			$http.get(requestURL)
-		       .success(function(data) { 
-		       	  dataElements.data = data.dataElements;
-		       	 
-		          deferred.resolve(dataElements.data);
-		          dataElements.available = true;
-		       })
-		       .error(function(msg, code) {
-		          deferred.reject("Error fetching datasets");
-		          console.log(msg, code);
-		       });
+			requestService.getSingle(requestURL).then(
+				function(response) { //success
+			    	var data = response.data;
+			    	dataElements.data = data.dataElements;
+			    	deferred.resolve(dataElements.data);
+			    	dataElements.available = true;
+				}, 
+				function(response) { //error
+			    	var data = response.data;
+			    	deferred.reject("Error fetching data elements");
+			    	console.log(msg, code);
+			    }
+			);
 		}
 			dataElements.promise = deferred.promise;
 			return deferred.promise; 
@@ -324,20 +394,22 @@
 		//need to be fetched
 		else {
 			console.log("Requesting orgunits");
-				var requestURL = BASE_URL + '/api/organisationUnits.json?'; 
+				var requestURL = '/api/organisationUnits.json?'; 
 				  requestURL += 'fields=id,name,children[id]&paging=false';
 				  
-			$http.get(requestURL)
-		       .success(function(data) { 
-		       	  orgunits.data = data.organisationUnits;
-		       	 
-		          deferred.resolve(orgunits.data);
-		          orgunits.available = true;
-		       })
-		       .error(function(msg, code) {
-		          deferred.reject("Error fetching orgunits");
-		          console.log(msg, code);
-		       });
+			requestService.getSingle(requestURL).then(
+				function(response) { //success
+			    	var data = response.data;
+			    	orgunits.data = data.organisationUnits;
+			    	deferred.resolve(orgunits.data);
+			    	orgunits.available = true;
+				}, 
+				function(response) { //error
+			    	var data = response.data;
+			    	deferred.reject("Error fetching orgunits");
+			    	console.log(msg, code);
+			    }
+			);
 		}
 		orgunits.promise = deferred.promise;
 		return deferred.promise; 
@@ -375,54 +447,7 @@
 	
   	return self;
   
-  }]);
-  
-  
-  app.service('periodService', [function () {
-  	
-  	var self = this;
-	self.periodTool = new PeriodType();
-	
-	self.getISOPeriods = function(startDate, endDate, periodType) {
-			
-		var startDate = dateToISOdate(startDate);
-		var endDate = dateToISOdate(endDate);
-			
-		var startDateParts = startDate.split('-');
-		var endDateParts = endDate.split('-');
-		var currentYear = new Date().getFullYear();
-		
-		var periods = [];
-		var periodsInYear;
-		for (var startYear = startDateParts[0]; startYear <= endDateParts[0] && currentYear; startYear++) {
-			
-			periodsInYear = self.periodTool.get(periodType).generatePeriods({'offset': startYear - currentYear, 'filterFuturePeriods': true, 'reversePeriods': false});
-							
-			for (var i = 0; i < periodsInYear.length; i++) {
-				if (periodsInYear[i].endDate >= startDate && periodsInYear[i].endDate <= endDate) {
-					periods.push(periodsInYear[i]);
-				}
-			}
-		}
-		
-		var isoPeriods = [];
-		for (var i = 0; i < periods.length; i++) {
-			isoPeriods.push(periods[i].iso);
-		}
-		
-		//To-do: yearly = duplicates
-		return isoPeriods;
-	}
-  	
-  	
-  	function dateToISOdate(date) {
-  		return moment(date).format('YYYY-MM-DD');
-  	}
-  	
-  	return self;
-  
-  }]);
-      
+  }]);  
   		              
 })();
 
