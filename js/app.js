@@ -148,10 +148,22 @@
 		'promise': null,
 		'data': []
 	};
+	var userOrgunits = {
+		'available': false,
+		'promise': null,
+		'data': []
+	};
+	var rootOrgunits = {
+		'available': false,
+		'promise': null,
+		'data': []
+	};
   	
   	
   	/**General*/
   	self.fetchMetaData = function () {
+	  	self.getUserOrgunits();
+	  	self.getRootOrgunits();
   		self.getDataSets();
   		self.getDataElements();
   		self.getIndicators();
@@ -160,19 +172,9 @@
   	
   	
   	self.metaDataReady = function () {
-  		return (dataSets.available && dataElements.available && indicators.available && orgunits.available);
+  		return (dataSets.available && dataElements.available && indicators.available && orgunits.available && userOrgunits.available && rootOrgunits.available);
   	}
-  	
-  	
-  	self.allMetaData = function () {
-  		return {
-  			'dataSets': dataSets.data,
-  			'dataElements': dataElements.data,
-  			'indicators': indicators.data,
-  			'orgunits': orgunits.data
-  		};
-  	}
-  	
+  	  	
   	
   	self.removeDuplicateObjects = function(objects) {
   	
@@ -205,6 +207,7 @@
   			return uniqueObjects;  	
   		}
   	
+	
   	
   	/**Data sets*/
   	self.getDataSets = function() { 
@@ -426,6 +429,78 @@
 		return deferred.promise; 
 	}
 	
+	self.getUserOrgunits = function() {
+	
+		var deferred = $q.defer();
+		
+		//available locally
+		if (userOrgunits.available) {
+			deferred.resolve(userOrgunits.data);
+		}
+		//waiting for server
+		else if (!userOrgunits.available && userOrgunits.promise) {
+			return userOrgunits.promise;
+		}
+		//need to be fetched
+		else {
+			var requestURL = '/api/organisationUnits.json?'; 
+			requestURL += 'userOnly=true&fields=id,name,children[name,id]&paging=false';
+			  
+			requestService.getSingle(requestURL).then(
+				function(response) { //success
+			    	var data = response.data;
+			    	userOrgunits.data = data.organisationUnits;
+			    	deferred.resolve(userOrgunits.data);
+			    	userOrgunits.available = true;
+				}, 
+				function(response) { //error
+			    	var data = response.data;
+			    	deferred.reject("Error fetching orgunits");
+			    	console.log(msg, code);
+			    }
+			);
+		}
+		userOrgunits.promise = deferred.promise;
+		return deferred.promise;
+	}
+	
+	
+	self.getRootOrgunits = function() {
+	
+		var deferred = $q.defer();
+		
+		//available locally
+		if (rootOrgunits.available) {
+			deferred.resolve(self.rootOrgunits.data);
+		}
+		//waiting for server
+		else if (!rootOrgunits.available && rootOrgunits.promise) {
+			return rootOrgunits.promise;
+		}
+		//need to be fetched
+		else {
+				var requestURL = '/api/organisationUnits.json?'; 
+				  requestURL += 'userDataViewFallback=true&fields=id,name,children[name,id]&paging=false';
+				  
+			requestService.getSingle(requestURL).then(
+				function(response) { //success
+			    	var data = response.data;
+			    	rootOrgunits.data = data.organisationUnits;
+			    	deferred.resolve(rootOrgunits.data);
+			    	rootOrgunits.available = true;
+				}, 
+				function(response) { //error
+			    	var data = response.data;
+			    	deferred.reject("Error fetching orgunits");
+			    	console.log(msg, code);
+			    }
+			);
+		}
+		rootOrgunits.promise = deferred.promise;
+		return deferred.promise;
+	}		
+	
+	
 	
 	//Returns array of orgunit child objects based on parent ID
 	self.orgunitChildrenFromParentID = function(parentID) {
@@ -436,6 +511,8 @@
 				children.push.apply(children, orgunits.data[i].children);
 			}
 		}
+		
+		console.log(orgunits.available);
 		
 		var childrenOrgunits = [];
 		for (var i = 0; i < children.length; i++) {

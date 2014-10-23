@@ -8,7 +8,7 @@
 	app.directive("completenessParameters", function() {
 		return {
 			restrict: "E",
-	        templateUrl: "directives/completenessParameters.html"
+	        templateUrl: "js/completeness/completenessParameters.html"
 		};
       
 	});
@@ -18,16 +18,14 @@
 	app.directive("completenessResult", function() {
 		return {
 			restrict: "E",
-	        templateUrl: "directives/completenessResult.html"
+	        templateUrl: "js/completeness/completenessResult.html"
 		};
 	  
 	});
 	
 	
 	/**Controller: Parameters*/
-	app.controller("ParamterController", function(completenessDataService, metaDataService, BASE_URL, $http, $q, $sce) {
-	    
-	    
+	app.controller("ParamterController", function(completenessDataService, metaDataService, BASE_URL, $http, $q, $sce, $scope) {
 	    
 	    
 	    var self = this;
@@ -75,6 +73,11 @@
 			indicatorPromise.then(function(data) { 
 				self.indicators = data;
 			});
+			
+			var orgunitPromise = metaDataService.getOrgunits();
+			orgunitPromise.then(function(data) { 
+				self.orgunitData = data;
+			});
 
 			//Options
 			self.onlyNumbers = /^\d+$/;
@@ -93,12 +96,11 @@
 	    	    }
 	    	};
 	    	
-	    	self.includeChildren = false;
+	    	self.includeChildren = true;
 	    }
 	    				
 
 		function initOrgunitTree() {
-			console.log("Tree loading");
 			$('#orgunitTree').jstree({
 				"plugins" : [ "wholerow", "ui"],
 			    'core': {
@@ -106,88 +108,67 @@
 		            	
 		            	//Tree is empty - get first two levels right away
 		            	if (node.parent === null) {
-		            		var requestURL = BASE_URL + "/api/organisationUnits.json?filter=level:eq:1&fields=id,name,children[id,name]";
-		            		console.log("Empty tree");
-		            		$.ajax({
-		            			type: "GET",
-		            			url: requestURL,
-		            			cache: false,
-		            			success: function(data){
-																	
-									var orgunits = data.organisationUnits;
-									var orgunitNodes = [];
+		            	
+		            		metaDataService.getRootOrgunits().then(function(data) { 
+		            			var orgunits = data;
+		            			var orgunitNodes = [];
+				
+								//Iterate over all the orgunit the user is assigned to (root(s))
+								for (var i = 0; i < orgunits.length; i++) {
+									orgunitNodes[i] = {
+										'id': orgunits[i].id, 
+										'text': orgunits[i].name,
+										'children': [], 
+										'state': {
+											'opened': true
+										}
+									};
 									
-									//Iterate over all the orgunit the user is assigned to (root(s))
-									for (var i = 0; i < orgunits.length; i++) {
-											orgunitNodes[i] = {
-												'id': orgunits[i].id, 
-												'text': orgunits[i].name,
-												'children': [], 
-												'state': {
-													'opened': true
-												}
-											};
-											
-											//Add the children of the root(s) as well
-											for (var j = 0; j < orgunits[i].children.length; j++) {
-												orgunitNodes[i].children.push({
-													'id': orgunits[i].children[j].id,
-													'text': orgunits[i].children[j].name,
-													'children': true
-												});
-												
-												orgunitNodes[i].children.sort(sortNodeByName);
-											}
-		
-									}
-									
-									orgunitNodes.sort(sortNodeByName);
-									callback(orgunitNodes);
-		            				
-		            			},
-		            			error: function (xhr, ajaxOptions, thrownError) {
-		            				console.log("Error fetching root orgunit");	
-		            			}
+									//Add the children of the root(s) as well
+									for (var j = 0; j < orgunits[i].children.length; j++) {
+										orgunitNodes[i].children.push({
+											'id': orgunits[i].children[j].id,
+											'text': orgunits[i].children[j].name,
+											'children': true
+										});
+										
+										orgunitNodes[i].children.sort(sortNodeByName);
+									}	
+								}
+
+								orgunitNodes.sort(sortNodeByName);
+								callback(orgunitNodes);
+		            		
 		            		});
 		            	}
 			                	
 	                	//A leaf was clicked, need to get the next level
 	                	else {
-	                		var requestURL = BASE_URL + "/api/organisationUnits/" + node.id + ".json?fields=children[id,name]";
+	                		var orgunits = metaDataService.orgunitChildrenFromParentID(node.id);
+	                		var children = [];
+	                		for (var i = 0; i < orgunits.length; i++) {
+	                			children.push({
+                					'id': orgunits[i].id,
+                					'text': orgunits[i].name,
+                					'children': true //should probably add a check for number of levels, and avoid this for facilities
+	                			});
+	                		}
 	                		
-	                		console.log("Fetching children");
-	                		                		
-	                		$.ajax({
-	                			type: "GET",
-	                			url: requestURL,
-	                			cache: false,
-	                			success: function(data){
-	                			  
-	                			  var children = [];
-	                			  for (var i = 0; i < data.children.length; i++) {
-	                			  	children.push({
-	                			  		'id': data.children[i].id,
-	                			  		'text': data.children[i].name,
-	                			  		'children': true //should probably add a check for number of levels, and avoid this for facilities
-	                			  	});
-	                			  }
-	                			 	
-	                			 	children.sort(sortNodeByName);
-	                			 	
-	                				callback(children);
-	                				
-	                			},
-	                			error: function (xhr, ajaxOptions, thrownError) {
-	                				console.log("Error fetching root orgunit");	
-	                			}
-	                		});
-	                		
+	                		children.sort(sortNodeByName);
+	                		callback(children);	                		
 	                	} //end else
 	                }//end data
 		        }//end core
 		   	}).bind("select_node.jstree", function (NODE, REF_NODE) {
-		   		self.orgunits = $('#orgunitTree').jstree('get_selected');        
-		   		//self.$apply();
+		   		self.orgunits = $('#orgunitTree').jstree('get_selected');
+		   	}).on("loaded.jstree", function() {
+		   		//select user orgunit nodes as default
+		   		metaDataService.getUserOrgunits().then(function(data) {
+		   			for (var i = 0; i < data.length; i++) {
+		   				$('#orgunitTree').jstree('select_node', data[i].id);
+		   				console.log("Selected " + data[i].id);
+		   			}
+		   		});
 		   	});
 		}
 		
