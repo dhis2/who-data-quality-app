@@ -1,3 +1,7 @@
-<div ng-controller="ResultsController as paramCtrl">
-	Result
+<div ng-controller="ResultsController as resultsCtrl">
+	<h3 ng-show="resultsCtrl.gridOptions.length != 0">Result</h3>
+	<div ng-repeat="gridOption in resultsCtrl.gridOptions">
+		<h4>{{gridOption.periodType}}</h4>
+		<div class="gridStyle" ui-grid="gridOption" ui-grid-resize-columns></div>
+	</div>
 </div>

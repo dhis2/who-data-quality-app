@@ -55,7 +55,7 @@
 	    <div id="periodPanel" class="panel-collapse collapse">
 	      <div class="panel-body">
 	      	<p>Select the start and end date for the analysis.</p>
-	        <input class="selector" date-range-picker class="form-control date-picker" type="text" ng-model="paramCtrl.date" placeholder="From - to..." options="paramCtrl.datePickerOpts"/>
+	        <input class="selector" date-range-picker class="form-control date-picker" type="text" ng-model="paramCtrl.date" placeholder="From - To" options="paramCtrl.datePickerOpts"/>
 	      </div>
 	    </div>
 	  </div>
@@ -93,5 +93,5 @@
 	    </div>
 	  </div>
 	</div>
-	<button type="button" class="btn btn-default" ng-click="paramCtrl.doAnalysis();">Do analysis</button>	
+	<button type="button" class="btn btn-default" ng-click="paramCtrl.doAnalysis();" ng-disabled="paramCtrl.orgunits.length === 0 || (paramCtrl.dataElementsSelected.length === 0 && paramCtrl.indicatorsSelected.length === 0 && paramCtrl.dataSetsSelected.length === 0) || paramCtrl.date.startDate == ''">Do analysis</button>
 </div>

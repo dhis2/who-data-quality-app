@@ -1,3 +1,38 @@
+.ui-grid-top-panel {
+	font-weight: normal;
+}
+
+.ui-grid-header-cell {
+	font-size: 9pt;
+}
+
+.ui-grid-cell {
+	font-size: 9pt;
+	text-align: right;
+}
+
+.dataSetCell {
+	text-align: left;
+}
+
+.orgunitCell {
+	text-align: left;
+}
+
+.lowDataCell {
+	background-color: yellow !important;
+}
+
+.noDataCell {
+	background-color: rgb(150,0,0) !important;
+}
+
+.gridStyle {
+    border: 1px solid rgb(212,212,212);
+    height: 400px;
+    margin-bottom: 50px;
+    size: 60%;
+}
 
 .selector {
 	width: 200px;
@@ -13,7 +48,7 @@ input.ng-dirty.ng-invalid {
 	max-height: 300px;
 	max-width: 300px;
 	overflow: auto;
-	border: 1px solid gray;
+	border: 1px solid rgb(212,212,212);
 }
 
 #result {

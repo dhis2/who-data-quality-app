@@ -1,9 +1,10 @@
 
 (function(){
 	
-	var app = angular.module('completenessAnalysis', ['daterangepicker']);
+	var app = angular.module('completenessAnalysis', ['ui.grid', 'ui.grid.resizeColumns', 'daterangepicker']);
 	
 	
+	/**Directive: Completeness parameters*/
 	app.directive("completenessParameters", function() {
 		return {
 			restrict: "E",
@@ -13,6 +14,7 @@
 	});
 	
 	
+	/**Directive: Completeness results*/	
 	app.directive("completenessResult", function() {
 		return {
 			restrict: "E",
@@ -22,7 +24,11 @@
 	});
 	
 	
+	/**Controller: Parameters*/
 	app.controller("ParamterController", function(completenessDataService, metaDataService, BASE_URL, $http, $q, $sce) {
+	    
+	    
+	    
 	    
 	    var self = this;
 	        
@@ -45,8 +51,8 @@
 	    	self.isoPeriods = [];
 	    	
 	    	self.date = {
-	    		"startDate": "", 
-	    		"endDate": ""
+	    		"startDate": moment().subtract(12, 'months'), 
+	    		"endDate": moment()
 	    	};
 	    }
 	    
@@ -195,7 +201,10 @@
 		
 		
 		self.doAnalysis = function() {
-
+			//Collapse open panels
+			$('.panel-collapse').removeClass('in');
+			
+			//Call service to get data
 			completenessDataService.analyseData(self.dataSetsSelected, 
 												self.dataElementsSelected, 
 												self.indicatorsSelected, 
@@ -213,16 +222,40 @@
 	});
 	
 	
-	app.controller("ResultsController", function($http) {
+	/**Controller: Results*/	
+	app.controller("ResultsController", function(completenessDataService) {
 	    var self = this;
-	   
+	    
+	    self.results = [];
+	    self.gridOptions = [];
+	    
+	    var receiveResult = function(results) {
+	     	self.results = results;
+	     	self.gridOptions = [];
+
+	     	for (var i = 0; i < results.length; i++) {
+		     	var option = {};
+	     		option.data = results[i].data;	     		
+	     		option.columnDefs = results[i].columnDefs;
+	     		option.showColumnMenu = false;
+	     		option.periodType = results[i].periodType;
+	     		self.gridOptions.push(option);
+	     	}
+	    }
+   	    completenessDataService.resultsCallback = receiveResult;
+
+			                   	   	
 	   	return self;
 	});
 	 
-	
-	app.service('completenessDataService', function (metaDataService, periodService, requestService) {
+	 
+	/**Service: Completeness data*/
+	app.service('completenessDataService', function (metaDataService, periodService, requestService, uiGridConstants) {
 		
 		var self = this;
+		
+		self.resultsCallback = null; 
+		
 		init();
 			
 		function init() {
@@ -245,6 +278,7 @@
 			self.orgunitsToRequest = [];
 			self.analysisObjects = [];
 			self.requests = [];
+			self.result = [];
 		}
 		
 		
@@ -354,23 +388,136 @@
 		
 	
 		function fetchData() {
-			
-			
 			var requestURLs = [];
 			for (var i = 0; i < self.requests.length; i++) {
 				requestURLs.push(self.requests[i].URL);
 			}
 			
 			
-			requestService.getMultiple(requestURLs).then(function(data) { 
+			requestService.getMultiple(requestURLs).then(function(response) { 
 				
-				//1 - Match data and requestList
+				var results = [];
+				for (var i = 0; i < response.length; i++) {
+					var data = response[i].data;
+					results.push(processResult(data, requestFromURL(response[i].config.url)));					
+				}
 				
-				console.log(data.length);
-				console.log(data);
+				self.result = results;
+				self.resultsCallback(results);
 			});
 			
+			
 		}
+		
+		
+		
+		function processResult(data, request) {
+			var ds = request.dataSets;
+			var pe = data.metaData.pe;
+			var ou = data.metaData.ou;
+						
+			var names = ["Data Set", "Orgunit"];
+			for (var i = 0; i < pe.length; i++) {
+			
+				var periodName;
+				if (request.periodType === "Monthly") {
+					periodName = periodService.shortMonthName(pe[i]);
+				}
+				else if (request.periodType === "Yearly") {
+					periodName = pe[i].toString();
+				}
+				else periodName = data.metaData.names[pe[i]];
+				
+				names.push(periodName);
+			}
+			names.push("Rank");
+			
+			
+			var columnDefs = [];
+			columnDefs[0] = {'field': "Data Set", cellClass: "dataSetCell"};
+			columnDefs[1] = {'field': "Orgunit", cellClass: "orgunitCell"}; 
+			for (var i = 0; i < pe.length; i++) {
+				columnDefs[i+2] = {'field': names[i+2], cellClass: 
+					function(grid, row, col, rowRenderIndex, colRenderIndex) {
+				    	if (grid.getCellValue(row,col) === '') {
+				        	return 'noDataCell';
+				        }
+				        else if (parseFloat(grid.getCellValue(row,col)) < self.param.threshold) {
+				        	return 'lowDataCell';
+				        }
+				        else {
+				        	return 'highDataCell';
+				        }
+				    }
+				};
+			}
+			columnDefs[names.length-1] = {
+				'field': "Rank", 
+				'sort': {
+			    	'direction': uiGridConstants.ASC,
+			        'priority': 0
+			    }
+			}; 
+			
+			var rows = [];
+			for (var i = 0; i < ds.length; i++) {
+				for (var j = 0; j < ou.length; j++) {
+					var row = {};
+					row[names[0]] = ds[i].name;		
+					row[names[1]] = data.metaData.names[ou[j]];
+					row[names[names.length-1]] = 0;
+					
+					for (var k = 0; k < pe.length; k++) {
+						var value = getDataValue(ds[i], ou[j], pe[k], data.rows);				
+						row[names[k+2]] = value;
+						if (value == '') {
+							row[names[names.length-1]] = row[names[names.length-1]] - 2;
+						}
+						else if (parseInt(value) < self.param.threshold) {
+							row[names[names.length-1]] = row[names[names.length-1]] - 1;
+						}					
+					}
+					rows.push(row);
+				}
+			}
+			
+			var resultObject = {
+				'metadata': data.metaData,
+				'columnDefs': columnDefs,
+				'periodType': request.periodType,
+				'data': rows,
+				'dataSets': ds
+			};
+			
+			return resultObject;
+		}
+		
+		
+		
+		function requestFromURL(requestURL) {
+
+			var matches = null;
+			for (var i = 0; i < self.requests.length; i++) {
+				if (requestURL.indexOf(self.requests[i].URL) > -1) {
+					return self.requests[i];
+				}
+			}
+			console.log("Error");	
+			return -1;
+		}
+				
+		
+		
+		function getDataValue(ds, ou, pe, rows) {
+			
+			
+			for (var i = 0; i < rows.length; i++) {
+				if (rows[i][0] === ds.id && rows[i][1] === ou && rows[i][2] === pe) return rows[i][3];
+			}
+			return "";
+		
+		}
+		
 		
 		
 		function orgunitsForAnalysis() {

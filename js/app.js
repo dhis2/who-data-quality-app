@@ -2,7 +2,7 @@
 (function(){
   var app = angular.module('dataQualityApp', ['completenessAnalysis', 'ui.select', 'ngSanitize', 'ui.bootstrap']);
     
-    //Load base URL and bootstrap
+    /**Bootstrap*/
 	angular.element(document).ready( 
 		function() {
 	  		var initInjector = angular.injector(['ng']);
@@ -17,13 +17,13 @@
 	    }
 	);
 	
-	
+  /**Config*/
   app.config(function(uiSelectConfig) {
   	uiSelectConfig.theme = 'bootstrap';
   });
 
 
-
+  /**Controller: Navigation*/
   app.controller("NavigationController", function(BASE_URL) {
   	this.current = "completeness";
   	this.isCollapsed = true;
@@ -40,7 +40,7 @@
   });
   
   
-  
+  /**Service: Requests*/  
   app.service('requestService', ['BASE_URL', '$http', '$q', function (BASE_URL, $http, $q) {
   
 	var self = this;
@@ -65,7 +65,7 @@
   }]);
   
   
-  
+  /**Service: Periods*/
   app.service('periodService', [function () {
   	
   	var self = this;
@@ -103,6 +103,16 @@
   	}
   	
   	
+  	self.shortMonthName = function(periodISO) {
+  		var year = periodISO.substring(2, 4);
+  		var monthNumber = periodISO.substring(4, 6);
+  		
+  		var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  		
+  		return monthNames[parseInt(monthNumber)-1] + " '" + year;
+  	}
+  	
+  	
   	function dateToISOdate(date) {
   		return moment(date).format('YYYY-MM-DD');
   	}
@@ -113,7 +123,7 @@
   }]);
     
       
-      
+  /**Service: Metadata*/
   app.service('metaDataService', ['$q', 'requestService', function ($q, requestService) {
   	
   	var self = this;
@@ -138,6 +148,7 @@
 		'promise': null,
 		'data': []
 	};
+  	
   	
   	/**General*/
   	self.fetchMetaData = function () {
@@ -430,7 +441,6 @@
 		for (var i = 0; i < children.length; i++) {
 			childrenOrgunits.push(self.orgunitFromID(children[i].id));
 		}
-		console.log(childrenOrgunits);
 		return childrenOrgunits;
 	
 	}
