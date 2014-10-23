@@ -1,5 +1,20 @@
 <div ng-controller="ParamterController as paramCtrl">
 	<div class="panel-group" id="parameterAccordion">
+	<div class="panel panel-default">
+	  <div class="panel-heading">
+	    <h4 class="panel-title">
+	      <a data-toggle="collapse" data-parent="#parameterAccordion" href="#optionsPanel">
+	        Analysis type
+	      </a>
+	    </h4>
+	  </div>
+	  <div id="optionsPanel" class="panel-collapse collapse in">
+	    <div class="panel-body">
+				<label for="threshold">Threshold </label>
+				<input id="threshold" class="selector" type="number" min="0" max="100" ng-model="paramCtrl.threshold"/>
+	    </div>
+	  </div>
+	</div>
 	  <div class="panel panel-default">
 	    <div class="panel-heading">
 	      <h4 class="panel-title">
@@ -8,7 +23,7 @@
 	        </a>
 	      </h4>
 	    </div>
-	    <div id="dataPanel" class="panel-collapse collapse in">
+	    <div id="dataPanel" class="panel-collapse collapse">
 	      <div class="panel-body">
           	<p>Select one or more data sets, data elements and/or indicators.</p>
           	<br />
@@ -74,21 +89,6 @@
 	        	<div id="orgunitTree"></div>
 	        </div>
 	        Include children: <input type="checkbox" ng-model="paramCtrl.includeChildren">
-	      </div>
-	    </div>
-	  </div>
-	  <div class="panel panel-default">
-	    <div class="panel-heading">
-	      <h4 class="panel-title">
-	        <a data-toggle="collapse" data-parent="#parameterAccordion" href="#optionsPanel">
-	          Options
-	        </a>
-	      </h4>
-	    </div>
-	    <div id="optionsPanel" class="panel-collapse collapse">
-	      <div class="panel-body">
-				<label for="threshold">Threshold </label>
-				<input id="threshold" class="selector" type="number" min="0" max="100" ng-model="paramCtrl.threshold"/>
 	      </div>
 	    </div>
 	  </div>
