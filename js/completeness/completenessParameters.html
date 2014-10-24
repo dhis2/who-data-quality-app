@@ -10,8 +10,28 @@
 	  </div>
 	  <div id="optionsPanel" class="panel-collapse collapse in">
 	    <div class="panel-body">
-				<label for="threshold">Threshold </label>
-				<input id="threshold" class="selector" type="number" min="0" max="100" ng-model="paramCtrl.threshold"/>
+	    	<label>Choose analysis type:</label><br />
+	      	<input id="analysisType" type="radio" ng-model="paramCtrl.analysisType" value="completeness">  Data completeness<br/>
+	      	<input type="radio" ng-model="paramCtrl.analysisType" value="outlier">  Outlier analysis<br/>
+	      	<div ng-show="paramCtrl.analysisType === 'completeness'"><br />
+				<label for="threshold">Target for completeness:   </label>
+				<input style="width: 100px;" id="threshold" class="selector" type="number" min="0" max="100" ng-model="paramCtrl.threshold"/>
+			</div>
+			<div ng-show="paramCtrl.analysisType === 'outlier'"><br />
+				<label for="threshold">Standard deviations:</label><br />
+				<select style="width: 100px;"
+				  ng-model="paramCtrl.stdDev"
+				  ng-options="stdDev.name group by stdDev.category for stdDev in paramCtrl.stdDevOptions">
+				</select>				
+			</div>
+			<span ng-show="paramCtrl.analysisType === 'outlier'"><br />
+				<label for="highLimit">High limit:   </label>
+				<input style="width: 100px;" id="highLimit" class="selector" type="number" ng-model="paramCtrl.highLimit"/>
+			</span>
+			<span ng-show="paramCtrl.analysisType === 'outlier'"><br />
+				<label for="lowLimit">Low limit:   </label>
+				<input style="width: 100px;" id="lowLimit" class="selector" type="number" ng-model="paramCtrl.lowLimit"/>
+			</span>
 	    </div>
 	  </div>
 	</div>
@@ -25,37 +45,33 @@
 	    </div>
 	    <div id="dataPanel" class="panel-collapse collapse">
 	      <div class="panel-body">
-          	<p>Select one or more data sets, data elements and/or indicators.</p>
-          	<br />
-	        <ui-select multiple ng-model="paramCtrl.dataSetsSelected" theme="bootstrap" style="min-width: 250px; max-width: 500px;">
-	          <ui-select-match placeholder="Select data sets...">
-	          	{{$item.name}}
+	        <ui-select ng-disabled="paramCtrl.indicatorsSelected || paramCtrl.dataElementsSelected" ng-show="paramCtrl.analysisType === 'completeness'" ng-model="paramCtrl.dataSetsSelected" theme="bootstrap" style="margin-bottom: 10px; min-width: 250px; max-width: 400px;">
+	          <ui-select-match placeholder="Select data set...">
+	          	{{paramCtrl.dataSetsSelected.name}}
 	          </ui-select-match>
 	          <ui-select-choices 
-	          	repeat="obj in paramCtrl.dataSets | filter: $select.search">
+	          	repeat="obj in paramCtrl.dataSets">
 	           		<div ng-bind-html="obj.name | highlight: $select.search"></div>
 	          </ui-select-choices>
-	        </ui-select> <p><small>The selected datasets will be analysed.</small></p>
-	        <br />
-	        <ui-select multiple ng-model="paramCtrl.dataElementsSelected" theme="bootstrap" style="min-width: 250px; max-width: 500px;">
+	        </ui-select>
+	        <ui-select ng-disabled="paramCtrl.indicatorsSelected || paramCtrl.dataSetsSelected" ng-model="paramCtrl.dataElementsSelected" theme="bootstrap" style="margin-bottom: 10px; min-width: 250px; max-width: 400px;">
 	          <ui-select-match placeholder="Select data elements...">
-	          	{{$item.name}}
+	          	{{paramCtrl.dataElementsSelected.name}}
 	          </ui-select-match>
 	          <ui-select-choices 
 	          	repeat="obj in paramCtrl.dataElements | filter: $select.search">
 	           		<div ng-bind-html="obj.name | highlight: $select.search"></div>
 	          </ui-select-choices>
-	        </ui-select> <p><small>All datasets in which these data elements are members will be analysed.</small></p>
-	        <br />
-	        <ui-select multiple ng-model="paramCtrl.indicatorsSelected" theme="bootstrap" style="min-width: 250px; max-width: 500px;">
+	        </ui-select>
+	        <ui-select ng-disabled="paramCtrl.dataSetsSelected || paramCtrl.dataElementsSelected" ng-model="paramCtrl.indicatorsSelected" theme="bootstrap" style="margin-bottom: 10px; min-width: 250px; max-width: 400px;">
 	          <ui-select-match placeholder="Select indicators...">
-	          	{{$item.name}}
+	          	{{paramCtrl.indicatorsSelected.name}}
 	          </ui-select-match>
 	          <ui-select-choices 
 	          	repeat="obj in paramCtrl.indicators | filter: $select.search">
 	           		<div ng-bind-html="obj.name | highlight: $select.search"></div>
 	          </ui-select-choices>
-	        </ui-select> <p><small>All datasets with data elements contributing to the denominator and numerator of these indicators will be analysed.</small></p>
+	        </ui-select>
 	       </div>
 	    </div>
 	  </div>

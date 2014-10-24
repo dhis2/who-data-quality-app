@@ -17,14 +17,19 @@
 	<script src="bower_components/jquery-ui/jquery-ui.js"></script>
 	<script src="bower_components/periodTypeNoDep.js"></script>
 	<script src="bower_components/angular-ui-grid/ui-grid.js"></script>
-	
-	
+		
 	<link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css"/>
 	<link rel="stylesheet" href="bower_components/bootstrap-daterangepicker/daterangepicker-bs3.css"/>
 	<link rel="stylesheet" href="bower_components/angular-ui-select/dist/select.min.css">
 	<link rel="stylesheet" href="bower_components/jstree/dist/themes/default/style.css">
 	<link rel="stylesheet" href="bower_components/jquery-ui/themes/cupertino/theme.css">
 	<link rel="stylesheet" href="bower_components/angular-ui-grid/ui-grid.css">
+	
+	
+	<!-- Charts -->
+	<script src="//dhis2-cdn.org/v216/ext/ext-all.js"></script>
+	<link href="//dhis2-cdn.org/v216/ext/resources/css/ext-plugin-gray.css" rel="stylesheet" type="text/css" />
+	<script src="//dhis2-cdn.org/v216/plugin/chart.js"></script>
 	
 	<!-- App -->
 	<script lang="javascript" src="js/app.js"></script>
@@ -50,8 +55,9 @@
 	        </div>
 	        <div collapse="navCtrl.isCollapsed" class="navbar-collapse bs-js-navbar-collapse">
 	          <ul class="nav navbar-nav">
-					<li ng-class="{active: navCtrl.current === 'completeness'}"><a href ng-click="navCtrl.menuClicked('completeness');">Quality Analysis</a></li>
-					<li ng-class="{active: navCtrl.current === 'consistency'}"><a href ng-click="navCtrl.menuClicked('consistency');">Data Export</a></li>
+					<li ng-class="{active: navCtrl.current === 'quality'}"><a href ng-click="navCtrl.menuClicked('quality');">Quality Analysis</a></li>
+					<li ng-class="{active: navCtrl.current === 'dictionary'}"><a href ng-click="navCtrl.menuClicked('dictionary');">Indicator Dictionary</a></li>
+					<li ng-class="{active: navCtrl.current === 'export'}"><a href ng-click="navCtrl.menuClicked('export');">Data Export</a></li>
 					<li class="dropdown">
 						<a href="#" class="dropdown-toggle" data-toggle="dropdown">More<span class="caret"></span></a>
 						<ul class="dropdown-menu" role="menu">
@@ -69,16 +75,19 @@
 	        </div><!-- /.nav-collapse -->
 	      </div><!-- /.container-fluid -->
 	    </nav>
-	<div id="completeness" ng-show="navCtrl.current === 'completeness'">
+	<div id="completeness" ng-show="navCtrl.current === 'quality'">
 		<h3>Completeness and Consistency Analysis</h3>
 		<completeness-parameters></completeness-parameters>
 		<br><br>
 		<completeness-result></completeness-result>
 	</div>
-	
-	<div ng-cloak id="consistency" ng-show="navCtrl.current === 'consistency'">
+	<div ng-cloak id="consistency" ng-show="navCtrl.current === 'dictionary'">
+		<h3>Data Dictionary</h3>
+		<p>Browse indicators and their defintion.</p>
+	</div>
+	<div ng-cloak id="consistency" ng-show="navCtrl.current === 'export'">
 		<h3>Data Export</h3>
-		<p>Here, you can export data for use with the Excel-based data quality report card</p>
+		<p>Export data for use with the Excel-based data quality report card</p>
 	</div>
 			
 	

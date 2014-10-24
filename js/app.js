@@ -24,8 +24,8 @@
 
 
   /**Controller: Navigation*/
-  app.controller("NavigationController", function(BASE_URL) {
-  	this.current = "completeness";
+  app.controller("NavigationController", function() {
+  	this.current = "quality";
   	this.isCollapsed = true;
 
   	
@@ -121,6 +121,52 @@
   	return self;
   
   }]);
+  
+  
+  
+  /**Service: Math*/
+  app.service('mathService', [function () {
+  	
+  	var self = this;
+  	
+  	self.getMean = function(valueSet) {
+  		
+  		
+  		var total = 0;
+  		
+  		for (var i = 0; i < valueSet.length; i++) {
+  			total += valueSet[i];
+  		}
+  		
+  		return (total/valueSet.length);
+  		
+  	}
+  	
+  	
+  	self.getVariance = function(valueSet) {
+  		
+  		var variance = 0;
+  		var mean = self.getMean(valueSet);
+  		
+  		for (var i = 0; i < valueSet.length; i++) {
+  			variance += Math.pow((valueSet[i] - mean), 2);
+  		}
+  	
+  		return (variance/(valueSet.length-1));
+  		
+  	}
+  	
+
+  	self.getStandardDeviation = function(valueSet) {
+  	
+  		return Math.sqrt(self.getVariance(valueSet));
+  	
+  	}  	
+  	
+  	return self;
+  
+  }]);
+  
     
       
   /**Service: Metadata*/
@@ -194,18 +240,34 @@
   	
   	self.removeDuplicateIDs = function(stringArray) {
   		
-  			var uniqueObjects = [];
-  			var existingIDs = {};	
+		var uniqueObjects = [];
+		var existingIDs = {};	
+	
+		for (var i = 0; i < stringArray.length; i++) {
+			if (!existingIDs[stringArray[i]]) {
+				uniqueObjects.push(stringArray[i]);
+				existingIDs[stringArray[i]] = true;
+			}
+		}
+		
+		return uniqueObjects;  	
+	}
   		
-  			for (var i = 0; i < stringArray.length; i++) {
-  				if (!existingIDs[stringArray[i]]) {
-  					uniqueObjects.push(stringArray[i]);
-  					existingIDs[stringArray[i]] = true;
-  				}
-  			}
-  			
-  			return uniqueObjects;  	
+  		
+  	self.getNameFromID = function(objectID) {
+  		
+  		var objects = [];
+  		if (orgunits.available) objects.push.apply(objects, orgunits.data);	
+  		if (dataElements.available) objects.push.apply(objects, dataElements.data);	
+  		if (dataSets.available) objects.push.apply(objects, dataSets.data);
+  		if (indicators.available) objects.push.apply(objects, indicators.data);
+  		console.log("Objects: " + objects.length);
+  		for (var i = 0; i < objects.length; i++) {
+  			if (objectID === objects[i].id) return objects[i].name;
   		}
+  		
+  		return "Unknown: " + objectID;
+  	}
   	
 	
   	

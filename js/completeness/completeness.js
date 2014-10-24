@@ -23,6 +23,15 @@
 	  
 	});
 	
+	/**Directive: Completeness results*/	
+	app.directive("outlierResult", function() {
+		return {
+			restrict: "E",
+	        templateUrl: "js/completeness/outlierResult.html"
+		};
+	  
+	});	
+		
 	
 	/**Controller: Parameters*/
 	app.controller("ParamterController", function(completenessDataService, metaDataService, BASE_URL, $http, $q, $sce, $scope) {
@@ -36,13 +45,13 @@
 	    
 		function init() {
 	    	self.dataSets = [];
-	    	self.dataSetsSelected = [];
+	    	self.dataSetsSelected = undefined;
 	    	
 	    	self.dataElements = [];
-	    	self.dataElementsSelected = [];
+	    	self.dataElementsSelected = undefined;
 	    		    
 	    	self.indicators = [];
-	    	self.indicatorsSelected = [];
+	    	self.indicatorsSelected = undefined;
 	    	
 	    	self.orgunits = [];
 	    	
@@ -81,7 +90,42 @@
 
 			//Options
 			self.onlyNumbers = /^\d+$/;
-			self.threshold = 80;
+			self.threshold = 90;
+			self.stdDevOptions = [
+				{
+				'name': 'None',
+				'value': 0,
+				'category': ''
+				},
+				{
+				'name': '1',
+				'value': 1,
+				'category': 'Medium'
+				},
+				{
+				'name': '1.5',
+				'value': 1.5,
+				'category': 'Medium'
+				},
+				{
+				'name': '2',
+				'value': 2,
+				'category': 'Medium'
+				},
+				{
+				'name': '2.5',
+				'value': 2.5,
+				'category': 'High'
+				},
+				{
+				'name': '3',
+				'value': 3,
+				'category': 'High'
+				}];
+			self.stdDev = self.stdDevOptions[2];
+			self.analysisType = "completeness";
+			self.highLimit = null;
+			self.lowLimit = null;
 			
 			
 			//Date initialisation
@@ -96,7 +140,7 @@
 	    	    }
 	    	};
 	    	
-	    	self.includeChildren = true;
+	    	self.includeChildren = false;
 	    }
 	    				
 
@@ -193,11 +237,11 @@
 												self.date.endDate,
 												self.orgunits, 
 												self.threshold, 
-												self.includeChildren);
+												self.includeChildren,
+												self.stdDev,
+												self.analysisType);
 				
 		}
-		
-		
 		return self;
 		
 	});
@@ -208,20 +252,99 @@
 	    var self = this;
 	    
 	    self.results = [];
-	    self.gridOptions = [];
+	    self.itemsPerPage = 15;
+        self.outliersOnly = true;
+        
+        // calculate page in place
+        function paginateRows(rows) {
+            var pagedItems = [];
+            
+            for (var i = 0; i < rows.length; i++) {
+                if (i % self.itemsPerPage === 0) {
+                    pagedItems[Math.floor(i / self.itemsPerPage)] = [ rows[i] ];
+                } else {
+                    pagedItems[Math.floor(i / self.itemsPerPage)].push(rows[i]);
+                }
+            }
+            
+            return pagedItems;
+            
+        };
+        
+        self.range = function (start, end) {
+            var ret = [];
+            if (!end) {
+                end = start;
+                start = 0;
+            }
+            for (var i = start; i < end; i++) {
+                ret.push(i);
+            }
+            return ret;
+        };
+        
+        self.prevPage = function (result) {
+            if (result.currentPage > 0) {
+                result.currentPage--;
+            }
+        };
+        
+        self.nextPage = function (result) {
+            if (result.currentPage < result.pages.length - 1) {
+                result.currentPage++;
+            }
+        };
+        
+        self.setPage = function (result, n) {
+            result.currentPage = n;
+        };
+        
+        
+        function filterOutlierRows(rows) {
+        
+        	var row, filteredRows = [];
+        	for (var i = 0; i < rows.length; i++) {
+        		row = rows[i];
+        		
+        		if (row.metaData.hasOutlier) {
+        			filteredRows.push(row);
+        		}
+        	}
+        	
+        	return filteredRows;
+        	
+        
+        }
+            
+        self.filter = function() {
+			for (var i = 0; i < self.results.length; i++) {
+				self.results[i] = self.filterChanged(self.results[i]);
+			}
+        
+        }
+        
+        
 	    
+	    self.filterChanged = function(result) {
+	    	if (self.outliersOnly) {
+	    		result.pages = paginateRows(filterOutlierRows(result.rows));	
+	    	}
+	    	else {
+	    		result.pages = paginateRows(result.rows);	
+	    	}
+	    	
+	    	result.currentPage = 0;
+	    	result.n = 0;
+	    	
+	    	return result;
+	    	
+	    }
+	    	    
 	    var receiveResult = function(results) {
-	     	self.results = results;
-	     	self.gridOptions = [];
-
-	     	for (var i = 0; i < results.length; i++) {
-		     	var option = {};
-	     		option.data = results[i].data;	     		
-	     		option.columnDefs = results[i].columnDefs;
-	     		option.showColumnMenu = false;
-	     		option.periodType = results[i].periodType;
-	     		self.gridOptions.push(option);
-	     	}
+		    for (var i = 0; i < results.length; i++) {
+		    	results[i] = self.filterChanged(results[i]);
+		    }
+		    self.results = results;
 	    }
    	    completenessDataService.resultsCallback = receiveResult;
 
@@ -231,24 +354,26 @@
 	 
 	 
 	/**Service: Completeness data*/
-	app.service('completenessDataService', function (metaDataService, periodService, requestService, uiGridConstants) {
+	app.service('completenessDataService', function (mathService, metaDataService, periodService, requestService, BASE_URL) {
 		
 		var self = this;
 		
-		self.resultsCallback = null; 
+		self.resultsCallback = null;
 		
 		init();
 			
 		function init() {
 			self.param = {
-				'dataSets': [],
-				'dataElements': [],
-				'indicators': [],
+				'dataSets': null,
+				'dataElements': null,
+				'indicators': null,
 				'startDate': "",
 				'endDate': "",
 				'orgunits': [],
 				'threshold': 0,
-				'includeChildren': false
+				'includeChildren': false,
+				'stdDev': '',
+				'analysisType': ''
 			};
 			resetParameters();
 		}
@@ -256,14 +381,13 @@
 			
 		function resetParameters() {
 			self.dataSetsToRequest = [];
-			self.orgunitsToRequest = [];
 			self.analysisObjects = [];
 			self.requests = [];
 			self.result = [];
 		}
 		
 		
-		self.analyseData = function (dataSets, dataElements, indicators, startDate, endDate, orgunits, threshold, includeChildren) {
+		self.analyseData = function (dataSets, dataElements, indicators, startDate, endDate, orgunits, threshold, includeChildren, stdDev, analysisType) {
 			
 			resetParameters();
 			
@@ -275,99 +399,44 @@
 			self.param.orgunits = orgunits;
 			self.param.threshold = threshold;
 			self.param.includeChildren = includeChildren;
-			
-			
-			processMetaData();	
-			dataSetsForAnalysis();
-			orgunitsForAnalysis();
-			prepareRequests();
-			fetchData();
-		}
-					
-			
-		function processMetaData() {
-								
-			var analysisObject;
-			for (var i = 0; i < self.param.dataSets.length; i++) {
-				
-				analysisObject = {
-					'type': 'dataset',
-					'id': self.param.dataSets[i].id,
-					'dataElements': [],
-					'dataSets': [self.param.dataSets[i]]
-				};
-
-				self.analysisObjects.push(analysisObject);
-							
-			}
-			
-			for (var i = 0; i < self.param.dataElements.length; i++) {
-				
-				analysisObject = {
-					'type': 'dataelement',
-					'id': self.param.dataElements[i].id,
-					'dataElements': [self.param.dataElements[i]],
-					'dataSets': metaDataService.getDataSetsFromDataElement(self.param.dataElements[i])
-				};
-				
-				self.analysisObjects.push(analysisObject);
-							
-			}
-			
-			
-			for (var i = 0; i < self.param.indicators.length; i++) {
-				
-				var dataElements = metaDataService.getDataElementsFromIndicator(self.param.indicators[i]);
-				var dataSets = [];
-				for (var j = 0; j < dataElements.length; j++) {
-					dataSets.push.apply(dataSets, metaDataService.getDataSetsFromDataElement(dataElements[j]));
-				}
-								
-				analysisObject = {
-					'type': 'indicator',
-					'id': self.param.indicators[i].id,
-					'dataElements': dataElements,
-					'dataSets': metaDataService.removeDuplicateObjects(dataSets)
-				};
-				
-				self.analysisObjects.push(analysisObject);				
+			self.param.stdDev = stdDev;
+			self.param.analysisType = analysisType;
+						
+			if (self.param.analysisType === "outlier") {
+				prepareOutlierRequests();
+				fetchData();
 			}
 		}
 		
 		
-		function prepareRequests() {
+		function prepareOutlierRequests() {
 			
-			var periodTypes = {};
-			for (var i = 0; i < self.dataSetsToRequest.length; i++) {
-				periodTypes[self.dataSetsToRequest[i].periodType] = true;
+			var variableID;
+			var periodType = "Monthly";
+			if (self.param.dataElements) {
+				
+				variableID = self.param.dataElements.id; 
 			}
-			
-			
-			var periods, dataSets, request;
-			for (var pType in periodTypes) {
-			    if (periodTypes.hasOwnProperty(pType)) {
-					periods = periodService.getISOPeriods(self.param.startDate, self.param.endDate, pType);
-					dataSets = dataSetsWithPeriodType(pType);
-					
-					var requestURL = "/api/analytics.json?";
-					requestURL += "dimension=dx:" + IDsFromObjects(dataSets).join(";");
-					requestURL += "&dimension=ou:" + IDsFromObjects(self.orgunitsToRequest).join(";");
-					requestURL += "&dimension=pe:" + periods.join(";");
-					
-					request = {
-						'URL': requestURL,
-						'periodType': pType,
-						'dataSets': dataSets,
-						'periods': periods
-					}
-					
-					self.requests.push(request);				
-				}
+			else {
+				variableID = self.param.indicators.id; 
 			}
-		
+			var periods = periodService.getISOPeriods(self.param.startDate, self.param.endDate, periodType);
+			var orgunits = orgunitsForAnalysis()
+			
+			var requestURL = "/api/analytics.json?";
+			requestURL += "dimension=dx:" + variableID;
+			requestURL += "&dimension=ou:" + IDsFromObjects(orgunits).join(";");
+			requestURL += "&dimension=pe:" + periods.join(";");
+				
+			self.requests.push({
+				'URL': requestURL,
+				'variables': variableID,
+				'type': 'outlier',
+				'periodType': periodType		
+			});			
 		}
 		
-	
+		
 		function fetchData() {
 			var requestURLs = [];
 			for (var i = 0; i < self.requests.length; i++) {
@@ -377,102 +446,20 @@
 			
 			requestService.getMultiple(requestURLs).then(function(response) { 
 				
-				var results = [];
+				var results = [];	
 				for (var i = 0; i < response.length; i++) {
 					var data = response[i].data;
-					results.push(processResult(data, requestFromURL(response[i].config.url)));					
+					var request =  requestFromURL(response[i].config.url);
+					if (request.type === 'outlier') {
+						results.push(findOutliers(data, request.periodType, request.variables));						
+					}
 				}
 				
-				self.result = results;
+				self.results = results;
 				self.resultsCallback(results);
 			});
 			
-			
 		}
-		
-		
-		
-		function processResult(data, request) {
-			var ds = request.dataSets;
-			var pe = data.metaData.pe;
-			var ou = data.metaData.ou;
-						
-			var names = ["Data Set", "Orgunit"];
-			for (var i = 0; i < pe.length; i++) {
-			
-				var periodName;
-				if (request.periodType === "Monthly") {
-					periodName = periodService.shortMonthName(pe[i]);
-				}
-				else if (request.periodType === "Yearly") {
-					periodName = pe[i].toString();
-				}
-				else periodName = data.metaData.names[pe[i]];
-				
-				names.push(periodName);
-			}
-			names.push("Rank");
-			
-			
-			var columnDefs = [];
-			columnDefs[0] = {'field': "Data Set", cellClass: "dataSetCell"};
-			columnDefs[1] = {'field': "Orgunit", cellClass: "orgunitCell"}; 
-			for (var i = 0; i < pe.length; i++) {
-				columnDefs[i+2] = {'field': names[i+2], cellClass: 
-					function(grid, row, col, rowRenderIndex, colRenderIndex) {
-				    	if (grid.getCellValue(row,col) === '') {
-				        	return 'noDataCell';
-				        }
-				        else if (parseFloat(grid.getCellValue(row,col)) < self.param.threshold) {
-				        	return 'lowDataCell';
-				        }
-				        else {
-				        	return 'highDataCell';
-				        }
-				    }
-				};
-			}
-			columnDefs[names.length-1] = {
-				'field': "Rank", 
-				'sort': {
-			    	'direction': uiGridConstants.ASC,
-			        'priority': 0
-			    }
-			}; 
-			
-			var rows = [];
-			for (var i = 0; i < ds.length; i++) {
-				for (var j = 0; j < ou.length; j++) {
-					var row = {};
-					row[names[0]] = ds[i].name;		
-					row[names[1]] = data.metaData.names[ou[j]];
-					row[names[names.length-1]] = 0;
-					
-					for (var k = 0; k < pe.length; k++) {
-						var value = getDataValue(ds[i], ou[j], pe[k], data.rows);				
-						row[names[k+2]] = value;
-						if (value == '') {
-							row[names[names.length-1]] = row[names[names.length-1]] - 2;
-						}
-						else if (parseInt(value) < self.param.threshold) {
-							row[names[names.length-1]] = row[names[names.length-1]] - 1;
-						}					
-					}
-					rows.push(row);
-				}
-			}
-			
-			var resultObject = {
-				'metadata': data.metaData,
-				'columnDefs': columnDefs,
-				'periodType': request.periodType,
-				'data': rows,
-				'dataSets': ds
-			};
-			
-			return resultObject;
-		}
-		
 		
 		
 		function requestFromURL(requestURL) {
@@ -486,19 +473,6 @@
 			console.log("Error");	
 			return -1;
 		}
-				
-		
-		
-		function getDataValue(ds, ou, pe, rows) {
-			
-			
-			for (var i = 0; i < rows.length; i++) {
-				if (rows[i][0] === ds.id && rows[i][1] === ou && rows[i][2] === pe) return rows[i][3];
-			}
-			return "";
-		
-		}
-		
 		
 		
 		function orgunitsForAnalysis() {
@@ -509,10 +483,9 @@
 				}
 				orgunits.push(metaDataService.orgunitFromID(self.param.orgunits[i]));
 			}
-			self.orgunitsToRequest = metaDataService.removeDuplicateObjects(orgunits);
+			return metaDataService.removeDuplicateObjects(orgunits);
 		}
 			
-		
 		
 		function dataSetsForAnalysis() {
 			var dataSets = [];
@@ -548,7 +521,197 @@
 			}
 			return idArray;
 		}
+		
+		
+		function findOutliers(data, periodType, variables) {
+			
+			var title = [];
+			var headers = [];
+			var rows = [];
+			
+			var orgunitIDs = data.metaData.ou;
+			var peIDs = data.metaData.pe;
+			
+			var periods = [];
+			for (var i = 0; i < peIDs.length; i++) {
+				periods.push({
+					'id': peIDs[i],
+					'name': data.metaData.names[peIDs[i]]
+				})
+			}
+						
+			//Identify which column is which
+			var valueIndex, dxIndex, ouIndex, peIndex;
+			for (var i = 0; i < data.headers.length; i++) {
+				if (data.headers[i].name === "value") valueIndex = i;
+				if (data.headers[i].name === "ou") ouIndex = i;
+				if (data.headers[i].name === "pe") peIndex = i;
+				if (data.headers[i].name === "dx") dxIndex = i;
+			}
+			
+			
+			//Find out what variables goes into rows
+			//To-Do: for now we assume there is always only one variable
+			var variableID = variables;
+			title.push(metaDataService.getNameFromID(variableID));
+			
+			//Check what goes into rows
+			var ouDataDimension;
+			if (orgunitIDs.length > 1) {
+				ouDataDimension = true;
+			}
+			else {
+				title.push(data.metaData.names[orgunitIDs]);
+				ouDataDimension = false;
+			}				
+			
+			
+			var row, value, orgunitID, periodID;
+			//To-Do: Deal with multiple variables
+			if (ouDataDimension) { //Need ou on rows
+				headers.push({'name': "Orgunit", 'id': orgunitID});
+				for (var i = 0; i < orgunitIDs.length; i++) {
+					row = {
+						'metaData': {
+							'hasOutlier': false,
+							'lowLimit': null,
+							'highLimit': null
+						},
+						'data': []
+					};
+					orgunitID = orgunitIDs[i];
+					row.data.push({'value': data.metaData.names[orgunitID]});
+					
+					for (var j = 0; j < periods.length; j++) {
+						periodID = periods[j].id;
+
+						//First time, also add headers
+						if (i === 0) headers.push({'name': periods[j].name, 'id': periodID});
+						
+						for (var k = 0; k < data.rows.length; k++) {
+
+							if (data.rows[k][ouIndex] === orgunitID && data.rows[k][peIndex] === periodID) { 
+								row.data.push({'value': parseFloat(data.rows[k][valueIndex])});
+							};
+						}
+					}
+					
+					rows.push(row);
+				}
+			}
+			else {
+				orgunitID = orgunitIDs[0];
+				row = {
+					'metaData': {
+						'hasOutlier': false,
+						'lowLimit': null,
+						'highLimit': null
+					},
+					'data': []
+				};				
+				for (var j = 0; j < periods.length; j++) {
+					periodID = periods[j].id;				
+
+					headers.push({'name': periods[j].name, 'id': periodID});
+					
+					for (var k = 0; k < data.rows.length; k++) {
+												
+						//To-Do: variable
+						if (data.rows[k][ouIndex] === orgunitID && data.rows[k][peIndex] === periodID) {
+							row.data.push({'value': parseFloat(data.rows[k][valueIndex])});
+						};
+					}
+				}
 				
+				rows.push(row);
+			}
+			
+			
+			//Find outliers
+			var value, mean, variance, standardDeviation, noDevs, highLimit, lowLimit, hasOutlier;
+			for (var i = 0; i < rows.length; i++) {
+				valueSet = [];
+				row = rows[i];
+
+				for (var j = 0; j < row.data.length; j++) {
+					value = row.data[j].value;
+					if (!isNaN(value)) {
+						valueSet.push(value);
+					}
+				}
+				
+				mean = mathService.getMean(valueSet); 
+				variance = mathService.getVariance(valueSet);
+				standardDeviation = mathService.getStandardDeviation(valueSet);
+				noDevs = parseFloat(self.param.stdDev.value);
+				highLimit = (mean + noDevs*standardDeviation);
+				lowLimit = (mean - noDevs*standardDeviation);
+				if (lowLimit < 0) lowLimit = 0;
+								
+				row.metaData.lowLimit = lowLimit;
+				row.metaData.highLimit = highLimit;
+				
+				hasOutlier = false;
+				for (var j = 0; j < row.data.length; j++) {
+					value = row.data[j].value;
+					if (!isNaN(value)) {
+						if (value > highLimit || value < lowLimit) {
+							hasOutlier = true;
+							j = row.data.length;
+						}
+					}
+				}
+				
+				row.metaData.hasOutlier = hasOutlier;
+			}
+					
+			
+			var analysisResult = {
+				'title': title.join(', '),
+				'headers': headers,
+				'rows': rows
+			};
+						
+			return analysisResult;
+		}
+		
+			
+		function getChartParameters(chartID, result) {
+		
+			
+			var periods = [];
+			for (var i = 0; i < result.periods.length; i++) {
+				periods.push({
+					'id': result.periods[i].iso
+					});	
+			}
+		
+		
+			var chartParameters = {
+				url: BASE_URL,
+				el: chartID,
+				type: "column",
+				columns: [ // Chart series
+				  {dimension: "de", items: [{id: result.variableID}]}
+				],
+				rows: [ // Chart categories
+				  {dimension: "pe", items: periods}
+				],
+				filters: [
+				  {dimension: "ou", items: [{id: result.orgunitID}]}
+				],
+				// All following options are optional
+				width: "800px",
+				heigth: "400px",
+				showData: false,
+				hideLegend: true,
+				targetLineValue: result.highLimit,
+				baseLineValue: result.lowLimit,
+				hideTitle: true
+				};
+				
+			return chartParameters;
+		}
 		
 				
 		return self;
