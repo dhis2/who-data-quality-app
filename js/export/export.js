@@ -33,7 +33,7 @@
 	    	self.orgunitLevels = [];
 	    	self.orgunitLevelSelected = undefined;
 	    	
-	    	self.years = [{'name': "2005", 'id': '2005'},{'name': "2006", 'id': '2006'},{'name': "2007", 'id': '2007'},{'name': "2008", 'id': '2008'},{'name': "2009", 'id': '2009'},{'name': "2010", 'id': '2010'},{'name': "2011", 'id': '2011'},{'name': "2012", 'id': '2012'},{'name': "2013", 'id': '2013'}];
+	    	self.years = periodService.getYears();
 	    	self.yearSelected = undefined;
 	    	
 	    	

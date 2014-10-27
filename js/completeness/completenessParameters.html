@@ -10,29 +10,38 @@
 	  </div>
 	  <div id="optionsPanel" class="panel-collapse collapse in">
 	    <div class="panel-body">
-	    	<label>Choose analysis type:</label><br />
-	      	<input id="analysisType" type="radio" ng-model="paramCtrl.analysisType" value="completeness">  Data completeness<br/>
-	      	<input type="radio" ng-model="paramCtrl.analysisType" value="outlier">  Outlier analysis<br/>
+	    	<div class="btn-group btn-group-justified" style="margin-bottom: 5px; max-width: 350px;">
+	    		  <label class="btn btn-default" ng-model="paramCtrl.analysisType" btn-radio="'outlier'">Outlier analysis</label>
+	    		  <label class="btn btn-default" ng-model="paramCtrl.analysisType" btn-radio="'completeness'">Completeness analysis</label>
+	    	</div>
 	      	<div ng-show="paramCtrl.analysisType === 'completeness'"><br />
 				<label for="threshold">Target for completeness:   </label>
 				<input style="width: 100px;" id="threshold" class="selector" type="number" min="0" max="100" ng-model="paramCtrl.threshold"/>
 			</div>
+			
+			
 			<div ng-show="paramCtrl.analysisType === 'outlier'"><br />
-				<label for="threshold">Standard deviations:</label><br />
-				<select style="width: 100px;"
-				  ng-model="paramCtrl.stdDev"
-				  ng-options="stdDev.name group by stdDev.category for stdDev in paramCtrl.stdDevOptions">
-				</select>				
+				<label for="threshold">Standard deviations</label><br />
+				<div class="btn-toolbar" role="toolbar">
+				  <div class="btn-group">
+				  	<label class="btn btn-info" ng-model="paramCtrl.stdDev" btn-radio="0.5">0.5</label>
+				  	<label class="btn btn-info" ng-model="paramCtrl.stdDev" btn-radio="1.0">1.0</label>
+				  	<label class="btn btn-info" ng-model="paramCtrl.stdDev" btn-radio="1.5">1.5</label>
+				  </div>
+				  
+				  <div class="btn-group">
+						<label class="btn btn-warning" ng-model="paramCtrl.stdDev" btn-radio="2.0">2.0</label>
+						<label class="btn btn-warning" ng-model="paramCtrl.stdDev" btn-radio="2.5">2.5</label>
+				  </div>
+				  
+				  <div class="btn-group">
+						<label class="btn btn-danger" ng-model="paramCtrl.stdDev" btn-radio="3.0">3.0</label>
+						<label class="btn btn-danger" ng-model="paramCtrl.stdDev" btn-radio="3.5">3.5</label>
+						<label class="btn btn-danger" ng-model="paramCtrl.stdDev" btn-radio="4.0">4.0</label>								  
+				  </div>
+				</div>	
 			</div>
-			<span ng-show="paramCtrl.analysisType === 'outlier'"><br />
-				<label for="highLimit">High limit:   </label>
-				<input style="width: 100px;" id="highLimit" class="selector" type="number" ng-model="paramCtrl.highLimit"/>
-			</span>
-			<span ng-show="paramCtrl.analysisType === 'outlier'"><br />
-				<label for="lowLimit">Low limit:   </label>
-				<input style="width: 100px;" id="lowLimit" class="selector" type="number" ng-model="paramCtrl.lowLimit"/>
-			</span>
-	    </div>
+		</div>
 	  </div>
 	</div>
 	  <div class="panel panel-default">
@@ -85,8 +94,16 @@
 	    </div>
 	    <div id="periodPanel" class="panel-collapse collapse">
 	      <div class="panel-body">
-	      	<p>Select the start and end date for the analysis.</p>
-	        <input class="selector" date-range-picker class="form-control date-picker" type="text" ng-model="paramCtrl.date" placeholder="From - To" options="paramCtrl.datePickerOpts"/>
+	      	<div class="btn-group" style="margin-bottom: 10px;">
+	      	  <label class="btn btn-default" ng-model="paramCtrl.periodOption" btn-radio="'last'">Recent periods</label>
+	      	  <label class="btn btn-default" ng-model="paramCtrl.periodOption" btn-radio="'year'">Periods in year</label>
+	      	  <label class="btn btn-default" ng-model="paramCtrl.periodOption" btn-radio="'custom'">Custom range</label>
+	      	</div>
+			<div style="margin-bottom: 15px;" ng-show="paramCtrl.periodOption === 'last'">Last 
+			<select ng-model="paramCtrl.periodCountSelected" ng-options="periodCount.name for periodCount in paramCtrl.periodCounts"></select>
+			<select ng-model="paramCtrl.periodTypeSelected" ng-options="periodType.name for periodType in paramCtrl.periodTypes"></select></div>
+			<div style="margin-bottom: 15px;" ng-show="paramCtrl.periodOption === 'year'"><select ng-model="paramCtrl.periodTypeSelected" ng-options="periodType.name for periodType in paramCtrl.periodTypes"></select>  of  <select ng-model="paramCtrl.yearSelected" ng-options="periodType.name for year in paramCtrl.years"></select></div>
+	      	<div style="margin-bottom: 15px;" ng-show="paramCtrl.periodOption === 'custom'"><select ng-model="paramCtrl.periodTypeSelected" ng-options="periodType.name for periodType in paramCtrl.periodTypes"></select>  between  <input class="selector" date-range-picker class="form-control date-picker" type="text" ng-model="paramCtrl.date" placeholder="From - To" options="paramCtrl.datePickerOpts"/></div>
 	      </div>
 	    </div>
 	  </div>
@@ -100,11 +117,37 @@
 	    </div>
 	    <div id="orgunitPanel" class="panel-collapse collapse">
 	      <div class="panel-body">
-   	    	<p>Select one or more (by holding Ctrl) organisation units. Use the "include children" checkbox to include the child orgunits in the analysis.</p>
-	        <div class="treeHolder">
+   	    	
+   	    	<div class="btn-group btn-group-justified" style="margin-bottom: 5px; width: 400px;">
+   	    		  <label class="btn btn-default" ng-model="paramCtrl.orgunitSelectionType" btn-radio="'user'">User</label>
+   	    		  <label class="btn btn-default" ng-model="paramCtrl.orgunitSelectionType" btn-radio="'select'">Manual</label>
+   	    		  <label class="btn btn-default" ng-model="paramCtrl.orgunitSelectionType" btn-radio="'level'">Level</label>
+   	    		  <label class="btn btn-default" ng-model="paramCtrl.orgunitSelectionType" btn-radio="'group'">Group</label>
+   	    	</div>
+   	    	
+   	    	<ui-select ng-show="paramCtrl.orgunitSelectionType === 'level'" ng-model="paramCtrl.orgunitLevelSelected" theme="bootstrap" style="margin-bottom: 10px; min-width: 250px; max-width: 400px;">
+   	    	  <ui-select-match placeholder="Select organisation unit level">
+   	    	  	{{paramCtrl.orgunitLevelSelected.name}}
+   	    	  </ui-select-match>
+   	    	  <ui-select-choices 
+   	    	  	repeat="obj in paramCtrl.orgunitLevels">
+   	    	   		<div ng-bind-html="obj.name | highlight: $select.search"></div>
+   	    	  </ui-select-choices>
+   	    	</ui-select>
+   	    	<ui-select ng-show="paramCtrl.orgunitSelectionType === 'group'" ng-model="paramCtrl.orgunitGroupSelected" theme="bootstrap" style="margin-bottom: 10px; min-width: 250px; max-width: 400px;">
+   	    		  <ui-select-match placeholder="Select organisation unit group">
+   	    		  	{{paramCtrl.orgunitGroupSelected.name}}
+   	    		  </ui-select-match>
+   	    		  <ui-select-choices 
+   	    		  	repeat="obj in paramCtrl.orgunitGroups">
+   	    		   		<div ng-bind-html="obj.name | highlight: $select.search"></div>
+   	    		  </ui-select-choices>
+   	    	</ui-select>
+   	    	<p ng-show="paramCtrl.orgunitSelectionType === 'group' || paramCtrl.orgunitSelectionType === 'level'">Boundary:</p>   	    	
+	        <div ng-show="paramCtrl.orgunitSelectionType != 'user'" class="treeHolder">
 	        	<div id="orgunitTree"></div>
 	        </div>
-	        Include children: <input type="checkbox" ng-model="paramCtrl.includeChildren">
+	        <div ng-show="paramCtrl.orgunitSelectionType === 'user' || paramCtrl.orgunitSelectionType === 'select'">Include children: <input type="checkbox" ng-model="paramCtrl.includeChildren"></div>
 	      </div>
 	    </div>
 	  </div>

@@ -34,7 +34,7 @@
 		
 	
 	/**Controller: Parameters*/
-	app.controller("ParamterController", function(completenessDataService, metaDataService, BASE_URL, $http, $q, $sce, $scope) {
+	app.controller("ParamterController", function(completenessDataService, metaDataService, periodService, BASE_URL, $http, $q, $sce, $scope) {
 	    
 	    
 	    var self = this;
@@ -54,6 +54,23 @@
 	    	self.indicatorsSelected = undefined;
 	    	
 	    	self.orgunits = [];
+	    	
+	    	self.userOrgunit = [];
+	    	
+	    	self.orgunitLevels = [];
+	    	self.orgunitLevelSelected = undefined;
+	    	
+	    	self.orgunitGroups = [];
+	    	self.orgunitGroupSelected = undefined;
+	    	
+	    	self.periodTypes = [];
+	    	self.periodTypeSelected = undefined;
+	    	
+	    	self.periodCount = [];
+	    	self.periodCountSelected = undefined;
+	    	
+	    	self.years = [];
+	    	self.yearSelected = undefined;
 	    	
 	    	self.isoPeriods = [];
 	    	
@@ -87,49 +104,30 @@
 			orgunitPromise.then(function(data) { 
 				self.orgunitData = data;
 			});
+			
+			metaDataService.getOrgunitLevels().then(function(data) { 
+				self.orgunitLevels = data;
+			});
 
 			//Options
 			self.onlyNumbers = /^\d+$/;
 			self.threshold = 90;
-			self.stdDevOptions = [
-				{
-				'name': 'None',
-				'value': 0,
-				'category': ''
-				},
-				{
-				'name': '1',
-				'value': 1,
-				'category': 'Medium'
-				},
-				{
-				'name': '1.5',
-				'value': 1.5,
-				'category': 'Medium'
-				},
-				{
-				'name': '2',
-				'value': 2,
-				'category': 'Medium'
-				},
-				{
-				'name': '2.5',
-				'value': 2.5,
-				'category': 'High'
-				},
-				{
-				'name': '3',
-				'value': 3,
-				'category': 'High'
-				}];
-			self.stdDev = self.stdDevOptions[2];
-			self.analysisType = "completeness";
-			self.highLimit = null;
-			self.lowLimit = null;
+			self.stdDev = 2;
+			self.analysisType = "outlier";
 			
 			
 			//Date initialisation
-	    	self.datePickerOpts = {
+			self.periodTypes = periodService.getPeriodTypes();
+			self.periodTypeSelected = self.periodTypes[2];
+			
+			self.periodCounts = periodService.getPeriodCount();
+			self.periodCountSelected = self.periodCounts[11];
+			
+			self.years = periodService.getYears();;
+			self.yearSelected = self.years[0];
+			
+			self.periodOption = "last";			
+			self.datePickerOpts = {
 	    		locale: {
     	            applyClass: 'btn-blue',
     	            applyLabel: "Select",
@@ -140,7 +138,8 @@
 	    	    }
 	    	};
 	    	
-	    	self.includeChildren = false;
+	    	self.includeChildren = true;
+	    	self.orgunitSelectionType = 'select';
 	    }
 	    				
 
@@ -653,7 +652,7 @@
 				mean = mathService.getMean(valueSet); 
 				variance = mathService.getVariance(valueSet);
 				standardDeviation = mathService.getStandardDeviation(valueSet);
-				noDevs = parseFloat(self.param.stdDev.value);
+				noDevs = parseFloat(self.param.stdDev);
 				highLimit = (mean + noDevs*standardDeviation);
 				lowLimit = (mean - noDevs*standardDeviation);
 				if (lowLimit < 0) lowLimit = 0;

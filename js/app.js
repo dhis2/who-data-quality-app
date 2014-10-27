@@ -112,6 +112,36 @@
   		return monthNames[parseInt(monthNumber)-1] + " '" + year;
   	}
   	
+  	self.getPeriodTypes = function() {
+  		var periodTypes = [{'name': 'Days', 'id': 'Daily'}, {'name': 'Weeks', 'id':'Weekly'}, {'name': 'Months', 'id':'Monthly'}, {'name': 'Bi-months', 'id':'Bi-Monthly'}, {'name': 'Quarters', 'id':'Quarterly'}, {'name': 'Six-months', 'id':'Six-Monthly'}, {'name': 'Years', 'id':'Yearly'}];
+  		
+  		return periodTypes;
+  	}
+  	
+  	
+  	self.getPeriodCount = function() {
+  			var objects = [];
+  			for (var i = 1; i <= 12; i++) {
+  				objects.push({'name': i.toString(), 'value': i});
+  			}
+  			
+  			return objects;
+  	
+  	
+  	}
+  	
+  	self.getYears = function () {
+  	
+  		var objects = [];
+  		for (var i = parseInt(moment().format('YYYY')); i >= 1990; i++) {
+  			objects.push({'name': i.toString(), 'id': i});
+  		}
+  		
+  		return objects;
+  	
+  	}
+  	
+  	  	
   	
   	function dateToISOdate(date) {
   		return moment(date).format('YYYY-MM-DD');
