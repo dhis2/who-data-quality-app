@@ -1,0 +1,52 @@
+<div ng-controller="ExportController as exportCtrl">
+<h3>Data Export</h3>
+<h5>Export data for use with the Excel-based data quality report card</h5>
+	
+	<br />
+	<p>Select data element OR indicator</p>
+	<ui-select ng-disabled="exportCtrl.indicatorSelected" ng-model="exportCtrl.dataElementSelected" theme="bootstrap" style="margin-bottom: 10px; min-width: 250px; max-width: 400px;">
+	  <ui-select-match placeholder="Select data element">
+	  	{{exportCtrl.dataElementSelected.name}}
+	  </ui-select-match>
+	  <ui-select-choices 
+	  	repeat="obj in exportCtrl.dataElements">
+	   		<div ng-bind-html="obj.name | highlight: $select.search"></div>
+	  </ui-select-choices>
+	</ui-select>
+	
+	<ui-select ng-disabled="exportCtrl.dataElementSelected" ng-model="exportCtrl.indicatorSelected" theme="bootstrap" style="margin-bottom: 10px; min-width: 250px; max-width: 400px;">
+	  <ui-select-match placeholder="Select indicator">
+	  	{{exportCtrl.indicatorSelected.name}}
+	  </ui-select-match>
+	  <ui-select-choices 
+	  	repeat="obj in exportCtrl.indicators">
+	   		<div ng-bind-html="obj.name | highlight: $select.search"></div>
+	  </ui-select-choices>
+	</ui-select>
+	
+	<br />
+	<p>Select organisation unit level</p>
+	<ui-select ng-model="exportCtrl.orgunitLevelSelected" theme="bootstrap" style="margin-bottom: 10px; min-width: 250px; max-width: 400px;">
+	  <ui-select-match placeholder="Select organisation unit level">
+	  	{{exportCtrl.orgunitLevelSelected.name}}
+	  </ui-select-match>
+	  <ui-select-choices 
+	  	repeat="obj in exportCtrl.orgunitLevels">
+	   		<div ng-bind-html="obj.name | highlight: $select.search"></div>
+	  </ui-select-choices>
+	</ui-select>
+	
+	<br />
+	<p>Select year</p>
+	<ui-select ng-model="exportCtrl.yearSelected" theme="bootstrap" style="margin-bottom: 10px; min-width: 250px; max-width: 400px;">
+	  <ui-select-match placeholder="Select year">
+	  	{{exportCtrl.yearSelected.name}}
+	  </ui-select-match>
+	  <ui-select-choices 
+	  	repeat="obj in exportCtrl.years">
+	   		<div ng-bind-html="obj.name | highlight: $select.search"></div>
+	  </ui-select-choices>
+	</ui-select>
+	<br />
+	<button type="button" class="btn btn-default" ng-click="exportCtrl.doExport();" ng-disabled="exportCtrl.orgunitLevelSelected === undefined || (exportCtrl.dataElementSelected === undefined && exportCtrl.indicatorSelected === undefined) || exportCtrl.yearSelected === undefined">Download</button>
+</div>

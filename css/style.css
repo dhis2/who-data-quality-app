@@ -11,8 +11,8 @@
 	margin-bottom: 10px;
 }
 
-input.ng-dirty.ng-invalid {
-  border-color: red;
+.valueCell {
+	text-align: right;
 }
 
 .treeHolder {
@@ -22,68 +22,10 @@ input.ng-dirty.ng-invalid {
 	border: 1px solid rgb(212,212,212);
 }
 
-#result {
-	font-family: sans-serif;
-}
 
-.resultTable {
-	border: 1px solid #333;
-	border-collapse: collapse;
-}
-
-.resultTable th {
-	border: 1px solid #333;
-	text-align: center;
-	padding: 3px;
-	font-size: 12px;
-}
-
-.resultTable td {
-	border: 1px solid #333;
-	text-align: right;
-	padding: 3px;
-	font-size: 12px;
-}
-
-
-.lowOutlier {
-	background-color: #0099FF !important;
-	font-weight: 700;
-}
-
-.highOutlier {
+.outlier {
 	background-color: #FF6633 !important;
 	font-weight: 700;
-}
-
-.headerBar {
-  background-color: #276696;
-  height: 44px;
-  position: fixed;
-  z-index: 10;
-  top: 0;
-  left: 0;
-  right: 0;
-  box-shadow: 0 0 3px #222222; }
-  .header-bar a {
-    position: relative;
-    top: 11px;
-    left: 55px; }
-  .header-bar img.header-logo {
-    cursor: pointer;
-    top: 2px;
-    position: relative;
-    vertical-align: initial; }
-  .header-bar span.header-text {
-    cursor: pointer;
-    font-weight: bold;
-    color: white;
-    font-size: 16px;
-    position: relative;
-    left: 50px; }
-
-#parameterSelection {
-  font-size: 70%;
 }
 
 .container {

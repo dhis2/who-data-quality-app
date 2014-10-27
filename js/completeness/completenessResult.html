@@ -2,35 +2,39 @@
 	<h3>Analysis results</h3>
 	<div>Show only violations: <input type="checkbox" ng-model="resultsCtrl.outliersOnly" ng-change="resultsCtrl.filter()"></div>
 	<div ng-repeat="result in resultsCtrl.results">
-	<h4>{{result.title}}</h4>
-	<table class="table table-striped table-condensed table-hover">
-        <thead>
-            <tr>
-            	<th ng-repeat="header in result.headers">{{header.name}}</th>
-            </tr>
-        </thead>
-        <tfoot>
-            <td colspan="{{result.headers.length}}">
-                <ul class="pagination pull-right">
-                    <li ng-class="{disabled: result.currentPage == 0}">
-                        <a href ng-click="resultsCtrl.prevPage(result)">« Prev</a>
-                    </li>
-                    <li ng-repeat="n in resultsCtrl.range(result.pages.length)"
-                        ng-class="{active: n == result.currentPage}"
-                    ng-click="resultsCtrl.setPage(result, n)">
-                        <a href ng-bind="n + 1">1</a>
-                    </li>
-                    <li ng-class="{disabled: result.currentPage === result.pages.length - 1}">
-                        <a href ng-click="resultsCtrl.nextPage(result)">Next »</a>
-                    </li>
-                </ul>
-            </td>
-        </tfoot>
-        <tbody>
-        	<tr ng-repeat="row in result.pages[result.currentPage]">
-                <td ng-repeat="value in row.data" ng-class="{lowOutlier: (value.value < row.metaData.lowLimit), highOutlier: (value.value > row.metaData.highLimit)}">{{value.value}}</td>
-            </tr>
-    	</tbody>
-	</table>
+	
+		<!-- CASE Outlier -->
+		<h4>{{result.title}}</h4>
+		<div class="table-responsive">
+		<table class="table table-bordered table-striped table-condensed table-hover">
+	        <thead>
+	            <tr>
+	            	<th ng-repeat="header in result.headers">{{header.name}}</th>
+	            </tr>
+	        </thead>
+	        <tfoot>
+	            <td colspan="{{result.headers.length}}">
+	                <ul class="pagination pull-right">
+	                    <li ng-class="{disabled: result.currentPage == 0}">
+	                        <a href ng-click="resultsCtrl.prevPage(result)">« Prev</a>
+	                    </li>
+	                    <li ng-repeat="n in resultsCtrl.range(result.pages.length)"
+	                        ng-class="{active: n == result.currentPage}"
+	                    ng-click="resultsCtrl.setPage(result, n)">
+	                        <a href ng-bind="n + 1">1</a>
+	                    </li>
+	                    <li ng-class="{disabled: result.currentPage === result.pages.length - 1}">
+	                        <a href ng-click="resultsCtrl.nextPage(result)">Next »</a>
+	                    </li>
+	                </ul>
+	            </td>
+	        </tfoot>
+	        <tbody>
+	        	<tr ng-repeat="row in result.pages[result.currentPage]">
+	                <td ng-repeat="value in row.data" ng-class="{danger: (value.value < row.metaData.lowLimit || value.value > row.metaData.highLimit), valueCell: value.type === 'number'}">{{value.value}}</td>
+	            </tr>
+	    	</tbody>
+		</table>
+		</div>
 	</div>
 </div>

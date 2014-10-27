@@ -1,6 +1,6 @@
 
 (function(){
-  var app = angular.module('dataQualityApp', ['completenessAnalysis', 'ui.select', 'ngSanitize', 'ui.bootstrap']);
+  var app = angular.module('dataQualityApp', ['completenessAnalysis', 'dataExport', 'ui.select', 'ngSanitize', 'ui.bootstrap']);
     
     /**Bootstrap*/
 	angular.element(document).ready( 
@@ -200,6 +200,11 @@
 		'data': []
 	};
 	var rootOrgunits = {
+		'available': false,
+		'promise': null,
+		'data': []
+	};
+	var orgunitLevels = {
 		'available': false,
 		'promise': null,
 		'data': []
@@ -460,7 +465,7 @@
 		//available locally
 		if (orgunits.available) {
 			console.log("Orgunits available locally");
-			deferred.resolve(self.orgunits.data);
+			deferred.resolve(orgunits.data);
 		}
 		//waiting for server
 		else if (!orgunits.available && orgunits.promise) {
@@ -490,6 +495,44 @@
 		orgunits.promise = deferred.promise;
 		return deferred.promise; 
 	}
+	
+	
+	self.getOrgunitLevels = function() { 
+		
+		var deferred = $q.defer();
+		
+		//available locally
+		if (orgunitLevels.available) {
+
+			deferred.resolve(orgunitLevels.data);
+		}
+		//waiting for server
+		else if (!orgunitLevels.available && orgunitLevels.promise) {
+			return orgunitLevels.promise;
+		}
+		//need to be fetched
+		else {
+				var requestURL = '/api/organisationUnitLevels.json?'; 
+				  requestURL += 'fields=name,id,level&paging=false';
+				  
+			requestService.getSingle(requestURL).then(
+				function(response) { //success
+			    	var data = response.data;
+			    	orgunitLevels.data = data.organisationUnitLevels;
+			    	deferred.resolve(orgunitLevels.data);
+			    	orgunitLevels.available = true;
+				}, 
+				function(response) { //error
+			    	var data = response.data;
+			    	deferred.reject("Error fetching orgunits");
+			    	console.log(msg, code);
+			    }
+			);
+		}
+		orgunitLevels.promise = deferred.promise;
+		return deferred.promise; 
+	}
+	
 	
 	self.getUserOrgunits = function() {
 	
@@ -573,8 +616,6 @@
 				children.push.apply(children, orgunits.data[i].children);
 			}
 		}
-		
-		console.log(orgunits.available);
 		
 		var childrenOrgunits = [];
 		for (var i = 0; i < children.length; i++) {

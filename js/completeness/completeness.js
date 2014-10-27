@@ -414,14 +414,13 @@
 			var variableID;
 			var periodType = "Monthly";
 			if (self.param.dataElements) {
-				
 				variableID = self.param.dataElements.id; 
 			}
 			else {
 				variableID = self.param.indicators.id; 
 			}
 			var periods = periodService.getISOPeriods(self.param.startDate, self.param.endDate, periodType);
-			var orgunits = orgunitsForAnalysis()
+			var orgunits = orgunitsForAnalysis();
 			
 			var requestURL = "/api/analytics.json?";
 			requestURL += "dimension=dx:" + variableID;
@@ -580,7 +579,7 @@
 						'data': []
 					};
 					orgunitID = orgunitIDs[i];
-					row.data.push({'value': data.metaData.names[orgunitID]});
+					row.data.push({'value': data.metaData.names[orgunitID], 'type': "text"});
 					
 					for (var j = 0; j < periods.length; j++) {
 						periodID = periods[j].id;
@@ -588,11 +587,16 @@
 						//First time, also add headers
 						if (i === 0) headers.push({'name': periods[j].name, 'id': periodID});
 						
-						for (var k = 0; k < data.rows.length; k++) {
+						var found = false;
+						for (var k = 0; k < data.rows.length && !found; k++) {
 
 							if (data.rows[k][ouIndex] === orgunitID && data.rows[k][peIndex] === periodID) { 
-								row.data.push({'value': parseFloat(data.rows[k][valueIndex])});
+								row.data.push({'value': parseFloat(data.rows[k][valueIndex]), 'type': "number"});
+								found = true;
 							};
+						}
+						if (!found) {
+							row.data.push({'value': "", 'type': "blank"});
 						}
 					}
 					
@@ -614,12 +618,18 @@
 
 					headers.push({'name': periods[j].name, 'id': periodID});
 					
-					for (var k = 0; k < data.rows.length; k++) {
+					var found = false;
+					for (var k = 0; k < data.rows.length && !found; k++) {
 												
 						//To-Do: variable
 						if (data.rows[k][ouIndex] === orgunitID && data.rows[k][peIndex] === periodID) {
-							row.data.push({'value': parseFloat(data.rows[k][valueIndex])});
+							row.data.push({'value': parseFloat(data.rows[k][valueIndex]), 'type': "number"});
+							found = true;
 						};
+					}
+					
+					if (!found) {
+						row.data.push({'value': "", 'type': "blank"});
 					}
 				}
 				
