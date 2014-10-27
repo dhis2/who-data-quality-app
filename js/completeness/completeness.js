@@ -123,8 +123,9 @@
 			self.periodCounts = periodService.getPeriodCount();
 			self.periodCountSelected = self.periodCounts[11];
 			
-			self.years = periodService.getYears();;
+			self.years = periodService.getYears();
 			self.yearSelected = self.years[0];
+			
 			
 			self.periodOption = "last";			
 			self.datePickerOpts = {

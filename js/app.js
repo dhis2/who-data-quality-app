@@ -133,7 +133,7 @@
   	self.getYears = function () {
   	
   		var objects = [];
-  		for (var i = parseInt(moment().format('YYYY')); i >= 1990; i++) {
+  		for (var i = parseInt(moment().format('YYYY')); i >= 1990; i--) {
   			objects.push({'name': i.toString(), 'id': i});
   		}
   		
