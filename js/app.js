@@ -75,30 +75,38 @@
   			
   		var startDate = dateToISOdate(startDate);
   		var endDate = dateToISOdate(endDate);
-  			
-  		var startDateParts = startDate.split('-');
-  		var endDateParts = endDate.split('-');
-  		var currentYear = new Date().getFullYear();
   		
-  		var periods = [];
-  		var periodsInYear;
-  		for (var startYear = startDateParts[0]; startYear <= endDateParts[0] && currentYear; startYear++) {
-  			
-  			periodsInYear = self.periodTool.get(periodType).generatePeriods({'offset': startYear - currentYear, 'filterFuturePeriods': true, 'reversePeriods': false});
-  							
+  		var startYear = parseInt(moment(startDate).format("YYYY"));
+  		var endYear = parseInt(moment(endDate).format("YYYY"));
+  		var thisYear = parseInt(moment().format("YYYY"));
+  		  		
+  		var current = startYear;
+		var periods = [];
+		var periodsInYear;
+		
+		
+  		while (current <=  endYear && periodType != "Yearly") {
+  						
+  			periodsInYear = self.periodTool.get(periodType).generatePeriods({'offset': current - thisYear, 'filterFuturePeriods': true, 'reversePeriods': false});
+  			  			
   			for (var i = 0; i < periodsInYear.length; i++) {
   				if (periodsInYear[i].endDate >= startDate && periodsInYear[i].endDate <= endDate) {
   					periods.push(periodsInYear[i]);
   				}
   			}
+  			
+  			current++;
   		}
-  		
   		var isoPeriods = [];
+  		if (periodType === "Yearly") {
+  			for (var i = startYear; i <= endYear; i++) {
+  				isoPeriods.push(i.toString());
+  			}
+  		}
   		for (var i = 0; i < periods.length; i++) {
   			isoPeriods.push(periods[i].iso);
   		}
   		
-  		//To-do: yearly = duplicates
   		return isoPeriods;
   	}
   	
@@ -113,7 +121,7 @@
   	}
   	
   	self.getPeriodTypes = function() {
-  		var periodTypes = [{'name': 'Days', 'id': 'Daily'}, {'name': 'Weeks', 'id':'Weekly'}, {'name': 'Months', 'id':'Monthly'}, {'name': 'Bi-months', 'id':'Bi-Monthly'}, {'name': 'Quarters', 'id':'Quarterly'}, {'name': 'Six-months', 'id':'Six-Monthly'}, {'name': 'Years', 'id':'Yearly'}];
+  		var periodTypes = [{'name': 'Weeks', 'id':'Weekly'}, {'name': 'Months', 'id':'Monthly'}, {'name': 'Quarters', 'id':'Quarterly'}, {'name': 'Six-months', 'id':'SixMonthly'}, {'name': 'Years', 'id':'Yearly'}];
   		
   		return periodTypes;
   	}
@@ -134,7 +142,7 @@
   	
   		var objects = [];
   		for (var i = parseInt(moment().format('YYYY')); i >= 1990; i--) {
-  			objects.push({'name': i.toString(), 'id': i});
+  			objects.push({'name': i, 'id': i});
   		}
   		
   		return objects;
@@ -144,9 +152,8 @@
   	  	
   	
   	function dateToISOdate(date) {
-  		return moment(date).format('YYYY-MM-DD');
+  		return moment(new Date(date)).format('YYYY-MM-DD');
   	}
-  	
   	
   	return self;
   
@@ -239,7 +246,11 @@
 		'promise': null,
 		'data': []
 	};
-  	
+  	var orgunitGroups = {
+  		'available': false,
+  		'promise': null,
+  		'data': []
+  	};
   	
   	/**General*/
   	self.fetchMetaData = function () {
@@ -542,14 +553,17 @@
 		}
 		//need to be fetched
 		else {
-				var requestURL = '/api/organisationUnitLevels.json?'; 
-				  requestURL += 'fields=name,id,level&paging=false';
+			var requestURL = '/api/organisationUnitLevels.json?'; 
+			requestURL += 'fields=name,id,level&paging=false';
 				  
 			requestService.getSingle(requestURL).then(
 				function(response) { //success
 			    	var data = response.data;
-			    	orgunitLevels.data = data.organisationUnitLevels;
-			    	deferred.resolve(orgunitLevels.data);
+			    				    	
+			    	var sortedData = data.organisationUnitLevels.sort(sortLevels);			    	
+			    	orgunitLevels.data = sortedData;
+			    	
+			    	deferred.resolve(sortedData);
 			    	orgunitLevels.available = true;
 				}, 
 				function(response) { //error
@@ -562,6 +576,50 @@
 		orgunitLevels.promise = deferred.promise;
 		return deferred.promise; 
 	}
+	
+	
+	function sortLevels(a, b) {
+		var aLevel = a.level;
+		var bLevel = b.level; 
+		return ((aLevel < bLevel) ? -1 : ((aLevel > bLevel) ? 1 : 0));
+	}
+	
+	
+	self.getOrgunitGroups = function() { 
+			
+			var deferred = $q.defer();
+			
+			//available locally
+			if (orgunitGroups.available) {
+	
+				deferred.resolve(orgunitGroups.data);
+			}
+			//waiting for server
+			else if (!orgunitGroups.available && orgunitGroups.promise) {
+				return orgunitGroups.promise;
+			}
+			//need to be fetched
+			else {
+					var requestURL = '/api/organisationUnitGroups.json?'; 
+					  requestURL += 'fields=name,id&paging=false';
+					  
+				requestService.getSingle(requestURL).then(
+					function(response) { //success
+				    	var data = response.data;
+				    	orgunitGroups.data = data.organisationUnitGroups;
+				    	deferred.resolve(orgunitGroups.data);
+				    	orgunitGroups.available = true;
+					}, 
+					function(response) { //error
+				    	var data = response.data;
+				    	deferred.reject("Error fetching orgunits");
+				    	console.log(msg, code);
+				    }
+				);
+			}
+			orgunitGroups.promise = deferred.promise;
+			return deferred.promise; 
+		}
 	
 	
 	self.getUserOrgunits = function() {
@@ -643,10 +701,11 @@
 		var children = [];
 		for (var i = 0; i < orgunits.data.length ; i++) {
 			if (orgunits.data[i].id === parentID) {
-				children.push.apply(children, orgunits.data[i].children);
+				children = orgunits.data[i].children;
+				break;
 			}
 		}
-		
+						
 		var childrenOrgunits = [];
 		for (var i = 0; i < children.length; i++) {
 			childrenOrgunits.push(self.orgunitFromID(children[i].id));

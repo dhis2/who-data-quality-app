@@ -59,7 +59,7 @@
 	          	{{paramCtrl.dataSetsSelected.name}}
 	          </ui-select-match>
 	          <ui-select-choices 
-	          	repeat="obj in paramCtrl.dataSets">
+	          	repeat="obj in paramCtrl.dataSets | filter: $select.search">
 	           		<div ng-bind-html="obj.name | highlight: $select.search"></div>
 	          </ui-select-choices>
 	        </ui-select>
@@ -102,7 +102,7 @@
 			<div style="margin-bottom: 15px;" ng-show="paramCtrl.periodOption === 'last'">Last 
 			<select ng-model="paramCtrl.periodCountSelected" ng-options="periodCount.name for periodCount in paramCtrl.periodCounts"></select>
 			<select ng-model="paramCtrl.periodTypeSelected" ng-options="periodType.name for periodType in paramCtrl.periodTypes"></select></div>
-			<div style="margin-bottom: 15px;" ng-show="paramCtrl.periodOption === 'year'"><select ng-model="paramCtrl.periodTypeSelected" ng-options="periodType.name for periodType in paramCtrl.periodTypes"></select>  of  <select ng-model="paramCtrl.yearSelected" ng-options="periodType.name for year in paramCtrl.years"></select></div>
+			<div style="margin-bottom: 15px;" ng-show="paramCtrl.periodOption === 'year'"><select ng-model="paramCtrl.periodTypeSelected" ng-options="periodType.name for periodType in paramCtrl.periodTypes"></select>  of  <select ng-model="paramCtrl.yearSelected" ng-options="year.name for year in paramCtrl.years"></select></div>
 	      	<div style="margin-bottom: 15px;" ng-show="paramCtrl.periodOption === 'custom'"><select ng-model="paramCtrl.periodTypeSelected" ng-options="periodType.name for periodType in paramCtrl.periodTypes"></select>  between  <input class="selector" date-range-picker class="form-control date-picker" type="text" ng-model="paramCtrl.date" placeholder="From - To" options="paramCtrl.datePickerOpts"/></div>
 	      </div>
 	    </div>
@@ -139,10 +139,11 @@
    	    		  	{{paramCtrl.orgunitGroupSelected.name}}
    	    		  </ui-select-match>
    	    		  <ui-select-choices 
-   	    		  	repeat="obj in paramCtrl.orgunitGroups">
+   	    		  	repeat="obj in paramCtrl.orgunitGroups | filter: $select.search">
    	    		   		<div ng-bind-html="obj.name | highlight: $select.search"></div>
    	    		  </ui-select-choices>
    	    	</ui-select>
+   	    	<p ng-show="paramCtrl.orgunitSelectionType === 'user'" ng-repeat="orgunit in paramCtrl.userOrgunits"><em>{{orgunit.name}}; </em></p>
    	    	<p ng-show="paramCtrl.orgunitSelectionType === 'group' || paramCtrl.orgunitSelectionType === 'level'">Boundary:</p>   	    	
 	        <div ng-show="paramCtrl.orgunitSelectionType != 'user'" class="treeHolder">
 	        	<div id="orgunitTree"></div>

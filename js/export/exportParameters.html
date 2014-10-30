@@ -9,7 +9,7 @@
 	  	{{exportCtrl.dataElementSelected.name}}
 	  </ui-select-match>
 	  <ui-select-choices 
-	  	repeat="obj in exportCtrl.dataElements">
+	  	repeat="obj in exportCtrl.dataElements | filter: $select.search">
 	   		<div ng-bind-html="obj.name | highlight: $select.search"></div>
 	  </ui-select-choices>
 	</ui-select>
@@ -19,7 +19,7 @@
 	  	{{exportCtrl.indicatorSelected.name}}
 	  </ui-select-match>
 	  <ui-select-choices 
-	  	repeat="obj in exportCtrl.indicators">
+	  	repeat="obj in exportCtrl.indicators | filter: $select.search">
 	   		<div ng-bind-html="obj.name | highlight: $select.search"></div>
 	  </ui-select-choices>
 	</ui-select>
@@ -31,7 +31,7 @@
 	  	{{exportCtrl.orgunitLevelSelected.name}}
 	  </ui-select-match>
 	  <ui-select-choices 
-	  	repeat="obj in exportCtrl.orgunitLevels">
+	  	repeat="obj in exportCtrl.orgunitLevels | filter: $select.search">
 	   		<div ng-bind-html="obj.name | highlight: $select.search"></div>
 	  </ui-select-choices>
 	</ui-select>
@@ -43,7 +43,7 @@
 	  	{{exportCtrl.yearSelected.name}}
 	  </ui-select-match>
 	  <ui-select-choices 
-	  	repeat="obj in exportCtrl.years">
+	  	repeat="obj in exportCtrl.years | filter: $select.search">
 	   		<div ng-bind-html="obj.name | highlight: $select.search"></div>
 	  </ui-select-choices>
 	</ui-select>

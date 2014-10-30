@@ -29,13 +29,13 @@
 }
 
 .container {
-  padding: 3px;	
+  margin: 5px;
 }
 
 body {
-  padding-top: 5%;
-  padding-left: 2%;
-  padding-right: 2%;
+  margin-top: 5%;
+  margin-left: 2%;
+  margin-right: 2%;
 }
 
 

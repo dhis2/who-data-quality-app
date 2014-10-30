@@ -55,7 +55,7 @@
 	    	
 	    	self.orgunits = [];
 	    	
-	    	self.userOrgunit = [];
+	    	self.userOrgunits = [];
 	    	
 	    	self.orgunitLevels = [];
 	    	self.orgunitLevelSelected = undefined;
@@ -105,8 +105,16 @@
 				self.orgunitData = data;
 			});
 			
+			metaDataService.getUserOrgunits().then(function(data) { 
+				self.userOrgunits = data;
+			});
+			
 			metaDataService.getOrgunitLevels().then(function(data) { 
 				self.orgunitLevels = data;
+			});
+			
+			metaDataService.getOrgunitGroups().then(function(data) { 
+				self.orgunitGroups = data;
 			});
 
 			//Options
@@ -118,29 +126,24 @@
 			
 			//Date initialisation
 			self.periodTypes = periodService.getPeriodTypes();
-			self.periodTypeSelected = self.periodTypes[2];
+			self.periodTypeSelected = self.periodTypes[1];
 			
 			self.periodCounts = periodService.getPeriodCount();
 			self.periodCountSelected = self.periodCounts[11];
 			
 			self.years = periodService.getYears();
 			self.yearSelected = self.years[0];
-			
-			
+					
 			self.periodOption = "last";			
 			self.datePickerOpts = {
 	    		locale: {
-    	            applyClass: 'btn-blue',
+    	            applyClass: 'btn-default',
     	            applyLabel: "Select",
-	    	   	},
-	    	    ranges: {
-	    	    	'Last half year': [moment().subtract(6, 'months'), moment()],
-	    	      	'Last year': [moment().subtract(12, 'months'), moment()]
-	    	    }
+	    	   	}
 	    	};
 	    	
 	    	self.includeChildren = true;
-	    	self.orgunitSelectionType = 'select';
+	    	self.orgunitSelectionType = 'user';
 	    }
 	    				
 
@@ -225,21 +228,84 @@
 		}
 		
 		
+		
+		function getPeriodsForAnalysis() {
+			
+			var startDate, endDate;
+			if (self.periodOption === "last") {
+				endDate = moment().format("YYYY-MM-DD");
+				if (self.periodTypeSelected.id === 'Weekly') {
+					startDate = moment().subtract(self.periodCountSelected.value, 'weeks').format("YYYY-MM-DD");
+				}
+				else if (self.periodTypeSelected.id === 'Monthly') {
+					startDate = moment().subtract(self.periodCountSelected.value, 'months').format("YYYY-MM-DD");
+				}
+				else if (self.periodTypeSelected.id === 'Quarterly') {
+					startDate = moment().subtract(self.periodCountSelected.value, 'quarters').format("YYYY-MM-DD");
+				}
+				else if (self.periodTypeSelected.id === 'SixMonthly') {
+					startDate = moment().subtract(self.periodCountSelected.value*2, 'quarters').format("YYYY-MM-DD");
+				}
+				else if (self.periodTypeSelected.id === 'Yearly') {
+					startDate = moment().subtract(self.periodCountSelected.value, 'years').format("YYYY-MM-DD");
+				}
+			}
+			else if (self.periodOption === "year") {
+				
+				if (self.yearSelected.name === moment().format('YYYY')) {
+					endDate = moment().format('YYYY-MM-DD');
+				}
+				else {
+					endDate = self.yearSelected.id + "-12-31";
+				}
+			
+				startDate = self.yearSelected.id + "-01-01";
+				
+				console.log(startDate);
+				console.log(endDate);
+				
+			}
+			else {
+				startDate = self.date.startDate;
+				endDate = self.date.endDate;
+			}
+			
+			return {'startDate': startDate, 'endDate': endDate, 'periodType': self.periodTypeSelected.id};
+		
+		}
+		
+		
 		self.doAnalysis = function() {
 			//Collapse open panels
 			$('.panel-collapse').removeClass('in');
 			
+			
+			var data = {
+				'dataSets': self.dataSetsSelected, 
+				'dataElements': self.dataElementsSelected,
+				'indicators': self.indicatorsSelected
+			};
+						
+			var period = getPeriodsForAnalysis();
+			
+			var orgunit = {
+				'orgunits': self.orgunits,
+				'userOrgunits': self.userOrgunits,
+				'includeChildren': self.includeChildren,
+				'level': self.orgunitLevelSelected,
+				'group': self.orgunitGroup,
+				'selectionType': self.orgunitSelectionType
+			};
+			
+			var parameters = {
+				'threshold': self.threshold,
+				'stdDev': self.stdDev,
+				'analysisType': self.analysisType
+			};
+							
+						
 			//Call service to get data
-			completenessDataService.analyseData(self.dataSetsSelected, 
-												self.dataElementsSelected, 
-												self.indicatorsSelected, 
-												self.date.startDate, 
-												self.date.endDate,
-												self.orgunits, 
-												self.threshold, 
-												self.includeChildren,
-												self.stdDev,
-												self.analysisType);
+			completenessDataService.analyseData(data, period, orgunit, parameters);
 				
 		}
 		return self;
@@ -252,8 +318,8 @@
 	    var self = this;
 	    
 	    self.results = [];
-	    self.itemsPerPage = 15;
-        self.outliersOnly = true;
+	    self.itemsPerPage = 25;
+        self.outliersOnly = false;
         
         // calculate page in place
         function paginateRows(rows) {
@@ -359,80 +425,107 @@
 		var self = this;
 		
 		self.resultsCallback = null;
-		
-		init();
-			
-		function init() {
-			self.param = {
-				'dataSets': null,
-				'dataElements': null,
-				'indicators': null,
-				'startDate': "",
-				'endDate': "",
-				'orgunits': [],
-				'threshold': 0,
-				'includeChildren': false,
-				'stdDev': '',
-				'analysisType': ''
-			};
-			resetParameters();
-		}
-		
 			
 		function resetParameters() {
-			self.dataSetsToRequest = [];
-			self.analysisObjects = [];
 			self.requests = [];
 			self.result = [];
 		}
 		
 		
-		self.analyseData = function (dataSets, dataElements, indicators, startDate, endDate, orgunits, threshold, includeChildren, stdDev, analysisType) {
+		self.analyseData = function (data, period, orgunit, parameters) {
 			
 			resetParameters();
 			
-			self.param.dataSets = dataSets; 
-			self.param.dataElements = dataElements; 
-			self.param.indicators = indicators; 
-			self.param.startDate = startDate;
-			self.param.endDate = endDate;
-			self.param.orgunits = orgunits;
-			self.param.threshold = threshold;
-			self.param.includeChildren = includeChildren;
-			self.param.stdDev = stdDev;
-			self.param.analysisType = analysisType;
-						
-			if (self.param.analysisType === "outlier") {
-				prepareOutlierRequests();
-				fetchData();
+			var variables = getVariables(data);
+			var orgunits = getOrgunits(orgunit);
+			var periods = periodService.getISOPeriods(period.startDate, period.endDate, period.periodType);
+			console.log(period);			
+			console.log(periods);
+			
+			
+			var requestURL = "/api/analytics.json?";
+			requestURL += "dimension=dx:" + IDsFromObjects(variables).join(";");
+			requestURL += "&dimension=ou:" + IDsFromObjects(orgunits).join(";");
+			
+			if (orgunit.selectionType === 'level') {
+				requestURL += ';LEVEL-' + orgunit.level.level;		
 			}
+			else if (orgunit.selectionType === 'group') {
+				requestURL += ';OU_GROUP-' + orgunit.group.id;		
+			}
+			
+			requestURL += "&dimension=pe:" + periods.join(";");
+					
+			if (parameters.analysisType === "outlier") {
+				self.requests.push({
+					'URL': requestURL,
+					'variables': variables,
+					'orgunits': orgunits,
+					'periods': periods,
+					'parameters': parameters,
+					'type': 'outlier',
+					'periodType': period.periodType		
+				});
+			}
+			
+			fetchData();
+			
 		}
 		
 		
-		function prepareOutlierRequests() {
+		
+		function getVariables(data) {			
+			var dataObjects = [];
+			if (data.dataSets) {
+				dataObjects.push(data.dataSets);
+//				for (var i = 0; i < data.dataSets.length; i++) {
+//					dataObjects.push(data.dataSets[i]);
+//				}
+			}
+			if (data.dataElements) {
+				dataObjects.push(data.dataElements);
+//				for (var i = 0; i < data.dataElements.length; i++) {
+//					dataObjects.push(data.dataElements[i]);
+//				}
+			}
+			if (data.indicators) {
+				dataObjects.push(data.indicators);
+//				for (var i = 0; i < data.indicators.length; i++) {
+//					dataObjects.push(data.indicators[i]);
+//				}
+			}
 			
-			var variableID;
-			var periodType = "Monthly";
-			if (self.param.dataElements) {
-				variableID = self.param.dataElements.id; 
+			return dataObjects;
+		}
+		
+		
+		
+		function getOrgunits(orgunit) {			
+			var ou = [];
+			
+			if (orgunit.selectionType === 'user') {
+				ou.push.apply(ou, orgunit.userOrgunits);
 			}
 			else {
-				variableID = self.param.indicators.id; 
+				for (var i = 0; i < orgunit.orgunits.length; i++) {
+					var tmp = metaDataService.orgunitFromID(orgunit.orgunits[i]);
+					ou.push(tmp);
+				}
 			}
-			var periods = periodService.getISOPeriods(self.param.startDate, self.param.endDate, periodType);
-			var orgunits = orgunitsForAnalysis();
 			
-			var requestURL = "/api/analytics.json?";
-			requestURL += "dimension=dx:" + variableID;
-			requestURL += "&dimension=ou:" + IDsFromObjects(orgunits).join(";");
-			requestURL += "&dimension=pe:" + periods.join(";");
-				
-			self.requests.push({
-				'URL': requestURL,
-				'variables': variableID,
-				'type': 'outlier',
-				'periodType': periodType		
-			});			
+			
+			if (orgunit.selectionType === 'user' || orgunit.selectionType === 'select') {
+				var children = [];
+				if (orgunit.includeChildren) {
+					for (var i = 0; i < ou.length; i++) {
+						children.push.apply(children, metaDataService.orgunitChildrenFromParentID(ou[i].id));
+					}
+				}
+				ou.push.apply(ou, children);
+			}
+			return metaDataService.removeDuplicateObjects(ou);
+		
+		
 		}
 		
 		
@@ -450,7 +543,7 @@
 					var data = response[i].data;
 					var request =  requestFromURL(response[i].config.url);
 					if (request.type === 'outlier') {
-						results.push(findOutliers(data, request.periodType, request.variables));						
+						results.push(outlierAnalysis(data, request));						
 					}
 				}
 				
@@ -485,21 +578,7 @@
 			return metaDataService.removeDuplicateObjects(orgunits);
 		}
 			
-		
-		function dataSetsForAnalysis() {
-			var dataSets = [];
-			var analysisObj;
-			for (var i = 0; i < self.analysisObjects.length; i++) {
-				analysisObj = self.analysisObjects[i];
 				
-				for (var j = 0; j < analysisObj.dataSets.length; j++) {
-					dataSets.push(analysisObj.dataSets[j]);	
-				}
-			}
-			self.dataSetsToRequest = metaDataService.removeDuplicateObjects(dataSets);
-		}
-		
-		
 		function dataSetsWithPeriodType(periodType) {
 			
 			var matches = [];
@@ -522,7 +601,9 @@
 		}
 		
 		
-		function findOutliers(data, periodType, variables) {
+		function outlierAnalysis(data, request) {
+			
+			var periodType = request.periodType;
 			
 			var title = [];
 			var headers = [];
@@ -551,7 +632,7 @@
 			
 			//Find out what variables goes into rows
 			//To-Do: for now we assume there is always only one variable
-			var variableID = variables;
+			var variableID = request.variables[0].id;
 			title.push(metaDataService.getNameFromID(variableID));
 			
 			//Check what goes into rows
@@ -653,7 +734,7 @@
 				mean = mathService.getMean(valueSet); 
 				variance = mathService.getVariance(valueSet);
 				standardDeviation = mathService.getStandardDeviation(valueSet);
-				noDevs = parseFloat(self.param.stdDev);
+				noDevs = parseFloat(request.parameters.stdDev);
 				highLimit = (mean + noDevs*standardDeviation);
 				lowLimit = (mean - noDevs*standardDeviation);
 				if (lowLimit < 0) lowLimit = 0;
