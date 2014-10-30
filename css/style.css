@@ -13,6 +13,7 @@
 
 .valueCell {
 	text-align: right;
+	vertical-align: middle;
 }
 
 .treeHolder {
@@ -22,14 +23,29 @@
 	border: 1px solid rgb(212,212,212);
 }
 
+.chartHolder {
+	margin-top: 40px;
+	height: 500px;
+	border: 1px solid rgb(212,212,212);
+}
 
 .outlier {
 	background-color: #FF6633 !important;
 	font-weight: 700;
 }
 
+.table > tbody > tr > td {
+	vertical-align: middle;	
+}
+
 .container {
   margin: 5px;
+}
+
+.tableButton {
+	height: 30px;
+	padding: 4px; 
+	text-aling:center;
 }
 
 body {

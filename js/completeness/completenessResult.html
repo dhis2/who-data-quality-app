@@ -1,42 +1,65 @@
 <div ng-controller="ResultsController as resultsCtrl">
 	<div ng-show="resultsCtrl.results.length === 0" style="height: 400px;"></div>
 	<div ng-show="resultsCtrl.results.length > 0">
-	<h3>Analysis results</h3>
-	<div>Show only violations: <input type="checkbox" ng-model="resultsCtrl.outliersOnly" ng-change="resultsCtrl.filter()"></div>
-	<div ng-repeat="result in resultsCtrl.results">
-		<!-- CASE Outlier -->
-		<h4>{{result.title}}</h4>
-		<div class="table-responsive">
-			<table class="table table-bordered table-striped table-condensed table-hover">
-		        <thead>
-		            <tr>
-		            	<th ng-repeat="header in result.headers">{{header.name}}</th>
-		            </tr>
-		        </thead>
-		        <tfoot>
-		            <td colspan="{{result.headers.length}}">
-		                <ul class="pagination pull-right">
-		                    <li ng-class="{disabled: result.currentPage == 0}">
-		                        <a href ng-click="resultsCtrl.prevPage(result)">« Prev</a>
-		                    </li>
-		                    <li ng-repeat="n in resultsCtrl.range(result.pages.length)"
-		                        ng-class="{active: n == result.currentPage}"
-		                    ng-click="resultsCtrl.setPage(result, n)">
-		                        <a href ng-bind="n + 1">1</a>
-		                    </li>
-		                    <li ng-class="{disabled: result.currentPage === result.pages.length - 1}">
-		                        <a href ng-click="resultsCtrl.nextPage(result)">Next »</a>
-		                    </li>
-		                </ul>
-		            </td>
-		        </tfoot>
-		        <tbody>
-		        	<tr ng-repeat="row in result.pages[result.currentPage]">
-		                <td ng-repeat="value in row.data" ng-class="{danger: (value.value < row.metaData.lowLimit || value.value > row.metaData.highLimit), valueCell: value.type === 'number'}">{{value.value}}</td>
-		            </tr>
-		    	</tbody>
-			</table>
-		</div>
-	</div>
+		<h3>Result</h3>
+		<div>Show only violations: <input type="checkbox" ng-model="resultsCtrl.outliersOnly" ng-change="resultsCtrl.filter()"></div>
+		<br />
+		<tabset>
+			<tab ng-repeat="result in resultsCtrl.results" heading="{{result.title}}" active="result.active">
+				<div class="table-responsive">
+					<table class="table table-bordered table-striped table-condensed table-hover">
+						
+				        <thead>
+				            <tr>
+				            	<th ng-repeat="header in result.headers">{{header.name}}</th>
+				            	<th></th>
+				            </tr>
+				        </thead>
+				        
+				        <tfoot>
+				            <td colspan="{{1+result.headers.length}}">
+				                <ul class="pagination pull-right">
+				                    <li ng-class="{disabled: result.currentPage == 0}">
+				                        <a href ng-click="resultsCtrl.prevPage(result)">« Prev</a>
+				                    </li>
+				                    <li ng-repeat="n in resultsCtrl.range(result.pages.length)"
+				                        ng-class="{active: n == result.currentPage}"
+				                    ng-click="resultsCtrl.setPage(result, n)">
+				                        <a href ng-bind="n + 1">1</a>
+				                    </li>
+				                    <li ng-class="{disabled: result.currentPage === result.pages.length - 1}">
+				                        <a href ng-click="resultsCtrl.nextPage(result)">Next »</a>
+				                    </li>
+				                </ul>
+				            </td>
+				        </tfoot>
+				        
+				        <tbody>
+				        	<tr valign="middle" ng-repeat="row in result.pages[result.currentPage]">
+				                <td ng-repeat="value in row.data" ng-class="{danger: (value.value < row.metaData.lowLimit || value.value > row.metaData.highLimit), valueCell: value.type === 'number'}" ng-click="completeness(row.metaData.dx, row.metaData.ou, value.pe);">
+				                	<div popover="{{resultsCtrl.popoverText}}" popover-trigger="click">{{value.value}}</div>
+				                </td>
+				                <td><div class="btn-group" dropdown is-open="status.isopen">
+				                      <button type="button tableButton" class="btn btn-default dropdown-toggle" ng-disabled="disabled">
+				                        Action <span class="caret"></span>
+				                      </button>
+				                      <ul class="dropdown-menu" role="menu">
+				                        <li><a href ng-click="resultsCtrl.showDetails(row);">Visualise</a></li>
+				                        <li><a href ng-click="resultsCtrl.showDetails(row);">Analyse completeness</a></li>
+				                        <li><a href ng-click="resultsCtrl.showDetails(row);">Analyse children</a></li>
+				                        <li><a href ng-click="alert('To-Do...');">Notify users</a></li>
+				                      </ul>
+				                    </div>
+				                </td>
+				            </tr>
+				    	</tbody>
+				    	
+					</table>
+				</div>	
+				<div style="min-height: 400px;" id="detailedResult">
+					<h4>Details</h4>
+				</div>
+			</tab>
+		</tabset>
 	</div>
 </div>

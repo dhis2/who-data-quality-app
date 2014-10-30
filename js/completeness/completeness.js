@@ -314,13 +314,56 @@
 	
 	
 	/**Controller: Results*/	
-	app.controller("ResultsController", function(completenessDataService) {
+	app.controller("ResultsController", function(completenessDataService, visualisationService) {
 	    var self = this;
 	    
 	    self.results = [];
-	    self.itemsPerPage = 25;
+	    self.itemsPerPage = 10;
         self.outliersOnly = false;
+        self.hasVisual = false;
         
+        self.popoverText = "Loading...";
+        
+        //showDetails
+        self.showDetails = function(row) {
+
+
+			$('#detailedResult').html('<div class="chartHolder" id="detailChart"></div>');
+
+        	var elementID, series = {}, category = {}, filter = {}, parameters = {};
+        	
+        	series.type = "dx"; 
+        	series.data = [{'id': row.metaData.dx}];
+        	
+        	filter.type = "ou";
+        	filter.data = [{'id': row.metaData.ou}];
+        	
+        	category.type = "pe";
+        	category.data = [];
+        	for (var i = 0; i < row.data.length; i++) {
+        		category.data.push({
+        			'id': row.data[i].pe        		
+        		});
+        	}
+        	        	
+        	// All following options are optional
+    		parameters.width = $('#detailChart').innerWidth();
+    		parameters.heigth = $('#detailChart').innerHeight();
+    		parameters.showData = true;
+    		parameters.hideLegend = true;
+    		parameters.hideTitle = true;
+    		if (row.metaData.highLimit) parameters.targetLineValue = Math.round(row.metaData.highLimit);
+    		if (row.metaData.lowLimit) parameters.baseLineValue = Math.round(row.metaData.lowLimit);
+    		
+    		visualisationService.generateChart('detailChart', 'column', series, category, filter, parameters);
+        }
+        
+        self.completeness = function(dx, ou, pe) {
+            //self.popoverText = "Loading...";
+        	self.popoverText = completenessDataService.getSingleCompleteness(dx, ou, pe);
+        }
+        
+
         // calculate page in place
         function paginateRows(rows) {
             var pagedItems = [];
@@ -389,8 +432,6 @@
         
         }
         
-        
-	    
 	    self.filterChanged = function(result) {
 	    	if (self.outliersOnly) {
 	    		result.pages = paginateRows(filterOutlierRows(result.rows));	
@@ -402,17 +443,20 @@
 	    	result.currentPage = 0;
 	    	result.n = 0;
 	    	
+	    	console.log(result);
+	    	
 	    	return result;
 	    	
 	    }
-	    	    
-	    var receiveResult = function(results) {
-		    for (var i = 0; i < results.length; i++) {
-		    	results[i] = self.filterChanged(results[i]);
-		    }
-		    self.results = results;
+	    	    	    
+	    var receiveResult = function(result) {		    
+	    
+	    	var latest = self.results.length;	
+		    self.results.push(self.filterChanged(result));
+		    self.results[latest].active = true;
 	    }
    	    completenessDataService.resultsCallback = receiveResult;
+   	    
 
 			                   	   	
 	   	return self;
@@ -472,6 +516,49 @@
 			
 		}
 		
+		
+		self.getSingleCompleteness = function(dx, ou, pe) {
+			
+			var dataSets = [{'id': 'BfMAe6Itzgt', 'periodType': 'Yearly'}]; //metaDataService.getDataSetsFromID(dx);
+			
+			
+			var requestURLs = [];
+			for (var i = 0; i < dataSets.length; i++) {
+				var period = 2013; //periodService.getBestFit(dataSets[i].periodType, pe);
+				var requestURL = "/api/analytics.json?";
+				requestURL += "dimension=dx:" + dataSets[i].id;
+				requestURL += "&dimension=ou:" + ou;
+				requestURL += "&dimension=pe:" + period;
+				
+				requestURLs.push(requestURL);	
+			}
+			
+			
+			requestService.getMultiple(requestURLs).then(function(response) { 
+				
+				var response = "";
+				
+				for (var i = 0; i < response.length; i++) {
+					var data = response[i].data;
+					
+					var valueIndex, dxIndex, ouIndex, peIndex;
+					for (var i = 0; i < data.headers.length; i++) {
+						if (data.headers[i].name === "value") valueIndex = i;
+						if (data.headers[i].name === "ou") ouIndex = i;
+						if (data.headers[i].name === "pe") peIndex = i;
+						if (data.headers[i].name === "dx") dxIndex = i;
+					}
+					
+					if (data.rows.length === 0) response += "No data";
+					else { 
+						response += data.rows.metaMata.name[data.rows[0][dxIndex]] + " (" + data.rows.metaMata.name[data.rows[0][peIndex]] + "): ";
+						response += data.rows[0][valueIndex] + "; ";	
+					}
+				}
+				
+				return response;
+			});
+		}
 		
 		
 		function getVariables(data) {			
@@ -545,10 +632,13 @@
 					if (request.type === 'outlier') {
 						results.push(outlierAnalysis(data, request));						
 					}
+					
 				}
 				
 				self.results = results;
-				self.resultsCallback(results);
+				for (var i = 0; i < results.length; i++) {
+					self.resultsCallback(results[i]);	
+				}
 			});
 			
 		}
@@ -653,6 +743,8 @@
 				for (var i = 0; i < orgunitIDs.length; i++) {
 					row = {
 						'metaData': {
+							'dx': variableID,
+							'ou': orgunitID,
 							'hasOutlier': false,
 							'lowLimit': null,
 							'highLimit': null
@@ -672,12 +764,12 @@
 						for (var k = 0; k < data.rows.length && !found; k++) {
 
 							if (data.rows[k][ouIndex] === orgunitID && data.rows[k][peIndex] === periodID) { 
-								row.data.push({'value': parseFloat(data.rows[k][valueIndex]), 'type': "number"});
+								row.data.push({'pe': periodID, 'value': parseFloat(data.rows[k][valueIndex]), 'type': "number"});
 								found = true;
 							};
 						}
 						if (!found) {
-							row.data.push({'value': "", 'type': "blank"});
+							row.data.push({'pe': periodID, 'value': "", 'type': "blank"});
 						}
 					}
 					
@@ -688,6 +780,8 @@
 				orgunitID = orgunitIDs[0];
 				row = {
 					'metaData': {
+						'dx': variableID,
+						'ou': orgunitID,
 						'hasOutlier': false,
 						'lowLimit': null,
 						'highLimit': null
@@ -704,13 +798,13 @@
 												
 						//To-Do: variable
 						if (data.rows[k][ouIndex] === orgunitID && data.rows[k][peIndex] === periodID) {
-							row.data.push({'value': parseFloat(data.rows[k][valueIndex]), 'type': "number"});
+							row.data.push({'pe': periodID, 'value': parseFloat(data.rows[k][valueIndex]), 'type': "number"});
 							found = true;
 						};
 					}
 					
 					if (!found) {
-						row.data.push({'value': "", 'type': "blank"});
+						row.data.push({'pe': periodID, 'value': "", 'type': "blank"});
 					}
 				}
 				
@@ -765,45 +859,7 @@
 						
 			return analysisResult;
 		}
-		
-			
-		function getChartParameters(chartID, result) {
-		
-			
-			var periods = [];
-			for (var i = 0; i < result.periods.length; i++) {
-				periods.push({
-					'id': result.periods[i].iso
-					});	
-			}
-		
-		
-			var chartParameters = {
-				url: BASE_URL,
-				el: chartID,
-				type: "column",
-				columns: [ // Chart series
-				  {dimension: "de", items: [{id: result.variableID}]}
-				],
-				rows: [ // Chart categories
-				  {dimension: "pe", items: periods}
-				],
-				filters: [
-				  {dimension: "ou", items: [{id: result.orgunitID}]}
-				],
-				// All following options are optional
-				width: "800px",
-				heigth: "400px",
-				showData: false,
-				hideLegend: true,
-				targetLineValue: result.highLimit,
-				baseLineValue: result.lowLimit,
-				hideTitle: true
-				};
 				
-			return chartParameters;
-		}
-		
 				
 		return self;
 	});
