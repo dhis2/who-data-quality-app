@@ -120,7 +120,7 @@
 			//Options
 			self.onlyNumbers = /^\d+$/;
 			self.threshold = 90;
-			self.stdDev = 2;
+			self.stdDev = 3.0;
 			self.analysisType = "outlier";
 			
 			
@@ -307,7 +307,8 @@
 			//Call service to get data
 			completenessDataService.analyseData(data, period, orgunit, parameters);
 				
-		}
+		};
+    
 		return self;
 		
 	});
@@ -330,7 +331,7 @@
 
 			$('#detailedResult').html('<div class="chartHolder" id="detailChart"></div>');
 
-        	var elementID, series = {}, category = {}, filter = {}, parameters = {};
+        	var series = {}, category = {}, filter = {}, parameters = {};
         	
         	series.type = "dx"; 
         	series.data = [{'id': row.metaData.dx}];
@@ -356,12 +357,12 @@
     		if (row.metaData.lowLimit) parameters.baseLineValue = Math.round(row.metaData.lowLimit);
     		
     		visualisationService.generateChart('detailChart', 'column', series, category, filter, parameters);
-        }
+        };
         
         self.completeness = function(dx, ou, pe) {
             //self.popoverText = "Loading...";
         	self.popoverText = completenessDataService.getSingleCompleteness(dx, ou, pe);
-        }
+        };
         
 
         // calculate page in place
@@ -378,7 +379,7 @@
             
             return pagedItems;
             
-        };
+        }
         
         self.range = function (start, end) {
             var ret = [];
@@ -407,8 +408,7 @@
         self.setPage = function (result, n) {
             result.currentPage = n;
         };
-        
-        
+             
         function filterOutlierRows(rows) {
         
         	var row, filteredRows = [];
@@ -426,11 +426,10 @@
         }
             
         self.filter = function() {
-			for (var i = 0; i < self.results.length; i++) {
-				self.results[i] = self.filterChanged(self.results[i]);
-			}
-        
-        }
+				for (var i = 0; i < self.results.length; i++) {
+					self.results[i] = self.filterChanged(self.results[i]);
+				}
+      };
         
 	    self.filterChanged = function(result) {
 	    	if (self.outliersOnly) {
@@ -447,14 +446,14 @@
 	    	
 	    	return result;
 	    	
-	    }
+	    };
 	    	    	    
 	    var receiveResult = function(result) {		    
 	    
 	    	var latest = self.results.length;	
 		    self.results.push(self.filterChanged(result));
 		    self.results[latest].active = true;
-	    }
+	    };
    	    completenessDataService.resultsCallback = receiveResult;
    	    
 
@@ -464,7 +463,7 @@
 	 
 	 
 	/**Service: Completeness data*/
-	app.service('completenessDataService', function (mathService, metaDataService, periodService, requestService, BASE_URL) {
+	app.service('completenessDataService', function (mathService, metaDataService, periodService, requestService) {
 		
 		var self = this;
 		
@@ -514,7 +513,7 @@
 			
 			fetchData();
 			
-		}
+		};
 		
 		
 		self.getSingleCompleteness = function(dx, ou, pe) {
@@ -536,7 +535,7 @@
 			
 			requestService.getMultiple(requestURLs).then(function(response) { 
 				
-				var response = "";
+				var result = "";
 				
 				for (var i = 0; i < response.length; i++) {
 					var data = response[i].data;
@@ -551,14 +550,14 @@
 					
 					if (data.rows.length === 0) response += "No data";
 					else { 
-						response += data.rows.metaMata.name[data.rows[0][dxIndex]] + " (" + data.rows.metaMata.name[data.rows[0][peIndex]] + "): ";
-						response += data.rows[0][valueIndex] + "; ";	
+						result += data.rows.metaMata.name[data.rows[0][dxIndex]] + " (" + data.rows.metaMata.name[data.rows[0][peIndex]] + "): ";
+						result += data.rows[0][valueIndex] + "; ";	
 					}
 				}
 				
-				return response;
+				return result;
 			});
-		}
+		};
 		
 		
 		function getVariables(data) {			
@@ -657,6 +656,7 @@
 		}
 		
 		
+    //Not used
 		function orgunitsForAnalysis() {
 			var orgunits = [];
 			for (var i = 0; i < self.param.orgunits.length; i++) {
@@ -668,7 +668,8 @@
 			return metaDataService.removeDuplicateObjects(orgunits);
 		}
 			
-				
+		
+    //Not used
 		function dataSetsWithPeriodType(periodType) {
 			
 			var matches = [];
@@ -707,7 +708,7 @@
 				periods.push({
 					'id': peIDs[i],
 					'name': data.metaData.names[peIDs[i]]
-				})
+				});
 			}
 						
 			//Identify which column is which
@@ -766,7 +767,7 @@
 							if (data.rows[k][ouIndex] === orgunitID && data.rows[k][peIndex] === periodID) { 
 								row.data.push({'pe': periodID, 'value': parseFloat(data.rows[k][valueIndex]), 'type': "number"});
 								found = true;
-							};
+							}
 						}
 						if (!found) {
 							row.data.push({'pe': periodID, 'value': "", 'type': "blank"});
@@ -800,7 +801,7 @@
 						if (data.rows[k][ouIndex] === orgunitID && data.rows[k][peIndex] === periodID) {
 							row.data.push({'pe': periodID, 'value': parseFloat(data.rows[k][valueIndex]), 'type': "number"});
 							found = true;
-						};
+						}
 					}
 					
 					if (!found) {

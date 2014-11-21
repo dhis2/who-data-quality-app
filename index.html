@@ -27,9 +27,9 @@
 	
 	
 	<!-- Charts -->
-<link rel="stylesheet" href="//dhis2-cdn.org/v216/ext/resources/css/ext-plugin-gray.css" />
-<script src="//dhis2-cdn.org/v216/ext/ext-all.js"></script>
-<script src="//dhis2-cdn.org/v216/plugin/chart.js"></script>
+<link rel="stylesheet" href="//dhis2-cdn.org/v217/ext/resources/css/ext-plugin-gray.css" />
+<script src="//dhis2-cdn.org/v217/ext/ext-all.js"></script>
+<script src="//dhis2-cdn.org/v217/plugin/chart.js"></script>
 	
 	<!-- App -->
 	<script lang="javascript" src="js/app.js"></script>
@@ -56,8 +56,9 @@
 	        </div>
 	        <div collapse="navCtrl.isCollapsed" class="navbar-collapse bs-js-navbar-collapse">
 	          <ul class="nav navbar-nav">
+  					<li ng-class="{active: navCtrl.current === 'report'}"><a href ng-click="navCtrl.menuClicked('report');">Report Card</a></li>
 					<li ng-class="{active: navCtrl.current === 'quality'}"><a href ng-click="navCtrl.menuClicked('quality');">Quality Analysis</a></li>
-					<li ng-class="{active: navCtrl.current === 'dictionary'}"><a href ng-click="navCtrl.menuClicked('dictionary');">Indicator Dictionary</a></li>
+					<li ng-class="{active: navCtrl.current === 'dictionary'}"><a href ng-click="navCtrl.menuClicked('dictionary');">Data Dictionary</a></li>
 					<li ng-class="{active: navCtrl.current === 'export'}"><a href ng-click="navCtrl.menuClicked('export');">Data Export</a></li>
 					<li class="dropdown">
 						<a href="#" class="dropdown-toggle" data-toggle="dropdown">More<span class="caret"></span></a>
@@ -66,6 +67,8 @@
 							<li><a href="#">Using the data quality app</a></li>
 							<li class="divider"></li>
 							<li><a href="#">Data Quality Report Card Excel tool</a></li>
+							<li class="divider"></li>
+							<li><a href ng-click="navCtrl.menuClicked('admin');">Administration</a></li>
 						</ul>
 					</li>
 
@@ -76,18 +79,26 @@
 	        </div><!-- /.nav-collapse -->
 	      </div><!-- /.container-fluid -->
 	    </nav>
-	<div id="completeness" ng-show="navCtrl.current === 'quality'">
+	<div id="completeness" ng-show="navCtrl.current === 'report'">
+		<h3>Report Card</h3>
+		Report card goes here...
+	</div>
+	<div id="quality" ng-show="navCtrl.current === 'quality'">
 		<h3>Completeness and Consistency Analysis</h3>
 		<completeness-parameters></completeness-parameters>
 		<br>
 		<completeness-result></completeness-result>
 	</div>
-	<div ng-cloak id="consistency" ng-show="navCtrl.current === 'dictionary'">
+	<div ng-cloak id="dictionary" ng-show="navCtrl.current === 'dictionary'">
 		<h3>Data Dictionary</h3>
 		<p>Browse indicators and their defintion.</p>
 	</div>
-	<div ng-cloak id="consistency" ng-show="navCtrl.current === 'export'">
+	<div ng-cloak id="export" ng-show="navCtrl.current === 'export'">
 		<export-parameters></export-parameters>
+	</div>
+	<div ng-cloak id="admin" ng-show="navCtrl.current === 'admin'">
+		<h3>App Administration</h3>
+		Administraiton goes here
 	</div>
 			
 	

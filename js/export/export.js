@@ -16,7 +16,7 @@
 		
 	
 	/**Controller: Parameters*/
-	app.controller("ExportController", function(metaDataService, periodService, BASE_URL, $location) {
+	app.controller("ExportController", function(metaDataService, periodService, BASE_URL) {
 	    	    
 	    var self = this;
 	    
@@ -63,7 +63,7 @@
 	    	self.href = requestURL;
 	    	
 	    	window.open(requestURL, '_blank', '');
-	    }
+	    };
 	    
 	    
 	    function periodsInYear(year) {

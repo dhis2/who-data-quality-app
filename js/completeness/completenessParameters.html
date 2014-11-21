@@ -22,23 +22,10 @@
 			
 			<div ng-show="paramCtrl.analysisType === 'outlier'"><br />
 				<label for="threshold">Standard deviations</label><br />
-				<div class="btn-toolbar" role="toolbar">
-				  <div class="btn-group">
-				  	<label class="btn btn-info" ng-model="paramCtrl.stdDev" btn-radio="0.5">0.5</label>
-				  	<label class="btn btn-info" ng-model="paramCtrl.stdDev" btn-radio="1.0">1.0</label>
-				  	<label class="btn btn-info" ng-model="paramCtrl.stdDev" btn-radio="1.5">1.5</label>
-				  </div>
-				  
-				  <div class="btn-group">
-						<label class="btn btn-warning" ng-model="paramCtrl.stdDev" btn-radio="2.0">2.0</label>
-						<label class="btn btn-warning" ng-model="paramCtrl.stdDev" btn-radio="2.5">2.5</label>
-				  </div>
-				  
-				  <div class="btn-group">
-						<label class="btn btn-danger" ng-model="paramCtrl.stdDev" btn-radio="3.0">3.0</label>
-						<label class="btn btn-danger" ng-model="paramCtrl.stdDev" btn-radio="3.5">3.5</label>
-						<label class="btn btn-danger" ng-model="paramCtrl.stdDev" btn-radio="4.0">4.0</label>								  
-				  </div>
+				<div class="btn-group btn-group-justified" style="margin-bottom: 5px; max-width: 350px;">
+				  		<label class="btn btn-info" ng-model="paramCtrl.stdDev" btn-radio="2.0">2 SD</label>
+						<label class="btn btn-warning" ng-model="paramCtrl.stdDev" btn-radio="3.0">3 SD</label>
+						<label class="btn btn-danger" ng-model="paramCtrl.stdDev" btn-radio="4.0">4 SD</label>
 				</div>	
 			</div>
 		</div>
@@ -153,5 +140,5 @@
 	    </div>
 	  </div>
 	</div>
-	<button type="button" class="btn btn-primary" ng-click="paramCtrl.doAnalysis();" ng-disabled="paramCtrl.orgunits.length === 0 || (paramCtrl.dataElementsSelected.length === 0 && paramCtrl.indicatorsSelected.length === 0 && paramCtrl.dataSetsSelected.length === 0) || paramCtrl.date.startDate == ''">Do analysis</button>
+	<button type="button" class="btn btn-primary" ng-click="paramCtrl.doAnalysis();" ng-disabled="paramCtrl.orgunits.length === 0 || (paramCtrl.dataElementsSelected.length === 0 && paramCtrl.indicatorsSelected.length === 0 && paramCtrl.dataSetsSelected.length === 0) || paramCtrl.date.startDate == ''">Analyze</button>
 </div>

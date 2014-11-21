@@ -25,7 +25,7 @@
 
   /**Controller: Navigation*/
   app.controller("NavigationController", function() {
-  	this.current = "quality";
+  	this.current = "report";
   	this.isCollapsed = true;
 
   	
@@ -36,7 +36,7 @@
   	this.collapse = function() {
   		if (this.isCollapsed) this.isCollapsed = false;
   		else this.isCollapsed = true;
-  	}
+  	};
   });
   
   
@@ -53,12 +53,12 @@
 	    });
 	  	
 	  	return $q.all(promises);
-	}	
+	};
 	
 	self.getSingle = function(requestURL) {
 		var fullURL = BASE_URL + requestURL;	  	
 	  	return $http.get(fullURL);
-	}
+	};
 	      
 	return self;
   
@@ -73,8 +73,8 @@
   	
   	self.getISOPeriods = function(startDate, endDate, periodType) {
   			
-  		var startDate = dateToISOdate(startDate);
-  		var endDate = dateToISOdate(endDate);
+  		startDate = dateToISOdate(startDate);
+  		endDate = dateToISOdate(endDate);
   		
   		var startYear = parseInt(moment(startDate).format("YYYY"));
   		var endYear = parseInt(moment(endDate).format("YYYY"));
@@ -108,7 +108,7 @@
   		}
   		
   		return isoPeriods;
-  	}
+  	};
   	
   	
   	self.shortMonthName = function(periodISO) {
@@ -118,13 +118,13 @@
   		var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
   		
   		return monthNames[parseInt(monthNumber)-1] + " '" + year;
-  	}
+  	};
   	
   	self.getPeriodTypes = function() {
   		var periodTypes = [{'name': 'Weeks', 'id':'Weekly'}, {'name': 'Months', 'id':'Monthly'}, {'name': 'Quarters', 'id':'Quarterly'}, {'name': 'Six-months', 'id':'SixMonthly'}, {'name': 'Years', 'id':'Yearly'}];
   		
   		return periodTypes;
-  	}
+  	};
   	
   	
   	self.getPeriodCount = function() {
@@ -134,9 +134,7 @@
   			}
   			
   			return objects;
-  	
-  	
-  	}
+  	};
   	
   	self.getYears = function () {
   	
@@ -147,7 +145,7 @@
   		
   		return objects;
   	
-  	}
+  	};
   	
   	  	
   	
@@ -177,7 +175,7 @@
   		
   		return (total/valueSet.length);
   		
-  	}
+  	};
   	
   	
   	self.getVariance = function(valueSet) {
@@ -191,21 +189,21 @@
   	
   		return (variance/(valueSet.length-1));
   		
-  	}
+  	};
   	
 
   	self.getStandardDeviation = function(valueSet) {
   	
   		return Math.sqrt(self.getVariance(valueSet));
   	
-  	}  	
+  	};  	
   	
   	return self;
   
   }]);
   
   /**Service: Visualisation*/
-  app.service('visualisationService', ['BASE_URL', function (BASE_URL, $http, $q) {
+  app.service('visualisationService', ['BASE_URL', function (BASE_URL) {
 
   	
   	var self = this;
@@ -243,7 +241,7 @@
 	  	
 	  	DHIS.getChart(chartParameters);
   		
-  	}
+  	};
   	
   	
   
@@ -307,12 +305,12 @@
   		self.getDataElements();
   		self.getIndicators();
   		self.getOrgunits();
-  	}
+  	};
   	
   	
   	self.metaDataReady = function () {
   		return (dataSets.available && dataElements.available && indicators.available && orgunits.available && userOrgunits.available && rootOrgunits.available);
-  	}
+  	};
   	  	
   	
   	self.removeDuplicateObjects = function(objects) {
@@ -328,7 +326,7 @@
   		}
   		
   		return uniqueObjects;  	
-  	}
+  	};
   	
   	
   	self.removeDuplicateIDs = function(stringArray) {
@@ -344,7 +342,7 @@
 		}
 		
 		return uniqueObjects;  	
-	}
+	};
   		
   		
   	self.getNameFromID = function(objectID) {
@@ -360,7 +358,7 @@
   		}
   		
   		return "Unknown: " + objectID;
-  	}
+  	};
   	
 	
   	
@@ -393,7 +391,6 @@
   			    	dataSets.available = true;
   				}, 
   				function(response) { //error
-  			    	var data = response.data;
   			    	deferred.reject("Error fetching datasets");
   			    	console.log(msg, code);
   			    }
@@ -401,7 +398,7 @@
   		}
   		dataSets.promise = deferred.promise;
   		return deferred.promise; 
-  	}
+  	};
   	
   	
   	self.getDataSetsFromDataElement = function(dataElement) {
@@ -412,7 +409,7 @@
   			}			
   		}
   		return dataSetsFound;
-  	}
+  	};
   	
   	
   	self.dataSetFromID = function(dataSetID) {
@@ -421,7 +418,7 @@
   				return dataSets.data[j];
   			}			
   		}
-  	}
+  	};
   	
   	
   	/**Indicators*/
@@ -461,7 +458,7 @@
 		}
 			indicators.promise = deferred.promise;
 			return deferred.promise; 
-	}
+	};
 	
 	
 	function indicatorFormulaToDataElementIDs(indicatorFormula) {
@@ -517,7 +514,7 @@
 		}
 			dataElements.promise = deferred.promise;
 			return deferred.promise; 
-	}
+	};
 	
 	
 	self.getDataElementsFromIndicator = function(indicator) {
@@ -533,7 +530,7 @@
 		}
 						
 		return self.removeDuplicateObjects(dataElementsFound);
-	}
+	};
 	
 	
 	self.dataElementFromID = function(dataSetID) {
@@ -542,7 +539,7 @@
 				return dataElements.data[j];
 			}			
 		}
-	}
+	};
 	
 	
 	/**Orgunits*/
@@ -564,7 +561,7 @@
 		else {
 			console.log("Requesting orgunits");
 				var requestURL = '/api/organisationUnits.json?'; 
-				  requestURL += 'fields=id,name,children[id]&paging=false';
+				  requestURL += 'fields=id,name,children[id]&filter=level:lte:3&paging=false';
 				  
 			requestService.getSingle(requestURL).then(
 				function(response) { //success
@@ -582,7 +579,7 @@
 		}
 		orgunits.promise = deferred.promise;
 		return deferred.promise; 
-	}
+	};
 	
 	
 	self.getOrgunitLevels = function() { 
@@ -622,7 +619,7 @@
 		}
 		orgunitLevels.promise = deferred.promise;
 		return deferred.promise; 
-	}
+	};
 	
 	
 	function sortLevels(a, b) {
@@ -658,7 +655,6 @@
 				    	orgunitGroups.available = true;
 					}, 
 					function(response) { //error
-				    	var data = response.data;
 				    	deferred.reject("Error fetching orgunits");
 				    	console.log(msg, code);
 				    }
@@ -666,7 +662,7 @@
 			}
 			orgunitGroups.promise = deferred.promise;
 			return deferred.promise; 
-		}
+		};
 	
 	
 	self.getUserOrgunits = function() {
@@ -702,7 +698,7 @@
 		}
 		userOrgunits.promise = deferred.promise;
 		return deferred.promise;
-	}
+	};
 	
 	
 	self.getRootOrgunits = function() {
@@ -738,7 +734,7 @@
 		}
 		rootOrgunits.promise = deferred.promise;
 		return deferred.promise;
-	}		
+	};
 	
 	
 	
@@ -759,7 +755,7 @@
 		}
 		return childrenOrgunits;
 	
-	}
+	};
 	
 	
 	self.orgunitFromID = function(orgunitID) {
@@ -768,7 +764,7 @@
 				return orgunits.data[j];
 			}			
 		}
-	}
+	};
 	
 	
   	return self;
