@@ -61,7 +61,22 @@
 			<select ng-model="paramCtrl.periodCountSelected" ng-options="periodCount.name for periodCount in paramCtrl.periodCounts"></select>
 			<select ng-model="paramCtrl.periodTypeSelected" ng-options="periodType.name for periodType in paramCtrl.periodTypes"></select></div>
 			<div style="margin-bottom: 15px;" ng-show="paramCtrl.periodOption === 'year'"><select ng-model="paramCtrl.periodTypeSelected" ng-options="periodType.name for periodType in paramCtrl.periodTypes"></select>  of  <select ng-model="paramCtrl.yearSelected" ng-options="year.name for year in paramCtrl.years"></select></div>
-				<div style="margin-bottom: 15px;" ng-show="paramCtrl.periodOption === 'custom'"><select ng-model="paramCtrl.periodTypeSelected" ng-options="periodType.name for periodType in paramCtrl.periodTypes"></select>  between  <input class="selector" date-range-picker class="form-control date-picker" type="text" ng-model="paramCtrl.date" placeholder="From - To" options="paramCtrl.datePickerOpts"/></div>
+			<div ng-show="paramCtrl.periodOption === 'custom'">
+			
+			<div style="margin-bottom: 10px;">Periodtype: <select ng-model="paramCtrl.periodTypeSelected" ng-options="periodType.name for periodType in paramCtrl.periodTypes"></select>
+				</div>
+				<div style="display: inline-block;"><label>From</label>
+				<div style="min-height:290px;">
+				        <datepicker ng-model="paramCtrl.date.startDate" class="well well-sm" starting-day="1" max-date="paramCtrl.date.endDate"></datepicker>
+				</div></div>
+				<div style="display: inline-block;"><label>To</label>
+				<div style="min-height:290px;">
+				        <datepicker ng-model="paramCtrl.date.endDate" min-date="paramCtrl.date.startDate" max-date="paramCtrl.currentDate" class="well well-sm" starting-day="1"></datepicker>
+				</div>
+				</div>
+			</div>
+				
+				
 	    </accordion-group>
 	    <accordion-group heading="Orgunit" is-open="status.open">
 			<div class="btn-group btn-group-justified" style="margin-bottom: 5px; width: 400px;">

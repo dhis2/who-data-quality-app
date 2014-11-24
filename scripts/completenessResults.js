@@ -13,7 +13,6 @@
         //showDetails
         self.showDetails = function(row) {
 
-
 			$('#detailedResult').html('<div class="chartHolder" id="detailChart"></div>');
 
         	var series = {}, category = {}, filter = {}, parameters = {};

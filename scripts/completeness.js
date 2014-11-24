@@ -1,7 +1,7 @@
 
 (function(){
 	
-	var app = angular.module('completenessAnalysis', ['daterangepicker']);
+	var app = angular.module('completenessAnalysis', []);
 	
 	
 	/**Directive: Completeness parameters*/

@@ -97,13 +97,8 @@
 			self.years = periodService.getYears();
 			self.yearSelected = self.years[0];
 					
-			self.periodOption = "last";			
-			self.datePickerOpts = {
-	    		locale: {
-    	            applyClass: 'btn-default',
-    	            applyLabel: "Select",
-	    	   	}
-	    	};
+			self.periodOption = "last";
+			self.currentDate = new Date();			
 	    	
 	    	self.includeChildren = true;
 	    	self.orgunitSelectionType = 'user';

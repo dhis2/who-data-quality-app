@@ -10,34 +10,7 @@
 			console.log("Making chart for: " + elementID);
 		  
 		  
-		  	var chartParameters = {
-		  		url: BASE_URL,
-		  		el: elementID,
-		  		
-		  		
-		  		type: type,
-		  		columns: [ // Chart series
-		  		  {dimension: series.type, items: series.data}
-		  		],
-		  		rows: [ // Chart categories
-		  		  {dimension: category.type, items: category.data}
-		  		],
-		  		filters: [
-		  		  {dimension: filter.type, items: filter.data}
-		  		],
-		  	};
-		  	
-		  	//Add optional parameters
-		  	for (var key in parameters) {
-		  	  if (parameters.hasOwnProperty(key)) {
-		  	    chartParameters[key] = parameters[key];
-		  	  }
-		  	}
-		  	
-		  	console.log(chartParameters);
-		  	
-		  	DHIS.getChart(chartParameters);
-	  		
+		  		  		
 	  	};
 	  	
 	  	
