@@ -20,7 +20,6 @@
 	    	self.indicatorsSelected = undefined;
 	    	
 	    	self.orgunits = [];
-	    	
 	    	self.userOrgunits = [];
 	    	
 	    	self.orgunitLevels = [];
@@ -44,34 +43,31 @@
 	    		"startDate": moment().subtract(12, 'months'), 
 	    		"endDate": moment()
 	    	};
+	    	
+	    	//Accordion settings
+	    	self.oneAtATime = true;
+	    	self.status = {
+	    	    isFirstOpen: true
+	    	};
 	    }
 	    
 	    
 	    function initSelects() {
 			
-			metaDataService.fetchMetaData();
+//			metaDataService.getDataSets().then(function(data) { 
+//				self.dataSets = data;
+//			});
 			
-			var dataSetPromise = metaDataService.getDataSets();
-			dataSetPromise.then(function(data) { 
-				self.dataSets = data;
-			});
-			
-			var dataElementPromise = metaDataService.getDataElements();
-			dataElementPromise.then(function(data) { 
+			metaDataService.getDataElements().then(function(data) { 
 				self.dataElements = data;
 			});
 			
-			var indicatorPromise = metaDataService.getIndicators();
-			indicatorPromise.then(function(data) { 
+			metaDataService.getIndicators().then(function(data) { 
 				self.indicators = data;
 			});
 			
-			var orgunitPromise = metaDataService.getOrgunits();
-			orgunitPromise.then(function(data) { 
-				self.orgunitData = data;
-			});
 			
-			metaDataService.getUserOrgunits().then(function(data) { 
+			metaDataService.getAnalysisOrgunits().then(function(data) { 
 				self.userOrgunits = data;
 			});
 			
@@ -83,7 +79,8 @@
 				self.orgunitGroups = data;
 			});
 
-			//Options
+				
+			//Defaults
 			self.onlyNumbers = /^\d+$/;
 			self.threshold = 90;
 			self.stdDev = 3.0;
@@ -122,7 +119,7 @@
 		            	//Tree is empty - get first two levels right away
 		            	if (node.parent === null) {
 		            	
-		            		metaDataService.getRootOrgunits().then(function(data) { 
+		            		metaDataService.getAnalysisOrgunits().then(function(data) { 
 		            			var orgunits = data;
 		            			var orgunitNodes = [];
 				
