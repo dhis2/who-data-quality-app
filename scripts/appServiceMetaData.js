@@ -139,17 +139,7 @@
 	  	};
 	  	
 	  	
-	  	self.getDataSetsFromDataElement = function(dataElement) {
-	  		var dataSetsFound = [];
-	  		if (dataElement.dataSets) {
-	  			for (var j = 0; j < dataElement.dataSets.length; j++) {
-	  				dataSetsFound.push(self.dataSetFromID(dataElement.dataSets[j].id));
-	  			}			
-	  		}
-	  		return dataSetsFound;
-	  	};
-	  	
-	  	
+	  		  	
 	  	self.dataSetFromID = function(dataSetID) {
 	  		for (var j = 0; j < dataSets.data.length; j++) {
 	  			if (dataSetID === dataSets.data[j].id) {
@@ -234,7 +224,7 @@
 			else {
 				console.log("Requesting data elements");
 				var requestURL = '/api/dataElements.json?'; 
-				requestURL += 'fields=id,name,dataSets[id]&paging=false';
+				requestURL += 'fields=id,name&paging=false';
 					  
 				requestService.getSingle(requestURL).then(
 					function(response) { //success
@@ -335,6 +325,7 @@
 			}
 			//need to be fetched
 			else {
+			
 				var requestURL = '/api/organisationUnitLevels.json?'; 
 				requestURL += 'fields=name,id,level&paging=false';
 					  
@@ -358,6 +349,7 @@
 			orgunitLevels.promise = deferred.promise;
 			return deferred.promise; 
 		};
+			
 		
 		
 		function sortLevels(a, b) {
@@ -418,7 +410,7 @@
 			//need to be fetched
 			else {
 				var requestURL = '/api/organisationUnits.json?'; 
-				requestURL += 'userOnly=true&fields=id,name,children[name,id]&paging=false';
+				requestURL += 'userOnly=true&fields=id,name,level,children[name,id]&paging=false';
 				  
 				requestService.getSingle(requestURL).then(
 					function(response) { //success
@@ -454,7 +446,7 @@
 			//need to be fetched
 			else {
 					var requestURL = '/api/organisationUnits.json?'; 
-					  requestURL += 'userDataViewFallback=true&fields=id,name,children[name,id]&paging=false';
+					  requestURL += 'userDataViewFallback=true&fields=id,name,level,children[name,id]&paging=false';
 					  
 				requestService.getSingle(requestURL).then(
 					function(response) { //success

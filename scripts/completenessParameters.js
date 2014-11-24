@@ -6,8 +6,7 @@
 	    var self = this;
 	        
 	    init();
-	    initSelects();	 
-    	initOrgunitTree();  	
+	    initSelects();	  	
 	    
 		function init() {
 	    	self.dataSets = [];
@@ -53,10 +52,10 @@
 	    
 	    
 	    function initSelects() {
-			
-//			metaDataService.getDataSets().then(function(data) { 
-//				self.dataSets = data;
-//			});
+						
+			metaDataService.getDataSets().then(function(data) { 
+				self.dataSets = data;
+			});
 			
 			metaDataService.getDataElements().then(function(data) { 
 				self.dataElements = data;
@@ -69,6 +68,7 @@
 			
 			metaDataService.getAnalysisOrgunits().then(function(data) { 
 				self.userOrgunits = data;
+				userOrgunitString();
 			});
 			
 			metaDataService.getOrgunitLevels().then(function(data) { 
@@ -82,8 +82,10 @@
 				
 			//Defaults
 			self.onlyNumbers = /^\d+$/;
-			self.threshold = 90;
-			self.stdDev = 3.0;
+			self.thresholdHigh = 100;
+			self.thresholdLow = 60;
+			self.stdDev = 2;
+			self.gapLimit = 2;
 			self.analysisType = "outlier";
 			
 			
@@ -100,91 +102,25 @@
 			self.periodOption = "last";
 			self.currentDate = new Date();			
 	    	
-	    	self.includeChildren = true;
-	    	self.orgunitSelectionType = 'user';
+	    	self.userOrgunitLabel = "";
 	    }
-	    				
-
-		function initOrgunitTree() {
-			$('#orgunitTree').jstree({
-				"plugins" : [ "wholerow", "ui"],
-			    'core': {
-		            'data': function (node, callback) {
-		            	
-		            	//Tree is empty - get first two levels right away
-		            	if (node.parent === null) {
-		            	
-		            		metaDataService.getAnalysisOrgunits().then(function(data) { 
-		            			var orgunits = data;
-		            			var orgunitNodes = [];
-				
-								//Iterate over all the orgunit the user is assigned to (root(s))
-								for (var i = 0; i < orgunits.length; i++) {
-									orgunitNodes[i] = {
-										'id': orgunits[i].id, 
-										'text': orgunits[i].name,
-										'children': [], 
-										'state': {
-											'opened': true
-										}
-									};
-									
-									//Add the children of the root(s) as well
-									for (var j = 0; j < orgunits[i].children.length; j++) {
-										orgunitNodes[i].children.push({
-											'id': orgunits[i].children[j].id,
-											'text': orgunits[i].children[j].name,
-											'children': true
-										});
-										
-										orgunitNodes[i].children.sort(sortNodeByName);
-									}	
-								}
-
-								orgunitNodes.sort(sortNodeByName);
-								callback(orgunitNodes);
-		            		
-		            		});
-		            	}
-			                	
-	                	//A leaf was clicked, need to get the next level
-	                	else {
-	                		var orgunits = metaDataService.orgunitChildrenFromParentID(node.id);
-	                		var children = [];
-	                		for (var i = 0; i < orgunits.length; i++) {
-	                			children.push({
-                					'id': orgunits[i].id,
-                					'text': orgunits[i].name,
-                					'children': true //should probably add a check for number of levels, and avoid this for facilities
-	                			});
-	                		}
-	                		
-	                		children.sort(sortNodeByName);
-	                		callback(children);	                		
-	                	} //end else
-	                }//end data
-		        }//end core
-		   	}).bind("select_node.jstree", function (NODE, REF_NODE) {
-		   		self.orgunits = $('#orgunitTree').jstree('get_selected');
-		   	}).on("loaded.jstree", function() {
-		   		//select user orgunit nodes as default
-		   		metaDataService.getUserOrgunits().then(function(data) {
-		   			for (var i = 0; i < data.length; i++) {
-		   				$('#orgunitTree').jstree('select_node', data[i].id);
-		   				console.log("Selected " + data[i].id);
-		   			}
-		   		});
-		   	});
+		
+		
+		function userOrgunitString() {
+			
+			if (self.userOrgunits.length <= 1) {
+				self.userOrgunitLabel = self.userOrgunits[0].name;
+			}
+			else {
+				for (var i = 0; i < self.userOrgunits.length; ) {
+					self.userOrgunitLabel += self.userOrgunits[i++].name;
+	
+					if (i < self.userOrgunits.length) {
+						self.userOrgunitLabel += ", ";	
+					}
+				}
+			}					
 		}
-		
-		
-		function sortNodeByName(a, b) {
-			var aName = a.text.toLowerCase();
-			var bName = b.text.toLowerCase(); 
-			return ((aName < bName) ? -1 : ((aName > bName) ? 1 : 0));
-		
-		}
-		
 		
 		
 		function getPeriodsForAnalysis() {
@@ -246,17 +182,25 @@
 						
 			var period = getPeriodsForAnalysis();
 			
+			
+			var disaggregationType = 'none', disaggregationID = undefined;
+			if (self.orgunitLevelSelected) {
+				disaggregationType = 'level';
+				disaggregationID = 'LEVEL-' + self.orgunitLevelSelected.level;
+			}
+			else if (self.orgunitGroupSelected) {
+				disaggregationType = 'group';
+				disaggregationID = 'OU_GROUP-' + self.orgunitGroupSelected.id;
+			}
 			var orgunit = {
-				'orgunits': self.orgunits,
-				'userOrgunits': self.userOrgunits,
-				'includeChildren': self.includeChildren,
-				'level': self.orgunitLevelSelected,
-				'group': self.orgunitGroup,
-				'selectionType': self.orgunitSelectionType
+				'boundary': self.userOrgunits,
+				'disaggregationType': disaggregationType,
+				'disaggregationID': disaggregationID
 			};
 			
 			var parameters = {
-				'threshold': self.threshold,
+				'thresholdLow': self.thresholdLow,
+				'thresholdHigh': self.thresholdHigh,
 				'stdDev': self.stdDev,
 				'analysisType': self.analysisType
 			};

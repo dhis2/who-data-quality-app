@@ -3,27 +3,52 @@
 	
 	<accordion close-others="paramCtrl.oneAtATime">
 	    <accordion-group heading="Analysis type" is-open="paramCtrl.status.isFirstOpen">
-			<div class="btn-group btn-group-justified" style="margin-bottom: 5px; max-width: 350px;">
-				  <label class="btn btn-default" ng-model="paramCtrl.analysisType" btn-radio="'outlier'">Outlier analysis</label>
-				  <label class="btn btn-default" ng-model="paramCtrl.analysisType" btn-radio="'completeness'">Completeness analysis</label>
+			<div class="btn-group btn-group-justified" style="margin-bottom: 5px; max-width: 380px;">
+				  <label class="btn btn-default" ng-model="paramCtrl.analysisType" btn-radio="'outlier'">Outlier</label>
+  				  <label class="btn btn-default" ng-model="paramCtrl.analysisType" btn-radio="'gap'">Gap</label>
+				  <label class="btn btn-default" ng-model="paramCtrl.analysisType" btn-radio="'threshold'">Threshold</label>
+			
 			</div>
-				<div ng-show="paramCtrl.analysisType === 'completeness'"><br />
-				<label for="threshold">Target for completeness:   </label>
-				<input style="width: 100px;" id="threshold" class="selector" type="number" min="0" max="100" ng-model="paramCtrl.threshold"/>
+				<div ng-show="paramCtrl.analysisType === 'threshold'"><br />
+				<label for="threshold">Threshold low limit</label><br />
+				<input style="width: 100px;" id="thresholdLow" class="selector" type="number" min="0" max="100000" ng-model="paramCtrl.thresholdLow"/><br />
+				<label for="threshold">Threshold high limit</label><br />
+				<input style="width: 100px;" id="thresholdHigh" class="selector" type="number" min="0" max="100000" ng-model="paramCtrl.thresholdHigh"/>
+				<br />
+				<br />
+				<label><span style="font-size: 100%" class="glyphicon glyphicon-info-sign"></span>  Info</label>
+				<p>Organisation units with values below <span style="font-size: 100%;" class="label label-primary">{{paramCtrl.thresholdLow}}</span> or above <span style="font-size: 100%;" class="label label-primary">{{paramCtrl.thresholdHigh}}</span> will be displayed.</p>	
+			</div>
+			
+			
+			<div ng-show="paramCtrl.analysisType === 'gap'"><br />
+				<label for="threshold">Gap threshold (missing values)</label><br />
+				<div class="btn-group btn-group-justified" style="margin-bottom: 5px; max-width: 350px;">
+				  	<label class="btn btn-info" ng-model="paramCtrl.gapLimit" btn-radio="1">1 or more</label>
+				  	<label class="btn btn-warning" ng-model="paramCtrl.gapLimit" btn-radio="2">2 or more</label>
+					<label class="btn btn-danger" ng-model="paramCtrl.gapLimit" btn-radio="3">3 or more</label>
+				</div>
+				<br />
+				<label><span style="font-size: 100%" class="glyphicon glyphicon-info-sign"></span>  Info</label>
+				<p>Organisation units with more than <span style="font-size: 100%;" class="label label-primary">{{paramCtrl.gapLimit}}</span> missing values be displayed.</p>	
 			</div>
 			
 			
 			<div ng-show="paramCtrl.analysisType === 'outlier'"><br />
 				<label for="threshold">Standard deviations</label><br />
 				<div class="btn-group btn-group-justified" style="margin-bottom: 5px; max-width: 350px;">
-				  		<label class="btn btn-info" ng-model="paramCtrl.stdDev" btn-radio="2.0">2 SD</label>
-						<label class="btn btn-warning" ng-model="paramCtrl.stdDev" btn-radio="3.0">3 SD</label>
-						<label class="btn btn-danger" ng-model="paramCtrl.stdDev" btn-radio="4.0">4 SD</label>
-				</div>	
-			</div>
+				  		<label class="btn btn-warning" ng-model="paramCtrl.stdDev" btn-radio="2">Moderate (> 2 SD)</label>
+						<label class="btn btn-danger" ng-model="paramCtrl.stdDev" btn-radio="3">Extreme (> 3 SD)</label>
+				</div>
+				<br />
+				<label><span style="font-size: 100%" class="glyphicon glyphicon-info-sign"></span>  Info</label>
+				<p>Organisation units with values more than <span style="font-size: 100%;" class="label label-primary">{{paramCtrl.stdDev}}</span> standard deviations from the mean will be displayed.</p>
+			</div>	
 	    </accordion-group>
+	    
+	    
 	    <accordion-group heading="Data">
-			<ui-select ng-disabled="paramCtrl.indicatorsSelected || paramCtrl.dataElementsSelected" ng-show="paramCtrl.analysisType === 'completeness'" ng-model="paramCtrl.dataSetsSelected" theme="bootstrap" style="margin-bottom: 10px; min-width: 250px; max-width: 400px;">
+			<ui-select ng-disabled="paramCtrl.indicatorsSelected || paramCtrl.dataElementsSelected" ng-show="paramCtrl.analysisType === 'threshold'" ng-model="paramCtrl.dataSetsSelected" theme="bootstrap" style="margin-bottom: 10px; min-width: 250px; max-width: 400px;">
 			  <ui-select-match placeholder="Select data set...">
 			  	{{paramCtrl.dataSetsSelected.name}}
 			  </ui-select-match>
@@ -32,6 +57,7 @@
 			   		<div ng-bind-html="obj.name | highlight: $select.search"></div>
 			  </ui-select-choices>
 			</ui-select>
+			
 			<ui-select ng-disabled="paramCtrl.indicatorsSelected || paramCtrl.dataSetsSelected" ng-model="paramCtrl.dataElementsSelected" theme="bootstrap" style="margin-bottom: 10px; min-width: 250px; max-width: 400px;">
 			  <ui-select-match placeholder="Select data elements...">
 			  	{{paramCtrl.dataElementsSelected.name}}
@@ -41,6 +67,7 @@
 			   		<div ng-bind-html="obj.name | highlight: $select.search"></div>
 			  </ui-select-choices>
 			</ui-select>
+			
 			<ui-select ng-disabled="paramCtrl.dataSetsSelected || paramCtrl.dataElementsSelected" ng-model="paramCtrl.indicatorsSelected" theme="bootstrap" style="margin-bottom: 10px; min-width: 250px; max-width: 400px;">
 			  <ui-select-match placeholder="Select indicators...">
 			  	{{paramCtrl.indicatorsSelected.name}}
@@ -50,20 +77,80 @@
 			   		<div ng-bind-html="obj.name | highlight: $select.search"></div>
 			  </ui-select-choices>
 			</ui-select>
+			<br />
+				<label><span style="font-size: 100%" class="glyphicon glyphicon-info-sign"></span>  Info</label>
+			<div ng-show="!paramCtrl.dataSetsSelected && !paramCtrl.dataElementsSelected && !paramCtrl.dataSetsSelected">Select data for analysis.</div>
+			<div ng-show="paramCtrl.dataSetsSelected || paramCtrl.dataElementsSelected || paramCtrl.indicatorsSelected">Will perform {{paramCtrl.analysisType}} analysis on <span style="font-size: 100%;" class="label label-primary" ng-show="paramCtrl.dataSetsSelected">{{paramCtrl.dataSetsSelected.name}} (completeness)</span><span style="font-size: 100%;" class="label label-primary" ng-show="paramCtrl.dataElementsSelected">{{paramCtrl.dataElementsSelected.name}}</span><span style="font-size: 100%;" class="label label-primary" ng-show="paramCtrl.indicatorsSelected">{{paramCtrl.indicatorsSelected.name}}</span></div>
 	    </accordion-group>
+	    
+	    
 	    <accordion-group heading="Period">
 			<div class="btn-group" style="margin-bottom: 10px;">
 				  <label class="btn btn-default" ng-model="paramCtrl.periodOption" btn-radio="'last'">Recent periods</label>
 				  <label class="btn btn-default" ng-model="paramCtrl.periodOption" btn-radio="'year'">Periods in year</label>
 				  <label class="btn btn-default" ng-model="paramCtrl.periodOption" btn-radio="'custom'">Custom range</label>
 				</div>
-			<div style="margin-bottom: 15px;" ng-show="paramCtrl.periodOption === 'last'">Last 
-			<select ng-model="paramCtrl.periodCountSelected" ng-options="periodCount.name for periodCount in paramCtrl.periodCounts"></select>
-			<select ng-model="paramCtrl.periodTypeSelected" ng-options="periodType.name for periodType in paramCtrl.periodTypes"></select></div>
-			<div style="margin-bottom: 15px;" ng-show="paramCtrl.periodOption === 'year'"><select ng-model="paramCtrl.periodTypeSelected" ng-options="periodType.name for periodType in paramCtrl.periodTypes"></select>  of  <select ng-model="paramCtrl.yearSelected" ng-options="year.name for year in paramCtrl.years"></select></div>
-			<div ng-show="paramCtrl.periodOption === 'custom'">
+			<div style="margin-bottom: 15px;" ng-show="paramCtrl.periodOption === 'last'">
 			
-			<div style="margin-bottom: 10px;">Periodtype: <select ng-model="paramCtrl.periodTypeSelected" ng-options="periodType.name for periodType in paramCtrl.periodTypes"></select>
+			<label>Use the last...</label><br />
+			<ui-select ng-model="paramCtrl.periodCountSelected" theme="bootstrap" style="margin-bottom: 10px; min-width: 250px; max-width: 250px;">
+			  <ui-select-match placeholder="Select number of periods...">
+			  	{{paramCtrl.periodCountSelected.name}}
+			  </ui-select-match>
+			  <ui-select-choices 
+			  	repeat="obj in paramCtrl.periodCounts | filter: $select.search">
+			   		<div ng-bind-html="obj.name | highlight: $select.search"></div>
+			  </ui-select-choices>
+			</ui-select>
+			<ui-select ng-model="paramCtrl.periodTypeSelected" theme="bootstrap" style="margin-bottom: 10px; min-width: 250px; max-width: 250px;">
+			  <ui-select-match placeholder="Select period type...">
+			  	{{paramCtrl.periodTypeSelected.name}}
+			  </ui-select-match>
+			  <ui-select-choices 
+			  	repeat="obj in paramCtrl.periodTypes | filter: $select.search">
+			   		<div ng-bind-html="obj.name | highlight: $select.search"></div>
+			  </ui-select-choices>
+			</ui-select>
+			</div>
+			
+			
+			
+			<div style="margin-bottom: 15px;" ng-show="paramCtrl.periodOption === 'year'">
+			<label>Use...</label><br />
+			<ui-select ng-model="paramCtrl.periodTypeSelected" theme="bootstrap" style="margin-bottom: 10px; min-width: 250px; max-width: 250px;">
+			  <ui-select-match placeholder="Select period type...">
+			  	{{paramCtrl.periodTypeSelected.name}}
+			  </ui-select-match>
+			  <ui-select-choices 
+			  	repeat="obj in paramCtrl.periodTypes | filter: $select.search">
+			   		<div ng-bind-html="obj.name | highlight: $select.search"></div>
+			  </ui-select-choices>
+			</ui-select>
+			<label>in</label>			
+			<ui-select ng-model="paramCtrl.yearSelected" theme="bootstrap" style="margin-bottom: 10px; min-width: 250px; max-width: 250px;">
+			  <ui-select-match placeholder="Select year...">
+			  	{{paramCtrl.yearSelected.name}}
+			  </ui-select-match>
+			  <ui-select-choices 
+			  	repeat="obj in paramCtrl.years | filter: $select.search">
+			   		<div ng-bind-html="obj.name | highlight: $select.search"></div>
+			  </ui-select-choices>
+			</ui-select>
+			
+			</div>
+			<div ng-show="paramCtrl.periodOption === 'custom'">
+			<label>Use...</label><br />
+			<div style="margin-bottom: 10px;">
+			<ui-select ng-model="paramCtrl.periodTypeSelected" theme="bootstrap" style="margin-bottom: 10px; min-width: 250px; max-width: 250px;">
+			  <ui-select-match placeholder="Select period type...">
+			  	{{paramCtrl.periodTypeSelected.name}}
+			  </ui-select-match>
+			  <ui-select-choices 
+			  	repeat="obj in paramCtrl.periodTypes | filter: $select.search">
+			   		<div ng-bind-html="obj.name | highlight: $select.search"></div>
+			  </ui-select-choices>
+			</ui-select>
+			
 				</div>
 				<div style="display: inline-block;"><label>From</label>
 				<div style="min-height:290px;">
@@ -74,28 +161,23 @@
 				        <datepicker ng-model="paramCtrl.date.endDate" min-date="paramCtrl.date.startDate" max-date="paramCtrl.currentDate" class="well well-sm" starting-day="1"></datepicker>
 				</div>
 				</div>
-			</div>
-				
-				
+			</div>				
 	    </accordion-group>
+	    
 	    <accordion-group heading="Orgunit" is-open="status.open">
-			<div class="btn-group btn-group-justified" style="margin-bottom: 5px; width: 400px;">
-					  <label class="btn btn-default" ng-model="paramCtrl.orgunitSelectionType" btn-radio="'user'">User</label>
-					  <label class="btn btn-default" ng-model="paramCtrl.orgunitSelectionType" btn-radio="'select'">Manual</label>
-					  <label class="btn btn-default" ng-model="paramCtrl.orgunitSelectionType" btn-radio="'level'">Level</label>
-					  <label class="btn btn-default" ng-model="paramCtrl.orgunitSelectionType" btn-radio="'group'">Group</label>
-				</div>
-				
-				<ui-select ng-show="paramCtrl.orgunitSelectionType === 'level'" ng-model="paramCtrl.orgunitLevelSelected" theme="bootstrap" style="margin-bottom: 10px; min-width: 250px; max-width: 400px;">
+		    <label for="orgunitSelect">Disaggregation</label>
+			<div id="orgunitSelect">
+				<ui-select ng-disabled="paramCtrl.orgunitGroupSelected" ng-model="paramCtrl.orgunitLevelSelected" theme="bootstrap" style="margin-bottom: 10px; min-width: 250px; max-width: 400px;">
 				  <ui-select-match placeholder="Select organisation unit level">
 				  	{{paramCtrl.orgunitLevelSelected.name}}
 				  </ui-select-match>
 				  <ui-select-choices 
 				  	repeat="obj in paramCtrl.orgunitLevels">
-				   		<div ng-bind-html="obj.name | highlight: $select.search"></div>
+				   		<div ng-if="obj.level > paramCtrl.userOrgunits[0].level" ng-bind-html="obj.name | highlight: $select.search"></div>
 				  </ui-select-choices>
 				</ui-select>
-				<ui-select ng-show="paramCtrl.orgunitSelectionType === 'group'" ng-model="paramCtrl.orgunitGroupSelected" theme="bootstrap" style="margin-bottom: 10px; min-width: 250px; max-width: 400px;">
+				
+				<ui-select ng-disabled="paramCtrl.orgunitLevelSelected" ng-model="paramCtrl.orgunitGroupSelected" theme="bootstrap" style="margin-bottom: 10px; min-width: 250px; max-width: 400px;">
 					  <ui-select-match placeholder="Select organisation unit group">
 					  	{{paramCtrl.orgunitGroupSelected.name}}
 					  </ui-select-match>
@@ -104,16 +186,18 @@
 					   		<div ng-bind-html="obj.name | highlight: $select.search"></div>
 					  </ui-select-choices>
 				</ui-select>
-				<p ng-show="paramCtrl.orgunitSelectionType === 'user'" ng-repeat="orgunit in paramCtrl.userOrgunits"><em>{{orgunit.name}}; </em></p>
-				<p ng-show="paramCtrl.orgunitSelectionType === 'group' || paramCtrl.orgunitSelectionType === 'level'">Boundary:</p>   	    	
-			<div ng-show="paramCtrl.orgunitSelectionType != 'user'" class="treeHolder">
-				<div id="orgunitTree"></div>
 			</div>
-			<div ng-show="paramCtrl.orgunitSelectionType === 'user' || paramCtrl.orgunitSelectionType === 'select'">Include children: <input type="checkbox" ng-model="paramCtrl.includeChildren"></div>
+			
+			<label for="orgunitSelected">Selected </label>
+			<div id="orgunitSelected">
+				<p ng-show="paramCtrl.orgunitLevelSelected"><span style="font-size: 100%;" class="label label-primary">{{paramCtrl.userOrgunitLabel}}</span><span class="glyphicon glyphicon-chevron-right"></span><span style="font-size: 100%;" class="label label-primary">{{paramCtrl.orgunitLevelSelected.name}}</span></p>
+				
+				<p ng-show="paramCtrl.orgunitGroupSelected"><span style="font-size: 100%;" class="label label-primary">{{paramCtrl.userOrgunitLabel}}</span><span class="glyphicon glyphicon-chevron-right"></span><span style="font-size: 100%;" class="label label-primary">{{paramCtrl.orgunitGroupSelected.name}}</span></p>
+				
+				<p ng-show="!paramCtrl.orgunitGroupSelected && !paramCtrl.orgunitLevelSelected"><span style="font-size: 100%;" class="label label-primary">{{paramCtrl.userOrgunitLabel}}</span></p>
+			</div>
 	    </accordion-group>
 	  </accordion>
-	
-	<!-- ng-disabled="paramCtrl.orgunits.length === 0 || (paramCtrl.dataElementsSelected.length === 0 && paramCtrl.indicatorsSelected.length === 0 && paramCtrl.dataSetsSelected.length === 0) || paramCtrl.date.startDate == ''" -->
-	{{paramCtrl.orgunits.length}}-{{paramCtrl.dataElementsSelected.length}}-{{paramCtrl.indicatorsSelected.length}}-{{paramCtrl.dataSetsSelected.length}}-{{paramCtrl.date.startDate}}
-	<button type="button" class="btn btn-primary" ng-click="paramCtrl.doAnalysis();"> Analyze</button>
+	  	
+	<button ng-disabled="(!paramCtrl.dataElementsSelected && !paramCtrl.indicatorsSelected && !paramCtrl.dataSetsSelected)" type="button" class="btn btn-primary" ng-click="paramCtrl.doAnalysis();"> Analyze</button>
 </div>

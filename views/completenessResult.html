@@ -2,8 +2,6 @@
 	<div ng-show="resultsCtrl.results.length === 0" style="height: 400px;"></div>
 	<div ng-show="resultsCtrl.results.length > 0">
 		<h3>Result</h3>
-		<div>Show only violations: <input type="checkbox" ng-model="resultsCtrl.outliersOnly" ng-change="resultsCtrl.filter()"></div>
-		<br />
 		<tabset>
 			<tab ng-repeat="result in resultsCtrl.results" heading="{{result.title}}" active="result.active">
 				<div class="table-responsive">
@@ -18,6 +16,14 @@
 				        
 				        <tfoot>
 				            <td colspan="{{1+result.headers.length}}">
+					            <div class="btn-group btn-group-justified pull-left" style="margin-top: 20px; width: 200px;" class="pull-left">
+					            	<label ng-change="resultsCtrl.filter()" class="btn btn-default" ng-model="resultsCtrl.outliersOnly" btn-radio="false">All rows</label>
+	            				  <label ng-change="resultsCtrl.filter()" class="btn btn-default" ng-model="resultsCtrl.outliersOnly" btn-radio="true">Violations</label>
+								</div>
+					            
+					            <div style="margin-left:20px; margin-top:27px" class="pull-left">
+					            <span style="font-size: 100%;" class="label label-primary">{{result.metaData.totalRows}}</span> rows, <span style="font-size: 100%;" class="label label-danger">{{result.metaData.outlierRows}}</span> with violations.</div>
+					            
 				                <ul class="pagination pull-right">
 				                    <li ng-class="{disabled: result.currentPage == 0}">
 				                        <a href ng-click="resultsCtrl.prevPage(result)">« Prev</a>
@@ -36,8 +42,8 @@
 				        
 				        <tbody>
 				        	<tr valign="middle" ng-repeat="row in result.pages[result.currentPage]">
-				                <td ng-repeat="value in row.data" ng-class="{danger: (value.value < row.metaData.lowLimit || value.value > row.metaData.highLimit), valueCell: value.type === 'number'}" ng-click="completeness(row.metaData.dx, row.metaData.ou, value.pe);">
-				                	<div popover="{{resultsCtrl.popoverText}}" popover-trigger="click">{{value.value}}</div>
+				                <td ng-repeat="value in row.data" ng-class="{danger: (value.value < row.metaData.lowLimit || value.value > row.metaData.highLimit), valueCell: value.type === 'number'}">
+				                	<div>{{value.value}}</div>
 				                </td>
 				                <td><div class="btn-group" dropdown is-open="status.isopen">
 				                      <button type="button tableButton" class="btn btn-default dropdown-toggle" ng-disabled="disabled">
@@ -45,8 +51,6 @@
 				                      </button>
 				                      <ul class="dropdown-menu" role="menu">
 				                        <li><a href ng-click="resultsCtrl.showDetails(row);">Visualise</a></li>
-				                        <li><a href ng-click="resultsCtrl.showDetails(row);">Analyse completeness</a></li>
-				                        <li><a href ng-click="resultsCtrl.showDetails(row);">Analyse children</a></li>
 				                        <li><a href ng-click="alert('To-Do...');">Notify users</a></li>
 				                      </ul>
 				                    </div>
@@ -55,7 +59,7 @@
 				    	</tbody>
 				    	
 					</table>
-				</div>	
+				</div>
 				<div style="min-height: 400px;" id="detailedResult">
 					<h4>Details</h4>
 				</div>

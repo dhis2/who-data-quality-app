@@ -8,7 +8,6 @@
 	<script src="libs/ui-bootstrap-tpls.js"></script>
 	<script src="libs/select.js"></script>
 	<script src="libs/angular-sanitize.js"></script>
-	<script src="libs/jstree.js"></script>
 	<script src="libs/periodTypeNoDep.js"></script>
 
 	<link rel="stylesheet" href="libs/bootstrap.css"/>
@@ -46,6 +45,21 @@
 	<!-- App Style -->
 	<link type="text/css" rel="stylesheet" media="screen" href="css/style.css">		
 	
+	
+	
+	<!--
+	    IE8 support, see AngularJS Internet Explorer Compatibility http://docs.angularjs.org/guide/ie
+	    For Firefox 3.6, you will also need to include jQuery and ECMAScript 5 shim
+	  -->
+	  <!--[if lt IE 9]>
+	    <script src="//cdnjs.cloudflare.com/ajax/libs/es5-shim/2.2.0/es5-shim.js"></script>
+	    <script>
+	      document.createElement('ui-select');
+	      document.createElement('ui-select-match');
+	      document.createElement('ui-select-choices');
+	    </script>
+	  <![endif]-->
+	  
 </head>
 
 <body>

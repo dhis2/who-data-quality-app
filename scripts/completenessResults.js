@@ -4,11 +4,10 @@
 	    var self = this;
 	    
 	    self.results = [];
-	    self.itemsPerPage = 10;
-        self.outliersOnly = false;
+	    self.itemsPerPage = 15;
+        self.outliersOnly = true;
         self.hasVisual = false;
         
-        self.popoverText = "Loading...";
         
         //showDetails
         self.showDetails = function(row) {
@@ -42,12 +41,7 @@
     		
     		visualisationService.generateChart('detailChart', 'column', series, category, filter, parameters);
         };
-        
-        self.completeness = function(dx, ou, pe) {
-            //self.popoverText = "Loading...";
-        	self.popoverText = completenessDataService.getSingleCompleteness(dx, ou, pe);
-        };
-        
+                
 
         // calculate page in place
         function paginateRows(rows) {
