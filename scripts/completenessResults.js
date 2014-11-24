@@ -94,21 +94,6 @@
             result.currentPage = n;
         };
              
-        function filterOutlierRows(rows) {
-        
-        	var row, filteredRows = [];
-        	for (var i = 0; i < rows.length; i++) {
-        		row = rows[i];
-        		
-        		if (row.metaData.hasOutlier) {
-        			filteredRows.push(row);
-        		}
-        	}
-        	
-        	return filteredRows;
-        	
-        
-        }
             
         self.filter = function() {
 				for (var i = 0; i < self.results.length; i++) {
@@ -141,7 +126,22 @@
 	    };
    	    completenessDataService.resultsCallback = receiveResult;
    	    
-
+		
+		function filterOutlierRows(rows) {
+		
+			var row, filteredRows = [];
+			for (var i = 0; i < rows.length; i++) {
+				row = rows[i];
+				
+				if (row.metaData.hasOutlier) {
+					filteredRows.push(row);
+				}
+			}
+			
+			return filteredRows;
+			
+		
+		}
 			                   	   	
 	   	return self;
 	});
