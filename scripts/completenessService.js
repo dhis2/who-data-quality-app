@@ -74,9 +74,8 @@
 				for (var i = 0; i < response.length; i++) {
 					var data = response[i].data;
 					var request =  requestFromURL(response[i].config.url);
-					if (request.type === 'outlier') {
-						results.push(outlierAnalysis(data, request));						
-					}
+					
+					results.push(resultsAnalysis(data, request));
 					
 				}
 				
@@ -112,7 +111,7 @@
 		}
 		
 		
-		function outlierAnalysis(data, request) {
+		function resultsAnalysis(data, request) {
 			
 			var periodType = request.periodType;
 			
@@ -150,18 +149,22 @@
 			var row, value, orgunitID, periodID;
 			headers.push({'name': "Orgunit", 'id': orgunitID});
 			for (var i = 0; i < orgunitIDs.length; i++) {
+				orgunitID = orgunitIDs[i];
 				row = {
 					'metaData': {
 						'dx': variableID,
+						'dxName': data.metaData.names[variableID],
 						'ou': orgunitID,
+						'ouName': data.metaData.names[orgunitID],
 						'hasOutlier': false,
 						'lowLimit': null,
-						'highLimit': null
+						'highLimit': null,
+						'gaps': 0
 					},
 					'data': []
 				};
-				orgunitID = orgunitIDs[i];
-				row.data.push({'value': data.metaData.names[orgunitID], 'type': "text"});
+
+				row.data.push({'value': data.metaData.names[orgunitID], 'type': "header"});
 				
 				for (var j = 0; j < periods.length; j++) {
 					periodID = periods[j].id;
@@ -173,12 +176,12 @@
 					for (var k = 0; k < data.rows.length && !found; k++) {
 
 						if (data.rows[k][ouIndex] === orgunitID && data.rows[k][peIndex] === periodID) { 
-							row.data.push({'pe': periodID, 'value': parseFloat(data.rows[k][valueIndex]), 'type': "number"});
+							row.data.push({'pe': periodID, 'value': parseFloat(data.rows[k][valueIndex]), 'type': "data"});
 							found = true;
 						}
 					}
 					if (!found) {
-						row.data.push({'pe': periodID, 'value': "", 'type': "blank"});
+						row.data.push({'pe': periodID, 'value': "", 'type': "data"});
 					}
 				}
 				
@@ -190,48 +193,79 @@
 			//Find outliers 
 			//TODO: should be possible to do gaps and thresholds here as well, very similar
 			var value, mean, variance, standardDeviation, noDevs, highLimit, lowLimit, hasOutlier, outlierCount = 0, violationCount = 0;
-			for (var i = 0; i < rows.length; i++) {
-				valueSet = [];
-				row = rows[i];
-
-				for (var j = 0; j < row.data.length; j++) {
-					value = row.data[j].value;
-					if (!isNaN(value)) {
-						valueSet.push(value);
+			if (request.type === 'outlier' || request.type === 'threshold') {			
+				
+				for (var i = 0; i < rows.length; i++) {
+					valueSet = [];
+					row = rows[i];
+	
+					for (var j = 0; j < row.data.length; j++) {
+						value = row.data[j].value;
+						if (!isNaN(value)) {
+							valueSet.push(value);
+						}
 					}
+					
+					if (request.type === 'outlier') {
+					
+						mean = mathService.getMean(valueSet); 
+						variance = mathService.getVariance(valueSet);
+						standardDeviation = mathService.getStandardDeviation(valueSet);
+						noDevs = parseFloat(request.parameters.stdDev);
+						highLimit = (mean + noDevs*standardDeviation);
+						lowLimit = (mean - noDevs*standardDeviation);
+						if (lowLimit < 0) lowLimit = 0;
+					
+					}
+					else { //threshold - min and max already set
+						lowLimit = request.parameters.thresholdLow;
+						highLimit = request.parameters.thresholdHigh;
+					}
+						
+					row.metaData.lowLimit = lowLimit;
+					row.metaData.highLimit = highLimit;
+					
+					hasOutlier = false;
+					for (var j = 0; j < row.data.length; j++) {
+						value = row.data[j].value;
+						if (!isNaN(value)) {
+							if (value > highLimit || value < lowLimit) {
+								hasOutlier = true;
+								j = row.data.length;
+								violationCount++;
+							}
+						}
+					}
+					
+					row.metaData.hasOutlier = hasOutlier;
+					if (hasOutlier) outlierCount++;
 				}
-				
-				mean = mathService.getMean(valueSet); 
-				variance = mathService.getVariance(valueSet);
-				standardDeviation = mathService.getStandardDeviation(valueSet);
-				noDevs = parseFloat(request.parameters.stdDev);
-				highLimit = (mean + noDevs*standardDeviation);
-				lowLimit = (mean - noDevs*standardDeviation);
-				if (lowLimit < 0) lowLimit = 0;
-								
-				row.metaData.lowLimit = lowLimit;
-				row.metaData.highLimit = highLimit;
-				
-				hasOutlier = false;
-				for (var j = 0; j < row.data.length; j++) {
-					value = row.data[j].value;
-					if (!isNaN(value)) {
-						if (value > highLimit || value < lowLimit) {
-							hasOutlier = true;
-							j = row.data.length;
+			}
+			else { //gap analysis
+				var gaps;
+				for (var i = 0; i < rows.length; i++) {
+					row = rows[i];
+					gaps = 0;
+					for (var j = 0; j < row.data.length; j++) {
+						if (row.data[j].type === 'data' && row.data[j].value === "") {
+							gaps++;
 							violationCount++;
 						}
 					}
+					
+					if (gaps >= request.parameters.maxGaps) {
+						row.metaData.hasOutlier = true;
+					}
+					if (row.metaData.hasOutlier) outlierCount++;
 				}
-				
-				row.metaData.hasOutlier = hasOutlier;
-				if (hasOutlier) outlierCount++;
 			}
+			
 			
 			
 			
 			var analysisResult = {
 				'title': title.join(', '),
+				'type': request.type,
 				'metaData': {
 					'totalRows': rows.length,
 					'outlierRows': outlierCount,

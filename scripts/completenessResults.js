@@ -12,41 +12,53 @@
         //showDetails
         self.showDetails = function(row) {
 
-			$('#detailedResult').html('<div class="chartHolder" id="detailChart"></div>');
-
-        	var series = {}, category = {}, filter = {}, parameters = {};
+			$('#detailedResult').html('<div id="detailChart"><svg class="bigChart"></svg></div>');
         	
-        	series.type = "dx"; 
-        	series.data = [{'id': row.metaData.dx}];
-        	
-        	filter.type = "ou";
-        	filter.data = [{'id': row.metaData.ou}];
-        	
-        	category.type = "pe";
-        	category.data = [];
-        	for (var i = 0; i < row.data.length; i++) {
-        		category.data.push({
-        			'id': row.data[i].pe        		
-        		});
+        	var chartSeries = [];
+        	var series = {};
+        	var data = [];
+        	//TODO: Needs to be more fancy here in order to deal with multiple variables (if needed)
+        	for (var i = 1; i < row.data.length; i++) {
+        		
+        		if (row.data[i].type === "data") {
+		    		data.push({
+		    			'pe': row.data[i].pe,   		
+		    			'value': row.data[i].value
+		    		});
+        		}
         	}
-        	        	
-        	// All following options are optional
-    		parameters.width = $('#detailChart').innerWidth();
-    		parameters.heigth = $('#detailChart').innerHeight();
-    		parameters.showData = true;
-    		parameters.hideLegend = true;
-    		parameters.hideTitle = true;
-    		if (row.metaData.highLimit) parameters.targetLineValue = Math.round(row.metaData.highLimit);
-    		if (row.metaData.lowLimit) parameters.baseLineValue = Math.round(row.metaData.lowLimit);
-    		
-    		visualisationService.generateChart('detailChart', 'column', series, category, filter, parameters);
+        	series.data = data;
+        	series.name = row.metaData.dxName + " - " + row.metaData.ouName; 
+			
+			var firstPeriod = series.data[0].pe;
+			var lastPeriod = series.data[series.data.length - 1].pe;        	
+        	
+        	chartSeries.push(series);
+        	
+        	series = {};
+        	series.name = "Low limit (" + parseInt(row.metaData.lowLimit).toString() + ")";
+        	series.data = [{'pe': firstPeriod, 'value': row.metaData.lowLimit}, 
+        				{'pe': lastPeriod, 'value': row.metaData.lowLimit}];
+			chartSeries.push(series);
+			
+			
+			series = {};
+			series.name = "High limit (" + parseInt(row.metaData.highLimit).toString() + ")";
+			series.data = [{'pe': firstPeriod, 'value': row.metaData.highLimit}, 
+						{'pe': lastPeriod, 'value': row.metaData.highLimit}];
+			chartSeries.push(series);
+        	        	        	   	    		
+    		visualisationService.timeTrendChart('detailChart', chartSeries, {});
         };
                 
 
         // calculate page in place
         function paginateRows(rows) {
             var pagedItems = [];
-            
+                  
+                  
+                              
+                  
             for (var i = 0; i < rows.length; i++) {
                 if (i % self.itemsPerPage === 0) {
                     pagedItems[Math.floor(i / self.itemsPerPage)] = [ rows[i] ];
@@ -88,34 +100,100 @@
         };
              
             
-        self.filter = function() {
-				for (var i = 0; i < self.results.length; i++) {
-					self.results[i] = self.filterChanged(self.results[i]);
-				}
-      };
         
-	    self.filterChanged = function(result) {
+	    self.updateCurrentView = function() {
+	    	var result = self.results[getActiveResultTab()];
+	    	var rows = result.rows;
+	    	
 	    	if (self.outliersOnly) {
-	    		result.pages = paginateRows(filterOutlierRows(result.rows));	
+	    		rows = sortRows(rows, result.sortColumn, result.reverse);	    		 
+	    		rows = filterOutlierRows(rows);
+	    		result.pages = paginateRows(rows);	
 	    	}
 	    	else {
-	    		result.pages = paginateRows(result.rows);	
+	    		rows = sortRows(rows, result.sortColumn, result.reverse); 
+	    		result.pages = paginateRows(rows);
 	    	}
 	    	
 	    	result.currentPage = 0;
 	    	result.n = 0;
-	    	
-	    	console.log(result);
-	    	
+	    		    	
 	    	return result;
-	    	
 	    };
-	    	    	    
+	    
+	    
+	    self.changeSortOrder = function(sortColumn) {	        
+	        var resultIndex = getActiveResultTab();
+	        
+	        if (self.results[resultIndex].sortColumn === sortColumn) {
+	        	self.results[resultIndex].reverse = !self.results[resultIndex].reverse;
+	        }
+	        self.results[resultIndex].sortColumn = sortColumn;
+	        
+	        self.updateCurrentView()
+	    }
+	    
+	    
+	    function sortRows(rows, sortCol, reverse) {
+			
+			var tmp = rows;
+			if (rows[0].data[sortCol].type === 'header') {
+				rows.sort(function (a, b) {
+					if (reverse) {
+						var tmp = a;
+						a = b;
+						b = tmp;
+					}
+					return a.data[sortCol].value.toLowerCase().localeCompare(b.data[sortCol].value.toLowerCase());	
+				});
+			}
+			else {
+				rows.sort(function (a, b) {
+					if (reverse) {
+						var tmp = a;
+						a = b;
+						b = tmp;
+					}
+					return (parseFloat(b.data[sortCol].value) - parseFloat(a.data[sortCol].value));	
+				});
+			}
+			
+			return rows;
+				    
+	    }
+	    
+	    
+	    function getActiveResultTab() {
+	    	for (var i = 0; i < self.results.length; i++) {
+	    		if (self.results[i].active) return i;
+	    	}
+	    }
+	    
+	    
+	    function setActiveResultTab(index) {
+	    	
+	    	for (var i = 0; i < self.results.length; i++) {
+	    		if (i != index) self.results[i].active = false;
+	    		else self.results[i].active = true;
+	    	}	    
+	    }
+	       
+	       	    
 	    var receiveResult = function(result) {		    
 	    
 	    	var latest = self.results.length;	
-		    self.results.push(self.filterChanged(result));
-		    self.results[latest].active = true;
+
+		    self.results.push(result);
+		    
+		    self.results[latest].sortColumn = 0;
+		    self.results[latest].sortRevers = false;
+		    
+		    if (result.metaData.outlierRows === 0) {
+		    	self.outliersOnly = false;
+		    }
+		    setActiveResultTab(latest);
+		    self.updateCurrentView();
+			
 	    };
    	    completenessDataService.resultsCallback = receiveResult;
    	    

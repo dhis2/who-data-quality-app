@@ -83,6 +83,27 @@
 		
 		};
 		
+		
+		self.epochFromPeriod = function (period) {
+		
+			//TODO: Deal with half-years etc
+			return moment(period, ["YYYYMM", "YYYYWww", "YYYYQQ", "YYYY"]).format('X');		
+		
+		};
+		
+		
+		self.periodFromEpoch = function (epoch, periodType) {
+			
+			if (periodType === 'monthly') {
+				return moment.unix(epoch).format('YYYYMM');
+			}
+			else if (periodType === 'yearly') {
+				return moment.unix(epoch).format('YYYY');
+			}
+			
+			//TODO
+		}
+		
 		  	
 		
 		function dateToISOdate(date) {

@@ -201,6 +201,7 @@
 			var parameters = {
 				'thresholdLow': self.thresholdLow,
 				'thresholdHigh': self.thresholdHigh,
+				'maxGaps': self.gapLimit,
 				'stdDev': self.stdDev,
 				'analysisType': self.analysisType
 			};

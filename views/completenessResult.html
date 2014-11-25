@@ -3,13 +3,13 @@
 	<div ng-show="resultsCtrl.results.length > 0">
 		<h3>Result</h3>
 		<tabset>
-			<tab ng-repeat="result in resultsCtrl.results" heading="{{result.title}}" active="result.active">
+			<tab ng-repeat="result in resultsCtrl.results" heading="{{result.title}} ({{result.type}})" active="result.active">
 				<div class="table-responsive">
 					<table class="table table-bordered table-striped table-condensed table-hover">
 						
 				        <thead>
 				            <tr>
-				            	<th ng-repeat="header in result.headers">{{header.name}}</th>
+				            	<th ng-repeat="header in result.headers">{{header.name}}<a ng-click="resultsCtrl.changeSortOrder($index)"><span class="glyphicon glyphicon-sort"></span></a></th>
 				            	<th></th>
 				            </tr>
 				        </thead>
@@ -17,12 +17,12 @@
 				        <tfoot>
 				            <td colspan="{{1+result.headers.length}}">
 					            <div class="btn-group btn-group-justified pull-left" style="margin-top: 20px; width: 200px;" class="pull-left">
-					            	<label ng-change="resultsCtrl.filter()" class="btn btn-default" ng-model="resultsCtrl.outliersOnly" btn-radio="false">All rows</label>
-	            				  <label ng-change="resultsCtrl.filter()" class="btn btn-default" ng-model="resultsCtrl.outliersOnly" btn-radio="true">Violations</label>
+					            	<label ng-change="resultsCtrl.updateCurrentView()" class="btn btn-default" ng-model="resultsCtrl.outliersOnly" btn-radio="false">All rows</label>
+	            				  <label ng-change="resultsCtrl.updateCurrentView()" class="btn btn-default" ng-model="resultsCtrl.outliersOnly" btn-radio="true">Violations</label>
 								</div>
 					            
 					            <div style="margin-left:20px; margin-top:27px" class="pull-left">
-					            <span style="font-size: 100%;" class="label label-primary">{{result.metaData.totalRows}}</span> rows, <span style="font-size: 100%;" class="label label-danger">{{result.metaData.outlierRows}}</span> with violations.</div>
+					            <span style="font-size: 100%;" class="label label-primary">{{result.metaData.totalRows}}</span> rows   <span style="font-size: 100%;" class="label label-danger">{{result.metaData.outlierRows}}</span> with violations.</div>
 					            
 				                <ul class="pagination pull-right">
 				                    <li ng-class="{disabled: result.currentPage == 0}">
@@ -42,28 +42,38 @@
 				        
 				        <tbody>
 				        	<tr valign="middle" ng-repeat="row in result.pages[result.currentPage]">
-				                <td ng-repeat="value in row.data" ng-class="{danger: (value.value < row.metaData.lowLimit || value.value > row.metaData.highLimit), valueCell: value.type === 'number'}">
-				                	<div>{{value.value}}</div>
+				                
+				                <!-- IF: Outlier and threshold -->
+				                <td ng-if="result.type != 'gap'" ng-repeat="value in row.data" ng-class="{danger: (value.value < row.metaData.lowLimit || value.value > row.metaData.highLimit), valueCell: value.type === 'data'}">
+									{{value.value}}
 				                </td>
+				                
+				                <!-- IF: Gap -->
+				                <td ng-if="result.type === 'gap'" ng-repeat="value in row.data" ng-class="{danger: (value.type === 'data' && value.value === ''), valueCell: value.type === 'data'}">{{value.value}}
+				                </td>
+				                
 				                <td><div class="btn-group" dropdown is-open="status.isopen">
 				                      <button type="button tableButton" class="btn btn-default dropdown-toggle" ng-disabled="disabled">
 				                        Action <span class="caret"></span>
 				                      </button>
 				                      <ul class="dropdown-menu" role="menu">
 				                        <li><a href ng-click="resultsCtrl.showDetails(row);">Visualise</a></li>
-				                        <li><a href ng-click="alert('To-Do...');">Notify users</a></li>
+				                        <li><a href ng-click="alert('To-Do...');">Contact</a></li>
 				                      </ul>
 				                    </div>
 				                </td>
+				                
+				                
 				            </tr>
+				            
+				            
+				            
 				    	</tbody>
 				    	
 					</table>
 				</div>
-				<div style="min-height: 400px;" id="detailedResult">
-					<h4>Details</h4>
-				</div>
 			</tab>
 		</tabset>
+		<div style="min-height: 400px;" id="detailedResult"></div>
 	</div>
 </div>
