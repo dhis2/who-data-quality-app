@@ -27,6 +27,7 @@
 			}
 			
 			requestURL += "&dimension=pe:" + periods.join(";");
+			requestURL += '&ignoreLimit=true';
 					
 			self.requests.push({
 				'URL': requestURL,
@@ -67,9 +68,9 @@
 				requestURLs.push(self.requests[i].URL);
 			}
 			
-			
+			console.log("Start request");
 			requestService.getMultiple(requestURLs).then(function(response) { 
-				
+				console.log("Received result");
 				var results = [];	
 				for (var i = 0; i < response.length; i++) {
 					var data = response[i].data;
@@ -205,51 +206,7 @@
 				for (var i = 0; i < rows.length; i++) {
 					valueSet = [];
 					row = rows[i];
-
-					if (request.type === 'outlier') {
-	
-						for (var j = 0; j < row.data.length; j++) {
-							type = row.data[j].type;
-							value = row.data[j].value;
-							if (type === 'data' && !isNaN(value) && value != '') {
-								valueSet.push(parseFloat(value));
-							}
-						}
-						
 					
-						mean = mathService.getMean(valueSet); 
-						variance = mathService.getVariance(valueSet);
-						standardDeviation = mathService.getStandardDeviation(valueSet);
-						noDevs = parseFloat(request.parameters.stdDev);
-						highLimit = Math.round((mean + noDevs*standardDeviation) * 10) / 10;
-						lowLimit = Math.round((mean - noDevs*standardDeviation) * 10) / 10;
-						if (lowLimit < 0) lowLimit = 0;
-					
-					}
-					else { //threshold - min and max already set
-						lowLimit = request.parameters.thresholdLow;
-						highLimit = request.parameters.thresholdHigh;
-					}
-						
-					row.metaData.lowLimit = lowLimit;
-					row.metaData.highLimit = highLimit;
-					
-					rowViolations = 0;
-					hasOutlier = false;
-					for (var j = 0; j < row.data.length; j++) {
-						value = row.data[j].value;
-						if (!isNaN(value)) {
-							if (value > highLimit || value < lowLimit) {
-								hasOutlier = true;
-								rowViolations++;
-							}
-						}
-					}
-					
-					row.data.push({'value': rowViolations, 'type': "result"});
-					violationCount += rowViolations;
-					row.metaData.hasOutlier = hasOutlier;
-					if (hasOutlier) outlierCount++;
 					
 					var hasData = false;
 					for (var j = 0; j < row.data.length; j++) {
@@ -262,8 +219,54 @@
 							}
 						}
 					}
-					
-					if (hasData) rowsToKeep.push(row);
+					if (hasData) {
+						if (request.type === 'outlier') {
+		
+							for (var j = 0; j < row.data.length; j++) {
+								type = row.data[j].type;
+								value = row.data[j].value;
+								if (type === 'data' && !isNaN(value) && value != '') {
+									valueSet.push(parseFloat(value));
+								}
+							}
+							
+						
+							mean = mathService.getMean(valueSet); 
+							variance = mathService.getVariance(valueSet);
+							standardDeviation = mathService.getStandardDeviation(valueSet);
+							noDevs = parseFloat(request.parameters.stdDev);
+							highLimit = Math.round((mean + noDevs*standardDeviation) * 10) / 10;
+							lowLimit = Math.round((mean - noDevs*standardDeviation) * 10) / 10;
+							if (lowLimit < 0) lowLimit = 0;
+						
+						}
+						else { //threshold - min and max already set
+							lowLimit = request.parameters.thresholdLow;
+							highLimit = request.parameters.thresholdHigh;
+						}
+							
+						row.metaData.lowLimit = lowLimit;
+						row.metaData.highLimit = highLimit;
+						
+						rowViolations = 0;
+						hasOutlier = false;
+						for (var j = 0; j < row.data.length; j++) {
+							value = row.data[j].value;
+							if (!isNaN(value) && value != '') {
+								if (value > highLimit || value < lowLimit) {
+									hasOutlier = true;
+									rowViolations++;
+								}
+							}
+						}
+						
+						row.data.push({'value': rowViolations, 'type': "result"});
+						violationCount += rowViolations;
+						row.metaData.hasOutlier = hasOutlier;
+						if (hasOutlier) outlierCount++;
+						
+						rowsToKeep.push(row);
+					}
 				}
 				
 				rows = rowsToKeep;

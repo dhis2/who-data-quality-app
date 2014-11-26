@@ -44,7 +44,7 @@
 				        	<tr valign="middle" ng-repeat="row in result.pages[result.currentPage]">
 				                
 				                <!-- IF: Outlier and threshold -->
-				                <td ng-if="result.type != 'gap'" ng-repeat="value in row.data" ng-class="{danger: (value.type === 'data' && (value.value < row.metaData.lowLimit || value.value > row.metaData.highLimit)), valueCell: value.type != 'header'}">
+				                <td ng-if="result.type != 'gap'" ng-repeat="value in row.data" ng-class="{danger: (value.type === 'data' && (value.value < row.metaData.lowLimit || value.value > row.metaData.highLimit) && value.value != ''), valueCell: value.type != 'header'}">
 									{{value.value}}
 				                </td>
 				                

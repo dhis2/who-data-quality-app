@@ -129,10 +129,10 @@
 		
 		self.periodFromEpoch = function (epoch, periodType) {
 			
-			if (periodType === 'monthly') {
+			if (periodType === 'Monthly') {
 				return moment.unix(epoch).format('YYYYMM');
 			}
-			else if (periodType === 'yearly') {
+			else if (periodType === 'Yearly') {
 				return moment.unix(epoch).format('YYYY');
 			}
 			

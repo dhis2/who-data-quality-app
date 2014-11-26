@@ -21,6 +21,8 @@
 		  	       .showXAxis(true)        //Show the x-axis
 		  	  ;
 		  	
+		  	
+		  	var periodType = undefined;
 		  	var minRange = 0, maxRange = 0;
 		  	var chartData = [], chartSeries, values;
 		  	for (var i = 0; i < series.length; i++) {
@@ -32,10 +34,15 @@
 		  		for (var j = 0; j < series[i].data.length; j++) {
 		  			value = series[i].data[j].value;
 		  			epoch = periodService.epochFromPeriod(series[i].data[j].pe);
-		  			values.push({
-		  				'x': epoch,
-		  				'y': value		  			
-		  			});
+		  			if (periodType === undefined) {
+		  				periodType = periodService.periodTypeFromPeriod(series[i].data[j].pe);
+		  			}
+		  			if (value != "") {
+			  			values.push({
+			  				'x': epoch,
+			  				'y': value  			
+			  			});
+		  			}
 		  			
 		  			if (value < minRange) {
 		  				minRange = value;
@@ -57,7 +64,8 @@
 		  	chart.xAxis     //Chart x-axis settings
 		  	      .axisLabel('Period')
 		  	      .tickFormat(function(d) {
-		  	      	var label = periodService.shortPeriodName(periodService.periodFromEpoch(d, 'monthly'));
+		  	      	var period = periodService.periodFromEpoch(d, periodType);
+		  	      	var label = periodService.shortPeriodName(period);
 		  	      	return label;
 		  	      });
 		  	

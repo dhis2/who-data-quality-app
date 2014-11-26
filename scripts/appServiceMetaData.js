@@ -90,7 +90,7 @@
 	  		if (dataElements.available) objects.push.apply(objects, dataElements.data);	
 	  		if (dataSets.available) objects.push.apply(objects, dataSets.data);
 	  		if (indicators.available) objects.push.apply(objects, indicators.data);
-	  		console.log("Objects: " + objects.length);
+
 	  		for (var i = 0; i < objects.length; i++) {
 	  			if (objectID === objects[i].id) return objects[i].name;
 	  		}
