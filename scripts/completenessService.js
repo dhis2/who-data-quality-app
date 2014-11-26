@@ -141,12 +141,10 @@
 			}
 			
 			
-			//TODO: now assumes one variable
 			var variableID = request.variables[0].id;
 			title.push(metaDataService.getNameFromID(variableID));
 			
-						
-			//TODO: now assumes one variable
+			var old_time = new Date();		
 			var row, value, orgunitID, periodID;
 			headers.push({'name': "Orgunit", 'id': orgunitID, 'type': 'header'});
 			for (var i = 0; i < orgunitIDs.length; i++) {
@@ -164,9 +162,9 @@
 					},
 					'data': []
 				};
-
 				row.data.push({'value': data.metaData.names[orgunitID], 'type': "header"});
 				
+
 				for (var j = 0; j < periods.length; j++) {
 					periodID = periods[j].id;
 
@@ -184,10 +182,11 @@
 					if (!found) {
 						row.data.push({'pe': periodID, 'value': "", 'type': "data"});
 					}
-				}
-								
+				}								
 				rows.push(row);
 			}
+			var new_time = new Date();
+			console.log("Building rows: " + (new_time - old_time));
 			
 			switch (request.type) {
 				case 'gap':
@@ -198,7 +197,8 @@
 					headers.push({'name': "Outliers", 'id': '', 'type': 'result'});
 					break;
 			}
-
+			
+			var old_time = new Date();		
 			//Find outliers 
 			var value, mean, variance, standardDeviation, noDevs, highLimit, lowLimit, hasOutlier, outlierCount = 0, violationCount = 0, rowViolations;
 			if (request.type === 'outlier' || request.type === 'threshold') {			
@@ -314,12 +314,9 @@
 				rows = rowsToKeep;
 				
 			}
-			
-			
-			
-			
-			
-			
+			var new_time = new Date();
+			console.log("Finding outliers: " + (new_time - old_time));
+				
 			var analysisResult = {
 				'title': title.join(', '),
 				'type': request.type,
