@@ -21,52 +21,63 @@
 		  	       .showXAxis(true)        //Show the x-axis
 		  	  ;
 		  	
-		  	
+		  	var minRange = 0, maxRange = 0;
 		  	var chartData = [], chartSeries, values;
 		  	for (var i = 0; i < series.length; i++) {
 			  	chartSeries = {};
 		  		chartSeries.key = series[i].name;
 		  		
 		  		values = [];
+		  		var value, epoch;
 		  		for (var j = 0; j < series[i].data.length; j++) {
+		  			value = series[i].data[j].value;
+		  			epoch = periodService.epochFromPeriod(series[i].data[j].pe);
 		  			values.push({
-		  				'x': periodService.epochFromPeriod(series[i].data[j].pe),
-		  				'y': series[i].data[j].value		  			
+		  				'x': epoch,
+		  				'y': value		  			
 		  			});
+		  			
+		  			if (value < minRange) {
+		  				minRange = value;
+		  			}
+		  			if (value > maxRange) {
+		  				maxRange = value;
+		  			}
 		  		}
 		  		
 		  		chartSeries.values = values;
 		  		chartData.push(chartSeries);
 		  	}
 		  	
+		  	//Leave some room above/below the max
+			minRange = parseInt(minRange - minRange*0.1);
+			maxRange = parseInt(maxRange + maxRange*0.1);
+		  	
 		  			  	
-		  	  chart.xAxis     //Chart x-axis settings
+		  	chart.xAxis     //Chart x-axis settings
 		  	      .axisLabel('Period')
 		  	      .tickFormat(function(d) {
-		  	      	var label = periodService.periodFromEpoch(d, 'monthly');
+		  	      	var label = periodService.shortPeriodName(periodService.periodFromEpoch(d, 'monthly'));
 		  	      	return label;
 		  	      });
 		  	
-		  	
-		  	 chart.yAxis.tickFormat(d3.format('.1f'));
-		  	
-		  	console.log(chartData);
-		  	
-		  	  /* Done setting the chart up? Time to render it!*/		  	
-		  	  d3.select('#detailChart svg')    //Select the <svg> element you want to render the chart in.   
+		  	chart.yAxis
+		  	 	.tickFormat(d3.format('g'));
+		  	chart.forceY([minRange, maxRange]);
+		  			  	
+		  			  	
+		  	/* Done setting the chart up? Time to render it!*/		  	
+		  	d3.select('#detailChart svg')    //Select the <svg> element you want to render the chart in.   
 		  	      .datum(chartData)         //Populate the <svg> element with chart data...
 		  	      .call(chart);          //Finally, render the chart!
 		  	
-		  	  //Update the chart when window resizes.
-		  	  nv.utils.windowResize(function() { chart.update() });
-		  	  return chart;
-		  	});
-		  	
-		  	
-		  	
-		  
+		  	//Update the chart when window resizes.
+		  	nv.utils.windowResize(function() { chart.update() });
+		  	return chart;
+		});
+		  		  
 		  		  		
-	  	};
+		};
 	  	
 	  	
 	  

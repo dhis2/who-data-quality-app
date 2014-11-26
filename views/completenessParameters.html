@@ -30,7 +30,7 @@
 				</div>
 				<br />
 				<label><span style="font-size: 100%" class="glyphicon glyphicon-info-sign"></span>  Info</label>
-				<p>Organisation units with more than <span style="font-size: 100%;" class="label label-primary">{{paramCtrl.gapLimit}}</span> missing values be displayed.</p>	
+				<p>Organisation units with more than <span style="font-size: 100%;" class="label label-primary">{{paramCtrl.gapLimit}}</span> missing values be displayed. If a facility has no data in the selected period for the given variable, it is ignored.</p>	
 			</div>
 			
 			
@@ -68,7 +68,7 @@
 			  </ui-select-choices>
 			</ui-select>
 			
-			<ui-select ng-disabled="paramCtrl.dataSetsSelected || paramCtrl.dataElementsSelected" ng-model="paramCtrl.indicatorsSelected" theme="bootstrap" style="margin-bottom: 10px; min-width: 250px; max-width: 400px;">
+			<ui-select ng-disabled="paramCtrl.dataSetsSelected || paramCtrl.dataElementsSelected" ng-show="paramCtrl.analysisType === 'threshold'" ng-model="paramCtrl.indicatorsSelected" theme="bootstrap" style="margin-bottom: 10px; min-width: 250px; max-width: 400px;">
 			  <ui-select-match placeholder="Select indicators...">
 			  	{{paramCtrl.indicatorsSelected.name}}
 			  </ui-select-match>

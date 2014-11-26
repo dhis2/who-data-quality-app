@@ -147,7 +147,7 @@
 						
 			//TODO: now assumes one variable
 			var row, value, orgunitID, periodID;
-			headers.push({'name': "Orgunit", 'id': orgunitID});
+			headers.push({'name': "Orgunit", 'id': orgunitID, 'type': 'header'});
 			for (var i = 0; i < orgunitIDs.length; i++) {
 				orgunitID = orgunitIDs[i];
 				row = {
@@ -170,7 +170,7 @@
 					periodID = periods[j].id;
 
 					//First time, also add headers
-					if (i === 0) headers.push({'name': periods[j].name, 'id': periodID});
+					if (i === 0) headers.push({'name': periodService.shortPeriodName(periodID), 'type': 'data', 'id': periodID});
 					
 					var found = false;
 					for (var k = 0; k < data.rows.length && !found; k++) {
@@ -184,36 +184,45 @@
 						row.data.push({'pe': periodID, 'value': "", 'type': "data"});
 					}
 				}
-				
+								
 				rows.push(row);
 			}
 			
-			
-			
+			switch (request.type) {
+				case 'gap':
+					headers.push({'name': "Gaps", 'id': '', 'type': 'result'});				
+					headers.push({'name': "Weight", 'id': '', 'type': 'result'});
+					break;
+				default:
+					headers.push({'name': "Outliers", 'id': '', 'type': 'result'});
+					break;
+			}
+
 			//Find outliers 
-			//TODO: should be possible to do gaps and thresholds here as well, very similar
-			var value, mean, variance, standardDeviation, noDevs, highLimit, lowLimit, hasOutlier, outlierCount = 0, violationCount = 0;
+			var value, mean, variance, standardDeviation, noDevs, highLimit, lowLimit, hasOutlier, outlierCount = 0, violationCount = 0, rowViolations;
 			if (request.type === 'outlier' || request.type === 'threshold') {			
-				
+				var rowsToKeep = [];
 				for (var i = 0; i < rows.length; i++) {
 					valueSet = [];
 					row = rows[i];
-	
-					for (var j = 0; j < row.data.length; j++) {
-						value = row.data[j].value;
-						if (!isNaN(value)) {
-							valueSet.push(value);
-						}
-					}
-					
+
 					if (request.type === 'outlier') {
+	
+						for (var j = 0; j < row.data.length; j++) {
+							type = row.data[j].type;
+							value = row.data[j].value;
+							if (type === 'data' && !isNaN(value) && value != '') {
+								valueSet.push(parseFloat(value));
+							}
+						}
+						
 					
 						mean = mathService.getMean(valueSet); 
 						variance = mathService.getVariance(valueSet);
 						standardDeviation = mathService.getStandardDeviation(valueSet);
 						noDevs = parseFloat(request.parameters.stdDev);
-						highLimit = (mean + noDevs*standardDeviation);
-						lowLimit = (mean - noDevs*standardDeviation);
+						highLimit = Math.round((mean + noDevs*standardDeviation) * 10) / 10;
+						lowLimit = Math.round((mean - noDevs*standardDeviation) * 10) / 10;
 						if (lowLimit < 0) lowLimit = 0;
 					
 					}
@@ -225,40 +234,85 @@
 					row.metaData.lowLimit = lowLimit;
 					row.metaData.highLimit = highLimit;
 					
+					rowViolations = 0;
 					hasOutlier = false;
 					for (var j = 0; j < row.data.length; j++) {
 						value = row.data[j].value;
 						if (!isNaN(value)) {
 							if (value > highLimit || value < lowLimit) {
 								hasOutlier = true;
-								j = row.data.length;
-								violationCount++;
+								rowViolations++;
 							}
 						}
 					}
 					
+					row.data.push({'value': rowViolations, 'type': "result"});
+					violationCount += rowViolations;
 					row.metaData.hasOutlier = hasOutlier;
 					if (hasOutlier) outlierCount++;
+					
+					var hasData = false;
+					for (var j = 0; j < row.data.length; j++) {
+						
+						if (row.data[j].type === 'data') {
+							var value = row.data[j].value;	
+							if (!isNaN(value) && value != "") {
+								hasData = true;
+								break;
+							}
+						}
+					}
+					
+					if (hasData) rowsToKeep.push(row);
 				}
+				
+				rows = rowsToKeep;
 			}
 			else { //gap analysis
 				var gaps;
+				var rowsToKeep = [];
 				for (var i = 0; i < rows.length; i++) {
 					row = rows[i];
 					gaps = 0;
+					rowViolations = 0;
+					valueSet = [];
+					
 					for (var j = 0; j < row.data.length; j++) {
 						if (row.data[j].type === 'data' && row.data[j].value === "") {
 							gaps++;
-							violationCount++;
+							rowViolations++;
 						}
 					}
+
+					for (var j = 0; j < row.data.length; j++) {
+						type = row.data[j].type;
+						value = row.data[j].value;
+						if (type === 'data' && !isNaN(value) && value !== '') {
+							valueSet.push(parseFloat(value));
+						}
+					}
+					mean = mathService.getMean(valueSet);
+					
+					
+					row.data.push({'value': rowViolations, 'type': "result"});
+					row.data.push({'value': parseInt(mean*rowViolations), 'type': "result"});
+					violationCount += rowViolations;
 					
 					if (gaps >= request.parameters.maxGaps) {
 						row.metaData.hasOutlier = true;
 					}
 					if (row.metaData.hasOutlier) outlierCount++;
+					
+					if ((row.data.length - 3) > rowViolations) {
+						rowsToKeep.push(row);
+					}
 				}
+				
+				rows = rowsToKeep;
+				
 			}
+			
+			
 			
 			
 			

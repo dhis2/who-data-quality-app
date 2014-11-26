@@ -35,20 +35,26 @@
         	
         	chartSeries.push(series);
         	
-        	series = {};
-        	series.name = "Low limit (" + parseInt(row.metaData.lowLimit).toString() + ")";
-        	series.data = [{'pe': firstPeriod, 'value': row.metaData.lowLimit}, 
-        				{'pe': lastPeriod, 'value': row.metaData.lowLimit}];
-			chartSeries.push(series);
-			
-			
-			series = {};
-			series.name = "High limit (" + parseInt(row.metaData.highLimit).toString() + ")";
-			series.data = [{'pe': firstPeriod, 'value': row.metaData.highLimit}, 
-						{'pe': lastPeriod, 'value': row.metaData.highLimit}];
-			chartSeries.push(series);
+        	if (self.results[getActiveResultTab()].type != 'gap') {
+        		
+	        	series = {};
+	        	series.name = "Low limit (" + parseInt(row.metaData.lowLimit).toString() + ")";
+	        	series.data = [{'pe': firstPeriod, 'value': row.metaData.lowLimit}, 
+	        				{'pe': lastPeriod, 'value': row.metaData.lowLimit}];
+				chartSeries.push(series);
+				
+				
+				series = {};
+				series.name = "High limit (" + parseInt(row.metaData.highLimit).toString() + ")";
+				series.data = [{'pe': firstPeriod, 'value': row.metaData.highLimit}, 
+							{'pe': lastPeriod, 'value': row.metaData.highLimit}];
+				chartSeries.push(series);
+			}
         	        	        	   	    		
     		visualisationService.timeTrendChart('detailChart', chartSeries, {});
+    		$('html, body').animate({
+    			scrollTop: $("#detailChart").offset().top
+    		}, 500);
         };
                 
 
@@ -126,6 +132,7 @@
 	        var resultIndex = getActiveResultTab();
 	        
 	        if (self.results[resultIndex].sortColumn === sortColumn) {
+	        	console.log("Reverse!");
 	        	self.results[resultIndex].reverse = !self.results[resultIndex].reverse;
 	        }
 	        self.results[resultIndex].sortColumn = sortColumn;
@@ -135,6 +142,8 @@
 	    
 	    
 	    function sortRows(rows, sortCol, reverse) {
+			
+			if (rows.length === 0) return rows;
 			
 			var tmp = rows;
 			if (rows[0].data[sortCol].type === 'header') {

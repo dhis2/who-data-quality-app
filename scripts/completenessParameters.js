@@ -134,6 +134,9 @@
 				else if (self.periodTypeSelected.id === 'Monthly') {
 					startDate = moment().subtract(self.periodCountSelected.value, 'months').format("YYYY-MM-DD");
 				}
+				else if (self.periodTypeSelected.id === 'BiMonthly') {
+					startDate = moment().subtract(self.periodCountSelected.value*2, 'months').format("YYYY-MM-DD");
+				}
 				else if (self.periodTypeSelected.id === 'Quarterly') {
 					startDate = moment().subtract(self.periodCountSelected.value, 'quarters').format("YYYY-MM-DD");
 				}
@@ -155,8 +158,6 @@
 			
 				startDate = self.yearSelected.id + "-01-01";
 				
-				console.log(startDate);
-				console.log(endDate);
 				
 			}
 			else {
