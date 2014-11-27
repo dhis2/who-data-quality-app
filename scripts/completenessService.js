@@ -19,7 +19,7 @@
 			var periods = periodService.getISOPeriods(period.startDate, period.endDate, period.periodType);		
 			
 			var requestURL = "/api/analytics.json?";
-			requestURL += "dimension=dx:" + IDsFromObjects(variables).join(";");
+			requestURL += "filter=dx:" + IDsFromObjects(variables).join(";");
 			requestURL += "&dimension=ou:" + IDsFromObjects(orgunit.boundary).join(";");
 			
 			if (orgunit.disaggregationType != 'none') {
@@ -28,6 +28,9 @@
 			
 			requestURL += "&dimension=pe:" + periods.join(";");
 			requestURL += '&ignoreLimit=true';
+			requestURL += '&hideEmptyRows=true';
+			requestURL += '&tableLayout=true';
+			requestURL += '&columns=pe&rows=ou';
 					
 			self.requests.push({
 				'URL': requestURL,
@@ -112,166 +115,129 @@
 		}
 		
 		
-		function resultsAnalysis(data, request) {
+		function filterArrayIndices(array, indicesToKeep) {
+			var newArray = [];
+			for (var i = 0; i < indicesToKeep.length; i++) {
+				newArray.push(array[indicesToKeep[i]]);
+			}
 			
+			return newArray;
+		}
+		
+		
+		function resultsAnalysis(data, request) {
+			var old_time = new Date();		
 			var periodType = request.periodType;
 			
-			var title = [];
-			var headers = [];
-			var rows = [];
+			var title = data.title;
 			
-			var orgunitIDs = data.metaData.ou;
-			var peIDs = data.metaData.pe;
-			
-			var periods = [];
-			for (var i = 0; i < peIDs.length; i++) {
-				periods.push({
-					'id': peIDs[i],
-					'name': data.metaData.names[peIDs[i]]
-				});
-			}
-						
-			//Identify which column is which
-			var valueIndex, dxIndex, ouIndex, peIndex;
-			for (var i = 0; i < data.headers.length; i++) {
-				if (data.headers[i].name === "value") valueIndex = i;
-				if (data.headers[i].name === "ou") ouIndex = i;
-				if (data.headers[i].name === "pe") peIndex = i;
-				if (data.headers[i].name === "dx") dxIndex = i;
-			}
-			
-			
+			//TODO: Should be part of request
 			var variableID = request.variables[0].id;
-			title.push(metaDataService.getNameFromID(variableID));
+			var variableName = data.metaData.names[variableID];
 			
-			var old_time = new Date();		
-			var row, value, orgunitID, periodID;
-			headers.push({'name': "Orgunit", 'id': orgunitID, 'type': 'header'});
-			for (var i = 0; i < orgunitIDs.length; i++) {
-				orgunitID = orgunitIDs[i];
-				row = {
-					'metaData': {
-						'dx': variableID,
-						'dxName': data.metaData.names[variableID],
-						'ou': orgunitID,
-						'ouName': data.metaData.names[orgunitID],
+			
+			var headers = data.headers;
+			var dataIndices = [];
+			var orgunitIDColumn = 0;
+			var orgunitNameColumn = 0;
+			for (var i = 0; i < headers.length; i++) {
+				if (headers[i].meta === false) dataIndices.push(i);
+				if (headers[i].column === 'organisationunitid') orgunitIDColumn = i;
+				else if (headers[i].column === 'organisationunitname') orgunitNameColumn = i;
+			}
+			
+			var rows = [], row, sourceRow;
+			for (var i = 0; i < data.rows.length; i++) {
+				sourceRow = data.rows[i];
+
+				row = {};
+				row.metaData = {
+						'ou': sourceRow[orgunitIDColumn],
+						'ouName': sourceRow[orgunitNameColumn],
 						'hasOutlier': false,
 						'lowLimit': null,
 						'highLimit': null,
 						'gaps': 0
-					},
-					'data': []
-				};
-				row.data.push({'value': data.metaData.names[orgunitID], 'type': "header"});
-				
-
-				for (var j = 0; j < periods.length; j++) {
-					periodID = periods[j].id;
-
-					//First time, also add headers
-					if (i === 0) headers.push({'name': periodService.shortPeriodName(periodID), 'type': 'data', 'id': periodID});
+					};
 					
-					var found = false;
-					for (var k = 0; k < data.rows.length && !found; k++) {
-
-						if (data.rows[k][ouIndex] === orgunitID && data.rows[k][peIndex] === periodID) { 
-							row.data.push({'pe': periodID, 'value': parseFloat(data.rows[k][valueIndex]), 'type': "data"});
-							found = true;
-						}
-					}
-					if (!found) {
-						row.data.push({'pe': periodID, 'value': "", 'type': "data"});
-					}
-				}								
+				row.data = filterArrayIndices(sourceRow, dataIndices);
+				row.data.unshift(sourceRow[orgunitNameColumn]);			
 				rows.push(row);
 			}
-			var new_time = new Date();
-			console.log("Building rows: " + (new_time - old_time));
+			
 			
 			switch (request.type) {
 				case 'gap':
-					headers.push({'name': "Gaps", 'id': '', 'type': 'result'});				
-					headers.push({'name': "Weight", 'id': '', 'type': 'result'});
+					headers.push({'name': "Gaps", 'column': 'gaps', 'hidden': 'false', 'meta': 'false'});				
+					headers.push({'name': "Weight", 'column': 'weight', 'hidden': 'false', 'meta': 'false'});
 					break;
 				default:
-					headers.push({'name': "Outliers", 'id': '', 'type': 'result'});
+					headers.push({'name': "Outliers", 'column': 'outliers', 'hidden': 'false', 'meta': 'false'});
 					break;
 			}
+			var new_time = new Date();		
+			console.log("Processing rows: " + (new_time - old_time));
 			
+			
+			
+
+			
+			//Outlier analysis
 			var old_time = new Date();		
-			//Find outliers 
 			var value, mean, variance, standardDeviation, noDevs, highLimit, lowLimit, hasOutlier, outlierCount = 0, violationCount = 0, rowViolations;
 			if (request.type === 'outlier' || request.type === 'threshold') {			
-				var rowsToKeep = [];
 				for (var i = 0; i < rows.length; i++) {
 					valueSet = [];
 					row = rows[i];
 					
+					if (request.type === 'outlier') {
+	
+						for (var j = 1; j < row.data.length; j++) {
+							value = row.data[j];
+							if (value != '') {
+								valueSet.push(parseFloat(value));
+							}
+						}
 					
-					var hasData = false;
-					for (var j = 0; j < row.data.length; j++) {
+						mean = mathService.getMean(valueSet); 
+						variance = mathService.getVariance(valueSet);
+						standardDeviation = mathService.getStandardDeviation(valueSet);
+						noDevs = parseFloat(request.parameters.stdDev);
+						highLimit = Math.round((mean + noDevs*standardDeviation) * 10) / 10;
+						lowLimit = Math.round((mean - noDevs*standardDeviation) * 10) / 10;
+						if (lowLimit < 0) lowLimit = 0;
+					
+					}
+					else { //threshold - min and max already set
+						lowLimit = request.parameters.thresholdLow;
+						highLimit = request.parameters.thresholdHigh;
+					}
 						
-						if (row.data[j].type === 'data') {
-							var value = row.data[j].value;	
-							if (!isNaN(value) && value != "") {
-								hasData = true;
-								break;
+					row.metaData.lowLimit = lowLimit;
+					row.metaData.highLimit = highLimit;
+					
+					rowViolations = 0;
+					hasOutlier = false;
+					for (var j = 1; j < row.data.length; j++) {
+						value = row.data[j];
+						if (value != '') {
+							if (value > highLimit || value < lowLimit) {
+								hasOutlier = true;
+								rowViolations++;
 							}
 						}
 					}
-					if (hasData) {
-						if (request.type === 'outlier') {
-		
-							for (var j = 0; j < row.data.length; j++) {
-								type = row.data[j].type;
-								value = row.data[j].value;
-								if (type === 'data' && !isNaN(value) && value != '') {
-									valueSet.push(parseFloat(value));
-								}
-							}
-							
-						
-							mean = mathService.getMean(valueSet); 
-							variance = mathService.getVariance(valueSet);
-							standardDeviation = mathService.getStandardDeviation(valueSet);
-							noDevs = parseFloat(request.parameters.stdDev);
-							highLimit = Math.round((mean + noDevs*standardDeviation) * 10) / 10;
-							lowLimit = Math.round((mean - noDevs*standardDeviation) * 10) / 10;
-							if (lowLimit < 0) lowLimit = 0;
-						
-						}
-						else { //threshold - min and max already set
-							lowLimit = request.parameters.thresholdLow;
-							highLimit = request.parameters.thresholdHigh;
-						}
-							
-						row.metaData.lowLimit = lowLimit;
-						row.metaData.highLimit = highLimit;
-						
-						rowViolations = 0;
-						hasOutlier = false;
-						for (var j = 0; j < row.data.length; j++) {
-							value = row.data[j].value;
-							if (!isNaN(value) && value != '') {
-								if (value > highLimit || value < lowLimit) {
-									hasOutlier = true;
-									rowViolations++;
-								}
-							}
-						}
-						
-						row.data.push({'value': rowViolations, 'type': "result"});
-						violationCount += rowViolations;
-						row.metaData.hasOutlier = hasOutlier;
-						if (hasOutlier) outlierCount++;
-						
-						rowsToKeep.push(row);
-					}
+					
+					row.data.push(rowViolations);
+					violationCount += rowViolations;
+					row.metaData.hasOutlier = hasOutlier;
+					if (hasOutlier) outlierCount++;
 				}
-				
-				rows = rowsToKeep;
 			}
-			else { //gap analysis
+			
+			
+			//Gap analysis
+			else {
 				var gaps;
 				var rowsToKeep = [];
 				for (var i = 0; i < rows.length; i++) {
@@ -280,25 +246,20 @@
 					rowViolations = 0;
 					valueSet = [];
 					
-					for (var j = 0; j < row.data.length; j++) {
-						if (row.data[j].type === 'data' && row.data[j].value === "") {
+					for (var j = 1; j < row.data.length; j++) {
+						value = row.data[j];
+						if (value === "") {
 							gaps++;
 							rowViolations++;
 						}
-					}
-
-					for (var j = 0; j < row.data.length; j++) {
-						type = row.data[j].type;
-						value = row.data[j].value;
-						if (type === 'data' && !isNaN(value) && value !== '') {
+						else {
 							valueSet.push(parseFloat(value));
 						}
 					}
 					mean = mathService.getMean(valueSet);
 					
-					
-					row.data.push({'value': rowViolations, 'type': "result"});
-					row.data.push({'value': parseInt(mean*rowViolations), 'type': "result"});
+					row.data.push(rowViolations);
+					row.data.push(parseInt(mean*rowViolations));
 					violationCount += rowViolations;
 					
 					if (gaps >= request.parameters.maxGaps) {
@@ -306,19 +267,13 @@
 					}
 					if (row.metaData.hasOutlier) outlierCount++;
 					
-					if ((row.data.length - 3) > rowViolations) {
-						rowsToKeep.push(row);
-					}
-				}
-				
-				rows = rowsToKeep;
-				
+				}				
 			}
 			var new_time = new Date();
 			console.log("Finding outliers: " + (new_time - old_time));
-				
+
 			var analysisResult = {
-				'title': title.join(', '),
+				'title': title,
 				'type': request.type,
 				'metaData': {
 					'totalRows': rows.length,
