@@ -111,8 +111,7 @@
 	    		result.pages = paginateRows(rows);
 	    	}
 	    	
-	    	result.currentPage = 0;
-	    	result.n = 0;
+	    	result.currentPage = 1;
 	    		    	
 	    	return result;
 	    };

@@ -183,7 +183,8 @@
 				
 				case 'outlier':	
 					headers.push({'name': "Outliers", 'column': 'outliers', 'type': 'java.lang.Double', 'hidden': false, 'meta': true});
-					headers.push({'name': "Score", 'column': 'zscore', 'type': 'java.lang.Double', 'hidden': false, 'meta': true});
+					headers.push({'name': "Z-Score", 'column': 'zscore', 'type': 'java.lang.Double', 'hidden': false, 'meta': true});
+					headers.push({'name': "Weight", 'column': 'weight', 'type': 'java.lang.Double', 'hidden': false, 'meta': true});
 					break;
 				default:
 					headers.push({'name': "Outliers", 'column': 'outliers', 'type': 'java.lang.Double', 'hidden': false, 'meta': true});
@@ -253,6 +254,21 @@
 					
 					if (request.type === 'outlier') {
 						row.data.push(Math.round(maxZscore*10)/10);
+						
+						var weight = 1;
+						if (maxZscore > 3) {
+							weight = 1.6;
+						}
+						else if (maxZscore > 2.5) {
+							weight = 1.4;
+						}
+						
+						else if (maxZscore > 2) {
+							weight = 1.2;
+						}
+						
+						
+						row.data.push(Math.round(mean*maxZscore*weight/10));
 					}
 					
 					violationCount += rowViolations;

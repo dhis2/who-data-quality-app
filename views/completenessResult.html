@@ -25,12 +25,12 @@
 					            <span style="font-size: 100%;" class="label label-primary">{{result.metaData.totalRows}}</span> rows   <span style="font-size: 100%;" class="label label-danger">{{result.metaData.outlierRows}}</span> with violations.</div>
 					            
 					            
-					            <pagination total-items="result.pages.length" ng-model="result.currentPage" max-size="5" class="pagination-sm pull-right" boundary-links="true" rotate="false"></pagination>
+					            <pagination total-items="result.outliersOnly ? result.metaData.outlierRows : result.metaData.totalRows" items-per-page="10" max-size="5" ng-model="result.currentPage" class="pagination-sm pull-right" boundary-links="true" rotate="true"></pagination>
 				            </td>
 				        </tfoot>
 				        
 				        <tbody>
-				        	<tr valign="middle" ng-repeat="row in result.pages[result.currentPage]">
+				        	<tr valign="middle" ng-repeat="row in result.pages[result.currentPage-1]">
 				                
 				                <!-- IF: Outlier and threshold -->
 				                <td ng-if="result.type != 'gap'" ng-repeat="value in row.data track by $index" ng-class="{danger: (value < row.metaData.lowLimit || value > row.metaData.highLimit) && value != '' && !result.headers[$index].meta, valueCell: result.headers[$index].type != 'java.lang.String'}">

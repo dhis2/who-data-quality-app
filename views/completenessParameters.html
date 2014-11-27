@@ -68,7 +68,7 @@
 			  </ui-select-choices>
 			</ui-select>
 			
-			<ui-select ng-disabled="paramCtrl.dataSetsSelected || paramCtrl.dataElementsSelected" ng-show="paramCtrl.analysisType === 'threshold'" ng-model="paramCtrl.indicatorsSelected" theme="bootstrap" style="margin-bottom: 10px; min-width: 250px; max-width: 400px;">
+			<ui-select ng-disabled="paramCtrl.dataSetsSelected || paramCtrl.dataElementsSelected" ng-show="paramCtrl.analysisType != 'gap'" ng-model="paramCtrl.indicatorsSelected" theme="bootstrap" style="margin-bottom: 10px; min-width: 250px; max-width: 400px;">
 			  <ui-select-match placeholder="Select indicators...">
 			  	{{paramCtrl.indicatorsSelected.name}}
 			  </ui-select-match>
