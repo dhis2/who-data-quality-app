@@ -180,6 +180,11 @@
 					headers.push({'name': "Gaps", 'column': 'gaps', 'type': 'java.lang.Double', 'hidden': false, 'meta': true});
 					headers.push({'name': "Weight", 'column': 'weight', 'type': 'java.lang.Double', 'hidden': false, 'meta': true});
 					break;
+				
+				case 'outlier':	
+					headers.push({'name': "Outliers", 'column': 'outliers', 'type': 'java.lang.Double', 'hidden': false, 'meta': true});
+					headers.push({'name': "Score", 'column': 'zscore', 'type': 'java.lang.Double', 'hidden': false, 'meta': true});
+					break;
 				default:
 					headers.push({'name': "Outliers", 'column': 'outliers', 'type': 'java.lang.Double', 'hidden': false, 'meta': true});
 					break;
@@ -196,14 +201,14 @@
 			
 			//Outlier analysis
 			var old_time = new Date();		
-			var value, mean, variance, standardDeviation, noDevs, highLimit, lowLimit, hasOutlier, outlierCount = 0, violationCount = 0, rowViolations;
+			var value, mean, variance, maxZscore, standardDeviation, noDevs, highLimit, lowLimit, hasOutlier, outlierCount = 0, violationCount = 0, rowViolations;
 			if (request.type === 'outlier' || request.type === 'threshold') {			
 				for (var i = 0; i < rows.length; i++) {
 					valueSet = [];
 					row = rows[i];
 					
 					if (request.type === 'outlier') {
-	
+						maxZscore = 0;
 						for (var j = 1; j < row.data.length; j++) {
 							value = row.data[j];
 							if (value != '') {
@@ -237,10 +242,19 @@
 								hasOutlier = true;
 								rowViolations++;
 							}
+							if (request.type === 'outlier') {
+								zScore = ((parseFloat(value)-mean)/standardDeviation);
+								if (Math.abs(zScore) > maxZscore) maxZscore = Math.abs(zScore);
+							}		
 						}
 					}
 					
 					row.data.push(rowViolations);
+					
+					if (request.type === 'outlier') {
+						row.data.push(Math.round(maxZscore*10)/10);
+					}
+					
 					violationCount += rowViolations;
 					row.metaData.hasOutlier = hasOutlier;
 					if (hasOutlier) outlierCount++;

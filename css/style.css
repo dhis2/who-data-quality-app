@@ -1,8 +1,7 @@
-.gridStyle {
-    border: 1px solid rgb(212,212,212);
-    height: 400px;
-    margin-bottom: 50px;
-    size: 60%;
+body {
+  margin-top: 5%;
+  margin-left: 2%;
+  margin-right: 2%;
 }
 
 .selector {
@@ -16,28 +15,6 @@
 	vertical-align: middle;
 }
 
-.treeHolder {
-	max-height: 300px;
-	max-width: 400px;
-	overflow: auto;
-	border: 1px solid rgb(212,212,212);
-}
-
-.chartHolder {
-	margin-top: 40px;
-	height: 500px;
-	border: 1px solid rgb(212,212,212);
-}
-
-.outlier {
-	background-color: #FF6633 !important;
-	font-weight: 700;
-}
-
-.table > tbody > tr > td {
-	vertical-align: middle;	
-}
-
 .container {
   margin: 5px;
 }
@@ -48,12 +25,7 @@
 	text-aling:center;
 }
 
-body {
-  margin-top: 5%;
-  margin-left: 2%;
-  margin-right: 2%;
-}
-
 .bigChart {
+	border: 1px solid gray;
 	height: 400px;
 }

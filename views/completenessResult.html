@@ -17,26 +17,15 @@
 				        <tfoot>
 				            <td colspan="{{1+result.headers.length}}">
 					            <div class="btn-group btn-group-justified pull-left" style="margin-top: 20px; width: 200px;" class="pull-left">
-					            	<label ng-change="resultsCtrl.updateCurrentView()" class="btn btn-default" ng-model="resultsCtrl.outliersOnly" btn-radio="false">All rows</label>
-	            				  <label ng-change="resultsCtrl.updateCurrentView()" class="btn btn-default" ng-model="resultsCtrl.outliersOnly" btn-radio="true">Violations</label>
+					            	<label ng-change="resultsCtrl.updateCurrentView()" class="btn btn-default" ng-model="result.outliersOnly" btn-radio="false">All rows</label>
+	            				  <label ng-change="resultsCtrl.updateCurrentView()" class="btn btn-default" ng-model="result.outliersOnly" btn-radio="true">Violations</label>
 								</div>
 					            
 					            <div style="margin-left:20px; margin-top:27px" class="pull-left">
 					            <span style="font-size: 100%;" class="label label-primary">{{result.metaData.totalRows}}</span> rows   <span style="font-size: 100%;" class="label label-danger">{{result.metaData.outlierRows}}</span> with violations.</div>
 					            
-				                <ul class="pagination pagination-sm pull-right">
-				                    <li ng-class="{disabled: result.currentPage == 0}">
-				                        <a href ng-click="resultsCtrl.prevPage(result)">« Prev</a>
-				                    </li>
-				                    <li ng-repeat="n in resultsCtrl.range(result.pages.length)"
-				                        ng-class="{active: n == result.currentPage}"
-				                    ng-click="resultsCtrl.setPage(result, n)">
-				                        <a href ng-bind="n + 1">1</a>
-				                    </li>
-				                    <li ng-class="{disabled: result.currentPage === result.pages.length - 1}">
-				                        <a href ng-click="resultsCtrl.nextPage(result)">Next »</a>
-				                    </li>
-				                </ul>
+					            
+					            <pagination total-items="result.pages.length" ng-model="result.currentPage" max-size="5" class="pagination-sm pull-right" boundary-links="true" rotate="false"></pagination>
 				            </td>
 				        </tfoot>
 				        

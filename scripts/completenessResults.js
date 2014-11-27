@@ -5,7 +5,6 @@
 	    
 	    self.results = [];
 	    self.itemsPerPage = 10;
-        self.outliersOnly = true;
         self.hasVisual = false;
         
         
@@ -57,7 +56,8 @@
 		    nv.utils.windowResize(chart.update);
 		    
 		    $('html, body').animate({
-		    	scrollTop: $("#detailChart").offset().top
+		    	scrollTop: $("#detailChart").offset().top,
+		    	scrollLeft: 0
 		    }, 500);
 		    
 		    //Mark outliers
@@ -94,43 +94,14 @@
             
             return pagedItems;
             
-        }
-        
-        self.range = function (start, end) {
-            var ret = [];
-            if (!end) {
-                end = start;
-                start = 0;
-            }
-            for (var i = start; i < end; i++) {
-                ret.push(i);
-            }
-            return ret;
-        };
-        
-        self.prevPage = function (result) {
-            if (result.currentPage > 0) {
-                result.currentPage--;
-            }
-        };
-        
-        self.nextPage = function (result) {
-            if (result.currentPage < result.pages.length - 1) {
-                result.currentPage++;
-            }
-        };
-        
-        self.setPage = function (result, n) {
-            result.currentPage = n;
-        };
-             
+        }           
             
         
 	    self.updateCurrentView = function() {
 	    	var result = self.results[getActiveResultTab()];
 	    	var rows = result.rows;
 	    	
-	    	if (self.outliersOnly) {
+	    	if (result.outliersOnly) {
 	    		rows = sortRows(rows, result.sortColumn, result.reverse);	    		 
 	    		rows = filterOutlierRows(rows);
 	    		result.pages = paginateRows(rows);	
@@ -210,16 +181,22 @@
 	    var receiveResult = function(result) {		    
 	    
 	    	var latest = self.results.length;	
-
-		    self.results.push(result);
+			if (latest > 3) {
+				self.results.splice(3, 1);
+				latest--;
+			}
+		    self.results.unshift(result);
 		    
-		    self.results[latest].sortColumn = 0;
-		    self.results[latest].sortRevers = false;
+		    self.results[0].sortColumn = 0;
+		    self.results[0].sortRevers = false;
 		    
 		    if (result.metaData.outlierRows === 0) {
-		    	self.outliersOnly = false;
+		    	self.results[0].outliersOnly = false;
 		    }
-		    setActiveResultTab(latest);
+		    else {
+		    	self.results[0].outliersOnly = true;
+		    }
+		    setActiveResultTab(0);
 		    self.updateCurrentView();
 			
 	    };
