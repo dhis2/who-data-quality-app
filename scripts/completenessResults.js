@@ -4,7 +4,7 @@
 	    var self = this;
 	    
 	    self.results = [];
-	    self.itemsPerPage = 15;
+	    self.itemsPerPage = 10;
         self.outliersOnly = true;
         self.hasVisual = false;
         
@@ -14,47 +14,66 @@
 
 			$('#detailedResult').html('<div id="detailChart"><svg class="bigChart"></svg></div>');
         	
-        	var chartSeries = [];
-        	var series = {};
-        	var data = [];
-        	//TODO: Needs to be more fancy here in order to deal with multiple variables (if needed)
-        	for (var i = 1; i < row.data.length; i++) {
-        		
-        		if (row.data[i].type === "data") {
-		    		data.push({
-		    			'pe': row.data[i].pe,   		
-		    			'value': row.data[i].value
-		    		});
+        	var chart = nv.models.multiBarChart()
+        			      .transitionDuration(500)
+        			      .reduceXTicks(true)   //If 'false', every single x-axis tick label will be rendered.
+        			      .rotateLabels(0)      //Angle to rotate x-axis labels.
+        			      .groupSpacing(0.1)    //Distance between each group of bars.
+        			      .showControls(false)
+        			    ;
+        			
+        	var result = self.results[getActiveResultTab()];
+        	var index = 0;
+        	var series = [{
+        		'key': result.title + ": " + row.metaData.ouName,
+        		'color': "green",
+        		'values': []
+        	}];
+        	for (var i = 0; i < row.data.length; i++) {
+        		if (!result.headers[i].meta) {
+        			var value = row.data[i];
+        			if (value === '') value = null;
+        			else value = parseFloat(value);
+        			series[0].values.push({
+        				'x': index++,   		
+        				'y': value,
+        				'label': result.headers[i].name
+        			});
         		}
         	}
-        	series.data = data;
-        	series.name = row.metaData.dxName + " - " + row.metaData.ouName; 
-			
-			var firstPeriod = series.data[0].pe;
-			var lastPeriod = series.data[series.data.length - 1].pe;        	
-        	
-        	chartSeries.push(series);
-        	
-        	if (self.results[getActiveResultTab()].type != 'gap') {
-        		
-	        	series = {};
-	        	series.name = "Low limit (" + parseInt(row.metaData.lowLimit).toString() + ")";
-	        	series.data = [{'pe': firstPeriod, 'value': row.metaData.lowLimit}, 
-	        				{'pe': lastPeriod, 'value': row.metaData.lowLimit}];
-				chartSeries.push(series);
+        	        	        				
+		    chart.xAxis
+		        .tickFormat(function(d) {
+		        	return series[0].values[d].label;
+		        });
+		
+		    chart.yAxis
+		        .tickFormat(d3.format('g'));
+		
+			d3.select('#detailChart svg')
+		        .datum(series)
+		        .call(chart);
 				
-				
-				series = {};
-				series.name = "High limit (" + parseInt(row.metaData.highLimit).toString() + ")";
-				series.data = [{'pe': firstPeriod, 'value': row.metaData.highLimit}, 
-							{'pe': lastPeriod, 'value': row.metaData.highLimit}];
-				chartSeries.push(series);
-			}
-        	        	        	   	    		
-    		visualisationService.timeTrendChart('detailChart', chartSeries, {});
-    		$('html, body').animate({
-    			scrollTop: $("#detailChart").offset().top
-    		}, 500);
+		    nv.utils.windowResize(chart.update);
+		    
+		    $('html, body').animate({
+		    	scrollTop: $("#detailChart").offset().top
+		    }, 500);
+		    
+		    //Mark outliers
+		    if (result.type === 'gap') {
+			    d3.selectAll("#detailChart rect.nv-bar").style("fill", function(d, i){
+	    	        if (d.y === null) return "#843534";
+			    });
+		    }
+		    else {
+		    	d3.selectAll("#detailChart rect.nv-bar").style("fill", function(d, i){
+					if (d.y < row.metaData.lowLimit) return "#843534";
+					if (d.y > row.metaData.highLimit) return "#843534";
+		    	});
+		    }
+		    
+    		
         };
                 
 
@@ -145,15 +164,15 @@
 			
 			if (rows.length === 0) return rows;
 			
-			var tmp = rows;
-			if (rows[0].data[sortCol].type === 'header') {
+			var tmp;
+			if (isNaN(parseFloat(rows[0].data[sortCol]))) {
 				rows.sort(function (a, b) {
 					if (reverse) {
 						var tmp = a;
 						a = b;
 						b = tmp;
 					}
-					return a.data[sortCol].value.toLowerCase().localeCompare(b.data[sortCol].value.toLowerCase());	
+					return a.data[sortCol].toLowerCase().localeCompare(b.data[sortCol].toLowerCase());	
 				});
 			}
 			else {
@@ -163,7 +182,7 @@
 						a = b;
 						b = tmp;
 					}
-					return (parseFloat(b.data[sortCol].value) - parseFloat(a.data[sortCol].value));	
+					return (parseFloat(b.data[sortCol]) - parseFloat(a.data[sortCol]));	
 				});
 			}
 			

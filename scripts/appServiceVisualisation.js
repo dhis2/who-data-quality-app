@@ -32,17 +32,10 @@
 		  		values = [];
 		  		var value, epoch;
 		  		for (var j = 0; j < series[i].data.length; j++) {
-		  			value = series[i].data[j].value;
-		  			epoch = periodService.epochFromPeriod(series[i].data[j].pe);
-		  			if (periodType === undefined) {
-		  				periodType = periodService.periodTypeFromPeriod(series[i].data[j].pe);
-		  			}
-		  			if (value != "") {
-			  			values.push({
-			  				'x': epoch,
-			  				'y': value  			
-			  			});
-		  			}
+		  			values.push({
+		  				'x': j,
+		  				'y': series[i].data[j].value
+		  			});
 		  			
 		  			if (value < minRange) {
 		  				minRange = value;
@@ -56,18 +49,23 @@
 		  		chartData.push(chartSeries);
 		  	}
 		  	
+		  	//Get XAxis labels = periods from series[0]
+		  	var periods = [];
+		  	for (var j = 0; j < series[0].data.length; j++) {
+		  			periods.push(periodService.shortPeriodName(series[0].data[j].pe));
+	  		}
+		  	
+		  	
 		  	//Leave some room above/below the max
-			minRange = parseInt(minRange - minRange*0.1);
-			maxRange = parseInt(maxRange + maxRange*0.1);
+			minRange = parseInt(minRange - minRange*0.3);
+			maxRange = parseInt(maxRange + maxRange*0.3);
 		  	
 		  			  	
 		  	chart.xAxis     //Chart x-axis settings
 		  	      .axisLabel('Period')
 		  	      .tickFormat(function(d) {
-		  	      	var period = periodService.periodFromEpoch(d, periodType);
-		  	      	var label = periodService.shortPeriodName(period);
-		  	      	return label;
-		  	      });
+		  	             return periods[d];
+		  	           });
 		  	
 		  	chart.yAxis
 		  	 	.tickFormat(d3.format('g'));
@@ -75,7 +73,7 @@
 		  			  	
 		  			  	
 		  	/* Done setting the chart up? Time to render it!*/		  	
-		  	d3.select('#detailChart svg')    //Select the <svg> element you want to render the chart in.   
+		  	d3.select('#' + elementID + ' svg')    //Select the <svg> element you want to render the chart in.   
 		  	      .datum(chartData)         //Populate the <svg> element with chart data...
 		  	      .call(chart);          //Finally, render the chart!
 		  	
@@ -88,6 +86,51 @@
 		};
 	  	
 	  	
+	  	self.barChart = function (elementID, series, options) {
+	  		
+	  		var chart = nv.models.multiBarChart()
+	  		      .transitionDuration(350)
+	  		      .reduceXTicks(true)   //If 'false', every single x-axis tick label will be rendered.
+	  		      .rotateLabels(0)      //Angle to rotate x-axis labels.
+	  		      .groupSpacing(0.1)    //Distance between each group of bars.
+	  		    ;
+	  		
+	  		
+	  		var series = [{
+	  			'key': "Test",
+	  			'values': [{
+	  				'x': 0, 
+	  				'y': 5,
+	  				'label': "x0 y10"
+	  			},{
+	  				'x': 1, 
+  					'y': 20,
+  					'label': "x1 y20"
+  				},{
+  					'x': 2, 
+  					'y': 5,
+  					'label': "x2 y5"
+  				}]
+  			}]; 
+	  		
+  		    chart.xAxis
+  		        .tickFormat(function(d) {
+  		        	return series[0].values[d].label;
+  		        });
+  		
+  		    chart.yAxis
+  		        .tickFormat(d3.format('g'));
+  		
+		  	d3.select('#' + elementID + ' svg')
+  		        .datum(series)
+  		        .call(chart);
+  		
+  		    nv.utils.windowResize(chart.update);
+  		
+  		    return chart;
+	  		    
+	  	
+	  	}
 	  
 	  	return self;
 	  

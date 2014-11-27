@@ -19,7 +19,7 @@
 			var periods = periodService.getISOPeriods(period.startDate, period.endDate, period.periodType);		
 			
 			var requestURL = "/api/analytics.json?";
-			requestURL += "filter=dx:" + IDsFromObjects(variables).join(";");
+			requestURL += "dimension=dx:" + IDsFromObjects(variables).join(";");
 			requestURL += "&dimension=ou:" + IDsFromObjects(orgunit.boundary).join(";");
 			
 			if (orgunit.disaggregationType != 'none') {
@@ -30,7 +30,7 @@
 			requestURL += '&ignoreLimit=true';
 			requestURL += '&hideEmptyRows=true';
 			requestURL += '&tableLayout=true';
-			requestURL += '&columns=pe&rows=ou';
+			requestURL += '&columns=pe&rows=dx;ou';
 					
 			self.requests.push({
 				'URL': requestURL,
@@ -129,22 +129,31 @@
 			var old_time = new Date();		
 			var periodType = request.periodType;
 			
-			var title = data.title;
-			
-			//TODO: Should be part of request
 			var variableID = request.variables[0].id;
-			var variableName = data.metaData.names[variableID];
-			
+			var title = data.metaData.names[variableID];					
 			
 			var headers = data.headers;
-			var dataIndices = [];
+			var dataIndices = [], headerIndices = [];
 			var orgunitIDColumn = 0;
 			var orgunitNameColumn = 0;
 			for (var i = 0; i < headers.length; i++) {
 				if (headers[i].meta === false) dataIndices.push(i);
+
 				if (headers[i].column === 'organisationunitid') orgunitIDColumn = i;
-				else if (headers[i].column === 'organisationunitname') orgunitNameColumn = i;
+				if (headers[i].column === 'organisationunitname') orgunitNameColumn = i;
+				
+				if (!headers[i].hidden && headers[i].column != 'dataname') headerIndices.push(i);
 			}
+			
+			//Fix names of periods
+			headers = filterArrayIndices(headers, headerIndices);
+			for (var i = 0; i < headers.length; i++) {
+				if (headers[i].meta === false) { // = period
+					headers[i].id = headers[i].name;
+					headers[i].name = periodService.shortPeriodName(headers[i].name);
+				}
+			}
+			
 			
 			var rows = [], row, sourceRow;
 			for (var i = 0; i < data.rows.length; i++) {
@@ -164,17 +173,20 @@
 				row.data.unshift(sourceRow[orgunitNameColumn]);			
 				rows.push(row);
 			}
-			
+						
 			
 			switch (request.type) {
 				case 'gap':
-					headers.push({'name': "Gaps", 'column': 'gaps', 'hidden': 'false', 'meta': 'false'});				
-					headers.push({'name': "Weight", 'column': 'weight', 'hidden': 'false', 'meta': 'false'});
+					headers.push({'name': "Gaps", 'column': 'gaps', 'type': 'java.lang.Double', 'hidden': false, 'meta': true});
+					headers.push({'name': "Weight", 'column': 'weight', 'type': 'java.lang.Double', 'hidden': false, 'meta': true});
 					break;
 				default:
-					headers.push({'name': "Outliers", 'column': 'outliers', 'hidden': 'false', 'meta': 'false'});
+					headers.push({'name': "Outliers", 'column': 'outliers', 'type': 'java.lang.Double', 'hidden': false, 'meta': true});
 					break;
 			}
+			
+			
+			//TODO: performance measure
 			var new_time = new Date();		
 			console.log("Processing rows: " + (new_time - old_time));
 			
@@ -278,7 +290,8 @@
 				'metaData': {
 					'totalRows': rows.length,
 					'outlierRows': outlierCount,
-					'outlierValues': violationCount
+					'outlierValues': violationCount,
+					'source': data.metaData
 				},
 				'headers': headers,
 				'rows': rows
