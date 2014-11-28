@@ -4,7 +4,6 @@
 	    
 	    var self = this; 
 	    
-	    
 	    self.text = "";
 	    self.message = false;
 	    self.orgunitID = orgunitID;
@@ -14,10 +13,8 @@
 	    self.recipients = [];
 	    self.selectedRecipient = null;
 	    self.selectedUsers = [];
-	    
 	    self.alerts = [];
-	    	
-	    	
+	    
 	    
 	    getInformation();
 	    

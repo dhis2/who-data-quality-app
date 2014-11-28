@@ -36,10 +36,11 @@
 				'URL': requestURL,
 				'variables': variables,
 				'orgunits': orgunit.boundary,
+				'orgunitDisaggregation': orgunit.disaggregationID,
 				'periods': periods,
 				'parameters': parameters,
 				'type': parameters.analysisType,
-				'periodType': period.periodType		
+				'periodType': period.periodType	
 			});
 			
 			fetchData();
@@ -91,6 +92,7 @@
 		}
 		
 		
+		
 		function requestFromURL(requestURL) {
 
 			var matches = null;
@@ -125,12 +127,50 @@
 		}
 		
 		
+		
+		self.updateAnalysis = function(baseRequest, orgunits) {
+												
+			resetParameters();
+			
+			var metaData = baseRequest.source;
+			var variables = metaData.dx;
+			var periods = metaData.pe;		
+			
+			requestURL = "/api/analytics.json?";
+			requestURL += "dimension=dx:" + IDsFromObjects(variables).join(";");
+			requestURL += "&dimension=ou:" + IDsFromObjects(orgunits).join(";");				
+			requestURL += "&dimension=pe:" + periods.join(";");
+			requestURL += '&ignoreLimit=true';
+			requestURL += '&hideEmptyRows=true';
+			requestURL += '&tableLayout=true';
+			requestURL += '&columns=pe&rows=dx;ou';
+					
+			self.requests.push({
+				'URL': requestURL,
+				'variables': variables,
+				'orgunits': orgunits,
+				'orgunitDisaggregation': null,
+				'periods': periods,
+				'parameters': baseRequest.parameters,
+				'type': baseRequest.parameters.analysisType,
+				'periodType': periodService.periodTypeFromPeriod(periods[0])
+			});
+			
+			fetchData();
+		
+
+		}
+		
+		
+		
 		function resultsAnalysis(data, request) {
 			var old_time = new Date();		
 			var periodType = request.periodType;
 			
 			var variableID = request.variables[0].id;
-			var title = data.metaData.names[variableID];					
+			var title = data.metaData.names[variableID];
+			data.metaData.dx = request.variables;
+			data.metaData.ouGroup = request.orgunitDisaggregation; 			
 			
 			var headers = data.headers;
 			var dataIndices = [], headerIndices = [];
@@ -321,6 +361,7 @@
 					'totalRows': rows.length,
 					'outlierRows': outlierCount,
 					'outlierValues': violationCount,
+					'parameters': request.parameters,
 					'source': data.metaData
 				},
 				'headers': headers,

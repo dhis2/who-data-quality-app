@@ -1,6 +1,6 @@
 (function(){  
 	/**Controller: Results*/
-	angular.module('completenessAnalysis').controller("CompletenessResultsController", function(completenessDataService, $modal) {
+	angular.module('completenessAnalysis').controller("CompletenessResultsController", function(completenessDataService, requestService, $modal) {
 	    var self = this;
 	    
 	    self.results = [];
@@ -94,6 +94,59 @@
 	
 	        modalInstance.result.then(function (result) {
 	        });
+        }
+        
+        
+        self.drillDown = function (orgunitID) {
+        	
+        	var requestURL = "/api/organisationUnits/" + orgunitID + ".json?fields=children[id]";
+        	requestService.getSingle(requestURL).then(function (response) {
+        		
+        		
+        		var children = response.data.children;
+        		
+        		if (children.length > 0) {
+        			completenessDataService.updateAnalysis(self.results[getActiveResultTab()].metaData, children);	
+        		}
+        		else {
+        			console.log("No children - at lowest level");	
+        		}
+        	});
+        	
+        	
+        }
+        
+        self.floatUp = function (orgunitID) {
+        	
+        	var requestURL = "/api/organisationUnits/" + orgunitID + ".json?fields=parent[id,children[id],parent[id,children[id]]";
+        	requestService.getSingle(requestURL).then(function (response) {
+
+        		var metaData = response.data;
+        		var orgunitIDs;
+        		var parent;
+        		if (metaData.parent) {
+        			parent = metaData.parent;
+        			
+        			if (parent.parent) {
+						orgunitIDs = parent.parent.children;
+        			}
+        			else {
+        				orgunitIDs = [parent];
+        			}
+        			
+        			//TODO: replace result rather than updating
+        			completenessDataService.updateAnalysis(self.results[getActiveResultTab()].metaData, orgunitIDs);
+        			
+        		}
+        		else {
+        			console.log("No parent - at the highest level");
+        		}
+        		
+        		
+        		
+        	});
+        	
+        	
         }
                 
 
@@ -200,8 +253,8 @@
 	    var receiveResult = function(result) {		    
 	    
 	    	var latest = self.results.length;	
-			if (latest > 3) {
-				self.results.splice(3, 1);
+			if (latest > 2) {
+				self.results.splice(2, 1);
 				latest--;
 			}
 		    self.results.unshift(result);
