@@ -1,6 +1,6 @@
 (function(){  
 	/**Controller: Parameters*/
-	angular.module('completenessAnalysis').controller("ParamterController", function(completenessDataService, metaDataService, periodService, BASE_URL, $http, $q, $sce, $scope) {
+	angular.module('completenessAnalysis').controller("CompletenessParamterController", function(completenessDataService, metaDataService, periodService, BASE_URL, $http, $q, $sce, $scope) {
 	    
 	    
 	    var self = this;

@@ -1,6 +1,6 @@
 
 (function(){
-  var app = angular.module('dataQualityApp', ['completenessAnalysis', 'dataExport', 'ui.select', 'ngSanitize', 'ui.bootstrap']);
+  var app = angular.module('dataQualityApp', ['reportCard', 'completenessAnalysis', 'dataExport', 'ui.select', 'ngSanitize', 'ui.bootstrap']);
     
 	/**Bootstrap*/
 	angular.element(document).ready( 
@@ -25,7 +25,7 @@
 	
 	/**Controller: Navigation*/
 	app.controller("NavigationController", function() {
-		this.current = "quality";
+		this.current = "report";
 		this.isCollapsed = true;
 	
 		

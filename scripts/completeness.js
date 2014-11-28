@@ -23,14 +23,5 @@
 	  
 	});
 	
-	/**Directive: Completeness results*/	
-	app.directive("outlierResult", function() {
-		return {
-			restrict: "E",
-	        templateUrl: "views/outlierResult.html"
-		};
-	  
-	});	
-		
 })();
 

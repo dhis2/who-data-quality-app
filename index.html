@@ -34,6 +34,14 @@
 	<script lang="javascript" src="scripts/completenessResults.js"></script>
 	<script lang="javascript" src="scripts/completenessService.js"></script>
 	
+	
+	<!-- App Report -->
+	<script lang="javascript" src="scripts/report.js"></script>
+	<script lang="javascript" src="scripts/reportParameters.js"></script>
+	<script lang="javascript" src="scripts/reportResult.js"></script>
+	<script lang="javascript" src="scripts/reportService.js"></script>
+	
+	
 	<!-- App Export -->
 	<script lang="javascript" src="scripts/export.js"></script>
 
@@ -76,7 +84,7 @@
 	          <ul class="nav navbar-nav">
   					<li ng-class="{active: navCtrl.current === 'report'}"><a href ng-click="navCtrl.menuClicked('report');">Report Card</a></li>
 					<li ng-class="{active: navCtrl.current === 'quality'}"><a href ng-click="navCtrl.menuClicked('quality');">Quality Analysis</a></li>
-					<li ng-class="{active: navCtrl.current === 'dictionary'}"><a href ng-click="navCtrl.menuClicked('dictionary');">Data Dictionary</a></li>
+<!--					<li ng-class="{active: navCtrl.current === 'dictionary'}"><a href ng-click="navCtrl.menuClicked('dictionary');">Data Dictionary</a></li>-->
 					<li ng-class="{active: navCtrl.current === 'export'}"><a href ng-click="navCtrl.menuClicked('export');">Data Export</a></li>
 					<li class="dropdown">
 						<a href="#" class="dropdown-toggle" data-toggle="dropdown">More<span class="caret"></span></a>
@@ -99,18 +107,20 @@
 	    </nav>
 	<div id="completeness" ng-show="navCtrl.current === 'report'">
 		<h3>Report Card</h3>
-		Report card goes here...
+		<report-parameters></report-parameters>
+		<br />
+		<report-result></report-result>
 	</div>
-	<div id="quality" ng-show="navCtrl.current === 'quality'">
+	<div ng-cloak id="quality" ng-show="navCtrl.current === 'quality'">
 		<h3>Detailed Data Quality Analysis</h3>
 		<completeness-parameters></completeness-parameters>
 		<br>
 		<completeness-result></completeness-result>
 	</div>
-	<div ng-cloak id="dictionary" ng-show="navCtrl.current === 'dictionary'">
+	<!--<div ng-cloak id="dictionary" ng-show="navCtrl.current === 'dictionary'">
 		<h3>Data Dictionary</h3>
 		<p>Browse indicators and their defintion.</p>
-	</div>
+	</div>-->
 	<div ng-cloak id="export" ng-show="navCtrl.current === 'export'">
 		<export-parameters></export-parameters>
 	</div>

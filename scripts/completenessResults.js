@@ -1,6 +1,6 @@
 (function(){  
 	/**Controller: Results*/
-	angular.module('completenessAnalysis').controller("ResultsController", function(completenessDataService, visualisationService) {
+	angular.module('completenessAnalysis').controller("CompletenessResultsController", function(completenessDataService, visualisationService) {
 	    var self = this;
 	    
 	    self.results = [];

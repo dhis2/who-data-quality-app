@@ -1,15 +1,15 @@
-<div ng-controller="ResultsController as resultsCtrl">
-	<div ng-show="resultsCtrl.results.length === 0" style="height: 400px;"></div>
-	<div ng-show="resultsCtrl.results.length > 0">
+<div ng-controller="CompletenessResultsController as compResultCtrl">
+	<div ng-show="compResultCtrl.results.length === 0" style="height: 400px;"></div>
+	<div ng-show="compResultCtrl.results.length > 0">
 		<h3>Result</h3>
 		<tabset>
-			<tab ng-repeat="result in resultsCtrl.results" heading="{{result.title}} ({{result.type}})" active="result.active">
+			<tab ng-repeat="result in compResultCtrl.results" heading="{{result.title}} ({{result.type}})" active="result.active">
 				<div class="table-responsive">
 					<table class="table table-bordered table-striped table-condensed table-hover">
 						
 				        <thead>
 				            <tr>
-				            	<th ng-click="resultsCtrl.changeSortOrder($index)" ng-repeat="header in result.headers" ng-if="!header.hidden"><span>{{header.name}}</span><span ng-if="header.meta && !header.hidden" class="glyphicon glyphicon-sort"></span></th>
+				            	<th ng-click="compResultCtrl.changeSortOrder($index)" ng-repeat="header in result.headers" ng-if="!header.hidden"><span>{{header.name}}</span><span ng-if="header.meta && !header.hidden" class="glyphicon glyphicon-sort"></span></th>
 				            	<th></th>
 				            </tr>
 				        </thead>
@@ -17,8 +17,8 @@
 				        <tfoot>
 				            <td colspan="{{1+result.headers.length}}">
 					            <div class="btn-group btn-group-justified pull-left" style="margin-top: 20px; width: 200px;" class="pull-left">
-					            	<label ng-change="resultsCtrl.updateCurrentView()" class="btn btn-default" ng-model="result.outliersOnly" btn-radio="false">All rows</label>
-	            				  <label ng-change="resultsCtrl.updateCurrentView()" class="btn btn-default" ng-model="result.outliersOnly" btn-radio="true">Violations</label>
+					            	<label ng-change="compResultCtrl.updateCurrentView()" class="btn btn-default" ng-model="result.outliersOnly" btn-radio="false">All rows</label>
+	            				  <label ng-change="compResultCtrl.updateCurrentView()" class="btn btn-default" ng-model="result.outliersOnly" btn-radio="true">Violations</label>
 								</div>
 					            
 					            <div style="margin-left:20px; margin-top:27px" class="pull-left">
@@ -46,7 +46,7 @@
 				                        Action <span class="caret"></span>
 				                      </button>
 				                      <ul class="dropdown-menu" role="menu">
-				                        <li><a href ng-click="resultsCtrl.showDetails(row);">Visualise</a></li>
+				                        <li><a href ng-click="compResultCtrl.showDetails(row);">Visualise</a></li>
 				                        <li><a href ng-click="alert('To-Do...');">Contact</a></li>
 				                      </ul>
 				                    </div>
