@@ -48,28 +48,33 @@
 	    
 	    
 	    <accordion-group heading="Data">
-			<ui-select ng-disabled="paramCtrl.indicatorsSelected || paramCtrl.dataElementsSelected" ng-show="paramCtrl.analysisType === 'threshold'" ng-model="paramCtrl.dataSetsSelected" theme="bootstrap" style="margin-bottom: 10px; min-width: 250px; max-width: 400px;">
+	    	<div ng-show="paramCtrl.analysisType === 'threshold'">
+	    	<label>Data sets (completeness)</label><br />
+			<ui-select ng-disabled="paramCtrl.indicatorsSelected || paramCtrl.dataElementsSelected" ng-model="paramCtrl.dataSetsSelected" theme="bootstrap" style="margin-bottom: 10px; min-width: 250px; max-width: 400px;">
 			  <ui-select-match placeholder="Select data set...">
 			  	{{paramCtrl.dataSetsSelected.name}}
 			  </ui-select-match>
-			  <ui-select-choices 
+			  <ui-select-choices
 			  	repeat="obj in paramCtrl.dataSets | filter: $select.search">
 			   		<div ng-bind-html="obj.name | highlight: $select.search"></div>
 			  </ui-select-choices>
 			</ui-select>
-			
+			</div>
+	    	<label>Data elements</label><br />
+			<div>			
 			<ui-select ng-disabled="paramCtrl.indicatorsSelected || paramCtrl.dataSetsSelected" ng-model="paramCtrl.dataElementsSelected" theme="bootstrap" style="margin-bottom: 10px; min-width: 250px; max-width: 400px;">
-			  <ui-select-match placeholder="Select data elements...">
+			  <ui-select-match placeholder="Select data element...">
 			  	{{paramCtrl.dataElementsSelected.name}}
 			  </ui-select-match>
 			  <ui-select-choices 
 			  	repeat="obj in paramCtrl.dataElements | filter: $select.search">
 			   		<div ng-bind-html="obj.name | highlight: $select.search"></div>
 			  </ui-select-choices>
-			</ui-select>
-			
-			<ui-select ng-disabled="paramCtrl.dataSetsSelected || paramCtrl.dataElementsSelected" ng-show="paramCtrl.analysisType != 'gap'" ng-model="paramCtrl.indicatorsSelected" theme="bootstrap" style="margin-bottom: 10px; min-width: 250px; max-width: 400px;">
-			  <ui-select-match placeholder="Select indicators...">
+			</div>
+			<div ng-show="paramCtrl.analysisType != 'gap'">
+	    	<label>Indicators</label><br />
+			<ui-select ng-disabled="paramCtrl.dataSetsSelected || paramCtrl.dataElementsSelected"  ng-model="paramCtrl.indicatorsSelected" theme="bootstrap" style="margin-bottom: 10px; min-width: 250px; max-width: 400px;">
+			  <ui-select-match placeholder="Select indicator...">
 			  	{{paramCtrl.indicatorsSelected.name}}
 			  </ui-select-match>
 			  <ui-select-choices 
@@ -77,6 +82,7 @@
 			   		<div ng-bind-html="obj.name | highlight: $select.search"></div>
 			  </ui-select-choices>
 			</ui-select>
+			</div>
 			<br />
 				<label><span style="font-size: 100%" class="glyphicon glyphicon-info-sign"></span>  Info</label>
 			<div ng-show="!paramCtrl.dataSetsSelected && !paramCtrl.dataElementsSelected && !paramCtrl.dataSetsSelected">Select data for analysis.</div>

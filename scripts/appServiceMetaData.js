@@ -8,6 +8,11 @@
 	  		'promise': null,
 	  		'data': []
 	  	};
+	  	var dataElementGroups = {
+	  			'available': false,
+	  			'promise': null,
+	  			'data': []
+	  		};
 	  	var dataSets = {
 	  		'available': false,
 	  		'promise': null,
@@ -203,6 +208,45 @@
 			return self.removeDuplicateIDs(IDs);		
 		
 		}
+		
+		/**Data element groups*/
+		self.getDataElementGroups = function() { 
+			
+				var deferred = $q.defer();
+				
+				//available locally
+				if (dataElementGroups.available) {
+					console.log("Data element groups available locally");
+					deferred.resolve(self.dataElementGroups.data);
+				}
+				//waiting for server
+				else if (!dataElementGroups.available && dataElementGroups.promise) {
+					console.log("Data element groups already requested");
+					return dataElementGroupss.promise;
+				}
+				//need to be fetched
+			else {
+				console.log("Requesting data element groups");
+				var requestURL = '/api/dataElementGroups.json?'; 
+				requestURL += 'fields=name,id,dataElements[name,id]&paging=false';
+					  
+				requestService.getSingle(requestURL).then(
+					function(response) { //success
+				    	var data = response.data;
+				    	dataElementGroups.data = data.dataElementGroups;
+				    	deferred.resolve(dataElementGroups.data);
+				    	dataElementGroups.available = true;
+					}, 
+					function(response) { //error
+				    	var data = response.data;
+				    	deferred.reject("Error fetching data element groups");
+				    	console.log(msg, code);
+				    }
+				);
+			}
+				dataElementGroups.promise = deferred.promise;
+				return deferred.promise; 
+		};
 		
 		
 		/**Data elements*/

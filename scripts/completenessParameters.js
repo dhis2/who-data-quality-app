@@ -14,7 +14,7 @@
 	    	
 	    	self.dataElements = [];
 	    	self.dataElementsSelected = undefined;
-	    		    
+				    		    
 	    	self.indicators = [];
 	    	self.indicatorsSelected = undefined;
 	    	
