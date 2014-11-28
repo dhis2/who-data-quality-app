@@ -1,6 +1,6 @@
 (function(){  
 	/**Controller: Results*/
-	angular.module('completenessAnalysis').controller("CompletenessResultsController", function(completenessDataService, visualisationService) {
+	angular.module('completenessAnalysis').controller("CompletenessResultsController", function(completenessDataService, $modal) {
 	    var self = this;
 	    
 	    self.results = [];
@@ -75,6 +75,26 @@
 		    
     		
         };
+        
+        self.sendMessage = function(metaData) {
+        	        	
+        	var modalInstance = $modal.open({
+	            templateUrl: "modals/modalMessage.html",
+	            controller: "ModalMessageController",
+	            controllerAs: 'mmCtrl',
+	            resolve: {
+	    	        orgunitID: function () {
+	    	            return metaData.ou;
+	    	        },
+	    	        orgunitName: function () {
+	    	            return metaData.ouName;
+	    	        }
+	            }
+	        });
+	
+	        modalInstance.result.then(function (result) {
+	        });
+        }
                 
 
         // calculate page in place

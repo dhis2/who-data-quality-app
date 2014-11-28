@@ -38,7 +38,7 @@
 				                </td>
 				                
 				                <!-- IF: Gap -->
-				                <td ng-if="result.type === 'gap'" ng-repeat="value in row.data track by $index" ng-class="{danger: (value === '' && !result.headers[$index].meta), valueCell: result.headers[$index].type != 'java.lang.String'}">{{value}}
+				                <td ng-if="result.type === 'gap'" ng-repeat="value in row.data track by $index" ng-class="{warning: (value === '' && !result.headers[$index].meta), valueCell: result.headers[$index].type != 'java.lang.String'}">{{value}}
 				                </td>
 				                
 				                <td><div class="btn-group" dropdown is-open="status.isopen">
@@ -47,7 +47,7 @@
 				                      </button>
 				                      <ul class="dropdown-menu" role="menu">
 				                        <li><a href ng-click="compResultCtrl.showDetails(row);">Visualise</a></li>
-				                        <li><a href ng-click="alert('To-Do...');">Contact</a></li>
+				                        <li><a href ng-click="compResultCtrl.sendMessage(row.metaData);">Contact</a></li>
 				                      </ul>
 				                    </div>
 				                </td>    

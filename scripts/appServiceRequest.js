@@ -17,6 +17,15 @@
 			var fullURL = BASE_URL + requestURL;	  	
 		  	return $http.get(fullURL);
 		};
+		
+		
+		self.post = function(postURL, data) {
+			var fullURL = BASE_URL + postURL;	  	
+		  	
+		  	
+		  	return $http.post(fullURL, data);
+		};
+		
 		      
 		return self;
 	
