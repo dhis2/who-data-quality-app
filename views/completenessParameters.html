@@ -2,14 +2,15 @@
 	
 	
 	<accordion close-others="compParamCtrl.oneAtATime">
+	
 	    <accordion-group heading="Analysis type" is-open="compParamCtrl.status.isFirstOpen">
 			<div class="btn-group btn-group-justified" style="margin-bottom: 5px; max-width: 380px;">
 				  <label class="btn btn-default" ng-model="compParamCtrl.analysisType" btn-radio="'outlier'">Outlier</label>
   				  <label class="btn btn-default" ng-model="compParamCtrl.analysisType" btn-radio="'gap'">Gap</label>
 				  <label class="btn btn-default" ng-model="compParamCtrl.analysisType" btn-radio="'threshold'">Threshold</label>
-			
 			</div>
-				<div ng-show="compParamCtrl.analysisType === 'threshold'"><br />
+			
+			<div ng-show="compParamCtrl.analysisType === 'threshold'"><br />
 				<label for="threshold">Threshold low limit</label><br />
 				<input style="width: 100px;" id="thresholdLow" class="selector" type="number" min="0" max="100000" ng-model="compParamCtrl.thresholdLow"/><br />
 				<label for="threshold">Threshold high limit</label><br />
@@ -30,7 +31,7 @@
 				</div>
 				<br />
 				<label><span style="font-size: 100%" class="glyphicon glyphicon-info-sign"></span>  Info</label>
-				<p>Organisation units with more than <span style="font-size: 100%;" class="label label-primary">{{compParamCtrl.gapLimit}}</span> missing values be displayed. If a facility has no data in the selected period for the given variable, it is ignored.</p>	
+				<p>Organisation units with more than <span style="font-size: 100%;" class="label label-primary">{{compParamCtrl.gapLimit}}</span> missing values be displayed.</p>	
 			</div>
 			
 			
@@ -201,9 +202,12 @@
 				<p ng-show="compParamCtrl.orgunitGroupSelected"><span style="font-size: 100%;" class="label label-primary">{{compParamCtrl.userOrgunitLabel}}</span><span class="glyphicon glyphicon-chevron-right"></span><span style="font-size: 100%;" class="label label-primary">{{compParamCtrl.orgunitGroupSelected.name}}</span></p>
 				
 				<p ng-show="!compParamCtrl.orgunitGroupSelected && !compParamCtrl.orgunitLevelSelected"><span style="font-size: 100%;" class="label label-primary">{{compParamCtrl.userOrgunitLabel}}</span></p>
+				<br />
+				<label><span style="font-size: 100%" class="glyphicon glyphicon-info-sign"></span>  Info</label>
+				<p>Organisation units with no data for the selected variable in the given time period are not included in the result.</p>
 			</div>
 	    </accordion-group>
 	  </accordion>
 	  	
-	<button ng-disabled="(!compParamCtrl.dataElementsSelected && !compParamCtrl.indicatorsSelected && !compParamCtrl.dataSetsSelected)" type="button" class="btn btn-primary" ng-click="compParamCtrl.doAnalysis();"> Analyze</button>
+	<button ng-disabled="(!compParamCtrl.dataElementsSelected && !compParamCtrl.indicatorsSelected && !compParamCtrl.dataSetsSelected)" type="button" class="btn btn-primary" ng-click="compParamCtrl.doAnalysis();">Analyze</button>
 </div>

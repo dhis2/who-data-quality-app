@@ -1,3 +1,35 @@
-<div ng-controller="ReportResultController as repResultCtrl">
-	Results...
+<div ng-controller="ReportResultController as repResCtrl">
+	<div ng-if="repResCtrl.ready">
+		<table style="font-size: 90%;" class="table table-bordered table-striped table-condensed table-hover">
+			<tr>
+			 	<th>Completeness</th><th>Data set</th><th>National score</th><th># Units with poor score</th><th>% Units with poor score</th><th>Names of units with poor score</th>
+		    </tr>
+		   	<tr ng-repeat="dataSet in repResCtrl.result.completeness.dataSets track by $index">
+	    		<th ng-if="$index === 0" rowspan="{{repResCtrl.result.completeness.dataSets.length}}">Completeness of facility reporting</th>
+	    		<td>{{dataSet.label}}</td>
+	    		<td>{{dataSet.level1}}</td>
+	    		<td>{{dataSet.level2p}}</td>
+	    		<td>{{dataSet.level2c}}</td>
+	    		<td>{{dataSet.level2names}}</td>
+	    	</tr>
+	    </table>
+	    
+	    <table style="font-size: 90%;" class="table table-bordered table-striped table-condensed table-hover">
+	    	<thead>
+	    	<tr>
+	    	 	<th>Internal consistency</th><th>Indicator</th><th>National Score</th><th># Units with poor score</th><th>% Units with poor score</th><th>Names of units with poor score</th>
+	        </tr>
+	    	</thead>
+	    	<tbody ng-repeat="section in repResCtrl.result.iConsistency track by $index">
+	    		<tr ng-repeat="indicator in section.indicators">
+	    			<th ng-if="$index === 0" rowspan="{{section.indicators.length}}">{{section.label}}</th>
+	    			<td>{{indicator.label}}</td>
+	    			<td>{{indicator.level1}}</td>
+	    			<td>{{indicator.level2p}}</td>
+	    			<td>{{indicator.level2c}}</td>
+	    			<td>{{indicator.level2names}}</td>
+	    		</tr>
+			</tbody>
+		</table>
+	</div>
 </div>

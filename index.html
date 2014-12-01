@@ -85,7 +85,7 @@
 	        </div>
 	        <div collapse="navCtrl.isCollapsed" class="navbar-collapse bs-js-navbar-collapse">
 	          <ul class="nav navbar-nav">
-  					<li ng-class="{active: navCtrl.current === 'report'}"><a href ng-click="navCtrl.menuClicked('report');">Report Card</a></li>
+  					<li ng-class="{active: navCtrl.current === 'report'}"><a href ng-click="navCtrl.menuClicked('report');">Data Quality Review</a></li>
 					<li ng-class="{active: navCtrl.current === 'quality'}"><a href ng-click="navCtrl.menuClicked('quality');">Quality Analysis</a></li>
 <!--					<li ng-class="{active: navCtrl.current === 'dictionary'}"><a href ng-click="navCtrl.menuClicked('dictionary');">Data Dictionary</a></li>-->
 					<li ng-class="{active: navCtrl.current === 'export'}"><a href ng-click="navCtrl.menuClicked('export');">Data Export</a></li>
@@ -109,7 +109,7 @@
 	      </div><!-- /.container-fluid -->
 	    </nav>
 	<div id="completeness" ng-show="navCtrl.current === 'report'">
-		<h3>Report Card</h3>
+		<h3>Annula Data Quality Review</h3>
 		<report-parameters></report-parameters>
 		<br />
 		<report-result></report-result>
