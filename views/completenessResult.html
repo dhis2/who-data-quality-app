@@ -4,7 +4,8 @@
 		<h3>Result</h3>
 		<tabset>
 			<tab ng-repeat="result in compResultCtrl.results" heading="{{result.title}} ({{result.type}})" active="result.active">
-				<div class="table-responsive">
+				<alert style="margin-top: 10px; margin-bottom: 10px;"ng-repeat="alert in result.alerts track by $index" type="{{alert.type}}" close="result.alerts.splice($index, 1)">{{alert.msg}}</alert>
+				<div style="margin-top: 10px; font-size: 90%;" class="table-responsive">
 					<table class="table table-bordered table-striped table-condensed table-hover">
 						
 				        <thead>
@@ -47,8 +48,8 @@
 				                      </button>
 				                      <ul class="dropdown-menu" role="menu">
 				                        <li><a href ng-click="compResultCtrl.showDetails(row);">Visualise</a></li>
-				                        <li><a href ng-click="compResultCtrl.floatUp(row.metaData.ou);">Float up</a></li>
-				                        <li><a href ng-click="compResultCtrl.drillDown(row.metaData.ou);">Drill down</a></li>
+				                        <li><a href ng-click="compResultCtrl.floatUp(row.metaData);">Float up</a></li>
+				                        <li><a href ng-click="compResultCtrl.drillDown(row.metaData);">Drill down</a></li>
 				                        <li><a href ng-click="compResultCtrl.sendMessage(row.metaData);">Contact</a></li>
 				                      </ul>
 				                    </div>

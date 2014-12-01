@@ -97,9 +97,9 @@
         }
         
         
-        self.drillDown = function (orgunitID) {
+        self.drillDown = function (rowMetaData) {
         	
-        	var requestURL = "/api/organisationUnits/" + orgunitID + ".json?fields=children[id]";
+        	var requestURL = "/api/organisationUnits/" + rowMetaData.ou + ".json?fields=children[id]";
         	requestService.getSingle(requestURL).then(function (response) {
         		
         		
@@ -109,16 +109,16 @@
         			completenessDataService.updateAnalysis(self.results[getActiveResultTab()].metaData, children);	
         		}
         		else {
-        			console.log("No children - at lowest level");	
+        			self.results[0].alerts.push({type: 'warning', msg: rowMetaData.ouName + ' does not have any children'});
         		}
         	});
         	
         	
         }
         
-        self.floatUp = function (orgunitID) {
+        self.floatUp = function (rowMetaData) {
         	
-        	var requestURL = "/api/organisationUnits/" + orgunitID + ".json?fields=parent[id,children[id],parent[id,children[id]]";
+        	var requestURL = "/api/organisationUnits/" + rowMetaData.ou + ".json?fields=parent[id,children[id],parent[id,children[id]]";
         	requestService.getSingle(requestURL).then(function (response) {
 
         		var metaData = response.data;
@@ -139,7 +139,7 @@
         			
         		}
         		else {
-        			console.log("No parent - at the highest level");
+					self.results[0].alerts.push({type: 'warning', msg: rowMetaData.ouName + ' does not have a parent'});
         		}
         		
         		
@@ -230,7 +230,6 @@
 			}
 			
 			return rows;
-				    
 	    }
 	    
 	    
@@ -248,10 +247,11 @@
 	    		else self.results[i].active = true;
 	    	}	    
 	    }
-	       
+	    
+	   	    
 	       	    
 	    var receiveResult = function(result) {		    
-	    
+	    	    
 	    	var latest = self.results.length;	
 			if (latest > 2) {
 				self.results.splice(2, 1);
@@ -259,15 +259,20 @@
 			}
 		    self.results.unshift(result);
 		    
-		    self.results[0].sortColumn = 0;
+		    self.results[0].alerts = [];
+		    self.results[0].sortColumn = self.results[0].headers.length-1;
 		    self.results[0].sortRevers = false;
 		    
-		    if (result.metaData.outlierRows === 0) {
+		    if (result.rows.length === 0) {
+		    	self.results[0].alerts.push({type: 'warning', msg: 'No data!'});
+		    }
+		    else if (result.metaData.outlierRows === 0) {
 		    	self.results[0].outliersOnly = false;
 		    }
 		    else {
 		    	self.results[0].outliersOnly = true;
 		    }
+		    		    
 		    setActiveResultTab(0);
 		    self.updateCurrentView();
 			

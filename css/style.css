@@ -1,7 +1,7 @@
 body {
   margin-top: 5%;
-  margin-left: 2%;
-  margin-right: 2%;
+  margin-left: 1%;
+  margin-right: 1%;
 }
 
 .selector {
@@ -16,7 +16,7 @@ body {
 }
 
 .container {
-  margin: 5px;
+  margin: 3px;
 }
 
 .tableButton {
