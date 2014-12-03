@@ -1,0 +1,55 @@
+<div ng-controller="AdminController as admCtrl">
+
+	<tabset>
+		<tab heading="Data Mapping" active="admCtrl.activeTab">
+			<br />
+			<p>Please map the reference data elements/indicators to the corresponding data element/indicator in this database.</p>
+			<table class="table table-bordered table-striped table-condensed table-hover">
+				<tr>
+					<th>Group</th>
+					<th>Reference indicator/data element</th>
+					<th>Definition</th>
+					<th width="400px">Local data element/indicator</th>
+				</tr>
+				<tr ng-repeat="indicator in admCtrl.mapping track by $index">
+					<td>{{indicator.group}}</td>
+					<td>{{indicator.name}}</td>
+					<td>{{indicator.definition}}</td>
+					<td>
+					
+					<ui-select ng-disabled="indicator.localIndicator" ng-model="indicator.localDataElement" theme="bootstrap" style="width: 350px;">
+					  <ui-select-match placeholder="Select data element...">
+					  	{{indicator.localDataElement.name}}
+					  </ui-select-match>
+					  <ui-select-choices 
+					  	repeat="obj in admCtrl.dataElements | filter: $select.search">
+					   		<div ng-bind-html="obj.name | highlight: $select.search"></div>
+					  </ui-select-choices>
+					  </ui-select>
+					  
+						<br />
+						
+					  <ui-select ng-disabled="indicator.localDataElement" ng-model="indicator.localIndicator" theme="bootstrap" style="width: 350px;">
+					    <ui-select-match placeholder="Select indicator...">
+					    	{{indicator.localIndicator.name}}
+					    </ui-select-match>
+					    <ui-select-choices 
+					    	repeat="obj in admCtrl.indicators | filter: $select.search">
+					     		<div ng-bind-html="obj.name | highlight: $select.search"></div>
+					    </ui-select-choices>
+					    </ui-select>
+
+					  </td>
+				</tr>
+			
+			</table>
+			<button class="btn btn-primary pull-right">Update</button>
+			{{admCtrl.mapping}}
+			
+		</tab>
+		<tab heading="Data Quality Parameters">
+			
+		</tab>
+	</tabset>
+	
+</div>
