@@ -8,7 +8,7 @@
 			var total = 0;
 			
 			for (var i = 0; i < valueSet.length; i++) {
-				total += valueSet[i];
+				total += parseFloat(valueSet[i]);
 			}
 			
 			return (total/valueSet.length);
