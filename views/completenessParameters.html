@@ -1,6 +1,4 @@
 <div ng-controller="CompletenessParamterController as compParamCtrl">
-	
-	
 	<accordion close-others="compParamCtrl.oneAtATime">
 	
 	    <accordion-group heading="Analysis type" is-open="compParamCtrl.status.isFirstOpen">
@@ -24,8 +22,8 @@
 			
 			<div ng-show="compParamCtrl.analysisType === 'gap'"><br />
 				<label for="threshold">Gap threshold (missing values)</label><br />
-				<div class="btn-group btn-group-justified" style="margin-bottom: 5px; max-width: 350px;">
-				  	<label class="btn btn-info" ng-model="compParamCtrl.gapLimit" btn-radio="1">1 or more</label>
+				<div class="btn-group btn-group-justified" style="margin-bottom: 5px; max-width: 380px;">
+				  	<label class="btn btn-default" ng-model="compParamCtrl.gapLimit" btn-radio="1">1 or more</label>
 				  	<label class="btn btn-warning" ng-model="compParamCtrl.gapLimit" btn-radio="2">2 or more</label>
 					<label class="btn btn-danger" ng-model="compParamCtrl.gapLimit" btn-radio="3">3 or more</label>
 				</div>
@@ -37,9 +35,10 @@
 			
 			<div ng-show="compParamCtrl.analysisType === 'outlier'"><br />
 				<label for="threshold">Standard deviations</label><br />
-				<div class="btn-group btn-group-justified" style="margin-bottom: 5px; max-width: 350px;">
-				  		<label class="btn btn-warning" ng-model="compParamCtrl.stdDev" btn-radio="2">Moderate (> 2 SD)</label>
-						<label class="btn btn-danger" ng-model="compParamCtrl.stdDev" btn-radio="3">Extreme (> 3 SD)</label>
+				<div class="btn-group btn-group-justified" style="margin-bottom: 5px; max-width: 380px;">
+						<label class="btn btn-default" ng-model="compParamCtrl.stdDev" btn-radio="1.5">Mild (1.5 SD)</label>
+				  		<label class="btn btn-warning" ng-model="compParamCtrl.stdDev" btn-radio="2">Moderate (2 SD)</label>
+						<label class="btn btn-danger" ng-model="compParamCtrl.stdDev" btn-radio="3">Extreme (3 SD)</label>
 				</div>
 				<br />
 				<label><span style="font-size: 100%" class="glyphicon glyphicon-info-sign"></span>  Info</label>
@@ -49,9 +48,9 @@
 	    
 	    
 	    <accordion-group heading="Data">
-	    	<div ng-show="compParamCtrl.analysisType === 'threshold'">
+	    	    	<div ng-show="compParamCtrl.analysisType === 'threshold' && compParamCtrl.dataDisaggregation === 0">
 	    	<label>Data sets (completeness)</label><br />
-			<ui-select ng-disabled="compParamCtrl.indicatorsSelected || compParamCtrl.dataElementsSelected" ng-model="compParamCtrl.dataSetsSelected" theme="bootstrap" style="margin-bottom: 10px; min-width: 250px; max-width: 400px;">
+			<ui-select ng-model="compParamCtrl.dataSetsSelected" theme="bootstrap" style="margin-bottom: 10px; min-width: 250px; max-width: 380px;">
 			  <ui-select-match placeholder="Select data set...">
 			  	{{compParamCtrl.dataSetsSelected.name}}
 			  </ui-select-match>
@@ -61,22 +60,52 @@
 			  </ui-select-choices>
 			</ui-select>
 			</div>
+			
+			
+			<div>	
 	    	<label>Data elements</label><br />
-			<div>			
-			<ui-select ng-disabled="compParamCtrl.indicatorsSelected || compParamCtrl.dataSetsSelected" ng-model="compParamCtrl.dataElementsSelected" theme="bootstrap" style="margin-bottom: 10px; min-width: 250px; max-width: 400px;">
-			  <ui-select-match placeholder="Select data element...">
-			  	{{compParamCtrl.dataElementsSelected.name}}
+			<ui-select ng-model="compParamCtrl.dataElementGroupsSelected" theme="bootstrap" style="margin-bottom: 10px; min-width: 250px; max-width: 380px;">
+			  <ui-select-match placeholder="Select data element group...">
+			  	{{compParamCtrl.dataElementGroupsSelected.name}}
+			  </ui-select-match>
+			  <ui-select-choices 
+			  	repeat="obj in compParamCtrl.dataElementGroups | filter: $select.search">
+			   		<div ng-bind-html="obj.name | highlight: $select.search"></div>
+			</ui-select-choices>
+			</ui-select>
+			<div class="btn-group btn-group-justified" style="margin-bottom: 10px; max-width: 380px;">
+					<label class="btn btn-default" ng-model="compParamCtrl.dataDisaggregation" btn-radio="0">Totals</label>
+			  		<label class="btn btn-default" ng-model="compParamCtrl.dataDisaggregation" btn-radio="1">Details</label>
+			</div>
+			<ui-select ng-if="compParamCtrl.dataElementGroupsSelected" ng-model="compParamCtrl.dataElementsSelected" multiple theme="bootstrap" style="margin-bottom: 10px; min-width: 250px; max-width: 380px;">
+			  <ui-select-match placeholder="{{compParamCtrl.dataElementPlaceholder}}">
+			  	{{$item.name}}
 			  </ui-select-match>
 			  <ui-select-choices 
 			  	repeat="obj in compParamCtrl.dataElements | filter: $select.search">
 			   		<div ng-bind-html="obj.name | highlight: $select.search"></div>
 			  </ui-select-choices>
+			  </ui-select>
 			</div>
-			<div ng-show="compParamCtrl.analysisType != 'gap'">
+			
+			
+			
+
+			<div ng-show="compParamCtrl.analysisType != 'gap' && compParamCtrl.dataDisaggregation === 0">
 	    	<label>Indicators</label><br />
-			<ui-select ng-disabled="compParamCtrl.dataSetsSelected || compParamCtrl.dataElementsSelected"  ng-model="compParamCtrl.indicatorsSelected" theme="bootstrap" style="margin-bottom: 10px; min-width: 250px; max-width: 400px;">
-			  <ui-select-match placeholder="Select indicator...">
-			  	{{compParamCtrl.indicatorsSelected.name}}
+	    	<ui-select ng-model="compParamCtrl.indicatorGroupsSelected" theme="bootstrap" style="margin-bottom: 10px; min-width: 250px; max-width: 380px;">
+	    	  <ui-select-match placeholder="Select indicator group...">
+	    	  	{{compParamCtrl.indicatorGroupsSelected.name}}
+	    	  </ui-select-match>
+	    	  <ui-select-choices
+	    	  	repeat="obj in compParamCtrl.indicatorGroups | filter: $select.search">
+	    	   		<div ng-bind-html="obj.name | highlight: $select.search"></div>
+	    	  </ui-select-choices>
+	    	</ui-select>
+	    	
+			<ui-select ng-if="compParamCtrl.indicatorGroupsSelected" ng-model="compParamCtrl.indicatorsSelected" multiple theme="bootstrap" style="margin-bottom: 10px; min-width: 250px; max-width: 380px;">
+			  <ui-select-match placeholder="{{compParamCtrl.indicatorPlaceholder}}">
+			  	{{$item.name}}
 			  </ui-select-match>
 			  <ui-select-choices 
 			  	repeat="obj in compParamCtrl.indicators | filter: $select.search">
@@ -84,11 +113,19 @@
 			  </ui-select-choices>
 			</ui-select>
 			</div>
+			
+			
+			
+			
+			
 			<br />
 				<label><span style="font-size: 100%" class="glyphicon glyphicon-info-sign"></span>  Info</label>
 			<div ng-show="!compParamCtrl.dataSetsSelected && !compParamCtrl.dataElementsSelected && !compParamCtrl.dataSetsSelected">Select data for analysis.</div>
 			<div ng-show="compParamCtrl.dataSetsSelected || compParamCtrl.dataElementsSelected || compParamCtrl.indicatorsSelected">Will perform {{compParamCtrl.analysisType}} analysis on <span style="font-size: 100%;" class="label label-primary" ng-show="compParamCtrl.dataSetsSelected">{{compParamCtrl.dataSetsSelected.name}} (completeness)</span><span style="font-size: 100%;" class="label label-primary" ng-show="compParamCtrl.dataElementsSelected">{{compParamCtrl.dataElementsSelected.name}}</span><span style="font-size: 100%;" class="label label-primary" ng-show="compParamCtrl.indicatorsSelected">{{compParamCtrl.indicatorsSelected.name}}</span></div>
 	    </accordion-group>
+	    
+	    
+	    
 	    
 	    
 	    <accordion-group heading="Period">
@@ -174,7 +211,7 @@
 	    <accordion-group heading="Orgunit" is-open="status.open">
 		    <label for="orgunitSelect">Disaggregation</label>
 			<div id="orgunitSelect">
-				<ui-select ng-disabled="compParamCtrl.orgunitGroupSelected" ng-model="compParamCtrl.orgunitLevelSelected" theme="bootstrap" style="margin-bottom: 10px; min-width: 250px; max-width: 400px;">
+				<ui-select ng-disabled="compParamCtrl.orgunitGroupSelected" ng-model="compParamCtrl.orgunitLevelSelected" theme="bootstrap" style="margin-bottom: 10px; min-width: 250px; max-width: 380px;">
 				  <ui-select-match placeholder="Select organisation unit level">
 				  	{{compParamCtrl.orgunitLevelSelected.name}}
 				  </ui-select-match>
@@ -184,7 +221,7 @@
 				  </ui-select-choices>
 				</ui-select>
 				
-				<ui-select ng-disabled="compParamCtrl.orgunitLevelSelected" ng-model="compParamCtrl.orgunitGroupSelected" theme="bootstrap" style="margin-bottom: 10px; min-width: 250px; max-width: 400px;">
+				<ui-select ng-disabled="compParamCtrl.orgunitLevelSelected" ng-model="compParamCtrl.orgunitGroupSelected" theme="bootstrap" style="margin-bottom: 10px; min-width: 250px; max-width: 380px;">
 					  <ui-select-match placeholder="Select organisation unit group">
 					  	{{compParamCtrl.orgunitGroupSelected.name}}
 					  </ui-select-match>

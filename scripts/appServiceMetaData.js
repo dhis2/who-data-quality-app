@@ -9,16 +9,21 @@
 	  		'data': []
 	  	};
 	  	var dataElementGroups = {
-	  			'available': false,
-	  			'promise': null,
-	  			'data': []
-	  		};
+  			'available': false,
+  			'promise': null,
+  			'data': []
+  		};
 	  	var dataSets = {
 	  		'available': false,
 	  		'promise': null,
 	  		'data': []
 	  	};
 	  	var indicators = {
+  			'available': false,
+  			'promise': null,
+  			'data': []
+	  	};
+	  	var indicatorGroups = {
 	  		'available': false,
 	  		'promise': null,
 	  		'data': []
@@ -155,6 +160,69 @@
 	  	
 	  	
 	  	/**Indicators*/
+	  	self.getIndicatorGroups = function() { 
+	  		
+	  		var deferred = $q.defer();
+	  			
+  			//available locally
+  			if (indicatorGroups.available) {
+  				console.log("Indicator groups available locally");
+  				deferred.resolve(indicatorGroups.data);
+  			}
+  			//waiting for server
+  			else if (!indicatorGroups.available && indicatorGroups.promise) {
+  				console.log("Indicator groups already requested");
+  				return indicatorGroups.promise;
+  			}
+  			//need to be fetched
+	  		else {
+	  			console.log("Requesting indicator groups");
+	  			var requestURL = '/api/indicatorGroups.json?'; 
+	  			requestURL += 'fields=id,name&paging=false';
+	  			
+	  			requestService.getSingle(requestURL).then(
+	  				function(response) { //success
+	  			    	var data = response.data;
+	  			    	indicatorGroups.data = data.indicatorGroups;
+	  			    	deferred.resolve(indicatorGroups.data);
+	  			    	indicatorGroups.available = true;
+	  				}, 
+	  				function(response) { //error
+	  			    	var data = response.data;
+	  			    	deferred.reject("Error fetching indicators");
+	  			    	console.log(msg, code);
+	  			    }
+	  			);
+	  		}
+  			indicatorGroups.promise = deferred.promise;
+  			return deferred.promise; 
+	  	};
+	  	
+	  	
+	  	self.getIndicatorGroupMembers = function(indicatorGroupID) { 
+	  		
+	  		var deferred = $q.defer();
+	  		
+	  		console.log("Requesting indicator group members");
+	  		
+	  		var requestURL = '/api/indicators.json?'; 
+	  		requestURL += 'fields=name,id&paging=false&filter=indicatorGroups.id:eq:' + indicatorGroupID;
+	  			  
+	  		requestService.getSingle(requestURL).then(
+	  			function(response) { //success
+	  		    	deferred.resolve(response.data.indicators);
+	  			}, 
+	  			function(response) { //error
+	  		    	deferred.reject("Error fetching indicator group members");
+	  		    	console.log(msg, code);
+	  		    }
+	  		);
+	  			
+	  		return deferred.promise; 
+	  	};
+	  	
+	  	
+	  	/**Indicators*/
 		self.getIndicators = function() { 
 			
 				var deferred = $q.defer();
@@ -162,7 +230,7 @@
 				//available locally
 				if (indicators.available) {
 					console.log("Indicators available locally");
-					deferred.resolve(self.dataSets.data);
+					deferred.resolve(self.indicators.data);
 				}
 				//waiting for server
 				else if (!indicators.available && indicators.promise) {
@@ -228,7 +296,7 @@
 			else {
 				console.log("Requesting data element groups");
 				var requestURL = '/api/dataElementGroups.json?'; 
-				requestURL += 'fields=name,id,dataElements[name,id]&paging=false';
+				requestURL += 'fields=name,id&paging=false';
 					  
 				requestService.getSingle(requestURL).then(
 					function(response) { //success
@@ -247,6 +315,55 @@
 				dataElementGroups.promise = deferred.promise;
 				return deferred.promise; 
 		};
+		
+		
+		
+		/**Data element group members*/
+		self.getDataElementGroupMemberOperands = function(dataElementGroupID) { 
+			
+			var deferred = $q.defer();
+			
+			console.log("Requesting data element operand group members");
+			
+			var requestURL = '/api/dataElementOperands.json?'; 
+			requestURL += 'fields=name,id,dataElementId,optionComboId&paging=false&filter=dataElementGroups.id:eq:' + dataElementGroupID;
+				  
+			requestService.getSingle(requestURL).then(
+				function(response) { //success
+			    	deferred.resolve(response.data.dataElementOperands);
+				}, 
+				function(response) { //error
+			    	deferred.reject("Error fetching data element group member operands");
+			    	console.log(msg, code);
+			    }
+			);
+				
+			return deferred.promise; 
+		};
+		
+		/**Data element group members*/
+		self.getDataElementGroupMembers = function(dataElementGroupID) { 
+			
+			var deferred = $q.defer();
+			
+			console.log("Requesting data element group members");
+			
+			var requestURL = '/api/dataElements.json?'; 
+			requestURL += 'fields=name,id&paging=false&filter=dataElementGroups.id:eq:' + dataElementGroupID;
+				  
+			requestService.getSingle(requestURL).then(
+				function(response) { //success
+			    	deferred.resolve(response.data.dataElements);
+				}, 
+				function(response) { //error
+			    	deferred.reject("Error fetching data element group members");
+			    	console.log(msg, code);
+			    }
+			);
+				
+			return deferred.promise; 
+		};
+		
 		
 		
 		/**Data elements*/

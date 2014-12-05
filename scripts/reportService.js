@@ -9,17 +9,7 @@
 		self.analysisYear = null;
 		self.result = null;
 		
-		var resultHandler = function (functionToCall, extraParameter) {
-			
-			var self = this;
-			self.extraParameter = extraParameter;
-			self.functionToCall = functionToCall;
-			
-			self.handleResult = function (response) {
-				functionToCall(response, self.extraParameter);
-			}
-			return this;
-		}
+	
 		
 		
 		self.setCallback = function (callback) {
@@ -161,7 +151,7 @@
 				requestURL += '&ignoreLimit=true';
 				
 								
-				var rh = new resultHandler(analyseOutliers, dataIDs[i]);
+				var rh = new resultHandler(analyseOutliers, dataIDs[i], true);
 				requestService.getSingle(requestURL).then(rh.handleResult);
 			}
 		}
@@ -285,7 +275,7 @@
 				requestURLchildren += '&columns=pe&rows=dx;ou';
 				requestURLchildren += '&ignoreLimit=true';
 								
-				var rh = new resultHandler(analyseTimeConsistency, dataIDs[i]);
+				var rh = new resultHandler(analyseTimeConsistency, dataIDs[i], true);
 				requestService.getMultiple([requestURLboundary, requestURLchildren]).then(rh.handleResult);
 			}
 		
@@ -387,7 +377,7 @@
 				requestURLchildren += '&hideEmptyRows=false';
 				requestURLchildren += '&ignoreLimit=true';
 								
-				var rh = new resultHandler(analyseDataConsistency, dataIDs[i]);
+				var rh = new resultHandler(analyseDataConsistency, dataIDs[i], true);
 				requestService.getMultiple([requestURLboundary, requestURLchildren]).then(rh.handleResult);
 			}
 		

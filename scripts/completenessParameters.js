@@ -7,16 +7,28 @@
 	        
 	    init();
 	    initSelects();	  	
+	    initWatchers();	    
 	    
 		function init() {
+				
+			self.dataDisaggregation = 0;
+				
 	    	self.dataSets = [];
 	    	self.dataSetsSelected = undefined;
 	    	
+	    	self.dataElementGroups = [];
+	    	self.dataElementGroupsSelected = undefined;
+	    	
 	    	self.dataElements = [];
-	    	self.dataElementsSelected = undefined;
-				    		    
+	    	self.dataElementPlaceholder = "";
+	    	self.dataElementsSelected = [];
+			
+			self.indicatorGroups = [];
+			self.indicatorGroupsSelected = undefined;
+			
 	    	self.indicators = [];
-	    	self.indicatorsSelected = undefined;
+	    	self.indicatorPlaceholder = "";
+	    	self.indicatorsSelected = [];
 	    	
 	    	self.orgunits = [];
 	    	self.userOrgunits = [];
@@ -57,14 +69,13 @@
 				self.dataSets = data;
 			});
 			
-			metaDataService.getDataElements().then(function(data) { 
-				self.dataElements = data;
+			metaDataService.getDataElementGroups().then(function(data) { 
+				self.dataElementGroups = data;
 			});
 			
-			metaDataService.getIndicators().then(function(data) { 
-				self.indicators = data;
+			metaDataService.getIndicatorGroups().then(function(data) { 
+				self.indicatorGroups = data;
 			});
-			
 			
 			metaDataService.getAnalysisOrgunits().then(function(data) { 
 				self.userOrgunits = data;
@@ -104,6 +115,74 @@
 	    	
 	    	self.userOrgunitLabel = "";
 	    }
+	    
+	    
+	    function updateDataElementList() {
+	    	
+	    	
+	    	
+	    	if (self.dataDisaggregation === 0) {	    	
+	    		self.dataElementPlaceholder = "All data elements (totals) in " + self.dataElementGroupsSelected.name;
+		    	metaDataService.getDataElementGroupMembers(self.dataElementGroupsSelected.id)
+		    	 	.then(function(data) { 
+		    	       	self.dataElements = data;
+		    	     });
+	    	}
+	    	else {
+	    		self.dataElementPlaceholder = "All data elements (details) in " + self.dataElementGroupsSelected.name;
+	    		metaDataService.getDataElementGroupMemberOperands(self.dataElementGroupsSelected.id)
+	    		 	.then(function(data) { 
+	    		       	self.dataElements = data;
+	    		     });
+	    	}
+	    
+	    }
+	    
+	    
+  	    function updateIndicatorList() {
+  	    	self.indicatorPlaceholder = "All indicators in " + self.indicatorGroupsSelected.name;
+  	    	
+  	    	metaDataService.getIndicatorGroupMembers(self.indicatorGroupsSelected.id)
+  	    		.then(function(data) { 
+  	    		   	self.indicators = data;
+  	    		});
+  	    }
+		
+		
+		function initWatchers() {
+		
+			$scope.$watchCollection(function() { return self.dataElementGroupsSelected; }, 
+				function() {
+					
+					if (self.dataElementGroupsSelected) {
+						updateDataElementList();	
+					}
+					
+				}
+			);
+			
+			$scope.$watchCollection(function() { return self.indicatorGroupsSelected; }, 
+				function() {
+					
+					if (self.indicatorGroupsSelected) {
+
+						updateIndicatorList();
+						
+			  		}     
+				}
+			);
+			
+			$scope.$watchCollection(function() { return self.dataDisaggregation; }, 
+				function() {
+					
+					if (self.dataElementGroupsSelected) {
+						self.dataElementsSelected = [];
+						updateDataElementList();	
+					}   
+				}
+			);
+					
+		}
 		
 		
 		function userOrgunitString() {
@@ -178,11 +257,11 @@
 			var data = {
 				'dataSets': self.dataSetsSelected, 
 				'dataElements': self.dataElementsSelected,
-				'indicators': self.indicatorsSelected
+				'indicators': self.indicatorsSelected,
+				'dataDisaggregation': self.dataDisaggregation
 			};
 						
 			var period = getPeriodsForAnalysis();
-			
 			
 			var disaggregationType = 'none', disaggregationID = undefined;
 			if (self.orgunitLevelSelected) {

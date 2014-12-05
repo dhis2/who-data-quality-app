@@ -25,7 +25,7 @@
 	
 	/**Controller: Navigation*/
 	app.controller("NavigationController", function() {
-		this.current = "admin";
+		this.current = "quality";
 		this.isCollapsed = true;
 	
 		
