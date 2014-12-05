@@ -3,7 +3,7 @@
 	<div ng-show="compResultCtrl.results.length > 0">
 		<h3>Result</h3>
 		<tabset>
-			<tab ng-repeat="result in compResultCtrl.results" heading="{{result.title}} ({{result.type}})" active="result.active">
+			<tab ng-repeat="result in compResultCtrl.results" heading="Result" active="result.active">
 				<alert style="margin-top: 10px; margin-bottom: 10px;"ng-repeat="alert in result.alerts track by $index" type="{{alert.type}}" close="result.alerts.splice($index, 1)">{{alert.msg}}</alert>
 				<div style="margin-top: 10px; font-size: 90%;" class="table-responsive">
 					<table class="table table-bordered table-striped table-condensed table-hover">

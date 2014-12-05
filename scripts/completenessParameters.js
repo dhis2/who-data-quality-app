@@ -249,18 +249,102 @@
 		}
 		
 		
+		function getDataForAnalysis() {
+		
+//		{
+//			'dataSets': self.dataSetsSelected, 
+//			'dataElements': self.dataElementsSelected,
+//			'indicators': self.indicatorsSelected,
+//			'dataDisaggregation': self.dataDisaggregation
+//		};
+			var details = false;
+			if (self.dataDisaggregation != 0) {
+				
+				//Only data elements are allowed, no indicator/completeness
+				self.indicatorsSelected = [];
+				self.dataSetsSelected = undefined;
+				self.indicatorGroupsSelected = undefined;
+				
+				details = true;
+			}
+			
+			var dataIDs = [];
+			var coFilter = {};
+			
+			//TODO: change if multiple
+			if (self.dataSetSelected) {
+				dataIDs.push(self.dataSetSelected.id)
+			}
+			
+			if (self.indicatorGroupsSelected) {
+				
+				if (self.indicatorsSelected.length > 0) {
+					for (var i = 0; i < self.indicatorsSelected.length; i++) {
+						dataIDs.push(self.indicatorsSelected[i].id);
+					}
+				}
+				else { //Selected group but did not specify = all
+					for (var i = 0; i < self.indicators.length; i++) {
+						dataIDs.push(self.indicators[i].id);
+					}
+				}
+				
+			}
+			
+			if (self.dataElementGroupsSelected) {
+				if (details) {
+					if (self.dataElementsSelected.length > 0) {
+						for (var i = 0; i < self.dataElementsSelected.length; i++) {
+							coFilter[self.dataElementsSelected[i].id] = true;
+							dataIDs.push(self.dataElementsSelected[i].dataElementId);
+						}
+					}
+					else { //Selected group but did not specify = all
+						for (var i = 0; i < self.dataElements.length; i++) {
+							coFilter[self.dataElements[i].id] = true;
+							dataIDs.push(self.dataElements[i].dataElementId);
+						}
+					}
+				}
+				else {
+					if (self.dataElementsSelected.length > 0) {
+						for (var i = 0; i < self.dataElementsSelected.length; i++) {
+							dataIDs.push(self.dataElementsSelected[i].id);
+						}
+					}
+					else { //Selected group but did not specify = all
+						for (var i = 0; i < self.dataElements.length; i++) {
+							dataIDs.push(self.dataElements[i].id);
+						}
+					}
+				}
+				
+			}
+			
+			return {'dataIDs': uniqueArray(dataIDs),
+				'details': details,  
+				'coFilter': coFilter
+				};
+		
+		
+		
+		}
+		
+		function uniqueArray(array) {
+		    var seen = {};
+		    return array.filter(function(item) {
+		        return seen.hasOwnProperty(item) ? false : (seen[item] = true);
+		    });
+		}
+		
+		
 		self.doAnalysis = function() {
 			//Collapse open panels
 			$('.panel-collapse').removeClass('in');
 			
 			
-			var data = {
-				'dataSets': self.dataSetsSelected, 
-				'dataElements': self.dataElementsSelected,
-				'indicators': self.indicatorsSelected,
-				'dataDisaggregation': self.dataDisaggregation
-			};
-						
+			var data = getDataForAnalysis(); 
+			console.log(data);	
 			var period = getPeriodsForAnalysis();
 			
 			var disaggregationType = 'none', disaggregationID = undefined;
@@ -285,7 +369,7 @@
 				'stdDev': self.stdDev,
 				'analysisType': self.analysisType
 			};
-							
+				
 						
 			//Call service to get data
 			completenessDataService.analyseData(data, period, orgunit, parameters);

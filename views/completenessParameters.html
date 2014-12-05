@@ -52,13 +52,13 @@
 	    	<label>Data sets (completeness)</label><br />
 			<ui-select ng-model="compParamCtrl.dataSetsSelected" theme="bootstrap" style="margin-bottom: 10px; min-width: 250px; max-width: 380px;">
 			  <ui-select-match placeholder="Select data set...">
-			  	{{compParamCtrl.dataSetsSelected.name}}
+			  	{{$item.name}}
 			  </ui-select-match>
-			  <ui-select-choices
+			  <ui-select-choices 
 			  	repeat="obj in compParamCtrl.dataSets | filter: $select.search">
 			   		<div ng-bind-html="obj.name | highlight: $select.search"></div>
 			  </ui-select-choices>
-			</ui-select>
+			  </ui-select>
 			</div>
 			
 			

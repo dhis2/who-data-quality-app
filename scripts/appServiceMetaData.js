@@ -326,7 +326,7 @@
 			console.log("Requesting data element operand group members");
 			
 			var requestURL = '/api/dataElementOperands.json?'; 
-			requestURL += 'fields=name,id,dataElementId,optionComboId&paging=false&filter=dataElementGroups.id:eq:' + dataElementGroupID;
+			requestURL += 'fields=name,id,dataElementId,optionComboId&paging=false&filter=dataElement.dataElementGroups.id:eq:' + dataElementGroupID;
 				  
 			requestService.getSingle(requestURL).then(
 				function(response) { //success

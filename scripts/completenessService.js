@@ -4,50 +4,77 @@
 		
 		var self = this;
 		
-		self.resultsCallback = null;
+		resetParameters();
 			
 		function resetParameters() {
-			self.requests = [];
+
+			self.result = {
+				'headers': [],
+				'metaData': {
+					'type': "",
+					'totalRows': 0,
+					'outlierRows': 0,
+					'outlierValues': 0,
+					'data': null,
+					'period': null,
+					'parameters': null
+					},
+				'rows': []
+			};
+			
+			self.remainingRequests = 0;
+			self.remainingResults = 0;
 		}
-		
 		
 		self.analyseData = function (data, period, orgunit, parameters) {
 			
 			resetParameters();
+			self.result.metaData.data = data;
+			self.result.metaData.period = period;
+			self.result.metaData.orgunit = orgunit;
+			self.result.metaData.parameters = parameters;
+			self.result.metaData.type = parameters.analysisType;
 			
-			var variables = getVariables(data);
+			var variables = data.dataIDs;
 			var periods = periodService.getISOPeriods(period.startDate, period.endDate, period.periodType);		
 			
-			var requestURL = "/api/analytics.json?";
-			requestURL += "dimension=dx:" + IDsFromObjects(variables).join(";");
-			requestURL += "&dimension=ou:" + IDsFromObjects(orgunit.boundary).join(";");
-			
-			if (orgunit.disaggregationType != 'none') {
-				requestURL += ';' + orgunit.disaggregationID;		
-			}
-			
-			requestURL += "&dimension=pe:" + periods.join(";");
-			requestURL += '&ignoreLimit=true';
-			requestURL += '&hideEmptyRows=true';
-			requestURL += '&tableLayout=true';
-			requestURL += '&columns=pe&rows=dx;ou';
+			for (var i = 0; i < variables.length; i++) {
+				var requestURL = "/api/analytics.json?";
+				requestURL += "dimension=dx:" + variables[i];
+				requestURL += "&dimension=ou:" + IDsFromObjects(orgunit.boundary).join(";");
+				
+				if (orgunit.disaggregationType != 'none') {
+					requestURL += ';' + orgunit.disaggregationID;		
+				}
+				
+				requestURL += "&dimension=pe:" + periods.join(";");
+				
+				if (data.details) {
+					requestURL += '&dimension=co';
+				}
+				
+				requestURL += '&ignoreLimit=true';
+				requestURL += '&hideEmptyRows=true';
+				requestURL += '&tableLayout=true';
+				requestURL += '&columns=pe&rows=ou;dx';
+				
+				if (data.details) {
+					requestURL += ';co';
+				}
+						
+
+				
+				self.remainingResults++;
+				self.remainingRequests++;
+				
+				requestService.getSingle(requestURL).then(function(response) { 
 					
-			self.requests.push({
-				'URL': requestURL,
-				'variables': variables,
-				'orgunits': orgunit.boundary,
-				'orgunitDisaggregation': orgunit.disaggregationID,
-				'periods': periods,
-				'parameters': parameters,
-				'type': parameters.analysisType,
-				'periodType': period.periodType	
-			});
-			
-			fetchData();
-			
+					self.remainingRequests--;
+					resultsAnalysis(response.data);
+					
+				});
+			}			
 		};
-		
-		
 		
 		function getVariables(data) {			
 			var dataObjects = [];
@@ -64,34 +91,13 @@
 			return dataObjects;
 		}
 		
-				
-		
-		function fetchData() {
-			var requestURLs = [];
-			for (var i = 0; i < self.requests.length; i++) {
-				requestURLs.push(self.requests[i].URL);
-			}
-			
-			console.log("Start request");
-			requestService.getMultiple(requestURLs).then(function(response) { 
-				console.log("Received result");
-				var results = [];	
-				for (var i = 0; i < response.length; i++) {
-					var data = response[i].data;
-					var request =  requestFromURL(response[i].config.url);
-					
-					results.push(resultsAnalysis(data, request));
-					
-				}
-				
-				for (var i = 0; i < results.length; i++) {
-					self.resultsCallback(results[i]);	
-				}
-			});
-			
+		function uniqueArray(array) {
+		    var seen = {};
+		    return array.filter(function(item) {
+		        return seen.hasOwnProperty(item) ? false : (seen[item] = true);
+		    });
 		}
-		
-		
+	
 		
 		function requestFromURL(requestURL) {
 
@@ -163,26 +169,36 @@
 		
 		
 		
-		function resultsAnalysis(data, request) {
-			var old_time = new Date();		
-			var periodType = request.periodType;
+		function resultsAnalysis(data) {
 			
-			var variableID = request.variables[0].id;
-			var title = data.metaData.names[variableID];
-			data.metaData.dx = request.variables;
-			data.metaData.ouGroup = request.orgunitDisaggregation; 			
+			var old_time = new Date();
+			var periodType = self.result.metaData.period.periodType;
 			
+			var details = self.result.metaData.data.details;
+			var coFilter = self.result.metaData.data.coFilter;
+						
 			var headers = data.headers;
 			var dataIndices = [], headerIndices = [];
 			var orgunitIDColumn = 0;
 			var orgunitNameColumn = 0;
+			var dataIDColumn = 0;
+			var dataNameColumn = 0;
+			var coIDColumn = -1;
+			var coNameColumn = -1;
+
 			for (var i = 0; i < headers.length; i++) {
 				if (headers[i].meta === false) dataIndices.push(i);
 
 				if (headers[i].column === 'organisationunitid') orgunitIDColumn = i;
 				if (headers[i].column === 'organisationunitname') orgunitNameColumn = i;
 				
-				if (!headers[i].hidden && headers[i].column != 'dataname') headerIndices.push(i);
+				if (headers[i].column === 'dataid') dataIDColumn = i;
+				if (headers[i].column === 'dataname') dataNameColumn = i;
+				
+				if (headers[i].column === 'categoryoptioncomboid') coIDColumn = i;
+				if (headers[i].column === 'categoryoptioncomboname') coNameColumn = i;
+				
+				if (!headers[i].hidden && headers[i].column != 'categoryoptioncomboname') headerIndices.push(i);
 			}
 			
 			//Fix names of periods
@@ -200,22 +216,37 @@
 				sourceRow = data.rows[i];
 
 				row = {};
-				row.metaData = {
-						'ou': sourceRow[orgunitIDColumn],
-						'ouName': sourceRow[orgunitNameColumn],
-						'hasOutlier': false,
-						'lowLimit': null,
-						'highLimit': null,
-						'gaps': 0
-					};
-					
-				row.data = filterArrayIndices(sourceRow, dataIndices);
-				row.data.unshift(sourceRow[orgunitNameColumn]);			
-				rows.push(row);
+				
+				//If applicable, check if part of combos we are interested in
+				var operandID = sourceRow[dataIDColumn] + '.' + sourceRow[coIDColumn];
+				
+				var dataName = sourceRow[dataNameColumn];
+				if (details) dataName += ' ' + sourceRow[coNameColumn];
+				if (details && !coFilter[operandID]) {
+				
+				
+				}
+				else {			
+					row.metaData = {
+							'ou': sourceRow[orgunitIDColumn],
+							'ouName': sourceRow[orgunitNameColumn],
+							'dx': operandID,
+							'dxName': dataName,
+							'hasOutlier': false,
+							'lowLimit': null,
+							'highLimit': null,
+							'gaps': 0
+						};
+						
+					row.data = filterArrayIndices(sourceRow, dataIndices);
+					row.data.unshift(dataName);	
+					row.data.unshift(sourceRow[orgunitNameColumn]);			
+					rows.push(row);
+				}
 			}
 						
 			
-			switch (request.type) {
+			switch (self.result.metaData.type) {
 				case 'gap':
 					headers.push({'name': "Gaps", 'column': 'gaps', 'type': 'java.lang.Double', 'hidden': false, 'meta': true});
 					headers.push({'name': "Weight", 'column': 'weight', 'type': 'java.lang.Double', 'hidden': false, 'meta': true});
@@ -233,24 +264,18 @@
 			
 			
 			//TODO: performance measure
-			var new_time = new Date();		
-			console.log("Processing rows: " + (new_time - old_time));
 			
 			
-			
-
-			
-			//Outlier analysis
-			var old_time = new Date();		
+			//Outlier analysis	
 			var value, mean, variance, maxZscore, standardDeviation, noDevs, highLimit, lowLimit, hasOutlier, outlierCount = 0, violationCount = 0, rowViolations;
-			if (request.type === 'outlier' || request.type === 'threshold') {			
+			if (self.result.metaData.type === 'outlier' || self.result.metaData.type === 'threshold') {			
 				for (var i = 0; i < rows.length; i++) {
 					valueSet = [];
 					row = rows[i];
 					
-					if (request.type === 'outlier') {
+					if (self.result.metaData.type === 'outlier') {
 						maxZscore = 0;
-						for (var j = 1; j < row.data.length; j++) {
+						for (var j = 2; j < row.data.length; j++) {
 							value = row.data[j];
 							if (value != '') {
 								valueSet.push(parseFloat(value));
@@ -260,15 +285,15 @@
 						mean = mathService.getMean(valueSet); 
 						variance = mathService.getVariance(valueSet);
 						standardDeviation = mathService.getStandardDeviation(valueSet);
-						noDevs = parseFloat(request.parameters.stdDev);
+						noDevs = parseFloat(self.result.metaData.parameters.stdDev);
 						highLimit = Math.round((mean + noDevs*standardDeviation) * 10) / 10;
 						lowLimit = Math.round((mean - noDevs*standardDeviation) * 10) / 10;
 						if (lowLimit < 0) lowLimit = 0;
 					
 					}
 					else { //threshold - min and max already set
-						lowLimit = request.parameters.thresholdLow;
-						highLimit = request.parameters.thresholdHigh;
+						lowLimit = self.result.metaData.parameters.thresholdLow;
+						highLimit = self.result.metaData.parameters.thresholdHigh;
 					}
 						
 					row.metaData.lowLimit = lowLimit;
@@ -276,14 +301,14 @@
 					
 					rowViolations = 0;
 					hasOutlier = false;
-					for (var j = 1; j < row.data.length; j++) {
+					for (var j = 2; j < row.data.length; j++) {
 						value = row.data[j];
 						if (value != '') {
 							if (value > highLimit || value < lowLimit) {
 								hasOutlier = true;
 								rowViolations++;
 							}
-							if (request.type === 'outlier') {
+							if (self.result.metaData.type === 'outlier') {
 								zScore = ((parseFloat(value)-mean)/standardDeviation);
 								if (Math.abs(zScore) > maxZscore) maxZscore = Math.abs(zScore);
 							}		
@@ -292,7 +317,7 @@
 					
 					row.data.push(rowViolations);
 					
-					if (request.type === 'outlier') {
+					if (self.result.metaData.type === 'outlier') {
 						row.data.push(Math.round(maxZscore*10)/10);
 						
 						var weight = 1;
@@ -321,14 +346,13 @@
 			//Gap analysis
 			else {
 				var gaps;
-				var rowsToKeep = [];
 				for (var i = 0; i < rows.length; i++) {
 					row = rows[i];
 					gaps = 0;
 					rowViolations = 0;
 					valueSet = [];
 					
-					for (var j = 1; j < row.data.length; j++) {
+					for (var j = 2; j < row.data.length; j++) {
 						value = row.data[j];
 						if (value === "") {
 							gaps++;
@@ -344,7 +368,7 @@
 					row.data.push(parseInt(mean*rowViolations));
 					violationCount += rowViolations;
 					
-					if (gaps >= request.parameters.maxGaps) {
+					if (gaps >= self.result.metaData.parameters.maxGaps) {
 						row.metaData.hasOutlier = true;
 					}
 					if (row.metaData.hasOutlier) outlierCount++;
@@ -352,25 +376,38 @@
 				}				
 			}
 			var new_time = new Date();
-			console.log("Finding outliers: " + (new_time - old_time));
-
-			var analysisResult = {
-				'title': title,
-				'type': request.type,
-				'metaData': {
-					'totalRows': rows.length,
-					'outlierRows': outlierCount,
-					'outlierValues': violationCount,
-					'parameters': request.parameters,
-					'source': data.metaData
-				},
-				'headers': headers,
-				'rows': rows
-			};
-						
-			return analysisResult;
+			console.log("Time for analysis: " + (new_time - old_time));
+			
+			addResultPart({
+				'totalRows': rows.length,
+				'outlierRows': outlierCount,
+				'outlierValues': violationCount,
+				}, headers, rows);
+			
 		}
-				
+		
+		function addResultPart(metaData, headers, rows) {
+			self.remainingResults--;
+			
+			if (self.result.headers.length === 0) {
+				self.result.headers = headers;
+			}
+			self.result.metaData.totalRows += metaData.totalRows;
+			self.result.metaData.outlierRows += metaData.outlierRows;
+			self.result.metaData.outlierValues += metaData.outlierValues;
+			
+			console.log(rows.length + " rows");
+			
+			for (var i = 0; i < rows.length; i++) {
+				if (rows[i].metaData.hasOutlier) self.result.rows.push(rows[i]);
+			}
+						
+			console.log("Remaining data for processing: " + self.remainingResults);
+			if (self.remainingResults === 0) {
+				self.resultsCallback(self.result);				
+			}
+
+		}
 				
 		return self;
 	});
