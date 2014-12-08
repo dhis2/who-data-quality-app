@@ -59,7 +59,7 @@
 						requestURL += '&dimension=co';
 					}
 					
-					requestURL += '&ignoreLimit=true';
+					//requestURL += '&ignoreLimit=true';
 					requestURL += '&hideEmptyRows=true';
 					requestURL += '&tableLayout=true';
 					requestURL += '&columns=pe&rows=ou;dx';
@@ -92,7 +92,7 @@
 					requestURL += '&dimension=co';
 				}
 				
-				requestURL += '&ignoreLimit=true';
+				//requestURL += '&ignoreLimit=true';
 				requestURL += '&hideEmptyRows=true';
 				requestURL += '&tableLayout=true';
 				requestURL += '&columns=pe&rows=ou;dx';

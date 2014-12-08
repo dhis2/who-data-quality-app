@@ -1,7 +1,6 @@
 <div ng-controller="CompletenessResultsController as compResultCtrl">
 	<div ng-show="compResultCtrl.result === undefined" style="height: 400px;"></div>
 	<div ng-show="compResultCtrl.result">
-		<h3>Result</h3>
 				<alert style="margin-top: 10px; margin-bottom: 10px;"ng-repeat="alert in compResultCtrl.result.alerts track by $index" type="{{alert.type}}" close="compResultCtrl.result.alerts.splice($index, 1)">{{alert.msg}}</alert>
 				<div style="margin-top: 10px; font-size: 90%;" class="table-responsive">
 					<table class="table table-bordered table-striped table-condensed table-hover">
@@ -19,7 +18,7 @@
 					            <span style="font-size: 100%;" class="label label-danger">{{compResultCtrl.result.metaData.outlierRows}}</span> rows with violations of <span style="font-size: 100%;" class="label label-primary">{{compResultCtrl.result.metaData.totalRows}}</span> rows analysed</div>
 					            
 					            
-					            <pagination total-items="compResultCtrl.result.metaData.outlierRows" items-per-page="10" max-size="5" ng-model="compResultCtrl.result.currentPage" class="pagination-sm pull-right" boundary-links="true" rotate="true"></pagination>
+					            <pagination total-items="compResultCtrl.result.metaData.outlierRows" items-per-page="compResultCtrl.itemsPerPage" max-size="5" ng-model="compResultCtrl.result.currentPage" class="pagination-sm pull-right" boundary-links="true" rotate="true"></pagination>
 				            </td>
 				        </tfoot>
 				        
@@ -40,7 +39,7 @@
 				                      <a href class="dropdown-toggle">
 				                              <span class="glyphicon glyphicon-th-list" style="color: black" aria-hidden="true"></span>
 				                            </a>
-				                      <ul class="dropdown-menu">
+				                      <ul class="dropdown-menu dropdown-menu-right">
 				                        <li><a href ng-click="compResultCtrl.showDetails(row);">Visualise</a></li>
 				                        <li><a href ng-click="compResultCtrl.floatUp(row.metaData);">Float up</a></li>
 				                        <li><a href ng-click="compResultCtrl.drillDown(row.metaData);">Drill down</a></li>

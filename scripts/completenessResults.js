@@ -4,7 +4,7 @@
 	    var self = this;
 	    
 	    self.result = undefined;
-	    self.itemsPerPage = 10;
+	    self.itemsPerPage = 25;
         self.hasVisual = false;
         
         
