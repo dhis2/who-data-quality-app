@@ -47,21 +47,7 @@
 	    </accordion-group>
 	    
 	    
-	    <accordion-group heading="Data">
-	    	    	<div ng-show="compParamCtrl.analysisType === 'threshold' && compParamCtrl.dataDisaggregation === 0">
-	    	<label>Data sets (completeness)</label><br />
-			<ui-select ng-model="compParamCtrl.dataSetsSelected" theme="bootstrap" style="margin-bottom: 10px; min-width: 250px; max-width: 380px;">
-			  <ui-select-match placeholder="Select data set...">
-			  	{{$item.name}}
-			  </ui-select-match>
-			  <ui-select-choices 
-			  	repeat="obj in compParamCtrl.dataSets | filter: $select.search">
-			   		<div ng-bind-html="obj.name | highlight: $select.search"></div>
-			  </ui-select-choices>
-			  </ui-select>
-			</div>
-			
-			
+	    <accordion-group heading="Data">			
 			<div>	
 	    	<label>Data elements</label><br />
 			<ui-select ng-model="compParamCtrl.dataElementGroupsSelected" theme="bootstrap" style="margin-bottom: 10px; min-width: 250px; max-width: 380px;">
@@ -116,15 +102,12 @@
 			
 			
 			
-			
-			
 			<br />
 				<label><span style="font-size: 100%" class="glyphicon glyphicon-info-sign"></span>  Info</label>
-			<div ng-show="!compParamCtrl.dataSetsSelected && !compParamCtrl.dataElementsSelected && !compParamCtrl.dataSetsSelected">Select data for analysis.</div>
-			<div ng-show="compParamCtrl.dataSetsSelected || compParamCtrl.dataElementsSelected || compParamCtrl.indicatorsSelected">Will perform {{compParamCtrl.analysisType}} analysis on <span style="font-size: 100%;" class="label label-primary" ng-show="compParamCtrl.dataSetsSelected">{{compParamCtrl.dataSetsSelected.name}} (completeness)</span><span style="font-size: 100%;" class="label label-primary" ng-show="compParamCtrl.dataElementsSelected">{{compParamCtrl.dataElementsSelected.name}}</span><span style="font-size: 100%;" class="label label-primary" ng-show="compParamCtrl.indicatorsSelected">{{compParamCtrl.indicatorsSelected.name}}</span></div>
+			<div ng-show="!compParamCtrl.dataElementsSelected">Select data for analysis.</div>
+			<div ng-show="compParamCtrl.dataElementsSelected || compParamCtrl.indicatorsSelected">Will perform {{compParamCtrl.analysisType}} analysis on <span style="font-size: 100%;" class="label label-primary" ng-show="compParamCtrl.dataElementsSelected">{{compParamCtrl.dataElementsSelected.name}}</span><span style="font-size: 100%;" class="label label-primary" ng-show="compParamCtrl.indicatorsSelected">{{compParamCtrl.indicatorsSelected.name}}</span></div>
 	    </accordion-group>
-	    
-	    
+	       
 	    
 	    
 	    
@@ -246,5 +229,5 @@
 	    </accordion-group>
 	  </accordion>
 	  	
-	<button ng-disabled="(!compParamCtrl.dataElementsSelected && !compParamCtrl.indicatorsSelected && !compParamCtrl.dataSetsSelected)" type="button" class="btn btn-primary" ng-click="compParamCtrl.doAnalysis();">Analyze</button>
+	<button ng-disabled="(!compParamCtrl.dataElementsSelected && !compParamCtrl.indicatorsSelected)" type="button" class="btn btn-primary" ng-click="compParamCtrl.doAnalysis();">Analyze</button>
 </div>

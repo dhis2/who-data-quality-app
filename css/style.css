@@ -10,6 +10,10 @@ body {
 	margin-bottom: 10px;
 }
 
+.headerCellWide {
+	min-width: 200px;
+}
+
 .valueCell {
 	text-align: right;
 	vertical-align: middle;
@@ -17,6 +21,7 @@ body {
 
 .container {
   margin: 3px;
+  width: 100%;
 }
 
 .tableButton {

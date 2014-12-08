@@ -12,9 +12,6 @@
 		function init() {
 				
 			self.dataDisaggregation = 0;
-				
-	    	self.dataSets = [];
-	    	self.dataSetsSelected = undefined;
 	    	
 	    	self.dataElementGroups = [];
 	    	self.dataElementGroupsSelected = undefined;
@@ -65,10 +62,6 @@
 	    
 	    function initSelects() {
 						
-			metaDataService.getDataSets().then(function(data) { 
-				self.dataSets = data;
-			});
-			
 			metaDataService.getDataElementGroups().then(function(data) { 
 				self.dataElementGroups = data;
 			});
@@ -251,18 +244,11 @@
 		
 		function getDataForAnalysis() {
 		
-//		{
-//			'dataSets': self.dataSetsSelected, 
-//			'dataElements': self.dataElementsSelected,
-//			'indicators': self.indicatorsSelected,
-//			'dataDisaggregation': self.dataDisaggregation
-//		};
 			var details = false;
 			if (self.dataDisaggregation != 0) {
 				
 				//Only data elements are allowed, no indicator/completeness
 				self.indicatorsSelected = [];
-				self.dataSetsSelected = undefined;
 				self.indicatorGroupsSelected = undefined;
 				
 				details = true;
@@ -271,10 +257,6 @@
 			var dataIDs = [];
 			var coFilter = {};
 			
-			//TODO: change if multiple
-			if (self.dataSetSelected) {
-				dataIDs.push(self.dataSetSelected.id)
-			}
 			
 			if (self.indicatorGroupsSelected) {
 				
@@ -320,6 +302,7 @@
 				}
 				
 			}
+					
 			
 			return {'dataIDs': uniqueArray(dataIDs),
 				'details': details,  
@@ -370,6 +353,20 @@
 				'analysisType': self.analysisType
 			};
 				
+			
+			var dataCount = 0;
+			if (data.details) dataCount = data.dataIDs.length * 5;
+			else dataCount = data.dataIDs.length;
+			
+			var ouCount = 0;
+			if (self.orgunitLevelSelected) {
+				var boundaryLevel = self.userOrgunits[0].level;
+			 	var selectedLevel = self.orgunitLevelSelected.level;
+			 	var levelDiff = selectedLevel - boundaryLevel;
+			 	ouCount = Math.pow(10, levelDiff);
+			}
+			
+			console.log("Expecting " + (dataCount * ouCount) + " rows.");			
 						
 			//Call service to get data
 			completenessDataService.analyseData(data, period, orgunit, parameters);

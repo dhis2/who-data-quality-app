@@ -3,7 +3,7 @@
 	angular.module('completenessAnalysis').controller("CompletenessResultsController", function(completenessDataService, requestService, $modal) {
 	    var self = this;
 	    
-	    self.results = [];
+	    self.result = undefined;
 	    self.itemsPerPage = 10;
         self.hasVisual = false;
         
@@ -21,10 +21,10 @@
         			      .showControls(false)
         			    ;
         			
-        	var result = self.results[getActiveResultTab()];
+        	var result = self.result;
         	var index = 0;
         	var series = [{
-        		'key': result.title + ": " + row.metaData.ouName,
+        		'key': row.metaData.dxName + " - " + row.metaData.ouName,
         		'color': "green",
         		'values': []
         	}];
@@ -106,10 +106,10 @@
         		var children = response.data.children;
         		
         		if (children.length > 0) {
-        			completenessDataService.updateAnalysis(self.results[getActiveResultTab()].metaData, children);	
+        			completenessDataService.updateAnalysis(self.result.metaData, children);	
         		}
         		else {
-        			self.results[0].alerts.push({type: 'warning', msg: rowMetaData.ouName + ' does not have any children'});
+        			self.result.alerts.push({type: 'warning', msg: rowMetaData.ouName + ' does not have any children'});
         		}
         	});
         	
@@ -135,11 +135,11 @@
         			}
         			
         			//TODO: replace result rather than updating
-        			completenessDataService.updateAnalysis(self.results[getActiveResultTab()].metaData, orgunitIDs);
+        			completenessDataService.updateAnalysis(self.result.metaData, orgunitIDs);
         			
         		}
         		else {
-					self.results[0].alerts.push({type: 'warning', msg: rowMetaData.ouName + ' does not have a parent'});
+					self.result.alerts.push({type: 'warning', msg: rowMetaData.ouName + ' does not have a parent'});
         		}
         		
         		
@@ -153,10 +153,7 @@
         // calculate page in place
         function paginateRows(rows) {
             var pagedItems = [];
-                  
-                  
-                              
-                  
+    
             for (var i = 0; i < rows.length; i++) {
                 if (i % self.itemsPerPage === 0) {
                     pagedItems[Math.floor(i / self.itemsPerPage)] = [ rows[i] ];
@@ -171,18 +168,11 @@
             
         
 	    self.updateCurrentView = function() {
-	    	var result = self.results[getActiveResultTab()];
+	    	var result = self.result;
 	    	var rows = result.rows;
 	    	
-	    	if (result.outliersOnly) {
-	    		rows = sortRows(rows, result.sortColumn, result.reverse);	    		 
-	    		rows = filterOutlierRows(rows);
-	    		result.pages = paginateRows(rows);	
-	    	}
-	    	else {
-	    		rows = sortRows(rows, result.sortColumn, result.reverse); 
-	    		result.pages = paginateRows(rows);
-	    	}
+    		rows = sortRows(rows, result.sortColumn, result.reverse); 
+    		result.pages = paginateRows(rows);
 	    	
 	    	result.currentPage = 1;
 	    		    	
@@ -191,13 +181,11 @@
 	    
 	    
 	    self.changeSortOrder = function(sortColumn) {	        
-	        var resultIndex = getActiveResultTab();
-	        
-	        if (self.results[resultIndex].sortColumn === sortColumn) {
+	        if (self.result.sortColumn === sortColumn) {
 	        	console.log("Reverse!");
-	        	self.results[resultIndex].reverse = !self.results[resultIndex].reverse;
+	        	self.result.reverse = !self.result.reverse;
 	        }
-	        self.results[resultIndex].sortColumn = sortColumn;
+	        self.result.sortColumn = sortColumn;
 	        
 	        self.updateCurrentView()
 	    }
@@ -232,69 +220,27 @@
 			return rows;
 	    }
 	    
-	    
-	    function getActiveResultTab() {
-	    	for (var i = 0; i < self.results.length; i++) {
-	    		if (self.results[i].active) return i;
-	    	}
-	    }
-	    
-	    
-	    function setActiveResultTab(index) {
-	    	
-	    	for (var i = 0; i < self.results.length; i++) {
-	    		if (i != index) self.results[i].active = false;
-	    		else self.results[i].active = true;
-	    	}	    
-	    }
-	    
-	   	    
+	    	   	    
 	       	    
 	    var receiveResult = function(result) {		    
 	    	    
-	    	var latest = self.results.length;	
-			if (latest > 2) {
-				self.results.splice(2, 1);
-				latest--;
-			}
-		    self.results.unshift(result);
+		    self.result = result;
 		    
-		    self.results[0].alerts = [];
-		    self.results[0].sortColumn = self.results[0].headers.length-1;
-		    self.results[0].sortRevers = false;
+		    self.result.alerts = [];
+		    self.result.sortColumn = self.result.headers.length-1;
+		    self.result.sortRevers = false;
 		    
 		    if (result.rows.length === 0) {
-		    	self.results[0].alerts.push({type: 'warning', msg: 'No data!'});
+		    	self.result.alerts.push({type: 'success', msg: 'No data!'});
 		    }
-		    else if (result.metaData.outlierRows === 0) {
-		    	self.results[0].outliersOnly = false;
-		    }
-		    else {
-		    	self.results[0].outliersOnly = true;
-		    }
-		    		    
-		    setActiveResultTab(0);
+	    
 		    self.updateCurrentView();
 			
 	    };
    	    completenessDataService.resultsCallback = receiveResult;
    	    
 		
-		function filterOutlierRows(rows) {
-		
-			var row, filteredRows = [];
-			for (var i = 0; i < rows.length; i++) {
-				row = rows[i];
-				
-				if (row.metaData.hasOutlier) {
-					filteredRows.push(row);
-				}
-			}
-			
-			return filteredRows;
-			
-		
-		}
+
 			                   	   	
 	   	return self;
 	});

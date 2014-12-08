@@ -24,6 +24,9 @@
 			
 			self.remainingRequests = 0;
 			self.remainingResults = 0;
+			self.pending = 0;
+			self.maxPending = 1;
+			self.requestQueue = [];
 		}
 		
 		self.analyseData = function (data, period, orgunit, parameters) {
@@ -38,9 +41,45 @@
 			var variables = data.dataIDs;
 			var periods = periodService.getISOPeriods(period.startDate, period.endDate, period.periodType);		
 			
-			for (var i = 0; i < variables.length; i++) {
+			
+		
+			if (data.details || variables.length > 10) {
+				for (var i = 0; i < variables.length; i++) {
+					var requestURL = "/api/analytics.json?";
+					requestURL += "dimension=dx:" + variables[i];
+					requestURL += "&dimension=ou:" + IDsFromObjects(orgunit.boundary).join(";");
+					
+					if (orgunit.disaggregationType != 'none') {
+						requestURL += ';' + orgunit.disaggregationID;		
+					}
+					
+					requestURL += "&dimension=pe:" + periods.join(";");
+					
+					if (data.details) {
+						requestURL += '&dimension=co';
+					}
+					
+					requestURL += '&ignoreLimit=true';
+					requestURL += '&hideEmptyRows=true';
+					requestURL += '&tableLayout=true';
+					requestURL += '&columns=pe&rows=ou;dx';
+					
+					if (data.details) {
+						requestURL += ';co';
+					}
+							
+	
+					
+					self.remainingResults++;
+					self.remainingRequests++;
+					
+					self.requestQueue.push(requestURL);
+				}	
+				requestQueue();
+			}
+			else {
 				var requestURL = "/api/analytics.json?";
-				requestURL += "dimension=dx:" + variables[i];
+				requestURL += "dimension=dx:" + variables.join(';');
 				requestURL += "&dimension=ou:" + IDsFromObjects(orgunit.boundary).join(";");
 				
 				if (orgunit.disaggregationType != 'none') {
@@ -62,7 +101,7 @@
 					requestURL += ';co';
 				}
 						
-
+	
 				
 				self.remainingResults++;
 				self.remainingRequests++;
@@ -72,9 +111,32 @@
 					self.remainingRequests--;
 					resultsAnalysis(response.data);
 					
-				});
-			}			
+				});	
+			
+			}
+			
 		};
+		
+		
+		function requestQueue() {
+			
+			while (self.pending < self.maxPending && self.requestQueue.length > 0) {
+				
+				self.pending++;
+				
+				requestService.getSingle(self.requestQueue.pop()).then(function(response) { 
+					
+					self.remainingRequests--;
+					self.pending--;
+					requestQueue();
+					
+					resultsAnalysis(response.data);
+				});
+								
+			}
+		}
+		
+		
 		
 		function getVariables(data) {			
 			var dataObjects = [];
@@ -134,37 +196,16 @@
 		
 		
 		
-		self.updateAnalysis = function(baseRequest, orgunits) {
-												
-			resetParameters();
-			
-			var metaData = baseRequest.source;
-			var variables = metaData.dx;
-			var periods = metaData.pe;		
-			
-			requestURL = "/api/analytics.json?";
-			requestURL += "dimension=dx:" + IDsFromObjects(variables).join(";");
-			requestURL += "&dimension=ou:" + IDsFromObjects(orgunits).join(";");				
-			requestURL += "&dimension=pe:" + periods.join(";");
-			requestURL += '&ignoreLimit=true';
-			requestURL += '&hideEmptyRows=true';
-			requestURL += '&tableLayout=true';
-			requestURL += '&columns=pe&rows=dx;ou';
+		self.updateAnalysis = function(originalMetaData, orgunits) {
+			var data = originalMetaData.data;
+			var period = originalMetaData.period;
+			var orgunit = originalMetaData.orgunit;
+			var parameters = originalMetaData.parameters;								
 					
-			self.requests.push({
-				'URL': requestURL,
-				'variables': variables,
-				'orgunits': orgunits,
-				'orgunitDisaggregation': null,
-				'periods': periods,
-				'parameters': baseRequest.parameters,
-				'type': baseRequest.parameters.analysisType,
-				'periodType': periodService.periodTypeFromPeriod(periods[0])
-			});
+			orgunit.boundary = orgunits;
+			orgunit.disaggregationType = 'none';
 			
-			fetchData();
-		
-
+			self.analyseData(data, period, orgunit, parameters);
 		}
 		
 		
@@ -253,7 +294,6 @@
 					break;
 				
 				case 'outlier':	
-					headers.push({'name': "Outliers", 'column': 'outliers', 'type': 'java.lang.Double', 'hidden': false, 'meta': true});
 					headers.push({'name': "Z-Score", 'column': 'zscore', 'type': 'java.lang.Double', 'hidden': false, 'meta': true});
 					headers.push({'name': "Weight", 'column': 'weight', 'type': 'java.lang.Double', 'hidden': false, 'meta': true});
 					break;
@@ -315,9 +355,10 @@
 						}
 					}
 					
-					row.data.push(rowViolations);
-					
-					if (self.result.metaData.type === 'outlier') {
+					if (self.result.metaData.type != 'outlier') {
+						row.data.push(rowViolations);
+					}
+					else {
 						row.data.push(Math.round(maxZscore*10)/10);
 						
 						var weight = 1;
