@@ -47,7 +47,7 @@
 				for (var i = 0; i < variables.length; i++) {
 					var requestURL = "/api/analytics.json?";
 					requestURL += "dimension=dx:" + variables[i];
-					requestURL += "&dimension=ou:" + IDsFromObjects(orgunit.boundary).join(";");
+					requestURL += "&dimension=ou:" + IDsFromObjects(orgunit.boundary).join(';');
 					
 					if (orgunit.disaggregationType != 'none') {
 						requestURL += ';' + orgunit.disaggregationID;		
@@ -67,8 +67,6 @@
 					if (data.details) {
 						requestURL += ';co';
 					}
-							
-	
 					
 					self.remainingResults++;
 					self.remainingRequests++;
@@ -80,7 +78,7 @@
 			else {
 				var requestURL = "/api/analytics.json?";
 				requestURL += "dimension=dx:" + variables.join(';');
-				requestURL += "&dimension=ou:" + IDsFromObjects(orgunit.boundary).join(";");
+				requestURL += "&dimension=ou:" + IDsFromObjects(orgunit.boundary).join(';');
 				
 				if (orgunit.disaggregationType != 'none') {
 					requestURL += ';' + orgunit.disaggregationID;		

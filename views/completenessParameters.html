@@ -192,13 +192,12 @@
 	    </accordion-group>
 	    
 	    <accordion-group heading="Orgunit" is-open="status.open">
-	    	<label>Boundary</label>
-	    	{{compParamCtrl.boundarySelectionType}}
-	    	<div class="btn-group btn-group-justified" style="margin-bottom: 10px; max-width: 600px;">
+	    	<label>Boundary</label><br />
+	    	<div class="btn-group" style="margin-bottom: 10px; max-width: 600px;">
 	    	  	<label ng-repeat="orgunit in compParamCtrl.userOrgunits track by $index" class="btn btn-default" ng-model="compParamCtrl.boundarySelectionType" btn-radio="$index">{{orgunit.name}}</label>
 	    	  	<label class="btn btn-default" ng-model="compParamCtrl.boundarySelectionType" btn-radio="compParamCtrl.userOrgunits.length">Manual</label>
 	    	</div>
-	    		    	
+			<br />	    		    	
 	    	<div style="margin-bottom: 10px; width: 380px;" ng-show="compParamCtrl.userOrgunits.length === compParamCtrl.boundarySelectionType" id="orgunitTree"></div>
 
 	       <label for="orgunitSelect">Disaggregation</label>
@@ -208,7 +207,7 @@
 				  	{{compParamCtrl.orgunitLevelSelected.name}}
 				  </ui-select-match>
 				  <ui-select-choices 
-				  	repeat="obj in compParamCtrl.orgunitLevels">
+				  	repeat="obj in compParamCtrl.filteredOrgunitLevels | filter: $select.search">
 				   		<div ng-bind-html="obj.name | highlight: $select.search"></div>
 				  </ui-select-choices>
 				</ui-select>
@@ -225,9 +224,8 @@
 			</div>
 
 			<label for="orgunitSelected">Selected </label>
-			{{compParamCtrl.boundaryOrgunitSelected}}
 			<div id="orgunitSelected">
-				<p ng-show="compParamCtrl.orgunitLevelSelected"><span style="font-size: 100%;" class="label label-primary">{{compParamCtrl.userOrgunitLabel}}</span><span class="glyphicon glyphicon-chevron-right"></span><span style="font-size: 100%;" class="label label-primary">{{compParamCtrl.orgunitLevelSelected.name}}</span></p>
+				<p><span style="font-size: 100%;" class="label label-primary">{{compParamCtrl.boundaryOrgunitSelected.name}}{{compParamCtrl.boundaryOrgunitSelected.text}}</span><span class="glyphicon glyphicon-chevron-right"></span><span style="font-size: 100%;" class="label label-primary">{{compParamCtrl.orgunitLevelSelected.name}}</span></p>
 				
 				<p ng-show="compParamCtrl.orgunitGroupSelected"><span style="font-size: 100%;" class="label label-primary">{{compParamCtrl.userOrgunitLabel}}</span><span class="glyphicon glyphicon-chevron-right"></span><span style="font-size: 100%;" class="label label-primary">{{compParamCtrl.orgunitGroupSelected.name}}</span></p>
 				

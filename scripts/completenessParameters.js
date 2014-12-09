@@ -28,10 +28,10 @@
 	    	
 	    	self.analysisOrgunits = [];
 	    	self.userOrgunits = [];
-	    	self.boundarySelectionType = 'manual';
 	    	self.boundaryOrgunitSelected = undefined;
 	    	
 	    	self.orgunitLevels = [];
+	    	self.filteredOrgunitLevels = [];
 	    	self.orgunitLevelSelected = undefined;
 	    	
 	    	self.orgunitGroups = [];
@@ -80,11 +80,14 @@
 			
 			metaDataService.getUserOrgunits().then(function(data) { 
 				self.userOrgunits = data;
-				self.boundarySelectionType = self.userOrgunits[0];
+				self.boundarySelectionType = 0;
+				self.boundaryOrgunitSelected = self.userOrgunits[0];
 			});
 			
 			metaDataService.getOrgunitLevels().then(function(data) { 
 				self.orgunitLevels = data;
+				filterLevels();
+				
 			});
 			
 			metaDataService.getOrgunitGroups().then(function(data) { 
@@ -276,17 +279,48 @@
 			);
 			
 			$scope.$watchCollection(function() { return self.boundarySelectionType; }, 
-				function() {
+				function(newObject, oldObject) {
 					
 					if (self.boundarySelectionType != self.userOrgunits.length) {
-						//manual
 						self.boundaryOrgunitSelected = self.userOrgunits[self.boundarySelectionType];
 					}
 					else {
 						self.boundaryOrgunitSelected = $('#orgunitTree').jstree('get_selected', true)[0].original;
+						if (self.orgunitLevelSelected && self.orgunitLevelSelected.level >= self.boundaryOrgunitSelected.level) {
+							self.orgunitLevelSelected = undefined;
+						}
+						
 					}
 				}
 			);
+			
+			$scope.$watchCollection(function() { return self.boundaryOrgunitSelected; }, 
+				function(newObject, oldObject) {
+				
+					console.log("Selected level changed");
+					if (oldObject && newObject && oldObject.level != newObject.level) {
+						if (self.orgunitLevelSelected && self.orgunitLevelSelected.level <= newObject.level) {
+							self.orgunitLevelSelected = undefined;
+						}
+						
+						filterLevels();
+					}
+				}
+			);
+			
+			
+		}
+		
+		function filterLevels() {
+			self.filteredOrgunitLevels = [];
+			
+			if (!self.orgunitLevels) return;
+			for (var i = 0; i < self.orgunitLevels.length; i++) {
+				if (self.orgunitLevels[i].level > self.boundaryOrgunitSelected.level) {
+					self.filteredOrgunitLevels.push(self.orgunitLevels[i]);
+				}
+			}
+			
 			
 		}
 		
@@ -453,12 +487,8 @@
 				disaggregationID = 'OU_GROUP-' + self.orgunitGroupSelected.id;
 			}
 			
-			if (self.boundarySelectionType != 'manual') {
-				self.boundaryOrgunitSelected = self.boundarySelectionType;
-			}
-			
 			var orgunit = {
-				'boundary': self.boundaryOrgunitSelected,
+				'boundary': [self.boundaryOrgunitSelected],
 				'disaggregationType': disaggregationType,
 				'disaggregationID': disaggregationID
 			};
