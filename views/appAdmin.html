@@ -15,35 +15,11 @@
 					<td>{{indicator.group}}</td>
 					<td>{{indicator.name}}</td>
 					<td>{{indicator.definition}}</td>
-					<td>
-					
-					<ui-select ng-disabled="indicator.localIndicator" ng-model="indicator.localDataElement" theme="bootstrap" style="width: 350px;">
-					  <ui-select-match placeholder="Select data element...">
-					  	{{indicator.localDataElement.name}}
-					  </ui-select-match>
-					  <ui-select-choices 
-					  	repeat="obj in admCtrl.dataElements | filter: $select.search">
-					   		<div ng-bind-html="obj.name | highlight: $select.search"></div>
-					  </ui-select-choices>
-					  </ui-select>
-					  
-						<br />
-						
-					  <ui-select ng-disabled="indicator.localDataElement" ng-model="indicator.localIndicator" theme="bootstrap" style="width: 350px;">
-					    <ui-select-match placeholder="Select indicator...">
-					    	{{indicator.localIndicator.name}}
-					    </ui-select-match>
-					    <ui-select-choices 
-					    	repeat="obj in admCtrl.indicators | filter: $select.search">
-					     		<div ng-bind-html="obj.name | highlight: $select.search"></div>
-					    </ui-select-choices>
-					    </ui-select>
-
-					  </td>
+					<td>{{indicator.localDataElement.name}}{{indicator.localIndicator.name}}</td>
 				</tr>
 			
 			</table>
-			<button class="btn btn-primary pull-right">Update</button>
+			<button class="btn btn-primary pull-right">Save changes</button>
 			{{admCtrl.mapping}}
 			
 		</tab>

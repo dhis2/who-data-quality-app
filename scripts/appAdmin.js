@@ -34,6 +34,27 @@
     			self.indicators = data;
     		});
 	    }
+	    
+	    
+	    self.sendMessage = function(data) {
+	        	        	
+	    	var modalInstance = $modal.open({
+	            templateUrl: "modals/modalMapping.html",
+	            controller: "ModalMappingController",
+	            controllerAs: 'mapCtrl',
+	            resolve: {
+	    	        orgunitID: function () {
+	    	            return metaData.ou;
+	    	        },
+	    	        orgunitName: function () {
+	    	            return metaData.ouName;
+	    	        }
+	            }
+	        });
+	
+	        modalInstance.result.then(function (result) {
+	        });
+	    }
 	        
 	    
 	    self.mapping = [
