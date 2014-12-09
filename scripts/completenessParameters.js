@@ -1,6 +1,6 @@
 (function(){  
 	/**Controller: Parameters*/
-	angular.module('completenessAnalysis').controller("CompletenessParamterController", function(completenessDataService, metaDataService, periodService, BASE_URL, $http, $q, $sce, $scope) {
+	angular.module('completenessAnalysis').controller("CompletenessParamterController", function(completenessDataService, metaDataService, periodService, requestService, $scope) {
 	    
 	    
 	    var self = this;
@@ -9,8 +9,7 @@
 	    initSelects();	  	
 	    initWatchers();	    
 	    
-		function init() {
-				
+		function init() {				
 			self.dataDisaggregation = 0;
 	    	
 	    	self.dataElementGroups = [];
@@ -27,8 +26,10 @@
 	    	self.indicatorPlaceholder = "";
 	    	self.indicatorsSelected = [];
 	    	
-	    	self.orgunits = [];
+	    	self.analysisOrgunits = [];
 	    	self.userOrgunits = [];
+	    	self.boundarySelectionType = 'manual';
+	    	self.boundaryOrgunitSelected = undefined;
 	    	
 	    	self.orgunitLevels = [];
 	    	self.orgunitLevelSelected = undefined;
@@ -52,6 +53,8 @@
 	    		"endDate": moment()
 	    	};
 	    	
+	    	
+	    		    	
 	    	//Accordion settings
 	    	self.oneAtATime = true;
 	    	self.status = {
@@ -71,8 +74,13 @@
 			});
 			
 			metaDataService.getAnalysisOrgunits().then(function(data) { 
+				self.analysisOrgunits = data;
+				initOrgunitTree();
+			});
+			
+			metaDataService.getUserOrgunits().then(function(data) { 
 				self.userOrgunits = data;
-				userOrgunitString();
+				self.boundarySelectionType = self.userOrgunits[0];
 			});
 			
 			metaDataService.getOrgunitLevels().then(function(data) { 
@@ -108,6 +116,98 @@
 	    	
 	    	self.userOrgunitLabel = "";
 	    }
+	    
+	    function initOrgunitTree() {
+			$('#orgunitTree').jstree({
+				"plugins" : [ "wholerow", "ui"],
+			    'core': {
+			    	'multiple' : false,
+		            'data': function (node, callback) {
+		            	
+		            	//Tree is empty - get first two levels right away
+		            	if (node.parent === null) {
+		      
+	            			var orgunitNodes = [];
+			
+							//Iterate over all the orgunit the user is assigned to (root(s))
+							for (var i = 0; i < self.analysisOrgunits.length; i++) {
+								var node = {
+									'id': self.analysisOrgunits[i].id, 
+									'text': self.analysisOrgunits[i].name,
+									'level': self.analysisOrgunits[i].level,
+									'children': [], 
+									'state': {
+										'opened': true
+									}
+								};
+								
+								//Add the children of the root(s) as well
+								for (var j = 0; j < self.analysisOrgunits[i].children.length; j++) {
+									node.children.push({
+										'id': self.analysisOrgunits[i].children[j].id,
+										'text': self.analysisOrgunits[i].children[j].name,
+										'level': self.analysisOrgunits[i].children[j].level,
+										'children': true
+									});
+									
+									node.children.sort(sortNodeByName);
+								}
+								
+								orgunitNodes.push(node);	
+							}
+
+							orgunitNodes.sort(sortNodeByName);
+							callback(orgunitNodes);
+		            	}
+			                	
+	                	//A leaf was clicked, need to get the next level
+	                	else {
+	                			                		
+	                		var requestURL = '/api/organisationUnits/' + node.id + '.json?';
+	                		requestURL += 'fields=children[name,id,level]';
+	                		
+	                		requestService.getSingle(requestURL).then(function(response) { 
+	                			var orgunits = response.data.children;
+	                			var children = [];
+	                			
+	                			var maxLevel = parseFloat(self.orgunitLevels[self.orgunitLevels.length-1].level);
+	                			var lowestLevel = false;
+	                			if (orgunits.length > 0) {
+	                				lowestLevel = (orgunits[0].level === maxLevel);
+	                			}
+	                			
+	                			for (var i = 0; i < orgunits.length; i++) {
+	                				children.push({
+	                					'id': orgunits[i].id,
+	                					'text': orgunits[i].name,
+	                					'level': orgunits[i].level,
+	                					'children': !lowestLevel
+	                				});
+	                			}
+	                			
+	                			children.sort(sortNodeByName);
+	                			callback(children);
+	                		});
+	                		
+	                		                		
+	                	} //end else
+	                }//end data
+		        }//end core
+		   	}).bind("select_node.jstree", function (NODE, REF_NODE) {
+		   		self.boundaryOrgunitSelected = REF_NODE.node.original;
+		   		$scope.$apply();
+		   	}).on("loaded.jstree", function() {
+		   		$('#orgunitTree').jstree('select_node', self.analysisOrgunits[0].id);
+		   	});
+		}
+		
+		
+		function sortNodeByName(a, b) {
+			var aName = a.text.toLowerCase();
+			var bName = b.text.toLowerCase(); 
+			return ((aName < bName) ? -1 : ((aName > bName) ? 1 : 0));
+		
+		}
 	    
 	    
 	    function updateDataElementList() {
@@ -174,7 +274,20 @@
 					}   
 				}
 			);
+			
+			$scope.$watchCollection(function() { return self.boundarySelectionType; }, 
+				function() {
 					
+					if (self.boundarySelectionType != self.userOrgunits.length) {
+						//manual
+						self.boundaryOrgunitSelected = self.userOrgunits[self.boundarySelectionType];
+					}
+					else {
+						self.boundaryOrgunitSelected = $('#orgunitTree').jstree('get_selected', true)[0].original;
+					}
+				}
+			);
+			
 		}
 		
 		
@@ -339,8 +452,13 @@
 				disaggregationType = 'group';
 				disaggregationID = 'OU_GROUP-' + self.orgunitGroupSelected.id;
 			}
+			
+			if (self.boundarySelectionType != 'manual') {
+				self.boundaryOrgunitSelected = self.boundarySelectionType;
+			}
+			
 			var orgunit = {
-				'boundary': self.userOrgunits,
+				'boundary': self.boundaryOrgunitSelected,
 				'disaggregationType': disaggregationType,
 				'disaggregationID': disaggregationID
 			};

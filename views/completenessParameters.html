@@ -192,7 +192,16 @@
 	    </accordion-group>
 	    
 	    <accordion-group heading="Orgunit" is-open="status.open">
-		    <label for="orgunitSelect">Disaggregation</label>
+	    	<label>Boundary</label>
+	    	{{compParamCtrl.boundarySelectionType}}
+	    	<div class="btn-group btn-group-justified" style="margin-bottom: 10px; max-width: 600px;">
+	    	  	<label ng-repeat="orgunit in compParamCtrl.userOrgunits track by $index" class="btn btn-default" ng-model="compParamCtrl.boundarySelectionType" btn-radio="$index">{{orgunit.name}}</label>
+	    	  	<label class="btn btn-default" ng-model="compParamCtrl.boundarySelectionType" btn-radio="compParamCtrl.userOrgunits.length">Manual</label>
+	    	</div>
+	    		    	
+	    	<div style="margin-bottom: 10px; width: 380px;" ng-show="compParamCtrl.userOrgunits.length === compParamCtrl.boundarySelectionType" id="orgunitTree"></div>
+
+	       <label for="orgunitSelect">Disaggregation</label>
 			<div id="orgunitSelect">
 				<ui-select ng-disabled="compParamCtrl.orgunitGroupSelected" ng-model="compParamCtrl.orgunitLevelSelected" theme="bootstrap" style="margin-bottom: 10px; min-width: 250px; max-width: 380px;">
 				  <ui-select-match placeholder="Select organisation unit level">
@@ -200,7 +209,7 @@
 				  </ui-select-match>
 				  <ui-select-choices 
 				  	repeat="obj in compParamCtrl.orgunitLevels">
-				   		<div ng-if="obj.level > compParamCtrl.userOrgunits[0].level" ng-bind-html="obj.name | highlight: $select.search"></div>
+				   		<div ng-bind-html="obj.name | highlight: $select.search"></div>
 				  </ui-select-choices>
 				</ui-select>
 				
@@ -214,8 +223,9 @@
 					  </ui-select-choices>
 				</ui-select>
 			</div>
-			
+
 			<label for="orgunitSelected">Selected </label>
+			{{compParamCtrl.boundaryOrgunitSelected}}
 			<div id="orgunitSelected">
 				<p ng-show="compParamCtrl.orgunitLevelSelected"><span style="font-size: 100%;" class="label label-primary">{{compParamCtrl.userOrgunitLabel}}</span><span class="glyphicon glyphicon-chevron-right"></span><span style="font-size: 100%;" class="label label-primary">{{compParamCtrl.orgunitLevelSelected.name}}</span></p>
 				

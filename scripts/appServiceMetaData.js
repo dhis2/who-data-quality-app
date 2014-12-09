@@ -571,7 +571,7 @@
 			//need to be fetched
 			else {
 				var requestURL = '/api/organisationUnits.json?'; 
-				requestURL += 'userOnly=true&fields=id,name,level,children[name,id]&paging=false';
+				requestURL += 'userOnly=true&fields=id,name,level&paging=false';
 				  
 				requestService.getSingle(requestURL).then(
 					function(response) { //success
@@ -607,7 +607,7 @@
 			//need to be fetched
 			else {
 					var requestURL = '/api/organisationUnits.json?'; 
-					  requestURL += 'userDataViewFallback=true&fields=id,name,level,children[name,id]&paging=false';
+					  requestURL += 'userDataViewFallback=true&fields=id,name,level,children[name,level,id]&paging=false';
 					  
 				requestService.getSingle(requestURL).then(
 					function(response) { //success
