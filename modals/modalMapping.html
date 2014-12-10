@@ -63,11 +63,21 @@
 	  </ui-select-choices>
 	</ui-select>
 	</div>
+	<label>Dataset for completeness</label>
+	<ui-select ng-disabled="(mapCtrl.dataDisaggregation === 0 && !mapCtrl.dataElementsSelected) || (mapCtrl.dataDisaggregation === 1 && !mapCtrl.indicatorsSelected)"ng-model="mapCtrl.dataSetsSelected" theme="bootstrap" style="margin-bottom: 10px;">
+	  <ui-select-match placeholder="Select data set...">
+	  	{{mapCtrl.dataSetsSelected.name}}
+	  </ui-select-match>
+	  <ui-select-choices 
+	  	repeat="obj in mapCtrl.dataSets | filter: $select.search">
+	   		<div ng-bind-html="obj.name | highlight: $select.search"></div>
+	  </ui-select-choices>
+	</ui-select>
 <hr />
 <p ng-if="(mapCtrl.dataDisaggregation === 0 && mapCtrl.dataElementsSelected) || (mapCtrl.dataDisaggregation === 1 && mapCtrl.indicatorsSelected)">"<em>{{mapCtrl.indicator.name}}</em>" will be mapped to "<em ng-if="mapCtrl.dataDisaggregation === 0">{{mapCtrl.dataElementsSelected.name}}</em><em ng-if="mapCtrl.dataDisaggregation === 1">{{mapCtrl.indicatorsSelected.name}}</em>"</p>
 
 </div>
 <div class="modal-footer" style="clear: both;">     
     <button type="button" class="btn btn-default" data-ng-click="mapCtrl.cancel()">Cancel</button>
-    <button type="button" class="btn btn-default" data-ng-click="mapCtrl.save()" ng-disabled="!((mapCtrl.dataDisaggregation === 0 && mapCtrl.dataElementsSelected) || (mapCtrl.dataDisaggregation === 1 && mapCtrl.indicatorsSelected))">Save</button>
+    <button type="button" class="btn btn-default" data-ng-click="mapCtrl.save()" ng-disabled="!((mapCtrl.dataDisaggregation === 0 && mapCtrl.dataElementsSelected) || (mapCtrl.dataDisaggregation === 1 && mapCtrl.indicatorsSelected) && mapCtrl.dataSetsSelected)">Save</button>
 </div>

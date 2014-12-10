@@ -8,6 +8,7 @@
 		self.orgunitLevel = null;
 		self.analysisYear = null;
 		self.result = null;
+		self.map = null;
 		
 	
 		
@@ -29,12 +30,18 @@
 			//Result skeleton
 			self.result = resultTemplate();
 			
-			getCompleteness();
-			getOutliers();
-			getTimeConsistency();
-			getDataConsistency();
-			
-			sendResult();
+			//Get mapped data, then do analysis
+			requestService.getSingle('/api/systemSettings/DQAmapping').then(function(response) {
+				
+				self.map = response.data;
+				
+				getCompleteness();
+				getOutliers();
+				getTimeConsistency();
+				getDataConsistency();
+				
+				sendResult();
+			});
 		}
 		
 		
@@ -496,58 +503,87 @@
 		
 		function dataSetsForCompleteness() {
 			
-			//TODO: Read from configuration
-			var dataSetIDs = ["oY9wn1Jzm00", "k4Irute1Kkc", "iRgGnHYSFnI"];
+			var dataSetIDs = [];
 			
+			for (var i = 0; i < self.map.dataSets.length; i++) {
+				dataSetIDs.push(self.map.dataSets[i].id);
+			}
 			
 			return dataSetIDs;
-			
+		}
+		
+		
+		function periodTypeFromDataSet(dataSetID) {
+			for (var i = 0; i < self.map.dataSets.length; i++) {
+				if (dataSetID === self.map.dataSets[i].id) return self.map.dataSets[i].periodType;
+			}
 		}
 		
 		
 		function dataForOutliers() {
 			
-			//TODO: Read from configuration
-			var dataIDs = [
-				{'id': "MFioLhQXlXt", 'modStdDev': 2, 'extStdDev': 3, 'consistency': 0.33, 'periodType': 'Monthly'}, 
-				{'id': "bGgjwgqm2ZF", 'modStdDev': 2, 'extStdDev': 3, 'consistency': 0.33, 'periodType': 'Monthly'},
-				{'id': "Jdn8IzJdWp6", 'modStdDev': 2, 'extStdDev': 3, 'consistency': 0.33, 'periodType': 'Monthly'},
-				{'id': "sKlCKBUJvKU", 'modStdDev': 2, 'extStdDev': 3, 'consistency': 0.33, 'periodType': 'Monthly'}
-			];
-			
-			
+			var data, dataIDs = [];
+			for (var i = 0; i < self.map.data.length; i++) {
+				data = self.map.data[i];
+				if (data.matched) {
+					
+					dataIDs.push({
+						'id': data.localData.id,
+						'modStdDev': data.moderateOutlier,
+						'extStdDev': data.extremeOutlier,
+						'consistency': data.consistency,
+						'periodType': periodTypeFromDataSet(data.dataSetID)
+					});
+					
+					
+				}
+			}
+
 			return dataIDs;
 			
 		}
 		
-		function dataRelations() {
+		function localDataIDfromCode(code) {
+			for (var i = 0; i < self.map.data.length; i++) {
+				if (self.map.data[i].matched && code === self.map.data[i].code) {
+					return self.map.data[i].localData.id;
+				}
+			}
+			
+			return null;
+		}
 		
-			//Types: 
-			var relations = [
-				{
-				'A': "MFioLhQXlXt",
-				'B': "zOktN0gFiH0",
-				'type': 'levelRatio',
-				'criteria': 0.1
+		
+		function dataRelations() {
+			
+			var data, relations = [];
+			for (var i = 0; i < self.map.relations.length; i++) {
+				data = self.map.relations[i];
+				
+				var codeA = localDataIDfromCode(data.A);
+				var codeB = localDataIDfromCode(data.B);
+				
+				if (codeA && codeB) {
+					relations.push({
+						'A': codeA,
+						'B': codeB,
+						'type': data.type,
+						'criteria': data.criteria
+					});
 				}
-				,
-				{
-				'A': "ujhUE3PAFGD",
-				'B': "zOktN0gFiH0",
-				'type': 'internalRatio',
-				'criteria': 1.02
-				}
-			];
+			}
+			
 			
 			return relations;	
 		}
 		
 		
 		function analysisParameters() {
-		
+			
+			
+			//TODO - per dataset
 			var parameters = {
 				"completenessTarget": 75
-				
 			};
 			
 			

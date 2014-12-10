@@ -149,6 +149,25 @@
 	  	};
 	  	
 	  	
+	  	/**Data sets*/
+	  		self.getDataSetsFromIDs = function(dataSetIDs) { 
+	  		
+	  			var deferred = $q.defer();
+	  			
+	  			var requestURL = '/api/dataSets.json?paging=false&fields=name,id,periodType';
+	  			for (var i = 0; i < dataSetIDs.length; i++) {
+	  				requestURL += '&filter=id:eq:' + dataSetIDs[i];
+	  			}
+	  			
+	  			requestService.getSingle(requestURL).then( function (response) {
+	  				deferred.resolve(response.data);
+	  			});
+	  			
+	  			return deferred.promise; 
+	  		};
+	  	
+	  	
+	  	
 	  		  	
 	  	self.dataSetFromID = function(dataSetID) {
 	  		for (var j = 0; j < dataSets.data.length; j++) {
@@ -262,6 +281,62 @@
 		};
 		
 		
+		self.getIndicatorDataElements = function (indicatorIDs) {
+
+			var deferred = $q.defer();
+
+			var requestURL = '/api/indicators.json?paging=false&fields=name,id,numerator,denominator';
+			for (var i = 0; i < indicatorIDs.length; i++) {
+				requestURL += '&filter=id:eq:' + indicatorIDs[i];
+			}
+			
+			requestService.getSingle(requestURL).then(function (response) {
+				
+				var indicators = response.data.indicators;
+				
+				var dataElementIDs = [], indicator;
+				for (var i = 0; i < indicators.length; i++) {
+					indicator = indicators[i];
+					dataElementIDs.push.apply(dataElementIDs, indicatorFormulaToDataElementIDs(indicator.numerator));
+					dataElementIDs.push.apply(dataElementIDs, indicatorFormulaToDataElementIDs(indicator.denominator));	
+				}
+				
+				
+				dataElementIDs = self.removeDuplicateIDs(dataElementIDs);
+				
+				self.getDataElementsFromIDs(dataElementIDs).then(function (data) {
+				
+					deferred.resolve(data);
+					
+				});
+						
+			
+			});
+			
+			return deferred.promise;
+		
+		}
+		
+		
+		self.getDataElementsFromIDs = function (dataElementIDs) {
+			
+			var deferred = $q.defer();
+			
+			
+			var requestURL = '/api/dataElements.json?paging=false&fields=name,id';
+			for (var i = 0; i < dataElementIDs.length; i++) {
+				requestURL += '&filter=id:eq:' + dataElementIDs[i];
+			}
+			
+			requestService.getSingle(requestURL).then( function (response) {
+				deferred.resolve(response.data);
+			});
+			
+			return deferred.promise;
+		}
+		
+		
+		
 		function indicatorFormulaToDataElementIDs(indicatorFormula) {
 		
 			var IDs = [];
@@ -363,6 +438,26 @@
 				
 			return deferred.promise; 
 		};
+		
+	
+		
+		self.getDataElementDataSets = function (dataElementIDs) {
+			var deferred = $q.defer();
+			
+			var requestURL = '/api/dataSets.json?paging=false&fields=name,id';
+			for (var i = 0; i < dataElementIDs.length; i++) {
+				requestURL += '&filter=dataElements.id:eq:' + dataElementIDs[i];
+			}
+			
+			requestService.getSingle(requestURL).then(function (response) {
+			
+				deferred.resolve(response.data);
+			
+			});
+						 
+			return deferred.promise; 
+
+		}
 		
 		
 		

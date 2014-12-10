@@ -1,4 +1,5 @@
 {
+  "metaDataVersion": 0.1,
   "data": [
     {
       "definition": "First antenatal care visit", 
@@ -7,7 +8,9 @@
       "localData": {}, 
       "matched": false, 
       "moderateOutlier": 2, 
-      "name": "ANC 1"
+      "consistency": 0.33,
+      "name": "ANC 1",
+      "code": "D1"
     }, 
     {
       "definition": "Institutional deliveries", 
@@ -16,7 +19,9 @@
       "localData": {}, 
       "matched": false, 
       "moderateOutlier": 2, 
-      "name": "Institutional deliveries"
+      "consistency": 0.33,
+      "name": "Institutional deliveries",
+      "code": "D2"
     }, 
     {
       "definition": "Children receiving 3rd dose of Penta-vaccine", 
@@ -25,7 +30,9 @@
       "localData": {}, 
       "matched": false, 
       "moderateOutlier": 2, 
-      "name": "DPT3"
+      "consistency": 0.33,
+      "name": "DPT3",
+      "code": "D3"
     }, 
     {
       "definition": "Children receiving 1st dose of measles vaccine.", 
@@ -34,7 +41,9 @@
       "localData": {}, 
       "matched": false, 
       "moderateOutlier": 2, 
-      "name": "MCV1"
+      "consistency": 0.33,
+      "name": "MCV1",
+      "code": "D4"
     }, 
     {
       "definition": "TB cases that have been notified.", 
@@ -43,7 +52,9 @@
       "localData": {}, 
       "matched": false, 
       "moderateOutlier": 2, 
-      "name": "TB cases notified"
+      "consistency": 0.33,
+      "name": "TB cases notified",
+      "code": "D5"
     }, 
     {
       "definition": "Persons initiating Antiretroviral Therapy treatment.", 
@@ -52,7 +63,9 @@
       "localData": {}, 
       "matched": false, 
       "moderateOutlier": 2, 
-      "name": "ART initiation"
+      "consistency": 0.33,
+      "name": "ART initiation",
+      "code": "D6"
     }, 
     {
       "definition": "Persons receiveing HIV counselling and treatment.", 
@@ -60,8 +73,10 @@
       "group": "HIV", 
       "localData": {}, 
       "matched": false, 
-      "moderateOutlier": 2, 
-      "name": "HIV counselling and treatment"
+      "moderateOutlier": 2,
+      "consistency": 0.33, 
+      "name": "HIV counselling and treatment",
+      "code": "D7"
     }, 
     {
       "definition": "Malaria cases treated that have been treated.", 
@@ -69,8 +84,10 @@
       "group": "Malaria", 
       "localData": {}, 
       "matched": false, 
-      "moderateOutlier": 2, 
-      "name": "Malaria cases treated"
+      "moderateOutlier": 2,
+      "consistency": 0.33,
+      "name": "Malaria cases treated",
+      "code": "D8"
     }, 
     {
       "definition": "Malaria cases that have been confirmed.", 
@@ -78,9 +95,24 @@
       "group": "Malaria", 
       "localData": {}, 
       "matched": false, 
-      "moderateOutlier": 2, 
-      "name": "Confirmed malaria cases"
+      "moderateOutlier": 2,
+      "consistency": 0.33, 
+      "name": "Confirmed malaria cases",
+      "code": "D9"
     }
   ],
-  "metaDataVersion": 0.1
+  "dataSets": [],
+  "relations": [
+  	{
+  	"A": "D1",
+  	"B": "D2",
+  	"type": "levelRatio",
+  	"criteria": 0.1
+  	},{
+  	"A": "D9",
+  	"B": "D8",
+  	"type": "internalRatio",
+  	"criteria": 1.02
+  	}
+  ]
 }

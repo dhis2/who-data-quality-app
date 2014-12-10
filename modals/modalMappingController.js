@@ -22,6 +22,9 @@
 	    self.indicatorPlaceholder = "";
 	    self.indicatorsSelected = undefined;
 	    
+	    self.dataSets = [];
+	    self.dataSetsSelected = undefined;
+	    
 	    metaDataService.getDataElementGroups().then(function(data) { 
 	    	self.dataElementGroups = data;
 	    });
@@ -56,6 +59,37 @@
   	    		   	self.indicators = data;
   	    		});
   	    }
+  	    
+  	    
+  	    function updateDataSetList() {
+  	    	self.dataSetsSelected = undefined;
+  	    	
+  	    	if (self.dataDisaggregation === 0) {
+		    	metaDataService.getDataElementDataSets([self.dataElementsSelected.id])
+		    		.then(function(data) {
+		    			 
+	    			   	self.dataSets = data.dataSets;
+	    			});
+	    	}
+	    	else {
+	    		//TODO: indicator
+	    		metaDataService.getIndicatorDataElements([self.indicatorsSelected.id])
+	    			.then(function(data) {
+	    				 
+	    			   	var dataIDs = [];
+	    			   	for (var i = 0; i < data.dataElements.length; i++) {
+	    			   		dataIDs.push(data.dataElements[i].id);	
+	    			   	}
+	    			   	metaDataService.getDataElementDataSets(dataIDs)
+	    			   	.then(function(data) {
+	    			   		 
+	    			   	   	self.dataSets = data.dataSets;
+	    			   	});
+	    			   	
+	    			   	
+	    			});
+	    	}
+  	    }
 		
 		
 		function initWatchers() {
@@ -76,6 +110,25 @@
 					if (self.indicatorGroupsSelected) {
 						updateIndicatorList();
 						
+			  		}     
+				}
+			);
+			
+			$scope.$watchCollection(function() { return self.indicatorsSelected; }, 
+				function() {
+					
+					if (self.indicatorsSelected) {
+						updateDataSetList();
+						
+			  		}     
+				}
+			);
+			
+			$scope.$watchCollection(function() { return self.dataElementsSelected; }, 
+				function() {
+					
+					if (self.dataElementsSelected) {
+						updateDataSetList();
 			  		}     
 				}
 			);
@@ -109,7 +162,7 @@
 	    		self.indicator.localData.type = "indicator";
 	    		self.indicator.localData.co = false;
 	    	}
-	    	
+	    	self.indicator.dataSetID = self.dataSetsSelected.id;
 	    	self.indicator.matched = true;
 	    	
 	        $modalInstance.close(self.indicator);
