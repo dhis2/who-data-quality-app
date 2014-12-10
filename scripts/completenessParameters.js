@@ -314,7 +314,7 @@
 		function filterLevels() {
 			self.filteredOrgunitLevels = [];
 			
-			if (!self.orgunitLevels) return;
+			if (!self.orgunitLevels || !self.boundaryOrgunitSelected) return;
 			for (var i = 0; i < self.orgunitLevels.length; i++) {
 				if (self.orgunitLevels[i].level > self.boundaryOrgunitSelected.level) {
 					self.filteredOrgunitLevels.push(self.orgunitLevels[i]);

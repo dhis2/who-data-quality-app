@@ -35,3 +35,8 @@ body {
 	border: 1px solid gray;
 	height: 400px;
 }
+
+.table tbody>tr>td.vert-align
+{
+    vertical-align: middle;
+}

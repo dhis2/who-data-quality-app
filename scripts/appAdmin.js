@@ -15,7 +15,7 @@
 		
 	
 	/**Controller: Parameters*/
-	app.controller("AdminController", function(metaDataService, periodService, BASE_URL) {
+	app.controller("AdminController", function(metaDataService, requestService, $modal) {
 	    	    
 	    var self = this;
 	    self.activeTab = true;
@@ -25,6 +25,7 @@
 	    function init() {
 	    	self.dataElements = [];
 	    	self.indicators = [];
+	    	self.outlierOptions = makeOutlierOptions();
 	    	
     		metaDataService.getDataElements().then(function(data) { 
     			self.dataElements = data;
@@ -33,75 +34,65 @@
     		metaDataService.getIndicators().then(function(data) { 
     			self.indicators = data;
     		});
+    		
+    		
+    		//TODO: check for updates to metaData
+    		requestService.getSingle('/api/systemSettings/DQAmapping').then(function(response) {
+    			if (response.data != "") {
+    				self.mapping = response.data;
+    				
+    			}
+    			else {
+    			
+    				requestService.getSingleLocal('data/metaData.json').then(function(response) {
+    					self.mapping = response.data;
+    				});
+    			}
+    		});
+    		
+    		
 	    }
 	    
 	    
-	    self.sendMessage = function(data) {
-	        	        	
+	    self.mapIndicator = function(indicator) {
+	       	     	
 	    	var modalInstance = $modal.open({
 	            templateUrl: "modals/modalMapping.html",
 	            controller: "ModalMappingController",
 	            controllerAs: 'mapCtrl',
 	            resolve: {
-	    	        orgunitID: function () {
-	    	            return metaData.ou;
-	    	        },
-	    	        orgunitName: function () {
-	    	            return metaData.ouName;
+	    	        indicator: function () {
+	    	            return indicator;
 	    	        }
 	            }
 	        });
 	
 	        modalInstance.result.then(function (result) {
+	        	if (result) saveMappingChanges();
 	        });
 	    }
-	        
 	    
-	    self.mapping = [
-	    	{
-	    	 'name': 'ANC 1',
-	    	 'definition': 'First antenatal care visit',
-	    	 'group': 'Maternal Health',
-	    	 'matched': false,
-	    	 'localType': 'dataElement', 	
-	    	 'localID': null, 		
-	    	 'localDataSetID': null,
-	    	 'moderateOutlier': 2,
-	    	 'extremeOutlier': 3
-	    	},{
-	    	 'name': 'Institutional deliveries',
-	    	 'definition': 'Institutional deliveries', 
-	    	 'group': 'Maternal Health',
-	    	 'matched': false,
-	    	 'localType': 'dataElement', 	
-	    	 'localID': null, 		
-	    	 'localDataSetID': null,
-	    	 'moderateOutlier': 2,
-	    	 'extremeOutlier': 3
-	    	},{
-	    	 'name': 'DPT3',
-	    	 'definition': 'Children receiving 3rd dose of Penta-vaccine', 
-	    	 'group': 'Immunization',
-	    	 'matched': false,
-	    	 'localType': 'dataElement', 	
-	    	 'localID': null, 		
-	    	 'localDataSetID': null,
-	    	 'moderateOutlier': 2,
-	    	 'extremeOutlier': 3
-	    	},{
-	    	 'name': 'MCV1',
-	    	 'definition': 'Children receiving 1st dose of measles vaccine.', 
-	    	 'group': 'Immunization',
-	    	 'matched': false,
-	    	 'localType': 'dataElement', 	
-	    	 'localDataElement': null, 		
-	    	 'localIndicator': null, 		
-	    	 'localDataSetID': null,
-	    	 'moderateOutlier': 2,
-	    	 'extremeOutlier': 3
-	    	}	    	
-	    ];
+	    
+	    self.deleteMapping = function(indicator) {
+	        	indicator.localData = {};
+	        	indicator.matched = false;
+				saveMappingChanges();
+	        }
+	    
+	    
+	    function saveMappingChanges() {	    	
+	    	var requestURL = '/api/systemSettings/';
+	    	requestService.post(requestURL, {'DQAmapping': JSON.stringify(self.mapping)});
+	    }
 	    	
+	    
+	    function makeOutlierOptions() {
+	    	var opts = [];
+	    	for (var i = 1.5; i <= 4.05; i += 0.1) {
+	    		opts.push({'val': (Math.round(10*i)/10), 'label': (Math.round(10*i)/10).toString()});
+	    	}
+	    	return opts;
+	    }
 	    
 	        
 		return self;

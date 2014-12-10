@@ -5,6 +5,7 @@
 	/**Bootstrap*/
 	angular.element(document).ready( 
 		function() {
+		
 	  		var initInjector = angular.injector(['ng']);
 	      	var $http = initInjector.get('$http');
        		

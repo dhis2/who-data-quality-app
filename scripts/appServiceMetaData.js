@@ -285,7 +285,7 @@
 				//available locally
 				if (dataElementGroups.available) {
 					console.log("Data element groups available locally");
-					deferred.resolve(self.dataElementGroups.data);
+					deferred.resolve(dataElementGroups.data);
 				}
 				//waiting for server
 				else if (!dataElementGroups.available && dataElementGroups.promise) {

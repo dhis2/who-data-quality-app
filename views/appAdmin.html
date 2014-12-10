@@ -10,21 +10,45 @@
 					<th>Reference indicator/data element</th>
 					<th>Definition</th>
 					<th width="400px">Local data element/indicator</th>
+					<th></th>
 				</tr>
-				<tr ng-repeat="indicator in admCtrl.mapping track by $index">
-					<td>{{indicator.group}}</td>
-					<td>{{indicator.name}}</td>
-					<td>{{indicator.definition}}</td>
-					<td>{{indicator.localDataElement.name}}{{indicator.localIndicator.name}}</td>
+				<tr ng-repeat="indicator in admCtrl.mapping.data track by $index">
+					<td class="vert-align">{{indicator.group}}</td>
+					<td class="vert-align">{{indicator.name}}</td>
+					<td class="vert-align">{{indicator.definition}}</td>
+					<td class="vert-align">{{indicator.localData.name}}</td>
+					<td class="vert-align"><button ng-click="admCtrl.mapIndicator(indicator);" class="btn btn-default">Edit</button><button ng-if="indicator.matched" style="margin-left: 5px;" ng-click="admCtrl.deleteMapping(indicator);" class="btn btn-warning">Delete</button></td>	
+				</tr>
+			
+			</table>			
+		</tab>
+		<tab heading="Data Quality Parameters">
+			<br />
+			<p>Please set the data quality parameters to use.</p>
+			<table class="table table-bordered table-striped table-condensed table-hover">
+				<tr>
+					<th>Group</th>
+					<th>Reference indicator/data element</th>
+					<th>Local data element/indicator</th>
+					<th>Moderate outlier limit</th>
+					<th>Extreme outlier limit</th>
+				</tr>
+				<tr ng-repeat="indicator in admCtrl.mapping.data | filter: {matched: true}">
+					<td class="vert-align">{{indicator.group}}</td>
+					<td class="vert-align">{{indicator.name}}</td>
+					<td class="vert-align">{{indicator.localData.name}}</td>
+					<td class="vert-align">
+						<select ng-model="indicator.moderateOutlier" ng-options="opts.val as opts.label for opts in admCtrl.outlierOptions">
+						</select>
+					</td>
+					<td class="vert-align">
+						<select ng-model="indicator.extremeOutlier" ng-options="opts.val as opts.label for opts in admCtrl.outlierOptions">
+						</select>
+					</td>
 				</tr>
 			
 			</table>
-			<button class="btn btn-primary pull-right">Save changes</button>
-			{{admCtrl.mapping}}
-			
-		</tab>
-		<tab heading="Data Quality Parameters">
-			
+			<button class="btn btn-primary pull-right" ng-click="admCtrl.saveMappingChanges();">Save changes</button>
 		</tab>
 	</tabset>
 	

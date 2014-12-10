@@ -1,0 +1,86 @@
+{
+  "data": [
+    {
+      "definition": "First antenatal care visit", 
+      "extremeOutlier": 3, 
+      "group": "Maternal Health", 
+      "localData": {}, 
+      "matched": false, 
+      "moderateOutlier": 2, 
+      "name": "ANC 1"
+    }, 
+    {
+      "definition": "Institutional deliveries", 
+      "extremeOutlier": 3, 
+      "group": "Maternal Health", 
+      "localData": {}, 
+      "matched": false, 
+      "moderateOutlier": 2, 
+      "name": "Institutional deliveries"
+    }, 
+    {
+      "definition": "Children receiving 3rd dose of Penta-vaccine", 
+      "extremeOutlier": 3, 
+      "group": "Immunization", 
+      "localData": {}, 
+      "matched": false, 
+      "moderateOutlier": 2, 
+      "name": "DPT3"
+    }, 
+    {
+      "definition": "Children receiving 1st dose of measles vaccine.", 
+      "extremeOutlier": 3, 
+      "group": "Immunization", 
+      "localData": {}, 
+      "matched": false, 
+      "moderateOutlier": 2, 
+      "name": "MCV1"
+    }, 
+    {
+      "definition": "TB cases that have been notified.", 
+      "extremeOutlier": 3, 
+      "group": "TB", 
+      "localData": {}, 
+      "matched": false, 
+      "moderateOutlier": 2, 
+      "name": "TB cases notified"
+    }, 
+    {
+      "definition": "Persons initiating Antiretroviral Therapy treatment.", 
+      "extremeOutlier": 3, 
+      "group": "HIV", 
+      "localData": {}, 
+      "matched": false, 
+      "moderateOutlier": 2, 
+      "name": "ART initiation"
+    }, 
+    {
+      "definition": "Persons receiveing HIV counselling and treatment.", 
+      "extremeOutlier": 3, 
+      "group": "HIV", 
+      "localData": {}, 
+      "matched": false, 
+      "moderateOutlier": 2, 
+      "name": "HIV counselling and treatment"
+    }, 
+    {
+      "definition": "Malaria cases treated that have been treated.", 
+      "extremeOutlier": 3, 
+      "group": "Malaria", 
+      "localData": {}, 
+      "matched": false, 
+      "moderateOutlier": 2, 
+      "name": "Malaria cases treated"
+    }, 
+    {
+      "definition": "Malaria cases that have been confirmed.", 
+      "extremeOutlier": 3, 
+      "group": "Malaria", 
+      "localData": {}, 
+      "matched": false, 
+      "moderateOutlier": 2, 
+      "name": "Confirmed malaria cases"
+    }
+  ],
+  "metaDataVersion": 0.1
+}
