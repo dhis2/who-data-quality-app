@@ -22,10 +22,13 @@
 		}
 		
 		
-		self.doAnalysis = function (orgunitBoundaryID, orgunitLevel, year) {
+		self.doAnalysis = function (orgunitBoundaryID, orgunitLevel, year, group) {
 			self.orgunitBoundaryID = orgunitBoundaryID;
 			self.orgunitLevel = orgunitLevel;
 			self.analysisYear = year; 
+			self.group = group;
+			self.core = false;
+			if (group === 'Core') self.core = true;
 			
 			//Result skeleton
 			self.result = resultTemplate();
@@ -503,13 +506,21 @@
 		
 		function dataSetsForCompleteness() {
 			
-			var dataSetIDs = [];
-			
-			for (var i = 0; i < self.map.dataSets.length; i++) {
-				dataSetIDs.push(self.map.dataSets[i].id);
+			var data, dataSetIDs = {};
+			for (var i = 0; i < self.map.data.length; i++) {
+				data = self.map.data[i];
+				if (data.matched) {
+					if ((data.core && self.core) || (data.group === self.group)) {
+						dataSetIDs[data.dataSetID] = true;
+					}
+				}
+			}
+			var IDs = [];
+			for (key in dataSetIDs) {
+				IDs.push(key);
 			}
 			
-			return dataSetIDs;
+			return IDs;
 		}
 		
 		
@@ -525,7 +536,7 @@
 			var data, dataIDs = [];
 			for (var i = 0; i < self.map.data.length; i++) {
 				data = self.map.data[i];
-				if (data.matched) {
+				if (data.matched && ((data.core && self.core) || (data.group === self.group))) {
 					
 					dataIDs.push({
 						'id': data.localData.id,
@@ -544,8 +555,10 @@
 		}
 		
 		function localDataIDfromCode(code) {
+			var data;
 			for (var i = 0; i < self.map.data.length; i++) {
-				if (self.map.data[i].matched && code === self.map.data[i].code) {
+				data = self.map.data[i];
+				if (data.matched && ((data.core && self.core) || (data.group === self.group)) && data.code === code) {
 					return self.map.data[i].localData.id;
 				}
 			}
@@ -596,37 +609,37 @@
 			return {	
 					"alerts": [],
 				    "completeness": {
-				    	"descriptions": "Reporting completeness from the facility - the percentage of expected report that have been reported.",
+				    	"descriptions": "Reporting completeness from the facility - the percentage of expected reports that have been entered and completed.",
 				        "dataSets": []
 				    },
 				    "iConsistency": [
 				        {
 				            "label": "Accuracy of event reporting - extreme outliers",
-				            "description": "The national score denotes the percentage of values reported during the year that are extreme outliers.",
+				            "description": "The overall score denotes the percentage of values reported during the year that are extreme outliers. For lower level units, more than 2 outlieries qualifies as poor score.",
 				            "type": "extremeOutliers",
 				            "indicators": []
 				        },
 				        {
 				            "label": "Accuracy of event reporting - moderate outliers",
-				            "description": "The national score denotes the percentage of values reported during the year that are moderate outliers.",
+				            "description": "The overall score denotes the percentage of values reported during the year that are moderate outliers. For lower level units, more than 2 outlieries qualifies as poor score.",
 				            "type": "moderateOutliers",
 				            "indicators": []
 				        },
 				        {
 				            "label": "Consistency over time",
-				            "description": "The national score is the ratio of the reporting year against the average of the three previous years. For the sub-national level, the number of districts with a large variation from the national trend are counted as outliers.",
+				            "description": "The overall score is the ratio of the year of analysis against the average for the three previous years.\nFor lower level units, poor score indicates that there is a large variation in a given units ratio compared to the overall ratio.",
 				            "type": "consistencyTime",
 				            "indicators": []
 				        },
 				        {
 				            "label": "Internal consistency between indicators - by level",
-				            "description": "The national score denotes the ratio between the two indicatos. For the sub-national level, the number of districts with a large variation from the national ratio are counted as outliers.",
+				            "description": "The overall score denotes the ratio between the two indicatos.\nFor the lower level units, poor score indicates a large difference in a given units ration compared to the overall ratio.",
 				            "type": "consistencyOU",
 				            "indicators": []
 				        },
 				        {
 				            "label": "Internal consistency between indicators - internal",
-				            "description": "The national score denotes ratio between the two indicators. For the sub-national level, the number of districts where the second indicator is larger than the first by a certain factor is counted as outliers.",
+				            "description": "The overall score denotes the ratio between the two indicatos.\nFor the lower level units, poor score indicates a ratio that is different from what is expected for the two indicators.",
 				            "type": "consistencyInternal",
 				            "indicators": []
 				        }

@@ -4,6 +4,8 @@
     {
       "definition": "First antenatal care visit", 
       "extremeOutlier": 3, 
+      "core": true,
+      "type": "all",
       "group": "Maternal Health", 
       "localData": {}, 
       "matched": false, 
@@ -15,6 +17,8 @@
     {
       "definition": "Institutional deliveries", 
       "extremeOutlier": 3, 
+      "core": true,
+      "type": "all",
       "group": "Maternal Health", 
       "localData": {}, 
       "matched": false, 
@@ -26,6 +30,8 @@
     {
       "definition": "Children receiving 3rd dose of Penta-vaccine", 
       "extremeOutlier": 3, 
+      "core": true,
+      "type": "all",
       "group": "Immunization", 
       "localData": {}, 
       "matched": false, 
@@ -37,6 +43,8 @@
     {
       "definition": "Children receiving 1st dose of measles vaccine.", 
       "extremeOutlier": 3, 
+      "core": true,
+      "type": "all",
       "group": "Immunization", 
       "localData": {}, 
       "matched": false, 
@@ -48,6 +56,8 @@
     {
       "definition": "TB cases that have been notified.", 
       "extremeOutlier": 3, 
+      "core": true,
+      "type": "all",
       "group": "TB", 
       "localData": {}, 
       "matched": false, 
@@ -59,6 +69,8 @@
     {
       "definition": "Persons initiating Antiretroviral Therapy treatment.", 
       "extremeOutlier": 3, 
+      "core": true,
+      "type": "all",
       "group": "HIV", 
       "localData": {}, 
       "matched": false, 
@@ -68,19 +80,23 @@
       "code": "D6"
     }, 
     {
-      "definition": "Persons receiveing HIV counselling and treatment.", 
+      "definition": "Pregnant women receiveing HIV counselling and testing.", 
       "extremeOutlier": 3, 
+      "core": true,
+      "type": "all",
       "group": "HIV", 
       "localData": {}, 
       "matched": false, 
       "moderateOutlier": 2,
       "consistency": 0.33, 
-      "name": "HIV counselling and treatment",
+      "name": "HIV counselling and testing",
       "code": "D7"
     }, 
     {
       "definition": "Malaria cases treated that have been treated.", 
       "extremeOutlier": 3, 
+      "core": true,
+      "type": "all",
       "group": "Malaria", 
       "localData": {}, 
       "matched": false, 
@@ -92,6 +108,8 @@
     {
       "definition": "Malaria cases that have been confirmed.", 
       "extremeOutlier": 3, 
+      "core": true,
+      "type": "all",
       "group": "Malaria", 
       "localData": {}, 
       "matched": false, 
@@ -99,6 +117,149 @@
       "consistency": 0.33, 
       "name": "Confirmed malaria cases",
       "code": "D9"
+    }, 
+    {
+      "definition": "Children receiving 1st dose of Penta-vaccine", 
+      "extremeOutlier": 3, 
+      "core": false,
+      "type": "all",
+      "group": "Immunization", 
+      "localData": {}, 
+      "matched": false, 
+      "moderateOutlier": 2, 
+      "consistency": 0.33,
+      "name": "DPT1",
+      "code": "D10"
+    }, 
+    {
+      "definition": "Children receiving 1st dose of OPV/IPV", 
+      "extremeOutlier": 3, 
+      "core": false,
+      "type": "all",
+      "group": "Immunization", 
+      "localData": {}, 
+      "matched": false, 
+      "moderateOutlier": 2, 
+      "consistency": 0.33,
+      "name": "OPV1/IPV1",
+      "code": "D11"
+    }, 
+    {
+      "definition": "Children receiving 3rd dose of OPV/IPV", 
+      "extremeOutlier": 3, 
+      "core": false,
+      "type": "all",
+      "group": "Immunization", 
+      "localData": {}, 
+      "matched": false, 
+      "moderateOutlier": 2, 
+      "consistency": 0.33,
+      "name": "OPV3/IPV3",
+      "code": "D17"
+    }, 
+    {
+      "definition": "Children receiving 1st dose of PCV", 
+      "extremeOutlier": 3, 
+      "core": false,
+      "type": "all",
+      "group": "Immunization", 
+      "localData": {}, 
+      "matched": false, 
+      "moderateOutlier": 2,
+      "consistency": 0.33,
+      "name": "PCV1",
+      "code": "D12"
+    }, 
+    {
+      "definition": "Children receiving 3rd dose of PCV", 
+      "extremeOutlier": 3, 
+      "core": false,
+      "type": "all",
+      "group": "Immunization", 
+      "localData": {}, 
+      "matched": false, 
+      "moderateOutlier": 2, 
+      "consistency": 0.33,
+      "name": "PCV3",
+      "code": "D13"
+    }, 
+    {
+      "definition": "PMTCT", 
+      "extremeOutlier": 3, 
+      "core": false,
+      "type": "all",
+      "group": "HIV", 
+      "localData": {}, 
+      "matched": false, 
+      "moderateOutlier": 2, 
+      "consistency": 0.33,
+      "name": "PMTCT",
+      "code": "D14"
+    }, 
+    {
+      "definition": "Pregnant women tested HIV positive in ANC", 
+      "extremeOutlier": 3, 
+      "core": false,
+      "type": "all",
+      "group": "HIV", 
+      "localData": {}, 
+      "matched": false, 
+      "moderateOutlier": 2, 
+      "consistency": 0.33,
+      "name": "Women HIV+ in ANC",
+      "code": "D15"
+    }, 
+    {
+      "definition": "Pregnant women initiating HIV care/treamtnet", 
+      "extremeOutlier": 3, 
+      "core": false,
+      "type": "all",
+      "group": "HIV", 
+      "localData": {}, 
+      "matched": false, 
+      "moderateOutlier": 2, 
+      "consistency": 0.33,
+      "name": "Pregnant women starting HIV care/treatment",
+      "code": "D16"
+    }, 
+    {
+      "definition": "First postnatal care visit", 
+      "extremeOutlier": 3, 
+      "core": false,
+      "type": "all",
+      "group": "Maternal Health", 
+      "localData": {}, 
+      "matched": false, 
+      "moderateOutlier": 2, 
+      "consistency": 0.33,
+      "name": "PNC1",
+      "code": "D18"
+    }, 
+    {
+      "definition": "First dose of tetanus toxoid", 
+      "extremeOutlier": 3, 
+      "core": false,
+      "type": "all",
+      "group": "Maternal Health", 
+      "localData": {}, 
+      "matched": false, 
+      "moderateOutlier": 2, 
+      "consistency": 0.33,
+      "name": "TT1",
+      "code": "D19"
+    }, 
+    {
+      "definition": "Pregnant women tested for HIV in ANC", 
+      "extremeOutlier": 3, 
+      "core": false,
+      "type": "all",
+      "group": "Maternal Health", 
+      "localData": {}, 
+      "matched": false, 
+      "moderateOutlier": 2, 
+      "consistency": 0.33,
+      "name": "HIV tested in ANC",
+      "code": "D20"
     }
   ],
   "dataSets": [],
@@ -108,9 +269,70 @@
   	"B": "D2",
   	"type": "levelRatio",
   	"criteria": 0.1
-  	},{
-  	"A": "D9",
-  	"B": "D8",
+  	},
+  	{
+  	"A": "D8",
+  	"B": "D9",
+  	"type": "internalRatio",
+  	"criteria": 1.02
+  	},
+	{
+	"A": "D17",
+	"B": "D11",
+	"type": "internalRatio",
+	"criteria": 1.02
+	},
+  	{
+  	"A": "D10",
+  	"B": "D11",
+  	"type": "levelRatio",
+  	"criteria": 0.1
+  	},
+  	{
+  	"A": "D10",
+  	"B": "D12",
+  	"type": "levelRatio",
+  	"criteria": 0.1
+  	},
+  	{
+  	"A": "D3",
+  	"B": "D17",
+  	"type": "levelRatio",
+  	"criteria": 0.1
+  	},
+	{
+	"A": "D3",
+	"B": "D10",
+	"type": "internalRatio",
+	"criteria": 1.02
+	},
+	{
+	"A": "D13",
+	"B": "D3",
+	"type": "internalRatio",
+	"criteria": 1.02
+	},
+  	{
+  	"A": "D7",
+  	"B": "D1",
+  	"type": "internalRatio",
+  	"criteria": 1.02
+  	},
+  	{
+  	"A": "D15",
+  	"B": "D16",
+  	"type": "internalRatio",
+  	"criteria": 1.02
+  	},
+  	{
+  	"A": "D19",
+  	"B": "D1",
+  	"type": "internalRatio",
+  	"criteria": 1.02
+  	},
+  	{
+  	"A": "D20",
+  	"B": "D1",
   	"type": "internalRatio",
   	"criteria": 1.02
   	}

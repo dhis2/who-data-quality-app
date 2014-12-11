@@ -5,6 +5,7 @@
 	    var self = this;
 	    self.ready = false;
 	    self.result = null;
+
 	    
 	    var resultCallback = function (result) {
     		self.result = result;

@@ -2,7 +2,7 @@
 	<div ng-if="repResCtrl.ready">
 		<table style="font-size: 90%;" class="table table-bordered table-condensed">
 			<tr bgcolor="#f9f9f9">
-			 	<th>Completeness</th><th>Data set</th><th>National completeness</th><th># Units with poor score</th><th>% Units with poor score</th>
+			 	<th>Completeness</th><th>Data set</th><th>Overall Completeness</th><th># Units with poor score</th><th>% Units with poor score</th>
 		    </tr>
 		   	<tr ng-repeat="dataSet in repResCtrl.result.completeness.dataSets track by $index | orderBy:'label':false">
 	    		<th width="40%" ng-if="$index === 0" rowspan="{{repResCtrl.result.completeness.dataSets.length}}">Completeness of facility reporting</th>
@@ -16,8 +16,9 @@
 	    <table style="font-size: 90%;" class="table table-bordered table-condensed">
 	    	<thead>
 	    	<tr bgcolor="#f9f9f9">
-	    	 	<th>Internal consistency</th><th>Indicator</th><th>National Score</th><th># Units with poor score</th><th>% Units with poor score</th>
+	    	 	<th rowspan="2">Internal consistency</th><th rowspan="2">Indicator</th><th rowspan="2">Overall Score</th><th colspan="2">Units with poor score</th>
 	        </tr>
+	        <tr bgcolor="#f9f9f9"><th>Number</th><th>Percentage</th></tr>
 	    	</thead>
 	    	<tbody ng-repeat="section in repResCtrl.result.iConsistency track by $index">
 	    		<tr ng-repeat="indicator in section.indicators | orderBy:'label':false">

@@ -12,7 +12,7 @@
 					<th>Dataset (completeness)</th>
 					<th width="135px"></th>
 				</tr>
-				<tr ng-repeat="indicator in admCtrl.mapping.data track by indicator.name">
+				<tr ng-repeat="indicator in admCtrl.mapping.data | orderBy:['group','name']:false">
 					<td class="vert-align">{{indicator.group}}</td>
 					<td class="vert-align">{{indicator.name}}</td>
 					<td class="vert-align">{{indicator.localData.name}}</td>
@@ -34,7 +34,7 @@
 					<th>Extreme outlier</th>
 					<th>Consistency</th>
 				</tr>
-				<tr ng-repeat="indicator in admCtrl.mapping.data | filter: {matched: true}">
+				<tr ng-repeat="indicator in admCtrl.mapping.data | filter: {matched: true} | orderBy:['group','name']:false">
 					<td class="vert-align">{{indicator.group}}</td>
 					<td class="vert-align">{{indicator.name}}</td>
 					<td class="vert-align">{{indicator.localData.name}}</td>
@@ -55,7 +55,7 @@
 					<th>Data set</th>
 					<th>Threshold for completeness (%)</th>
 				</tr>
-				<tr ng-class="{danger: !dataSet.threshold}" ng-repeat="dataSet in admCtrl.mapping.dataSets">
+				<tr ng-class="{danger: !dataSet.threshold}" ng-repeat="dataSet in admCtrl.mapping.dataSets  | orderBy:['name']:false">
 					<td class="vert-align">{{dataSet.name}}</td>
 					<td style="width: 150px;" class="vert-align"><input type="number" class="form-control" ng-model="dataSet.threshold" min="0" max="100"/></td>
 				</tr>
@@ -71,7 +71,7 @@
 					<th nowrap>Threshold</th>
 					<th nowrap>Description</th>
 				</tr>
-				<tr ng-repeat="relation in admCtrl.mapping.relations" ng-if="admCtrl.filterMatchedRelations(relation)">
+				<tr ng-repeat="relation in admCtrl.mapping.relations | orderBy:['A', 'B']:false" ng-if="admCtrl.filterMatchedRelations(relation)">
 					<td class="vert-align">{{admCtrl.dataNameFromCode(relation.A);}}</td>
 					<td class="vert-align">{{admCtrl.dataNameFromCode(relation.B);}}</td>
 					<td class="vert-align">{{relation.type}}</td>
