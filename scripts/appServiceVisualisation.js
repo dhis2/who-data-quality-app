@@ -51,6 +51,148 @@
 				makeOUBarChart(elementID, period, dataID, ouIDs, options, response.data);
 			});
 		}
+		
+		
+	  	/**
+	  	@param elementID	html element to place chart in
+	  	@param periods		array of array of ISO period, one set for each series. Same period in each year.
+	  	@param dataIDs		data ID
+	  	@param ouID			orgunit ID
+	  	*/
+	  	self.autoYYLineChart = function (elementID, periods, dataID, ouID, options) {
+	  		
+	  		var requestURL, requests = [];
+	  		for (var i = 0; i < periods.length; i++) {
+	  			requestURL = '/api/analytics.json?'
+  				requestURL += "dimension=dx:" + dataID;
+  				requestURL += "&dimension=pe:" + periods[i].join(';');
+  				requestURL += "&filter=ou:" + ouID;
+  				requests.push(requestURL);
+	  		}
+	  		
+	  		requestService.getMultiple(requests).then(function (response) {
+	  			var datas = [];
+	  			for (var i = 0; i < response.length; i++) {
+	  				datas.push(response[i].data);
+	  			}
+
+	  			makeYYLineChart(elementID, periods, dataID, ouID, options, datas);
+	  		});
+	  	}
+	  	
+	  	
+	  	
+	  	function makeYYLineChart(elementID, periods, dataID, ouIDs, options, data) {
+	  		
+	  		nv.addGraph(function() {
+  				var chart = nv.models.lineChart();
+  				  
+  				chart.margin({left: 90})  //t chart margins to give the x-axis some breathing room.
+  				       .useInteractiveGuideline(false)  //We want nice looking tooltips and a guideline!
+  				       .transitionDuration(1000)  //how fast do you want the lines to transition?
+  				       .showLegend(true)       //Show the legend, allowing users to turn on/off line series.
+  				       .tooltips(false)
+  				       .showYAxis(true)        //Show the y-axis
+  				       .showXAxis(true)        //Show the x-axis
+  				;
+  				
+				var pe, val;
+				for (var i = 0; i < data[0].headers.length; i++) {	
+					if (data[0].headers[i].name === 'pe') pe = i;
+					if (data[0].headers[i].name === 'value') val = i;
+				}
+  				
+  				var minRange = 0, maxRange = 0;
+  				var chartData = [], chartSeries, values, dataSet;
+  				for (var i = data.length-1; i >= 0 ; i--) {
+  			  		
+  			  		values = [];
+  			  		chartSeries = {};  			  		
+  			  		dataSet = data[i];
+
+  					chartSeries.key = dataSet.metaData.pe[0].substring(0, 4) + ' - ' + dataSet.metaData.pe[dataSet.metaData.pe.length-1].substring(0, 4);
+  					
+  					var row, value, values = [];
+  					for (var j = 0; j < periods[i].length; j++) {
+  					
+  						var period = periods[i][j];
+  						var rows = dataSet.rows;
+  						
+  					 	for (var k = 0; k < rows.length; k++) {
+	  					 	
+	  					 	row = rows[k];
+  		  					if (row[pe] === period) {
+  		  					
+  		  						value = parseFloat(row[val]);
+  			  					
+  			  					values.push({
+  			  						'x': j,
+  			  						'y': value
+  			  					});
+  			  					
+  			  					if (value < minRange) {
+  			  						minRange = value;
+  			  					}
+  			  					if (value > maxRange) {
+  			  						maxRange = value;
+  			  					}
+  			  					
+  			  					k = rows.length;
+  			  				}
+  						}
+  					}
+  					
+  					chartSeries.values = values;
+  					chartData.push(chartSeries);
+  				}
+  				
+  				//Get XAxis labels = periods from series[0]
+  				var periodNames = [];
+  				for (var i = 0; i < periods[0].length; i++) {
+  					periodNames.push(periodService.shortPeriodName(periods[0][i]).split(' ')[0]);
+  				}
+  				
+  					
+  				//Leave some room above/below the max
+	  			minRange = parseInt(minRange - minRange*0.3);
+	  			maxRange = parseInt(maxRange + maxRange*0.3);
+  				if (options && options.range) {
+  					if (options.range.min) minRange = options.range.min;
+  					if (options.range.max) maxRange = options.range.max;
+  				}
+  						  	
+  				chart.xAxis     //Chart x-axis settings
+  				      .rotateLabels(-30)
+  				      .tickFormat(function(d) {
+  				             return periodNames[d];
+  				           });
+  							
+  				chart.yAxis
+				 	.axisLabel(data[0].metaData.names[dataID])
+  				 	.tickFormat(d3.format('g'));
+  				  				
+  				chart.forceY([minRange, maxRange]);
+  				
+  				
+
+  				/* Done setting the chart up? Time to render it!*/		  	
+  				d3.select('#' + elementID + ' svg')    //Select the <svg> element you want to render the chart in.   
+  				      .datum(chartData)         //Populate the <svg> element with chart data...
+  				      .call(chart);          //Finally, render the chart!
+  				
+  				//Update the chart when window resizes.
+  				nv.utils.windowResize(function() { chart.update() });
+  				
+  				if (options && options.callBack) options.callBack(); 
+  				
+  				return chart;
+  			});
+	  	
+	  		
+	  	
+	  	
+	  	}
+	  	
 	  	
 	  	
 	  	function makeOUBarChart(elementID, period, dataID, ouIDs, options, data) {
@@ -107,7 +249,7 @@
 					if (options.range.max) maxRange = options.range.max;
 				}
 				
-				chart.xAxis.rotateLabels(-45);
+				chart.xAxis.rotateLabels(-30);
 				
 				chart.yAxis.tickFormat(d3.format('g'));
 				chart.forceY([minRange, maxRange]);
@@ -118,7 +260,7 @@
 				  .call(chart);
 				
 				nv.utils.windowResize(chart.update);
-				
+				if (options && options.callBack) options.callBack();
 				return chart;
 	  		});
 	  	}
@@ -203,7 +345,7 @@
 	  			}
 	  					  	
 	  			chart.xAxis     //Chart x-axis settings
-	  			      .rotateLabels(-45)
+	  			      .rotateLabels(-30)
 	  			      .tickFormat(function(d) {
 	  			             return periodNames[d];
 	  			           });
@@ -222,10 +364,39 @@
 	  			
 	  			//Update the chart when window resizes.
 	  			nv.utils.windowResize(function() { chart.update() });
+	  			if (options && options.callBack) options.callBack();
 	  			return chart;
 	  		});
 	  	}
+	  	
+	  	
+	  	
+	  	self.makeDistinctBarChart = function(elementID, series, options) {
 	  		
+  			nv.addGraph(function() {
+  			var chart = nv.models.discreteBarChart()
+  			  .margin({bottom: 125})
+  			  .x(function(d) { return d.label })    //Specify the data accessors.
+  			  .y(function(d) { return d.value })
+  			  .staggerLabels(false)    //Too many bars and not enough room? Try staggering labels.
+  			  .tooltips(false)        //Don't show tooltips
+  			  .showValues(false)       //...instead, show the bar value right on top of each bar.
+  			  .transitionDuration(350)
+  			  ;
+  			
+  			
+  			chart.xAxis.rotateLabels(-30);
+  			chart.yAxis.tickFormat(d3.format('g'));
+  			
+  			d3.select('#' + elementID + ' svg')
+  			  .datum(series)
+  			  .call(chart);
+  			
+  			nv.utils.windowResize(chart.update);
+  			if (options && options.callBack) options.callBack();
+  			return chart;
+  			});
+  		}
 	  	
 	  	
 	  	

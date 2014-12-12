@@ -17,10 +17,7 @@
 			var current = startYear;
 			var periods = [];
 			var periodsInYear;
-			
-			
-			console.log(startDate, endDate, periodType);
-			
+						
 			while (current <=  endYear && periodType != "yearly") {
 							
 				periodsInYear = self.periodTool.get(periodType).generatePeriods({'offset': current - thisYear, 'filterFuturePeriods': true, 'reversePeriods': false});
