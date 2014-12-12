@@ -124,6 +124,7 @@
   		  					if (row[pe] === period) {
   		  					
   		  						value = parseFloat(row[val]);
+  		  						if (isNaN(value)) value = null;
   			  					
   			  					values.push({
   			  						'x': j,
@@ -225,6 +226,7 @@
 				for (var i = 0; i < data.rows.length; i++) {
 				 	row = data.rows[i];	
 					value = parseInt(row[val]);
+					if (isNaN(value)) value = null;
   					values.push({
   						'label': data.metaData.names[row[ou]],
   						'value': value
@@ -309,6 +311,7 @@
 			  					
 			  					if (!data.headers[k].meta) {
 			  						value = parseFloat(row[k]);
+			  						if (isNaN(value)) value = null;
 				  					values.push({
 				  						'x': count++,
 				  						'y': value

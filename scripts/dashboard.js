@@ -291,6 +291,7 @@
 			chartOptions.yLabel = 'Completeness (%)';
 			
 			for (var i = 0; i < self.dataSetsAvailable.length; i++) {
+			
 				dataSet = self.dataSetsAvailable[i];
 				var periods = periodService.getISOPeriods(startDate, endDate, dataSet.periodType, chartOptions);
 				
