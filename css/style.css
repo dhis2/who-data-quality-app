@@ -38,9 +38,20 @@
 		height: 400px;
 	}
 	
+	.smallChart {
+		border: 1px solid gray;
+		height: 300px;
+	}
+	
 	.table tbody>tr>td.vert-align
 	{
 	    vertical-align: middle;
+	}
+	.rotate {
+		display: block;
+		  -webkit-transform: rotate(-45deg);
+		  -moz-transform: rotate(-45deg);
+		  filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=2);	
 	}
 }
 

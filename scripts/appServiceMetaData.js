@@ -53,8 +53,7 @@
 	  		'promise': null,
 	  		'data': []
 	  	};
-	  	
-	  	
+	  		  	
 	  	
 	  	self.metaDataReady = function () {
 	  		return (dataSets.available && dataElements.available && indicators.available && orgunits.available && userOrgunits.available && rootOrgunits.available);
@@ -755,7 +754,6 @@
 		
 	  	return self;
 	  
-	  }]);
-	
+	  }]);	
 	
 })();
