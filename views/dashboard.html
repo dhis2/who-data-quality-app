@@ -1,41 +1,57 @@
 <div ng-controller="DashboardController as dashCtrl">
-
 	<div class="btn-group btn-group-justified" style="margin-bottom: 5px;">
-		<label class="btn btn-default" ng-click="dashCtrl.updateDashboard()" ng-model="dashCtrl.analysisType" btn-radio="'comp'">Completeness</label>
-		<label class="btn btn-default" ng-click="dashCtrl.updateDashboard()" ng-model="dashCtrl.analysisType" btn-radio="'yy'">Year-Over-Year</label>
-		<label class="btn btn-default" ng-click="dashCtrl.updateDashboard()" ng-model="dashCtrl.analysisType" btn-radio="'out'">Outliers</label>
-		<label class="btn btn-default" ng-click="dashCtrl.updateDashboard()" ng-model="dashCtrl.analysisType" btn-radio="'gap'">Gaps</label>
+		<label class="btn btn-default" ng-click="$( window ).resize();" ng-model="dashCtrl.analysisType" btn-radio="'comp'">Completeness</label>
+		<label class="btn btn-default" ng-click="$( window ).resize();" ng-model="dashCtrl.analysisType" btn-radio="'yy'">Year-Over-Year</label>
+		<label class="btn btn-default" ng-click="$( window ).resize();" ng-model="dashCtrl.analysisType" btn-radio="'out'">Outliers</label>
 	</div>
 		
 
-		<div ng-if="dashCtrl.analysisType === 'comp'">
-			<table width="100%">
-			<tr ng-repeat="dataset in dashCtrl.dataSetsAvailable">
-			<th width="7%"><span class="rotate">{{dataset.name}}</span></th>
-			<td>
-				<div style="min-width: 400px; display: inline-block; width: 47%; margin-top: 10px; margin-left: 1%; margin-right: 1%;" id="compPE_{{dataset.id}}"><svg class="smallChart"></svg></div>
-				<div style="min-width: 400px; display: inline-block; width: 47%; margin-top: 10px; margin-left: 1%; margin-right: 1%;" id="compOU_{{dataset.id}}"><svg class="smallChart"></svg></div>
-			</td>
-			</tr>
-			</table>
+		<div ng-class="{hideDiv: dashCtrl.analysisType != 'comp'}">
+			<div style="display: inline-block; width: 100%;" ng-repeat="dataset in dashCtrl.dataSetsAvailable track by $index">
+			
+				<div class="chartHolder" ng-class="{chartFull: dashCtrl.singleCol, chartHalf: !dashCtrl.singleCol}" style="display: inline-block;" id="compPE_{{dataset.id}}"><svg class="smallChart"></svg></div>
+				
+				<div class="chartHolder" ng-class="{chartFull: dashCtrl.singleCol, chartHalf: !dashCtrl.singleCol}" style="display: inline-block;" id="compOU_{{dataset.id}}"><svg class="smallChart"></svg></div>
+			</div>
 		</div>
-		<div ng-if="dashCtrl.analysisType === 'yy'">
-			<div ng-repeat="data in dashCtrl.dataAvailable track by $index" style="margin-top: 10px; margin-left: 2px; margin-right: 2px; width: 49%; display: inline-block;" ng-class="{'pull-right' : $index%2==0 }" id="yy_{{data.localData.id}}"><svg class="smallChart"></svg></div>
+		
+		
+		
+		<div ng-class="{hideDiv: dashCtrl.analysisType != 'yy'}">
+		
+			<div
+				class="chartHolder"
+				ng-repeat="data in dashCtrl.dataAvailable track by $index" 
+				style="display: inline-block;" 
+				id="yy_{{data.localData.id}}"
+				ng-class="{chartFull: dashCtrl.singleCol, chartHalf: !dashCtrl.singleCol}"
+				>
+				
+				<svg class="smallChart"></svg>
+				
+			</div>
+			
 		</div>
-		<div ng-if="dashCtrl.analysisType === 'out'">
-			<label>Outliers over time</label>
-			<div style="margin-bottom: 15px; margin-left: 2px; margin-right: 2px; width: 100%" id="out_pe"><svg class="bigChart"></svg></div>
-			<label>Outliers by organisation units</label>
-			<div style="margin-bottom: 15px; margin-left: 2px; margin-right: 2px; width: 100%" id="out_ou"><svg class="bigChart"></svg></div>
-			<label>Outliers by data element/indicator</label>
-			<div style="margin-bottom: 15px; margin-left: 2px; margin-right: 2px; width: 100%" id="out_dx"><svg class="bigChart"></svg></div>
-		</div>
-		<div ng-if="dashCtrl.analysisType === 'gap'">
-			<label>Gaps/missing data over time</label>
-			<div style="margin-bottom: 15px; margin-left: 2px; margin-right: 2px; width: 100%" id="gap_pe"><svg class="bigChart"></svg></div>
-			<label>Gaps/missing data by organisation units</label>
-			<div style="margin-bottom: 15px; margin-left: 2px; margin-right: 2px; width: 100%" id="gap_ou"><svg class="bigChart"></svg></div>
-			<label>Gaps/missing data by data element/indicator</label>
-			<div style="margin-bottom: 15px; margin-left: 2px; margin-right: 2px; width: 100%" id="gap_dx"><svg class="bigChart"></svg></div>
+		
+		
+		
+		<div ng-class="{hideDiv: dashCtrl.analysisType != 'out'}">
+		
+			<div class="chartHolder" id="out_all"><svg class="bigChart"></svg></div>
+			
+			<div class="chartHolder" id="gap_all"><svg class="bigChart"></svg></div>
+			
+				
+			<div class="chartHolder" ng-class="{chartFull: dashCtrl.singleCol, chartHalf: !dashCtrl.singleCol}" style="display: inline-block;"  id="out_ou"><svg class="smallPie" ></svg></div>
+			
+			
+			<div class="chartHolder" ng-class="{chartFull: dashCtrl.singleCol, chartHalf: !dashCtrl.singleCol}" style="display: inline-block;" id="out_dx"><svg class="smallPie" ></svg></div>
+		
+			
+			
+			<div class="chartHolder" ng-class="{chartFull: dashCtrl.singleCol, chartHalf: !dashCtrl.singleCol}" style="display: inline-block;"  id="gap_ou"><svg class="smallPie" ></svg></div>
+			
+			
+			<div class="chartHolder" ng-class="{chartFull: dashCtrl.singleCol, chartHalf: !dashCtrl.singleCol}" style="display: inline-block;" id="gap_dx"><svg class="smallPie"></svg></div>	
 		</div>
 </div>

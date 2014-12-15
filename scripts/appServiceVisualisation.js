@@ -7,6 +7,7 @@
 		
 		
 		/**
+		Line chart - parameter-based
 		@param elementID	html element to place chart in
 		@param periods		array ISO periods
 		@param dataIDs		array of data IDs. One series will be created for each
@@ -22,13 +23,17 @@
 			requestURL += '&tableLayout=true';
 			requestURL += '&columns=pe&rows=dx';
 			
+			console.log("1: " + options.title);
+			
 			requestService.getSingle(requestURL).then(function (response) {
+				console.log("2: " + options.title);
 				makeLineChart(elementID, periods, dataIDs, ouID, options, response.data);
 			});
 		}
 		
 		
 		/**
+		Distinct bar chart (OU) - parameter-based
 		@param elementID	html element to place chart in
 		@param periods		ISO period
 		@param dataIDs		data ID 
@@ -54,6 +59,7 @@
 		
 		
 	  	/**
+	  	Year over year line chart - parameter-based
 	  	@param elementID	html element to place chart in
 	  	@param periods		array of array of ISO period, one set for each series. Same period in each year.
 	  	@param dataIDs		data ID
@@ -88,10 +94,10 @@
   				var chart = nv.models.lineChart();
   				  
   				chart.margin({left: 90})  //t chart margins to give the x-axis some breathing room.
-  				       .useInteractiveGuideline(false)  //We want nice looking tooltips and a guideline!
+  				       .useInteractiveGuideline(true)  //We want nice looking tooltips and a guideline!
   				       .transitionDuration(1000)  //how fast do you want the lines to transition?
   				       .showLegend(true)       //Show the legend, allowing users to turn on/off line series.
-  				       .tooltips(false)
+  				       .tooltips(true)
   				       .showYAxis(true)        //Show the y-axis
   				       .showXAxis(true)        //Show the x-axis
   				;
@@ -174,7 +180,9 @@
   				  				
   				chart.forceY([minRange, maxRange]);
   				
-  				
+  				if (options.title) {
+  					$('#' + elementID + ' svg').parent().prepend('<div class="chart-title">' + options.title + '</div>');
+  				}
 
   				/* Done setting the chart up? Time to render it!*/		  	
   				d3.select('#' + elementID + ' svg')    //Select the <svg> element you want to render the chart in.   
@@ -182,15 +190,14 @@
   				      .call(chart);          //Finally, render the chart!
   				
   				//Update the chart when window resizes.
-  				nv.utils.windowResize(function() { chart.update() });
+  				$(window).bind('resize', function(){ d3.select('#' + elementID + ' svg')
+  					.transition().duration(350)
+  					.call(chart); });
   				
   				if (options && options.callBack) options.callBack(); 
   				
   				return chart;
   			});
-	  	
-	  		
-	  	
 	  	
 	  	}
 	  	
@@ -204,7 +211,7 @@
 				  .x(function(d) { return d.label })    //Specify the data accessors.
 				  .y(function(d) { return d.value })
 				  .staggerLabels(false)    //Too many bars and not enough room? Try staggering labels.
-				  .tooltips(false)        //Don't show tooltips
+				  .tooltips(true)        //Don't show tooltips
 				  .showValues(false)       //...instead, show the bar value right on top of each bar.
 				  .transitionDuration(350)
 				  ;
@@ -222,6 +229,8 @@
 					
 				chartSeries.key = data.metaData.names[dataID];
 				
+				
+				//To-Do: add option to include children without data
 				var row, value, values = [];
 				for (var i = 0; i < data.rows.length; i++) {
 				 	row = data.rows[i];	
@@ -256,12 +265,18 @@
 				chart.yAxis.tickFormat(d3.format('g'));
 				chart.forceY([minRange, maxRange]);
 				
+				if (options.title) {
+					$('#' + elementID + ' svg').parent().prepend('<div class="chart-title">' + options.title + '</div>');
+				}
+			
 				
 				d3.select('#' + elementID + ' svg')
 				  .datum(chartData)
 				  .call(chart);
 				
-				nv.utils.windowResize(chart.update);
+				$(window).bind('resize', function(){ d3.select('#' + elementID + ' svg')
+					.transition().duration(350)
+					.call(chart); });
 				if (options && options.callBack) options.callBack();
 				return chart;
 	  		});
@@ -270,6 +285,9 @@
 	  	
 	  	
 	  	function makeLineChart(elementID, periods, dataIDs, ouID, options, data) {
+	  		
+
+	  		
 	  		/*These lines are all chart setup.  Pick and choose which chart features you want to utilize. */
   			nv.addGraph(function() {
 	  			var chart = nv.models.lineChart();
@@ -278,7 +296,7 @@
 	  			       .useInteractiveGuideline(false)  //We want nice looking tooltips and a guideline!
 	  			       .transitionDuration(1000)  //how fast do you want the lines to transition?
 	  			       .showLegend(false)       //Show the legend, allowing users to turn on/off line series.
-	  			       .tooltips(false)
+	  			       .tooltips(true)
 	  			       .showYAxis(true)        //Show the y-axis
 	  			       .showXAxis(true)        //Show the x-axis
 	  			;
@@ -354,6 +372,10 @@
 	  			           });
 	  			
 	  			if (options && options.yLabel) chart.yAxis.axisLabel = options.yLabel;
+	  			
+	  			if (options.title) {
+	  				$('#' + elementID + ' svg').parent().prepend('<div class="chart-title">' + options.title + '</div>');
+	  			}
 	  				  			
 	  			chart.yAxis
 	  			 	.tickFormat(d3.format('g'));
@@ -366,7 +388,10 @@
 	  			      .call(chart);          //Finally, render the chart!
 	  			
 	  			//Update the chart when window resizes.
-	  			nv.utils.windowResize(function() { chart.update() });
+				$(window).bind('resize', function(){ d3.select('#' + elementID + ' svg')
+					.transition().duration(350)
+					.call(chart); });
+
 	  			if (options && options.callBack) options.callBack();
 	  			return chart;
 	  		});
@@ -382,7 +407,7 @@
   			  .x(function(d) { return d.label })    //Specify the data accessors.
   			  .y(function(d) { return d.value })
   			  .staggerLabels(false)    //Too many bars and not enough room? Try staggering labels.
-  			  .tooltips(false)        //Don't show tooltips
+  			  .tooltips(true)        //Don't show tooltips
   			  .showValues(false)       //...instead, show the bar value right on top of each bar.
   			  .transitionDuration(350)
   			  ;
@@ -391,21 +416,98 @@
   			chart.xAxis.rotateLabels(-30);
   			chart.yAxis.tickFormat(d3.format('g'));
   			
+  			if (options.title) {
+  				$('#' + elementID + ' svg').parent().prepend('<div class="chart-title">' + options.title + '</div>');
+  			}
+  			
   			d3.select('#' + elementID + ' svg')
   			  .datum(series)
   			  .call(chart);
   			
-  			nv.utils.windowResize(chart.update);
+			$(window).bind('resize', function(){ d3.select('#' + elementID + ' svg')
+					.transition().duration(350)
+					.call(chart); });
+  			
   			if (options && options.callBack) options.callBack();
   			return chart;
   			});
   		}
+  		
+  		
+  		
+  		self.makeMultiBarChart = function(elementID, series, options) {
+  				
+			nv.addGraph(function() {
+			    var chart = nv.models.multiBarChart()
+			      .transitionDuration(350)
+			      .reduceXTicks(false)   //If 'false', every single x-axis tick label will be rendered.
+			      .rotateLabels(0)      //Angle to rotate x-axis labels.
+			      .showControls(true)   //Allow user to switch between 'Grouped' and 'Stacked' mode.
+			      .groupSpacing(0.1)    //Distance between each group of bars.
+				  .stacked(true)
+			    ;
+
+
+				if (options.categoryLabels) {
+					chart.xAxis     //Chart x-axis settings
+					      .rotateLabels(-30)
+					      .tickFormat(function(d) {
+					             return options.categoryLabels[d];
+					           });
+				}
+				else {
+					chart.xAxis.tickFormat(d3.format('g'));
+				}
+				
+				if (options.title) {
+					$('#' + elementID + ' svg').parent().prepend('<div class="chart-title">' + options.title + '</div>');
+				}
+			    
+			    chart.yAxis
+			        .tickFormat(d3.format('g'));
+			
+			    d3.select('#' + elementID + ' svg')
+			        .datum(series)
+			        .call(chart);
+			
+				$(window).bind('resize', function(){ d3.select('#' + elementID + ' svg')
+					.transition().duration(350)
+					.call(chart); });			
+				
+			    return chart;
+			});
+		}
 	  	
+	  	self.makePieChart = function(elementID, series, options) {
+	  	  	nv.addGraph(function() {
+	  	  	  var chart = nv.models.pieChart()
+	  	  	      .x(function(d) { return d.label })
+	  	  	      .y(function(d) { return d.value })
+	  	  	      .showLabels(true)
+	  	  	      .showLegend(false)
+		  	  	  .valueFormat(d3.format('g'));
+	  	  	
+	  	  	
+	  	  		if (options.title) {
+	  	  			$('#' + elementID + ' svg').parent().prepend('<div class="chart-title">' + options.title + '</div>');
+	  	  		}
+	  	  	
+	  	  	    d3.select("#" + elementID + " svg")
+	  	  	        .datum(series)
+	  	  	        .transition().duration(350)
+	  	  	        .call(chart);
+	  	  	
+				$(window).bind('resize', function(){ d3.select('#' + elementID + ' svg')
+					.transition().duration(350)
+					.call(chart); });	
+	  	  	  return chart;
+	  	  	});
+	  	}
 	  	
 	  	
 	  	return self;
-	  
-	  }]);
+	  	
+		}]);
 	
 	
 })();

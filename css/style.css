@@ -35,16 +35,41 @@
 	
 	.bigChart {
 		border: 1px solid gray;
-		height: 400px;
+		min-width: 450px;
+		height: 450px;
 	}
 	
 	.smallChart {
 		border: 1px solid gray;
+		min-width: 300px;
 		height: 300px;
 	}
 	
-	.table tbody>tr>td.vert-align
-	{
+	.smallPie {
+		border: 1px solid gray;
+		height: 350px;
+		min-width: 350px;
+	}
+	
+	.chartHolder {
+		margin: 3px		
+	}
+	
+	.chartHalf {
+		width: 49%;
+	}
+	
+	.chartFull {
+		width: 100%;
+	}
+	
+	
+	.hideDiv {
+		display: none;
+	}
+	
+	
+	.table tbody>tr>td.vert-align {
 	    vertical-align: middle;
 	}
 	.rotate {
@@ -52,6 +77,12 @@
 		  -webkit-transform: rotate(-45deg);
 		  -moz-transform: rotate(-45deg);
 		  filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=2);	
+	}
+	
+	.chart-title {
+		margin-top: 6px;
+		font-weight: bold;
+		font-family: sans-serif;
 	}
 }
 

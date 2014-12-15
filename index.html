@@ -101,7 +101,6 @@
 	          		<li ng-class="{active: navCtrl.current === 'dash'}"><a href ng-click="navCtrl.menuClicked('dash');">Dashboard</a></li>
 	          		<li ng-class="{active: navCtrl.current === 'quality'}"><a href ng-click="navCtrl.menuClicked('quality');">Ad-Hoc Analysis</a></li>
   					<li ng-class="{active: navCtrl.current === 'report'}"><a href ng-click="navCtrl.menuClicked('report');">Annual Review</a></li>
-<!--					<li ng-class="{active: navCtrl.current === 'dictionary'}"><a href ng-click="navCtrl.menuClicked('dictionary');">Data Dictionary</a></li>-->
 					<li ng-class="{active: navCtrl.current === 'export'}"><a href ng-click="navCtrl.menuClicked('export');">Data Export</a></li>
 					<li class="dropdown">
 						<a href="#" class="dropdown-toggle" data-toggle="dropdown">More<span class="caret"></span></a>
@@ -138,10 +137,6 @@
 		<br>
 		<completeness-result></completeness-result>
 	</div>
-	<!--<div ng-cloak id="dictionary" ng-show="navCtrl.current === 'dictionary'">
-		<h3>Data Dictionary</h3>
-		<p>Browse indicators and their defintion.</p>
-	</div>-->
 	<div ng-cloak id="export" ng-show="navCtrl.current === 'export'">
 		<export-parameters></export-parameters>
 	</div>

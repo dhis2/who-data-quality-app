@@ -13,14 +13,30 @@
 	});
 	
 	
-	app.controller("DashboardController", function(metaDataService, periodService, requestService, visualisationService, mathService, $scope) {
+	app.controller("DashboardController", function(metaDataService, periodService, requestService, visualisationService, mathService, $scope, $window) {
 
 	    var self = this;
 
     	init();
     	
     	
+    	$( window ).resize(function() {
+    		setWindowWidth();
+    	});
+    	
+    	
     	function init() {
+    	
+    		if ($window.innerWidth < 768) {
+    			self.singleCol = true;
+    		}
+    		else {
+    			self.singleCol = false;
+    		}
+    		
+    		    		
+    		setWindowWidth();
+    		
     		self.analysisType = 'comp'; 
     		self.count = 0;
 
@@ -46,9 +62,20 @@
     	}
     	
     	
-    	self.updateDashboard = function() {
+    	function setWindowWidth() {
     		
-    		console.log("Update dashboard");
+    		if ($window.innerWidth < 768) {
+    			self.singleCol = true;
+    		}
+    		else {
+    			self.singleCol = false;
+    		}
+    		
+    		$scope.$apply();
+    	}
+    	
+    	
+    	self.updateDashboard = function() {
     		
     		if (!self.metaData) return;
     		
@@ -64,7 +91,6 @@
 			makeCompletenessTrendCharts();
 			makeYYtrendCharts();
 			fetchOutlierGapChartsData();
-			
     	}
        
        
@@ -175,6 +201,17 @@
     		}
     		
     		
+    		var outlierSeries = {};
+    		for (var i = 0; i < variables.length; i++) {
+    			outlierSeries[variables[i]] = [];
+    			for (var k = 0; k < periods.length; k++) {
+    				outlierSeries[variables[i]].push(0);	
+    			}
+    		}
+    		
+    		var gapSeries = angular.copy(outlierSeries);
+    		
+    		
     		for (var i = 0; i < data.rows.length; i++) {
    				var row = data.rows[i];   			
     			var valueSet  = [];
@@ -189,7 +226,7 @@
     			var highLimit = Math.round((mean + noDevs*standardDeviation) * 10) / 10;
     			var lowLimit = Math.round((mean - noDevs*standardDeviation) * 10) / 10;
     			if (lowLimit < 0) lowLimit = 0;
-    			
+    			   			
     			
     			var dataCount = 0;
     			for (var j = 0; j < row.length; j++) {
@@ -213,6 +250,8 @@
     						else {
     							variableGaps[row[dx]] = 1;
     						}
+    						
+    						gapSeries[row[dx]][dataCount]++;
     					
     					}
     					else if (parseFloat(row[j]) > highLimit || parseFloat(row[j]) < lowLimit) {
@@ -233,29 +272,93 @@
     						else {
     							variableOutliers[row[dx]] = 1;
     						}
+    						
+    						outlierSeries[row[dx]][dataCount]++;
     					}
     					dataCount++;
     				}
     			}
     		}
     		
-    		var chartSeries = [];
-			chartSeries.push(makeSeries(periods, periodOutliers, data.metaData, "Outliers by period"));
-			chartSeries.push(makeSeries(orgunits, orgunitOutliers, data.metaData, "Outliers by orgunit"));
-			chartSeries.push(makeSeries(variables, variableOutliers, data.metaData, "Outliers by indicator"));
+    		//Outliers
+    		var stackedSeries = [];
+    		for (key in outlierSeries) {
+    			var series = {};
+    			series.key = data.metaData.names[key];
+    			series.values = [];
+    			
+    			for (var i = 0; i < outlierSeries[key].length; i++) {
+    				series.values.push({'x': i, 'y': outlierSeries[key][i]});
+    			}
+    			
+    			stackedSeries.push(series);
+    		}
+    		var categoryNames = [];
+    		for (var i = 0; i < periods.length; i++) {
+	    		categoryNames.push(periodService.shortPeriodName(periods[i]));
+    		}
+    		visualisationService.makeMultiBarChart('out_all', stackedSeries, {'categoryLabels': categoryNames, 'title': "Outliers over time"});
+    		
+    		
+    		var series = [];
+    		for (key in orgunitOutliers) {
+    			series.push({
+    				'label': data.metaData.names[key],
+    				'value': orgunitOutliers[key]
+    			});
+    		}
+    		visualisationService.makePieChart('out_ou', series, {'title': 'Outliers by orgunit'});
+
 			
-			chartSeries.push(makeSeries(periods, periodOutliers, data.metaData, "Gaps by period"));
-			chartSeries.push(makeSeries(orgunits, orgunitGaps, data.metaData, "Gaps by orgunit"));
-			chartSeries.push(makeSeries(variables, variableGaps, data.metaData, "Gaps by indicator"));			
-									
-			visualisationService.makeDistinctBarChart('out_pe', [chartSeries[0]], null);
-			visualisationService.makeDistinctBarChart('out_ou', [chartSeries[1]], null);
-			visualisationService.makeDistinctBarChart('out_dx', [chartSeries[2]], null);
+    		var series = [];
+    		for (key in variableOutliers) {
+    			series.push({
+    				'label': data.metaData.names[key],
+    				'value': variableOutliers[key]
+    			});
+    		}
+    		visualisationService.makePieChart('out_dx', series, {'title': 'Outliers by data element/indicator'});
+    		
+    		
+    		//Gaps
+    		var stackedSeries = [];
+    		for (key in gapSeries) {
+    			var series = {};
+    			series.key = data.metaData.names[key];
+    			series.values = [];
+    			
+    			for (var i = 0; i < gapSeries[key].length; i++) {
+    				series.values.push({'x': i, 'y': gapSeries[key][i]});
+    			}
+    			
+    			stackedSeries.push(series);
+    		}
+    		var categoryNames = [];
+    		for (var i = 0; i < periods.length; i++) {
+	    		categoryNames.push(periodService.shortPeriodName(periods[i]));
+    		}
+    		visualisationService.makeMultiBarChart('gap_all', stackedSeries, {'categoryLabels': categoryNames, 'title': "Gaps/missing values over time"});
+    		
+    		
+    		var series = [];
+    		for (key in orgunitGaps) {
+    			series.push({
+    				'label': data.metaData.names[key],
+    				'value': orgunitGaps[key]
+    			});
+    		}
+    		visualisationService.makePieChart('gap_ou', series, {'title': 'Gaps/missing values by orgunit'});
+
 			
-			visualisationService.makeDistinctBarChart('gap_pe', [chartSeries[3]], null);
-			visualisationService.makeDistinctBarChart('gap_ou', [chartSeries[4]], null);
-			visualisationService.makeDistinctBarChart('gap_dx', [chartSeries[5]], null);
-    	}
+    		var series = [];
+    		for (key in variableGaps) {
+    			series.push({
+    				'label': data.metaData.names[key],
+    				'value': variableGaps[key]
+    			});
+    		}
+    		visualisationService.makePieChart('gap_dx', series, {'title': 'Gaps/missing values by data element/indicator'});
+		}
     	
     	
     	
@@ -291,12 +394,15 @@
 			chartOptions.yLabel = 'Completeness (%)';
 			
 			for (var i = 0; i < self.dataSetsAvailable.length; i++) {
-			
 				dataSet = self.dataSetsAvailable[i];
+									
+
 				var periods = periodService.getISOPeriods(startDate, endDate, dataSet.periodType, chartOptions);
 				
+				chartOptions.title = dataSet.name + ' completeness trend';				
 				visualisationService.autoLineChart('compPE_'+dataSet.id, periods, [dataSet.id], 'USER_ORGUNIT', chartOptions);
-				
+
+				chartOptions.title = dataSet.name + ' completeness comparison';								
 				visualisationService.autoOUBarChart('compOU_'+dataSet.id, periods.pop(), [dataSet.id], 'USER_ORGUNIT_CHILDREN', chartOptions);
 				
 			}
