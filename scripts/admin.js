@@ -1,13 +1,13 @@
 
 (function(){
 	
-	var app = angular.module('appAdmin', []);
+	var app = angular.module('admin', []);
 	
 	
-	app.directive("appAdmin", function() {
+	app.directive("admin", function() {
 		return {
 			restrict: "E",
-	        templateUrl: "views/appAdmin.html"
+	        templateUrl: "views/admin.html"
 		};
       
 	});

@@ -1,4 +1,3 @@
-<div ng-controller="ExportController as exportCtrl">
 <h3>Data Export</h3>
 <h5>Export data for use with the Excel-based data quality report card</h5>
 	
@@ -49,4 +48,3 @@
 	</ui-select>
 	<br />
 	<button type="button" class="btn btn-primary" ng-click="exportCtrl.doExport();" ng-disabled="exportCtrl.orgunitLevelSelected === undefined || (exportCtrl.dataElementSelected === undefined && exportCtrl.indicatorSelected === undefined) || exportCtrl.yearSelected === undefined">Download</button>
-</div>

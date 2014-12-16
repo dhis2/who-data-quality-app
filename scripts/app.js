@@ -1,6 +1,6 @@
 
 (function(){
-  var app = angular.module('dataQualityApp', ['dashboard', 'reportCard', 'completenessAnalysis', 'dataExport', 'appAdmin', 'ui.select', 'ngSanitize', 'ui.bootstrap']);
+  var app = angular.module('dataQualityApp', ['ngRoute', 'dashboard', 'reportCard', 'completenessAnalysis', 'dataExport', 'admin', 'ui.select', 'ngSanitize', 'ui.bootstrap']);
     
 	/**Bootstrap*/
 	angular.element(document).ready( 
@@ -23,16 +23,47 @@
 		uiSelectConfig.theme = 'bootstrap';
 	});
 	
+	app.config(['$routeProvider',
+	        function($routeProvider) {
+	            $routeProvider.
+	                when('/dashboard', {
+	                    templateUrl: 'views/dashboard.html',
+	                    controller: 'DashboardController',
+	                    controllerAs: 'dashCtrl'
+	                }).
+	                when('/analysis', {
+	                    templateUrl: 'views/analysis.html',
+	                    controller: 'AnalysisController',
+	                    controllerAs: 'aCtrl'
+	                }).
+	                when('/review', {
+	                    templateUrl: 'views/review.html',
+	                    controller: 'ReviewController',
+	                    controllerAs: 'revCtrl'
+	                    
+	                }).
+	                when('/export', {
+	                    templateUrl: 'views/exportParameters.html',
+	                    controller: 'ExportController',
+	                    controllerAs: 'exportCtrl'
+	                }).
+	                when('/admin', {
+	                    templateUrl: 'views/admin.html',
+	                    controller: 'AdminController',
+	                    controllerAs: 'admCtrl'
+	                }).
+	                otherwise({
+	                    redirectTo: '/dashboard'
+	                });
+	        }]);
+	
+	
 	
 	/**Controller: Navigation*/
-	app.controller("NavigationController", function() {
-		this.current = "dash";
-		this.isCollapsed = true;
-	
+	app.controller("NavigationController", function(BASE_URL) {
+
+		this.isCollapsed = true;	
 		
-		this.menuClicked = function(pageClicked) {	
-			this.current = pageClicked;
-		};
 		
 		this.collapse = function() {
 			if (this.isCollapsed) this.isCollapsed = false;

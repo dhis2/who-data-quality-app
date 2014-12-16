@@ -3,6 +3,14 @@
 	
 	var app = angular.module('reportCard', []);
 	
+	app.controller("ReviewController", function() {
+		var self = this;
+		
+		console.log("Loading");
+		
+		
+		return self;
+	});
 	
 	/**Directive: Completeness parameters*/
 	app.directive("reportParameters", function() {

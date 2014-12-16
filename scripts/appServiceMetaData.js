@@ -117,7 +117,7 @@
 	  		//available locally
 	  		if (dataSets.available) {
 	  			console.log("Data sets available locally");
-	  			deferred.resolve(self.dataSets.data);
+	  			deferred.resolve(dataSets.data);
 	  		}
 	  		//waiting for server
 	  		else if (!dataSets.available && dataSets.promise) {
@@ -248,7 +248,7 @@
 				//available locally
 				if (indicators.available) {
 					console.log("Indicators available locally");
-					deferred.resolve(self.indicators.data);
+					deferred.resolve(indicators.data);
 				}
 				//waiting for server
 				else if (!indicators.available && indicators.promise) {
@@ -468,7 +468,7 @@
 				//available locally
 				if (dataElements.available) {
 					console.log("Data elements available locally");
-					deferred.resolve(self.dataElements.data);
+					deferred.resolve(dataElements.data);
 				}
 				//waiting for server
 				else if (!dataElements.available && dataElements.promise) {
@@ -509,7 +509,7 @@
 			
 			var dataElementsFound = [];
 			for (var i = 0; i < dataElementIDs.length; i++) {
-				dataElementsFound.push(self.dataElementFromID(dataElementIDs[i]));
+				dataElementsFound.push(dataElementFromID(dataElementIDs[i]));
 			}
 							
 			return self.removeDuplicateObjects(dataElementsFound);
@@ -692,7 +692,7 @@
 			
 			//available locally
 			if (rootOrgunits.available) {
-				deferred.resolve(self.rootOrgunits.data);
+				deferred.resolve(rootOrgunits.data);
 			}
 			//waiting for server
 			else if (!rootOrgunits.available && rootOrgunits.promise) {
