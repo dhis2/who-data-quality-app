@@ -22,16 +22,15 @@
 			requestURL += '&hideEmptyRows=true';
 			requestURL += '&tableLayout=true';
 			requestURL += '&columns=pe&rows=dx';
-			
-			console.log("1: " + options.title);
-			
+						
 			requestService.getSingle(requestURL).then(function (response) {
-				console.log("2: " + options.title);
+				
 				makeLineChart(elementID, periods, dataIDs, ouID, options, response.data);
+			
 			});
 		}
 		
-		
+
 		/**
 		Distinct bar chart (OU) - parameter-based
 		@param elementID	html element to place chart in
@@ -53,7 +52,9 @@
 			}
 			
 			requestService.getSingle(requestURL).then(function (response) {
+				
 				makeOUBarChart(elementID, period, dataID, ouIDs, options, response.data);
+			
 			});
 		}
 		
@@ -93,9 +94,9 @@
 	  		nv.addGraph(function() {
   				var chart = nv.models.lineChart();
   				  
-  				chart.margin({left: 90})  //t chart margins to give the x-axis some breathing room.
+  				chart.margin({left: 50})  //t chart margins to give the x-axis some breathing room.
   				       .useInteractiveGuideline(true)  //We want nice looking tooltips and a guideline!
-  				       .transitionDuration(1000)  //how fast do you want the lines to transition?
+  				       .transitionDuration(250)  //how fast do you want the lines to transition?
   				       .showLegend(true)       //Show the legend, allowing users to turn on/off line series.
   				       .tooltips(true)
   				       .showYAxis(true)        //Show the y-axis
@@ -175,7 +176,6 @@
   				           });
   							
   				chart.yAxis
-				 	.axisLabel(data[0].metaData.names[dataID])
   				 	.tickFormat(d3.format('g'));
   				  				
   				chart.forceY([minRange, maxRange]);
@@ -191,7 +191,7 @@
   				
   				//Update the chart when window resizes.
   				$(window).bind('resize', function(){ d3.select('#' + elementID + ' svg')
-  					.transition().duration(350)
+  					.transition().duration(50)
   					.call(chart); });
   				
   				if (options && options.callBack) options.callBack(); 
@@ -213,7 +213,7 @@
 				  .staggerLabels(false)    //Too many bars and not enough room? Try staggering labels.
 				  .tooltips(true)        //Don't show tooltips
 				  .showValues(false)       //...instead, show the bar value right on top of each bar.
-				  .transitionDuration(350)
+				  .transitionDuration(250)
 				  ;
 				
 				
@@ -275,7 +275,7 @@
 				  .call(chart);
 				
 				$(window).bind('resize', function(){ d3.select('#' + elementID + ' svg')
-					.transition().duration(350)
+					.transition().duration(50)
 					.call(chart); });
 				if (options && options.callBack) options.callBack();
 				return chart;
@@ -294,7 +294,7 @@
 	  			  
 	  			chart.margin({left: 50})  //Adjust chart margins to give the x-axis some breathing room.
 	  			       .useInteractiveGuideline(false)  //We want nice looking tooltips and a guideline!
-	  			       .transitionDuration(1000)  //how fast do you want the lines to transition?
+	  			       .transitionDuration(250)  //how fast do you want the lines to transition?
 	  			       .showLegend(false)       //Show the legend, allowing users to turn on/off line series.
 	  			       .tooltips(true)
 	  			       .showYAxis(true)        //Show the y-axis
@@ -389,7 +389,7 @@
 	  			
 	  			//Update the chart when window resizes.
 				$(window).bind('resize', function(){ d3.select('#' + elementID + ' svg')
-					.transition().duration(350)
+					.transition().duration(50)
 					.call(chart); });
 
 	  			if (options && options.callBack) options.callBack();
@@ -409,7 +409,7 @@
   			  .staggerLabels(false)    //Too many bars and not enough room? Try staggering labels.
   			  .tooltips(true)        //Don't show tooltips
   			  .showValues(false)       //...instead, show the bar value right on top of each bar.
-  			  .transitionDuration(350)
+  			  .transitionDuration(250)
   			  ;
   			
   			
@@ -425,7 +425,7 @@
   			  .call(chart);
   			
 			$(window).bind('resize', function(){ d3.select('#' + elementID + ' svg')
-					.transition().duration(350)
+					.transition().duration(50)
 					.call(chart); });
   			
   			if (options && options.callBack) options.callBack();
@@ -439,7 +439,7 @@
   				
 			nv.addGraph(function() {
 			    var chart = nv.models.multiBarChart()
-			      .transitionDuration(350)
+			      .transitionDuration(250)
 			      .reduceXTicks(false)   //If 'false', every single x-axis tick label will be rendered.
 			      .rotateLabels(0)      //Angle to rotate x-axis labels.
 			      .showControls(true)   //Allow user to switch between 'Grouped' and 'Stacked' mode.
@@ -471,12 +471,13 @@
 			        .call(chart);
 			
 				$(window).bind('resize', function(){ d3.select('#' + elementID + ' svg')
-					.transition().duration(350)
+					.transition().duration(50)
 					.call(chart); });			
 				
 			    return chart;
 			});
 		}
+	  	
 	  	
 	  	self.makePieChart = function(elementID, series, options) {
 	  	  	nv.addGraph(function() {
@@ -494,11 +495,11 @@
 	  	  	
 	  	  	    d3.select("#" + elementID + " svg")
 	  	  	        .datum(series)
-	  	  	        .transition().duration(350)
+	  	  	        .transition().duration(250)
 	  	  	        .call(chart);
 	  	  	
 				$(window).bind('resize', function(){ d3.select('#' + elementID + ' svg')
-					.transition().duration(350)
+					.transition().duration(50)
 					.call(chart); });	
 	  	  	  return chart;
 	  	  	});

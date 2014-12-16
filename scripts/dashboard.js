@@ -13,32 +13,22 @@
 	});
 	
 	
-	app.controller("DashboardController", function(metaDataService, periodService, requestService, visualisationService, mathService, $scope, $window) {
+	app.controller("DashboardController", function(metaDataService, periodService, requestService, visualisationService, mathService, $scope, $window, $timeout) {
 
 	    var self = this;
 
     	init();
     	
-    	
-    	$( window ).resize(function() {
-    		setWindowWidth();
-    	});
-    	
-    	
     	function init() {
     	
-    		if ($window.innerWidth < 768) {
-    			self.singleCol = true;
-    		}
-    		else {
-    			self.singleCol = false;
-    		}
-    		
-    		    		
     		setWindowWidth();
-    		
+			$( window ).resize(function() {
+				setWindowWidth();
+			});
+    		    		
     		self.analysisType = 'comp'; 
     		self.count = 0;
+    		self.loaded = {};
 
     		self.metaData = undefined;
     		
@@ -53,7 +43,6 @@
     		
     		//Get mapped data, then do analysis
 			requestService.getSingle('/api/systemSettings/DQAmapping').then(function(response) {
-			
 				self.metaData = response.data;
 				self.updateDashboard();
 			
@@ -64,6 +53,8 @@
     	
     	function setWindowWidth() {
     		
+    		var previous = self.singleCol;
+    		
     		if ($window.innerWidth < 768) {
     			self.singleCol = true;
     		}
@@ -71,7 +62,16 @@
     			self.singleCol = false;
     		}
     		
-    		$scope.$apply();
+    		//update if there was a change
+    		if (previous != undefined && (previous != self.singleCol)) $scope.$apply();
+    	}
+    	
+    	self.updateCharts = function() {
+    		$timeout(function() {		
+		    		for (var i = 0; i < nv.graphs.length; i++) {
+		    			nv.graphs[i].update();
+		    		}
+	    		});
     	}
     	
     	
@@ -87,10 +87,7 @@
     			getAvailableData();
     			self.dataIsSet = true;
     		}
-    		
-			makeCompletenessTrendCharts();
-			makeYYtrendCharts();
-			fetchOutlierGapChartsData();
+    		makeCompletenessTrendCharts();			
     	}
        
        
@@ -393,17 +390,25 @@
 			chartOptions.range = {'min': 0, 'max': 110};
 			chartOptions.yLabel = 'Completeness (%)';
 			
+			
 			for (var i = 0; i < self.dataSetsAvailable.length; i++) {
+				
+				
 				dataSet = self.dataSetsAvailable[i];
-									
-
 				var periods = periodService.getISOPeriods(startDate, endDate, dataSet.periodType, chartOptions);
 				
-				chartOptions.title = dataSet.name + ' completeness trend';				
-				visualisationService.autoLineChart('compPE_'+dataSet.id, periods, [dataSet.id], 'USER_ORGUNIT', chartOptions);
-
-				chartOptions.title = dataSet.name + ' completeness comparison';								
-				visualisationService.autoOUBarChart('compOU_'+dataSet.id, periods.pop(), [dataSet.id], 'USER_ORGUNIT_CHILDREN', chartOptions);
+				var options = angular.copy(chartOptions);
+				options.title = dataSet.name + ' completeness trend';				
+				visualisationService.autoLineChart('compPE_'+dataSet.id, periods, [dataSet.id], 'USER_ORGUNIT', options);
+		
+		
+				options = angular.copy(chartOptions);
+				options.title = dataSet.name + ' completeness comparison';
+				if (i === self.dataSetsAvailable.length - 1) {
+					options.callBack = function() {console.log("Calling YY"); makeYYtrendCharts();};
+				}
+				
+				visualisationService.autoOUBarChart('compOU_'+dataSet.id, periods.pop(), [dataSet.id], 'USER_ORGUNIT_CHILDREN', options);
 				
 			}
 			
@@ -414,15 +419,14 @@
       		 
       		     		
       		var chartOptions = {}, periods, data, endDate, startDate; 	
-
+   
 			for (var i = 0; i < self.dataAvailable.length; i++) {
       			
-      			data = self.dataAvailable[i];
       			
+      			data = self.dataAvailable[i];
       			endDate = moment().subtract(new Date().getDate(), 'days');
       			startDate = moment(endDate).subtract(12, 'months').add(1, 'day'); 
       			periods = [];
-      			
       			periods.push(periodService.getISOPeriods(startDate, endDate, data.periodType));
       			for (var j = 0; j < 2; j++) {
       				startDate = moment(startDate).subtract(1, 'year');
@@ -430,7 +434,14 @@
       				periods.push(periodService.getISOPeriods(startDate, endDate, data.periodType));
       			}
       			
-      			visualisationService.autoYYLineChart('yy_' + data.localData.id, periods, data.localData.id, 'USER_ORGUNIT', chartOptions);
+      			var options = angular.copy(chartOptions);
+      			if (i === self.dataAvailable.length-1) {
+	      			options.callBack = function() {console.log("Calling gap"); fetchOutlierGapChartsData();};
+      			}
+      			
+      			options.title = data.localData.name;
+      			
+      			visualisationService.autoYYLineChart('yy_' + data.localData.id, periods, data.localData.id, 'USER_ORGUNIT', options);
 
       		}
       		

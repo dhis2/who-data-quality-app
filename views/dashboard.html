@@ -1,13 +1,13 @@
 <div ng-controller="DashboardController as dashCtrl">
 	<div class="btn-group btn-group-justified" style="margin-bottom: 5px;">
-		<label class="btn btn-default" ng-click="$( window ).resize();" ng-model="dashCtrl.analysisType" btn-radio="'comp'">Completeness</label>
-		<label class="btn btn-default" ng-click="$( window ).resize();" ng-model="dashCtrl.analysisType" btn-radio="'yy'">Year-Over-Year</label>
-		<label class="btn btn-default" ng-click="$( window ).resize();" ng-model="dashCtrl.analysisType" btn-radio="'out'">Outliers</label>
+		<label class="btn btn-default" ng-click="dashCtrl.updateCharts();" ng-model="dashCtrl.analysisType" btn-radio="'comp'">Completeness</label>
+		<label class="btn btn-default" ng-click="dashCtrl.updateCharts();" ng-model="dashCtrl.analysisType" btn-radio="'yy'">Year-Over-Year</label>
+		<label class="btn btn-default" ng-click="dashCtrl.updateCharts();" ng-model="dashCtrl.analysisType" btn-radio="'out'">Outliers</label>
 	</div>
 		
 
 		<div ng-class="{hideDiv: dashCtrl.analysisType != 'comp'}">
-			<div style="display: inline-block; width: 100%;" ng-repeat="dataset in dashCtrl.dataSetsAvailable track by $index">
+			<div style="display: inline-block; width: 100%;" ng-repeat="dataset in dashCtrl.dataSetsAvailable|orderBy:'name'">
 			
 				<div class="chartHolder" ng-class="{chartFull: dashCtrl.singleCol, chartHalf: !dashCtrl.singleCol}" style="display: inline-block;" id="compPE_{{dataset.id}}"><svg class="smallChart"></svg></div>
 				
