@@ -3,15 +3,18 @@
 	angular.module('reportCard').service('reportService', function (mathService, metaDataService, periodService, requestService) {
 		
 		var self = this;
-		self.resultCallback = null;
-		self.orgunitBoundaryID = null;
-		self.orgunitLevel = null;
-		self.analysisYear = null;
-		self.result = null;
-		self.map = null;
 		
+		init();
+		
+		function init() {
+			self.resultCallback = null;
+			self.orgunitBoundaryID = null;
+			self.orgunitLevel = null;
+			self.analysisYear = null;
+			self.result = null;
+			self.map = null;
+		}
 	
-		
 		
 		self.setCallback = function (callback) {
 		
@@ -141,8 +144,7 @@
 			
 		}
 			
-		
-		
+			
 		function getOutliers() {
 			var dataIDs = dataForOutliers();
 			
@@ -503,7 +505,6 @@
 		}
 		
 		
-		
 		function dataSetsForCompleteness() {
 			
 			var data, dataSetIDs = {};
@@ -553,6 +554,7 @@
 			return dataIDs;
 			
 		}
+	
 		
 		function localDataIDfromCode(code) {
 			var data;
@@ -603,6 +605,7 @@
 			return parameters;
 			
 		}
+		
 		
 		function resultTemplate() {
 			

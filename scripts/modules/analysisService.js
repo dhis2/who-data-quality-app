@@ -29,6 +29,7 @@
 			self.requestQueue = [];
 		}
 		
+		
 		self.analyseData = function (data, period, orgunit, parameters) {
 			
 			resetParameters();
@@ -133,8 +134,7 @@
 								
 			}
 		}
-		
-		
+				
 		
 		function getVariables(data) {			
 			var dataObjects = [];
@@ -150,6 +150,7 @@
 			
 			return dataObjects;
 		}
+	
 		
 		function uniqueArray(array) {
 		    var seen = {};
@@ -170,8 +171,7 @@
 			console.log("Error");	
 			return -1;
 		}
-		
-		
+				
 		
 		function IDsFromObjects(array) {
 			
@@ -191,8 +191,7 @@
 			
 			return newArray;
 		}
-		
-		
+				
 		
 		self.updateAnalysis = function(originalMetaData, orgunits) {
 			var data = originalMetaData.data;
@@ -205,8 +204,7 @@
 			
 			self.analyseData(data, period, orgunit, parameters);
 		}
-		
-		
+				
 		
 		function resultsAnalysis(data) {
 			
@@ -425,6 +423,7 @@
 			
 		}
 		
+		
 		function addResultPart(metaData, headers, rows) {
 			self.remainingResults--;
 			
@@ -447,6 +446,7 @@
 			}
 
 		}
+
 				
 		return self;
 	});

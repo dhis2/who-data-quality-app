@@ -38,6 +38,7 @@
 	    	});		    	
 	    }
 	    
+	    
 	    self.doExport = function() {
 	    	var dx = self.dataElementSelected.id;
 	    	var pe = periodsInYear(self.yearSelected.id).join(';');

@@ -18,11 +18,11 @@
 	app.controller("AdminController", function(metaDataService, requestService, $modal) {
 	    	    
 	    var self = this;
-	    self.activeTab = true;
 	    
 	    init();
 	    
 	    function init() {
+   		    self.activeTab = true;
 	    	self.dataElements = [];
 	    	self.indicators = [];
 	    	self.outlierOptions = makeOutlierOptions();
@@ -42,7 +42,7 @@
     		});	
 	    }
 	    
-	    
+	    	    
 	    self.mapIndicator = function(indicator) {
 	       	     	
 	    	var modalInstance = $modal.open({
@@ -95,6 +95,7 @@
         	}
         }
         
+        
         self.filterMatchedRelations = function(relation) {
         	if (!self.mapping) return false;
         	if (!relation) return false;
@@ -118,88 +119,87 @@
         }
         
         
-	    
-	    function updateDataSetListAndSave() {
-	   		var dataSetsUnique = {};
-	   		
-	   		for (var i = 0; i < self.mapping.data.length; i++) {
-	   			if (self.mapping.data[i].dataSetID) {
-	   				dataSetsUnique[self.mapping.data[i].dataSetID] = true;
-	   			}
-	   		}
-	   		
-	   		var dataSetIDs = [];
-	   		for (key in dataSetsUnique) {
-	   			dataSetIDs.push(key);
-	   		}
-	   		
-	   		var dataSetsToAdd = [];
-	   		var dataSetsToKeep = [];
-	   		var current = self.mapping.dataSets;
-	   		
-	   		//check if there are data sets to remove
-	   		for (var i = 0; i < current.length; i++) {
-	   			
-	   			var found = false;
-	   			for (var j = 0; j < dataSetIDs.length; j++) {
-	   				
-	   				if (current[i].id === dataSetIDs[j]) {
-	   					found = true;
-	   					j = dataSetIDs.length;
-	   				}
-	   				
-	   			}
-	   			if (found) dataSetsToKeep.push(current[i]);
-	   			//else it is not linked to any mapped data element/indicator
-	   		}
-	   		
-	   		self.mapping.dataSets = dataSetsToKeep;
-	   		current = self.mapping.dataSets;
-	   		
-	   		//check if there are data sets to add
-   			for (var i = 0; i < dataSetIDs.length; i++) {
-   				
-   				var found = false;
-   				for (var j = 0; j < current.length; j++) {
-   					
-   					if (current[j].id === dataSetIDs[i]) {
-   						found = true;
-   						j = current.length;
-   					}
-   					
-   				}
-   				if (!found) dataSetsToAdd.push(dataSetIDs[i]);
-   			}
-   			
-   			if (dataSetsToAdd.length > 0) {
-	   			metaDataService.getDataSetsFromIDs(dataSetsToAdd).then(function (data) {
-	   			
-	   				self.mapping.dataSets.push.apply(self.mapping.dataSets, data.dataSets);
-	   				
-	   				//Add default completeness
-	   				for (var i = 0; i < self.mapping.dataSets.length; i++) {
-	   					if (!self.mapping.dataSets[i].threshold) self.mapping.dataSets[i].threshold = 80;
-	   				}
-	   				
-	   				var requestURL = '/api/systemSettings/';
-	   				requestService.post(requestURL, {'DQAmapping': angular.toJson(self.mapping)});
-	   			
-	   			});
-			}
-			else {
-				var requestURL = '/api/systemSettings/';
-				requestService.post(requestURL, {'DQAmapping': angular.toJson(self.mapping)});
-			}	
-	    
-	    }
-	    
-	    
 	    self.saveParameterChanges = function () {
 	    	var requestURL = '/api/systemSettings/';	    		    	
 	    	requestService.post(requestURL, {'DQAmapping': angular.toJson(self.mapping)});
 	    }
-	    	
 	    
+	    
+	    function updateDataSetListAndSave() {
+	    		var dataSetsUnique = {};
+	    		
+	    		for (var i = 0; i < self.mapping.data.length; i++) {
+	    			if (self.mapping.data[i].dataSetID) {
+	    				dataSetsUnique[self.mapping.data[i].dataSetID] = true;
+	    			}
+	    		}
+	    		
+	    		var dataSetIDs = [];
+	    		for (key in dataSetsUnique) {
+	    			dataSetIDs.push(key);
+	    		}
+	    		
+	    		var dataSetsToAdd = [];
+	    		var dataSetsToKeep = [];
+	    		var current = self.mapping.dataSets;
+	    		
+	    		//check if there are data sets to remove
+	    		for (var i = 0; i < current.length; i++) {
+	    			
+	    			var found = false;
+	    			for (var j = 0; j < dataSetIDs.length; j++) {
+	    				
+	    				if (current[i].id === dataSetIDs[j]) {
+	    					found = true;
+	    					j = dataSetIDs.length;
+	    				}
+	    				
+	    			}
+	    			if (found) dataSetsToKeep.push(current[i]);
+	    			//else it is not linked to any mapped data element/indicator
+	    		}
+	    		
+	    		self.mapping.dataSets = dataSetsToKeep;
+	    		current = self.mapping.dataSets;
+	    		
+	    		//check if there are data sets to add
+	    		for (var i = 0; i < dataSetIDs.length; i++) {
+	    			
+	    			var found = false;
+	    			for (var j = 0; j < current.length; j++) {
+	    				
+	    				if (current[j].id === dataSetIDs[i]) {
+	    					found = true;
+	    					j = current.length;
+	    				}
+	    				
+	    			}
+	    			if (!found) dataSetsToAdd.push(dataSetIDs[i]);
+	    		}
+	    		
+	    		if (dataSetsToAdd.length > 0) {
+	    			metaDataService.getDataSetsFromIDs(dataSetsToAdd).then(function (data) {
+	    			
+	    				self.mapping.dataSets.push.apply(self.mapping.dataSets, data.dataSets);
+	    				
+	    				//Add default completeness
+	    				for (var i = 0; i < self.mapping.dataSets.length; i++) {
+	    					if (!self.mapping.dataSets[i].threshold) self.mapping.dataSets[i].threshold = 80;
+	    				}
+	    				
+	    				var requestURL = '/api/systemSettings/';
+	    				requestService.post(requestURL, {'DQAmapping': angular.toJson(self.mapping)});
+	    			
+	    			});
+	    	}
+	    	else {
+	    		var requestURL = '/api/systemSettings/';
+	    		requestService.post(requestURL, {'DQAmapping': angular.toJson(self.mapping)});
+	    	}	
+	    
+	    }
+	    
+	    	
 	    function makeOutlierOptions() {
 	    	var opts = [];
 	    	for (var i = 1.5; i <= 4.05; i += 0.1) {

@@ -57,6 +57,7 @@
     		if (previous != undefined && (previous != self.singleCol)) $scope.$apply();
     	}
     	
+    	
     	self.updateCharts = function() {
     		$timeout(function() {		
 		    		for (var i = 0; i < nv.graphs.length; i++) {
@@ -81,8 +82,7 @@
     		makeCompletenessTrendCharts();			
     	}
        
-       
-       
+           
        	function getAvailableDataSets() {
    			var data, dataSetIDs = {};
    			for (var i = 0; i < self.metaData.data.length; i++) {
@@ -124,8 +124,7 @@
        			if (self.dataAvailable[i].localData.id === id) return self.dataAvailable[i];
        		}
        	}
-       	
-       	
+       	    	
        	
        	function fetchOutlierGapChartsData() {
        		
@@ -163,8 +162,7 @@
        		       	
        	}
     	
-    	
-    	
+	
     	function processOutlierGapCharts(data) {
     		
     		var periods = data.metaData.pe;
@@ -347,9 +345,7 @@
     		}
     		visualisationService.makePieChart('gap_dx', series, {'title': 'Gaps/missing values by data element/indicator'});
 		}
-    	
-    	
-    	
+    	  	
     	
     	function makeSeries(reference, data, metaData,name) {
     		var values = [];
@@ -366,8 +362,7 @@
     		series.values = values;
     		return series;
     	}
-    	
-    	
+    	  	
     	
     	function makeCompletenessTrendCharts() {
     		

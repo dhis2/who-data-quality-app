@@ -6,11 +6,13 @@
 	app.controller("ReviewController", function(completenessDataService, metaDataService, periodService, reportService, requestService) {
 		var self = this;
 		    
-		self.notPossible = false;
-	    
 	    init();
 	    
 	    function init() {
+	    	self.notPossible = false;
+	    	self.ready = false;
+	    	self.result = null;    
+	    	
 	    	self.orgunitLevels = [];
 	    	self.orgunitLevelSelected = undefined;
 	    	
@@ -70,18 +72,19 @@
 			
 		}
 		
-	    self.ready = false;
-	    self.result = null;
-
-	    
+    
 	    var resultCallback = function (result) {
     		self.result = result;
     		updateView();
 	    }  
 	    
+	    
+	    
 	    function updateView() {
 	    	if (self.result != null) self.ready = true;
 	    }
+	    
+	    
 	    
 	    reportService.setCallback(resultCallback);
 	
