@@ -43,7 +43,7 @@
 	                    
 	                }).
 	                when('/export', {
-	                    templateUrl: 'views/exportParameters.html',
+	                    templateUrl: 'views/export.html',
 	                    controller: 'ExportController',
 	                    controllerAs: 'exportCtrl'
 	                }).

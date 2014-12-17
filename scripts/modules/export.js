@@ -3,18 +3,6 @@
 	
 	var app = angular.module('dataExport', []);
 	
-	
-	/**Directive: Completeness parameters*/
-	app.directive("exportParameters", function() {
-		return {
-			restrict: "E",
-	        templateUrl: "views/exportParameters.html"
-		};
-      
-	});
-	
-		
-	
 	/**Controller: Parameters*/
 	app.controller("ExportController", function(metaDataService, periodService, BASE_URL) {
 	    	    

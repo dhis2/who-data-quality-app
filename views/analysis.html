@@ -1,4 +1,296 @@
-	<h3>Detailed Data Quality Analysis</h3>
-	<completeness-parameters></completeness-parameters>
-	<br>
-	<completeness-result></completeness-result>
+<h3>Detailed Data Quality Analysis</h3>
+<accordion close-others="aCtrl.oneAtATime">
+
+    <accordion-group heading="Analysis type" is-open="aCtrl.status.isFirstOpen">
+		<div class="btn-group btn-group-justified" style="margin-bottom: 5px; max-width: 380px;">
+			  <label class="btn btn-default" ng-model="aCtrl.analysisType" btn-radio="'outlier'">Outlier</label>
+				  <label class="btn btn-default" ng-model="aCtrl.analysisType" btn-radio="'gap'">Gap</label>
+			  <label class="btn btn-default" ng-model="aCtrl.analysisType" btn-radio="'threshold'">Threshold</label>
+		</div>
+		
+		<div ng-show="aCtrl.analysisType === 'threshold'"><br />
+			<label for="threshold">Threshold low limit</label><br />
+			<input style="width: 100px;" id="thresholdLow" class="selector" type="number" min="0" max="100000" ng-model="aCtrl.thresholdLow"/><br />
+			<label for="threshold">Threshold high limit</label><br />
+			<input style="width: 100px;" id="thresholdHigh" class="selector" type="number" min="0" max="100000" ng-model="aCtrl.thresholdHigh"/>
+			<br />
+			<br />
+			<label><span style="font-size: 100%" class="glyphicon glyphicon-info-sign"></span>  Info</label>
+			<p>Organisation units with values below <span style="font-size: 100%;" class="label label-primary">{{aCtrl.thresholdLow}}</span> or above <span style="font-size: 100%;" class="label label-primary">{{aCtrl.thresholdHigh}}</span> will be displayed.</p>	
+		</div>
+		
+		
+		<div ng-show="aCtrl.analysisType === 'gap'"><br />
+			<label for="threshold">Gap threshold (missing values)</label><br />
+			<div class="btn-group btn-group-justified" style="margin-bottom: 5px; max-width: 380px;">
+			  	<label class="btn btn-default" ng-model="aCtrl.gapLimit" btn-radio="1">1 or more</label>
+			  	<label class="btn btn-warning" ng-model="aCtrl.gapLimit" btn-radio="2">2 or more</label>
+				<label class="btn btn-danger" ng-model="aCtrl.gapLimit" btn-radio="3">3 or more</label>
+			</div>
+			<br />
+			<label><span style="font-size: 100%" class="glyphicon glyphicon-info-sign"></span>  Info</label>
+			<p>Organisation units with more than <span style="font-size: 100%;" class="label label-primary">{{aCtrl.gapLimit}}</span> missing values be displayed.</p>	
+		</div>
+		
+		
+		<div ng-show="aCtrl.analysisType === 'outlier'"><br />
+			<label for="threshold">Standard deviations</label><br />
+			<div class="btn-group btn-group-justified" style="margin-bottom: 5px; max-width: 380px;">
+					<label class="btn btn-default" ng-model="aCtrl.stdDev" btn-radio="1.5">Mild (1.5 SD)</label>
+			  		<label class="btn btn-warning" ng-model="aCtrl.stdDev" btn-radio="2">Moderate (2 SD)</label>
+					<label class="btn btn-danger" ng-model="aCtrl.stdDev" btn-radio="3">Extreme (3 SD)</label>
+			</div>
+			<br />
+			<label><span style="font-size: 100%" class="glyphicon glyphicon-info-sign"></span>  Info</label>
+			<p>Organisation units with values more than <span style="font-size: 100%;" class="label label-primary">{{aCtrl.stdDev}}</span> standard deviations from the mean will be displayed.</p>
+		</div>	
+    </accordion-group>
+    
+    
+    <accordion-group heading="Data">			
+		<div>	
+    	<label>Data elements</label><br />
+		<ui-select ng-model="aCtrl.dataElementGroupsSelected" theme="bootstrap" style="margin-bottom: 10px; min-width: 250px; max-width: 380px;">
+		  <ui-select-match placeholder="Select data element group...">
+		  	{{aCtrl.dataElementGroupsSelected.name}}
+		  </ui-select-match>
+		  <ui-select-choices 
+		  	repeat="obj in aCtrl.dataElementGroups | filter: $select.search">
+		   		<div ng-bind-html="obj.name | highlight: $select.search"></div>
+		</ui-select-choices>
+		</ui-select>
+		<div class="btn-group btn-group-justified" style="margin-bottom: 10px; max-width: 380px;">
+				<label class="btn btn-default" ng-model="aCtrl.dataDisaggregation" btn-radio="0">Totals</label>
+		  		<label class="btn btn-default" ng-model="aCtrl.dataDisaggregation" btn-radio="1">Details</label>
+		</div>
+		<ui-select ng-if="aCtrl.dataElementGroupsSelected" ng-model="aCtrl.dataElementsSelected" multiple theme="bootstrap" style="margin-bottom: 10px; min-width: 250px; max-width: 380px;">
+		  <ui-select-match placeholder="{{aCtrl.dataElementPlaceholder}}">
+		  	{{$item.name}}
+		  </ui-select-match>
+		  <ui-select-choices 
+		  	repeat="obj in aCtrl.dataElements | filter: $select.search">
+		   		<div ng-bind-html="obj.name | highlight: $select.search"></div>
+		  </ui-select-choices>
+		  </ui-select>
+		</div>
+		
+		
+		
+
+		<div ng-show="aCtrl.analysisType != 'gap' && aCtrl.dataDisaggregation === 0">
+    	<label>Indicators</label><br />
+    	<ui-select ng-model="aCtrl.indicatorGroupsSelected" theme="bootstrap" style="margin-bottom: 10px; min-width: 250px; max-width: 380px;">
+    	  <ui-select-match placeholder="Select indicator group...">
+    	  	{{aCtrl.indicatorGroupsSelected.name}}
+    	  </ui-select-match>
+    	  <ui-select-choices
+    	  	repeat="obj in aCtrl.indicatorGroups | filter: $select.search">
+    	   		<div ng-bind-html="obj.name | highlight: $select.search"></div>
+    	  </ui-select-choices>
+    	</ui-select>
+    	
+		<ui-select ng-if="aCtrl.indicatorGroupsSelected" ng-model="aCtrl.indicatorsSelected" multiple theme="bootstrap" style="margin-bottom: 10px; min-width: 250px; max-width: 380px;">
+		  <ui-select-match placeholder="{{aCtrl.indicatorPlaceholder}}">
+		  	{{$item.name}}
+		  </ui-select-match>
+		  <ui-select-choices 
+		  	repeat="obj in aCtrl.indicators | filter: $select.search">
+		   		<div ng-bind-html="obj.name | highlight: $select.search"></div>
+		  </ui-select-choices>
+		</ui-select>
+		</div>
+		
+		
+		
+		<br />
+			<label><span style="font-size: 100%" class="glyphicon glyphicon-info-sign"></span>  Info</label>
+		<div ng-show="!aCtrl.dataElementsSelected">Select data for analysis.</div>
+		<div ng-show="aCtrl.dataElementsSelected || aCtrl.indicatorsSelected">Will perform {{aCtrl.analysisType}} analysis on <span style="font-size: 100%;" class="label label-primary" ng-show="aCtrl.dataElementsSelected">{{aCtrl.dataElementsSelected.name}}</span><span style="font-size: 100%;" class="label label-primary" ng-show="aCtrl.indicatorsSelected">{{aCtrl.indicatorsSelected.name}}</span></div>
+    </accordion-group>
+       
+    
+    
+    
+    <accordion-group heading="Period">
+		<div class="btn-group" style="margin-bottom: 10px;">
+			  <label class="btn btn-default" ng-model="aCtrl.periodOption" btn-radio="'last'">Recent periods</label>
+			  <label class="btn btn-default" ng-model="aCtrl.periodOption" btn-radio="'year'">Periods in year</label>
+			  <label class="btn btn-default" ng-model="aCtrl.periodOption" btn-radio="'custom'">Custom range</label>
+			</div>
+		<div style="margin-bottom: 15px;" ng-show="aCtrl.periodOption === 'last'">
+		
+		<label>Use the last...</label><br />
+		<ui-select ng-model="aCtrl.periodCountSelected" theme="bootstrap" style="margin-bottom: 10px; min-width: 250px; max-width: 250px;">
+		  <ui-select-match placeholder="Select number of periods...">
+		  	{{aCtrl.periodCountSelected.name}}
+		  </ui-select-match>
+		  <ui-select-choices 
+		  	repeat="obj in aCtrl.periodCounts | filter: $select.search">
+		   		<div ng-bind-html="obj.name | highlight: $select.search"></div>
+		  </ui-select-choices>
+		</ui-select>
+		<ui-select ng-model="aCtrl.periodTypeSelected" theme="bootstrap" style="margin-bottom: 10px; min-width: 250px; max-width: 250px;">
+		  <ui-select-match placeholder="Select period type...">
+		  	{{aCtrl.periodTypeSelected.name}}
+		  </ui-select-match>
+		  <ui-select-choices 
+		  	repeat="obj in aCtrl.periodTypes | filter: $select.search">
+		   		<div ng-bind-html="obj.name | highlight: $select.search"></div>
+		  </ui-select-choices>
+		</ui-select>
+		</div>
+		
+		
+		
+		<div style="margin-bottom: 15px;" ng-show="aCtrl.periodOption === 'year'">
+		<label>Use...</label><br />
+		<ui-select ng-model="aCtrl.periodTypeSelected" theme="bootstrap" style="margin-bottom: 10px; min-width: 250px; max-width: 250px;">
+		  <ui-select-match placeholder="Select period type...">
+		  	{{aCtrl.periodTypeSelected.name}}
+		  </ui-select-match>
+		  <ui-select-choices 
+		  	repeat="obj in aCtrl.periodTypes | filter: $select.search">
+		   		<div ng-bind-html="obj.name | highlight: $select.search"></div>
+		  </ui-select-choices>
+		</ui-select>
+		<label>in</label>			
+		<ui-select ng-model="aCtrl.yearSelected" theme="bootstrap" style="margin-bottom: 10px; min-width: 250px; max-width: 250px;">
+		  <ui-select-match placeholder="Select year...">
+		  	{{aCtrl.yearSelected.name}}
+		  </ui-select-match>
+		  <ui-select-choices 
+		  	repeat="obj in aCtrl.years | filter: $select.search">
+		   		<div ng-bind-html="obj.name | highlight: $select.search"></div>
+		  </ui-select-choices>
+		</ui-select>
+		
+		</div>
+		<div ng-show="aCtrl.periodOption === 'custom'">
+		<label>Use...</label><br />
+		<div style="margin-bottom: 10px;">
+		<ui-select ng-model="aCtrl.periodTypeSelected" theme="bootstrap" style="margin-bottom: 10px; min-width: 250px; max-width: 250px;">
+		  <ui-select-match placeholder="Select period type...">
+		  	{{aCtrl.periodTypeSelected.name}}
+		  </ui-select-match>
+		  <ui-select-choices 
+		  	repeat="obj in aCtrl.periodTypes | filter: $select.search">
+		   		<div ng-bind-html="obj.name | highlight: $select.search"></div>
+		  </ui-select-choices>
+		</ui-select>
+		
+			</div>
+			<div style="display: inline-block;"><label>From</label>
+			<div style="min-height:290px;">
+			        <datepicker ng-model="aCtrl.date.startDate" class="well well-sm" starting-day="1" max-date="aCtrl.date.endDate"></datepicker>
+			</div></div>
+			<div style="display: inline-block;"><label>To</label>
+			<div style="min-height:290px;">
+			        <datepicker ng-model="aCtrl.date.endDate" min-date="aCtrl.date.startDate" max-date="aCtrl.currentDate" class="well well-sm" starting-day="1"></datepicker>
+			</div>
+			</div>
+		</div>				
+    </accordion-group>
+    
+    <accordion-group heading="Orgunit" is-open="status.open">
+    	<label>Boundary</label><br />
+    	<div class="btn-group" style="margin-bottom: 10px; max-width: 600px;">
+    	  	<label ng-repeat="orgunit in aCtrl.userOrgunits track by $index" class="btn btn-default" ng-model="aCtrl.boundarySelectionType" btn-radio="$index">{{orgunit.name}}</label>
+    	  	<label class="btn btn-default" ng-model="aCtrl.boundarySelectionType" btn-radio="aCtrl.userOrgunits.length">Manual</label>
+    	</div>
+		<br />	    		    	
+    	<div style="margin-bottom: 10px; width: 380px;" ng-show="aCtrl.userOrgunits.length === aCtrl.boundarySelectionType" id="orgunitTree"></div>
+
+       <label for="orgunitSelect">Disaggregation</label>
+		<div id="orgunitSelect">
+			<ui-select ng-disabled="aCtrl.orgunitGroupSelected" ng-model="aCtrl.orgunitLevelSelected" theme="bootstrap" style="margin-bottom: 10px; min-width: 250px; max-width: 380px;">
+			  <ui-select-match placeholder="Select organisation unit level">
+			  	{{aCtrl.orgunitLevelSelected.name}}
+			  </ui-select-match>
+			  <ui-select-choices 
+			  	repeat="obj in aCtrl.filteredOrgunitLevels | filter: $select.search">
+			   		<div ng-bind-html="obj.name | highlight: $select.search"></div>
+			  </ui-select-choices>
+			</ui-select>
+			
+			<ui-select ng-disabled="aCtrl.orgunitLevelSelected" ng-model="aCtrl.orgunitGroupSelected" theme="bootstrap" style="margin-bottom: 10px; min-width: 250px; max-width: 380px;">
+				  <ui-select-match placeholder="Select organisation unit group">
+				  	{{aCtrl.orgunitGroupSelected.name}}
+				  </ui-select-match>
+				  <ui-select-choices 
+				  	repeat="obj in aCtrl.orgunitGroups | filter: $select.search">
+				   		<div ng-bind-html="obj.name | highlight: $select.search"></div>
+				  </ui-select-choices>
+			</ui-select>
+		</div>
+
+		<label for="orgunitSelected">Selected </label>
+		<div id="orgunitSelected">
+			<p><span style="font-size: 100%;" class="label label-primary">{{aCtrl.boundaryOrgunitSelected.name}}{{aCtrl.boundaryOrgunitSelected.text}}</span><span class="glyphicon glyphicon-chevron-right"></span><span style="font-size: 100%;" class="label label-primary">{{aCtrl.orgunitLevelSelected.name}}</span></p>
+			
+			<p ng-show="aCtrl.orgunitGroupSelected"><span style="font-size: 100%;" class="label label-primary">{{aCtrl.userOrgunitLabel}}</span><span class="glyphicon glyphicon-chevron-right"></span><span style="font-size: 100%;" class="label label-primary">{{aCtrl.orgunitGroupSelected.name}}</span></p>
+			
+			<p ng-show="!aCtrl.orgunitGroupSelected && !aCtrl.orgunitLevelSelected"><span style="font-size: 100%;" class="label label-primary">{{aCtrl.userOrgunitLabel}}</span></p>
+			<br />
+			<label><span style="font-size: 100%" class="glyphicon glyphicon-info-sign"></span>  Info</label>
+			<p>Organisation units with no data for the selected variable in the given time period are not included in the result.</p>
+		</div>
+    </accordion-group>
+  </accordion>
+  	
+<button ng-disabled="(!aCtrl.dataElementsSelected && !aCtrl.indicatorsSelected)" type="button" class="btn btn-primary" ng-click="aCtrl.doAnalysis();">Analyze</button>
+<br>
+<div ng-show="aCtrl.result === undefined" style="height: 400px;"></div>
+<div ng-show="aCtrl.result">
+			<alert style="margin-top: 10px; margin-bottom: 10px;"ng-repeat="alert in aCtrl.result.alerts track by $index" type="{{alert.type}}" close="aCtrl.result.alerts.splice($index, 1)">{{alert.msg}}</alert>
+			<div style="margin-top: 10px; font-size: 90%;" class="table-responsive">
+				<table class="table table-bordered table-striped table-condensed table-hover">
+					
+			        <thead>
+			            <tr>
+			            	<th nowrap ng-class="{headerCellWide: header.name === 'Data'}" ng-click="aCtrl.changeSortOrder($index)" ng-repeat="header in aCtrl.result.headers" ng-if="!header.hidden"><span>{{header.name}}</span><span ng-if="header.meta && !header.hidden" class="glyphicon glyphicon-sort"></span></th>
+			            	<th></th>
+			            </tr>
+			        </thead>
+			        
+			        <tfoot>
+			            <td colspan="{{1+aCtrl.result.headers.length}}">
+				            <div style="margin-left:20px; margin-top:27px" class="pull-left">
+				            <span style="font-size: 100%;" class="label label-danger">{{aCtrl.result.metaData.outlierRows}}</span> rows with violations of <span style="font-size: 100%;" class="label label-primary">{{aCtrl.result.metaData.totalRows}}</span> rows analysed</div>
+				            
+				            
+				            <pagination total-items="aCtrl.result.metaData.outlierRows" items-per-page="aCtrl.itemsPerPage" max-size="5" ng-model="aCtrl.result.currentPage" class="pagination-sm pull-right" boundary-links="true" rotate="true"></pagination>
+			            </td>
+			        </tfoot>
+			        
+			        <tbody>
+			        	<tr valign="middle" ng-repeat="row in aCtrl.result.pages[aCtrl.result.currentPage-1]">
+			                
+			                <!-- IF: Outlier and threshold -->
+			                <td ng-if="aCtrl.result.type != 'gap'" ng-repeat="value in row.data track by $index" ng-class="{danger: (value < row.metaData.lowLimit || value > row.metaData.highLimit) && value != '' && !aCtrl.result.headers[$index].meta, valueCell: aCtrl.result.headers[$index].type != 'java.lang.String'}">
+								{{value}}
+			                </td>
+			                
+			                <!-- IF: Gap -->
+			                <td ng-if="aCtrl.result.type === 'gap'" ng-repeat="value in row.data track by $index" ng-class="{warning: (value === '' && !aCtrl.result.headers[$index].meta), valueCell: aCtrl.result.headers[$index].type != 'java.lang.String'}">{{value}}
+			                </td>
+			                
+			                <td>
+			                	<span class="dropdown" on-toggle="toggled(open)">
+			                      <a href class="dropdown-toggle">
+			                              <span class="glyphicon glyphicon-th-list" style="color: black" aria-hidden="true"></span>
+			                            </a>
+			                      <ul class="dropdown-menu dropdown-menu-right">
+			                        <li><a href ng-click="aCtrl.showDetails(row);">Visualise</a></li>
+			                        <li><a href ng-click="aCtrl.floatUp(row.metaData);">Float up</a></li>
+			                        <li><a href ng-click="aCtrl.drillDown(row.metaData);">Drill down</a></li>
+			                        <li><a href ng-click="aCtrl.sendMessage(row.metaData);">Contact</a></li>
+			                      </ul>
+			                      </span>
+			                </td>    
+			            </tr>
+			    	</tbody>
+			    	
+				</table>
+			</div>
+	<div style="min-height: 400px; margin-top: 20px; margin-bottom: 20px;" id="detailedResult"></div>
+</div>

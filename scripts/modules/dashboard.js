@@ -3,15 +3,6 @@
 	
 	var app = angular.module('dashboard', []);
 	
-	/**Directive: Completeness results*/	
-	app.directive("dashboard", function() {
-		return {
-			restrict: "E",
-	        templateUrl: "views/dashboard.html"
-		};
-	  
-	});
-	
 	
 	app.controller("DashboardController", function(metaDataService, periodService, requestService, visualisationService, mathService, $scope, $window, $timeout) {
 

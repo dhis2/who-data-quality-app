@@ -1,4 +1,78 @@
 	<h3>Annual Data Quality Review</h3>
-	<report-parameters></report-parameters>
-	<br />
-	<report-result></report-result>
+
+<div ng-if="!revCtrl.notPossible">
+<span style="white-space:nowrap;"><label>Year:</label>
+<ui-select ng-model="revCtrl.yearSelected" theme="bootstrap" style="width: 100px; display: inline-block;">
+  <ui-select-match placeholder="Select year...">
+  	{{revCtrl.yearSelected.name}}
+  </ui-select-match>
+  <ui-select-choices 
+  	repeat="obj in revCtrl.years | filter: $select.search">
+   		<div ng-bind-html="obj.name | highlight: $select.search"></div>
+  </ui-select-choices>
+</ui-select></span>
+<span style="white-space:nowrap;"><label>Level:</label>
+<ui-select ng-model="revCtrl.orgunitLevelSelected" theme="bootstrap" style="width: 200px; display: inline-block;">
+  <ui-select-match placeholder="Select level...">
+  	{{revCtrl.orgunitLevelSelected.name}}
+  </ui-select-match>
+  <ui-select-choices 
+  	repeat="obj in revCtrl.orgunitLevels | filter: $select.search">
+   		<div ng-bind-html="obj.name | highlight: $select.search"></div>
+  </ui-select-choices>
+</ui-select></span>
+<span style="white-space:nowrap;"><label>Group:</label>
+<ui-select ng-model="revCtrl.groupSelected" theme="bootstrap" style="min-width: 200px; display: inline-block;">
+  <ui-select-match placeholder="Select group...">
+  	{{revCtrl.groupSelected.name}}
+  </ui-select-match>
+  <ui-select-choices 
+  	repeat="obj in revCtrl.groups | filter: $select.search">
+   		<div ng-bind-html="obj.name | highlight: $select.search"></div>
+  </ui-select-choices>
+</ui-select></span>
+<button  ng-disabled="!self.userOrgunit && !revCtrl.orgunitLevelSelected && !revCtrl.groupSelected" style="display: inline-block;" class="btn btn-primary pull-right" ng-click="revCtrl.doAnalysis();">Generate</button>
+</div>
+<div ng-if="revCtrl.notPossible">
+<p>Annual review not possible for the facility level.</p>
+</div>
+<hr />
+
+
+<div ng-if="revCtrl.ready">
+	<table style="font-size: 90%;" class="table table-bordered table-condensed">
+		<tr bgcolor="#f9f9f9">
+		 	<th>Completeness</th><th>Data set</th><th>Overall Completeness</th><th># Units with poor score</th><th>% Units with poor score</th>
+	    </tr>
+	   	<tr ng-repeat="dataSet in revCtrl.result.completeness.dataSets track by $index | orderBy:'label':false">
+    		<th width="40%" ng-if="$index === 0" rowspan="{{revCtrl.result.completeness.dataSets.length}}">Completeness of facility reporting</th>
+    		<td>{{dataSet.label}}</td>
+    		<td class="valueCell">{{dataSet.level1}}%</td>
+    		<td class="valueCell">{{dataSet.level2c}}</td>
+    		<td class="valueCell">{{dataSet.level2p}}%</td>
+    	</tr>
+    </table>
+    
+    <table style="font-size: 90%;" class="table table-bordered table-condensed">
+    	<thead>
+    	<tr bgcolor="#f9f9f9">
+    	 	<th rowspan="2">Internal consistency</th><th rowspan="2">Indicator</th><th rowspan="2">Overall Score</th><th colspan="2">Units with poor score</th>
+        </tr>
+        <tr bgcolor="#f9f9f9"><th>Number</th><th>Percentage</th></tr>
+    	</thead>
+    	<tbody ng-repeat="section in revCtrl.result.iConsistency track by $index">
+    		<tr ng-repeat="indicator in section.indicators | orderBy:'label':false">
+    			<td width="40%" ng-if="$index === 0" rowspan="{{section.indicators.length}}">
+    				<strong>{{section.label}}</strong>
+    				<br/>
+    				{{section.description}}
+    			</td>
+    			<td>{{indicator.label}}</td>
+    			<td class="valueCell">{{indicator.level1}}</td>
+    			<td class="valueCell">{{indicator.level2c}}</td>
+    			<td class="valueCell">{{indicator.level2p}}%</td>
+    		</tr>
+		</tbody>
+	</table>
+</div>
+<alert style="margin-top: 10px; margin-bottom: 10px;"ng-repeat="alert in revCtrl.result.alerts track by $index" type="{{alert.type}}" close="revCtrl.result.alerts.splice($index, 1)">{{alert.msg}}</alert>

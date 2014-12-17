@@ -1,11 +1,12 @@
-(function(){  
-	/**Controller: Parameters*/
-	angular.module('reportCard').controller("ReportParametersController", function(completenessDataService, metaDataService, periodService, reportService, requestService) {
-	    
-	    
-	    var self = this;
-	    
-   	    self.notPossible = false;
+
+(function(){
+	
+	var app = angular.module('reportCard', []);
+	
+	app.controller("ReviewController", function(completenessDataService, metaDataService, periodService, reportService, requestService) {
+		var self = this;
+		    
+		self.notPossible = false;
 	    
 	    init();
 	    
@@ -65,11 +66,28 @@
 	  	
 	  	self.doAnalysis = function() {
 	  		
-   			reportService.doAnalysis(self.userOrgunit.id, self.orgunitLevelSelected.level, self.yearSelected.id, self.groupSelected.name);
-   		
-   		}
-    
-		return self;
+			reportService.doAnalysis(self.userOrgunit.id, self.orgunitLevelSelected.level, self.yearSelected.id, self.groupSelected.name);
+			
+		}
 		
+	    self.ready = false;
+	    self.result = null;
+
+	    
+	    var resultCallback = function (result) {
+    		self.result = result;
+    		updateView();
+	    }  
+	    
+	    function updateView() {
+	    	if (self.result != null) self.ready = true;
+	    }
+	    
+	    reportService.setCallback(resultCallback);
+	
+		return self;
 	});
+		
+		
 })();
+
