@@ -16,12 +16,12 @@
 			$( window ).resize(function() {
 				setWindowWidth();
 			});
+			
+			nv.graphs = [];
     		    		
     		self.analysisType = 'comp'; 
     		self.count = 0;
     		self.loaded = {};
-
-    		self.metaData = undefined;
     		
     		self.dataSetsAvailable = [];
     		self.dataAvailable = [];
@@ -31,6 +31,8 @@
     		//Makes it possible to switch later if necessary
     		self.group = 'Core';
     		self.core = true;
+    		
+    		if (self.metaData) return;
     		
     		//Get mapped data, then do analysis
 			requestService.getSingle('/api/systemSettings/DQAmapping').then(function(response) {
@@ -69,6 +71,8 @@
     	
     	self.updateDashboard = function() {
     		
+    		if (self.done) return;
+    		
     		if (!self.metaData) return;
     		
     		if (!self.dataSetIsSet) {
@@ -79,7 +83,9 @@
     			getAvailableData();
     			self.dataIsSet = true;
     		}
-    		makeCompletenessTrendCharts();			
+    		self.done = true;
+    		makeCompletenessTrendCharts();
+    				
     	}
        
            
