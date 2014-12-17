@@ -60,15 +60,21 @@
 	
 	
 	/**Controller: Navigation*/
-	app.controller("NavigationController", function(BASE_URL) {
-
-		this.isCollapsed = true;	
+	app.controller("NavigationController", function(BASE_URL, $location) {
+		var self = this;
 		
+		self.isCollapsed = true;	
+		self.navClass = function (page) {
+		    var currentRoute = $location.path().substring(1) || 'dashboard';
+		    return page === currentRoute ? 'active' : '';
+		  };
 		
-		this.collapse = function() {
+		self.collapse = function() {
 			if (this.isCollapsed) this.isCollapsed = false;
 			else this.isCollapsed = true;
 		};
+		
+		return self;
 	});
 
   		              
