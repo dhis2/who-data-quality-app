@@ -4,6 +4,7 @@
 	
 	  	
 		var self = this;
+		self.maxPendingRequests = 3;
 		
 		function reset() {
 			self.analysisType = null;
@@ -11,7 +12,7 @@
 			self.callback = null;	
 			
 			self.requestQueue = [];		//Queue with requests
-			self.remainingRequests = 0; //Pending requests
+			self.pendingRequests = 0; //Pending requests
 
 			self.processQueue = [];		//Responses awainting processing
 			self.pendingProcessing = 0; //Responses pending processing
@@ -41,19 +42,101 @@
 			self.periods = periods; 
 			self.orguntis = orguntis; 
 			self.parameters parameters;
-		
-		
-			//Figure out how to partition the query
+			self.analysisType = 'outlier';						
 			
-			if (parameters.co) { //categoryoptions => need to fetch one variable at the time to be safe
-				
-			}
-			else {
-				
-			}
-		
+			createRequests();
 		}
 		
+		
+		function createRequests() {
+			var baseRequest;
+			baseRequest = '/api/analytics.json?';
+			baseRequest += '&hideEmptyRows=true';
+			baseRequest += '&tableLayout=true';
+			baseRequest += '&dimension=pe' + period.join(';');
+			
+			//if many variables or categoryoptions => need to fetch one variable at the time to be safe
+			var splitData;
+			if (parameters.co) {
+				baseRequest += '&dimension=co';
+				baseRequest += '&columns=pe&rows=ou;dx;co';
+				splitData = true;
+			}
+			else if (variables.length > 10) {
+				baseRequest += '&columns=pe&rows=ou;dx';
+				splitData = true;
+			}
+			else {
+				baseRequest += '&columns=pe&rows=ou;dx';					
+				splitData = false;
+			}
+			
+			var request, requests = [];
+			for (var i = 0; i < orgunits.length; i++) {
+				request = baseRequest;
+				request += '&dimension=ou' + orgunits[i];
+				if (parameters.OUgroup) {
+					request += ';OU_GROUP-' + parameters.OUgroup;
+				}
+				else if (parameters.OUlevel) {
+					request += ';OU_LEVEL-' + parameters.OUgroup;					
+				}
+				
+				
+				if (splitData) {
+					for (var j = 0; j < variables.length; j++) {
+						requests.push(request + '&dimension=dx:' + variables[j]);
+					}
+				}
+				else {
+					requests.push(request + '&dimension=dx:' + variables.join(';'));
+				}
+			}
+			
+			for (var i = 0; i < requests.length; i++) {
+				self.requestQueue.push({
+					"url": requests[i],
+					"pending": false,
+					"done": false
+				});
+			}
+			
+			fetchData();
+		}
+	
+		
+		function fetchData() {
+			var request = getQueuedRequest();
+			while (request && self.pendingRequests < self.maxPendingRequests) {
+				
+				
+				requestService.getSingle(request.url).then(function (response) {
+					self.pendingRequests--;
+					storeResponse(response);		
+				}
+				
+				self.pendingRequests++;
+				request = getQueuedRequest();
+			}
+		}
+		
+
+		function getQueuedRequest() {
+			for (var i = 0; i < self.requestQueue.length; i++) {
+				if (!self.requestQueue[i].pending && !self.requestQueue[i].done) {
+					return self.requestQueue[i];
+				}
+			}
+			return null;
+		}
+		
+		
+		
+		function storeResponse(response) {
+			
+			console.log(response);
+			
+		}
 		
 		
 		/**
