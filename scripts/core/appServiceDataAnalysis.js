@@ -19,7 +19,7 @@
 			
 			self.variables = null;
 			self.periods = null;
-			self.orguntis = null;
+			self.orgunits = null;
 			self.parameters = null;
 		}
 		
@@ -150,8 +150,7 @@
 				}
 			}
 			
-			
-			
+						
 			//process the actual data
 			var row, value, valueSet, newRow, stats, lookForGap, gapCount, zScore;
 			for (var i = 0; i < rows.length; i++) {
@@ -159,9 +158,10 @@
 				newRow = {
 					"data": [],
 					"metaData": {
+						"ouName": names[row[ou]],
 						"ouID": row[ou],
-						"dxID": row[dx],
-						"coID": co != undefined ? row[co] : undefined,
+						"dxName": co != undefined ? names[row[dx]] + ' ' + names[row[co]] : names[row[dx]],
+						"dxID": co != undefined ? row[dx] + '.' + row[co] : row[dx],
 						"mean": undefined,
 						"var": undefined,
 						"maxZ": undefined,
@@ -222,8 +222,8 @@
 				
 				//check if row should be saved or discarded
 				if (newRow.metaData.outliers > 0 || newRow.metaData.gaps >= maxGap) {
-					newRow.metaData.gapWeight = Math.round(mean*newRow.metaData.gaps*0.25);
-					newRow.metaData.outWeight = Math.round(mean*newRow.metaData.maxZ*0.25);
+					newRow.metaData.gapWeight = Math.round(stats.mean*newRow.metaData.gaps*0.25);
+					newRow.metaData.outWeight = Math.round(stats.mean*newRow.metaData.maxZ*0.25);
 					self.result.rows.push(newRow);
 				}
 			}
@@ -247,32 +247,71 @@
 		}
 		
 		
-		function outlierAggregates() {
+		function outlierAggregatesAndMetaData() {
 			
-			//Get number of gaps per ou
-			//Get number of outliers per ou
-			//Get number of gaps per dx
-			//Get number of outliers per dx
-			//Get number of gaps per pe
-			//Get number of outliers per pe
+			var ouGaps = {};
+			var ouOut = {};
+			var dxGaps = {};
+			var dxOut = {};
+			var peGaps = {};
+			var peOut = {};
+
+			//When iterating through all rows, make a name dictionary as well 
+			var names = {};
 			
-			outlierMetadata();
-		}
-		
-		
-		
-		function outlierMetadata() {
-		
-		
-		
-		}
-		
-		
-		function analyseDataValues(dataValues, SD, gaps, low, high) {
-		
-		
-		}
+			var meta;
+			for (var i = 0; i < self.result.rows.length; i++) {
+				meta = self.result.rows[i].metaData;
+								
+				//Get number of gaps per ou
+				if (ouGaps[meta.ouID]) ouGaps[meta.ouID] += meta.gaps;
+				else ouGaps[meta.ouID] = meta.gaps;
+
+				//Get number of outliers per ou
+				if (ouOut[meta.ouID]) ouOut[meta.ouID] += meta.outliers;
+				else ouOut[meta.ouID] = meta.outliers;
+								
+				//Get number of gaps per dx
+				if (dxGaps[dxID]) dxGaps[dxID] += meta.gaps;
+				else dxGaps[dxID] = meta.gaps;
 				
+				//Get number of outliers per dx
+				if (dxOut[meta.dxID]) dxOut[meta.dxID] += meta.outliers;
+				else dxOut[meta.dxID] = meta.outliers;
+				
+				//Get number of gaps per pe
+				for (var j = 0; j < meta.peGap.length; j++) {
+					//Get number of outliers per dx
+					if (peGaps[meta.peGap[i]]) peGaps[meta.peGap[i]]++;
+					else peGaps[meta.peGap[i]] = 1;
+				}
+				
+				//Get number of outliers per pe
+				for (var j = 0; j < meta.peOut.length; j++) {
+					//Get number of outliers per dx
+					if (peOut[meta.peOut[i]]) peOut[meta.peOut[i]]++;
+					else peOut[meta.peOut[i]] = 1;	
+				}
+				
+				names[meta.ouID] = meta.ouName;
+				names[meta.dxID] = meta.dxName
+				
+			}
+			
+			self.result.aggregates.ouGaps;
+			self.result.aggregates.ouOut;
+			self.result.aggregates.dxGaps;
+			self.result.aggregates.dxOut;
+			self.result.aggregates.peGaps;
+			self.result.aggregates.peOut;
+			
+			self.result.metaData.names = names;
+			self.result.metaData.variables = self.variables;
+			self.result.metaData.periods = self.periods;
+			self.result.metaData.orgunits = self.orgunits;
+			self.result.metaData.parameters = self.parameters
+			
+		}				
 		
 		
 		/** CONSISTENCY ANALYSIS
@@ -346,7 +385,6 @@
 					console.log("Error fetching data: " + response.statusText);
 					self.callback(null);
 				}
-				
 			}
 			else {
 				//Mark item in queue as downloaded - discard if not there (which means it stems from different request
