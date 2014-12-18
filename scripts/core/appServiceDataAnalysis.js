@@ -1,6 +1,6 @@
 (function(){  
 	/**Service: Completeness*/
-	angular.module('dataQualityApp').service('dataAnalysisService', ['requestService', function (requestService) {
+	angular.module('dataQualityApp').service('dataAnalysisService', ['requestService', 'mathService', function (requestService, mathService) {
 	
 	  	
 		var self = this;
@@ -31,8 +31,6 @@
 		@param parameters		object with the following properties
 			.outlierLimit	int		SD from mean to count as outlier
 			.gapLimit		int		number of gaps/missing data to count as violation
-			.lowLimit		int 	low limt for data. Values below are outliers
-			.highLimit		int 	high limt for data. Values above are outliers
 			.OUgroup		string	ID of orgunit group for disaggregation.
 			.OUlevel		int 	orgunit level for disaggregation.
 			.co				bool	whether or not include categoryoptions
@@ -47,9 +45,9 @@
 			self.parameters = parameters;
 			self.analysisType = 'outlier';						
 			
+			resetOutlierResult();
 			createOutlierRequests();
 		}
-		
 		
 		function createOutlierRequests() {
 			var baseRequest;
@@ -107,17 +105,30 @@
 			requestData();
 		}
 	
+	
+		function resetOutlierResult() {
+		
+			self.result = {
+				"rows": [],
+				"aggregates": {},
+				"metaData": {}
+			};
+		}
+	
 		
 		function outlierAnalysis(data) {
+						
+			var headers = data.data.headers;
+			var names = data.data.metaData.names;
+			var rows = data.data.rows;
+			var periods = data.data.metaData.pe;
 			
-			var headers = data.headers;
-			var names = data.metaData.names;
-			var rows = data.rows;
-			var periods = data.metaData.pe;
+			var SD = self.parameters.outlierLimit;
+			var maxGap = self.parameters.gapLimit;
 			
 			
 			//Get the index of the important columns
-			var ou, dx, co, val; 
+			var ou, dx, co, valStart; 
 			for (var i = 0; i < headers.length; i++) {
 				
 				switch (headers[i].column) {
@@ -134,35 +145,88 @@
 				}
 				
 				if (!headers[i].meta) {
-					val = i;
-					break;
+					valStart = i;
+					i = headers.length;
 				}
 			}
 			
 			
-			//for simplicity, align period array with headers
-			for (var i = 0; i < val; i++) {
-				periods.unshift("");
+			
+			//process the actual data
+			var row, value, valueSet, newRow, stats, lookForGap, gapCount, zScore;
+			for (var i = 0; i < rows.length; i++) {
+				row = rows[i];
+				newRow = {
+					"data": [],
+					"metaData": {
+						"ouID": row[ou],
+						"dxID": row[dx],
+						"coID": co != undefined ? row[co] : undefined,
+						"mean": undefined,
+						"var": undefined,
+						"maxZ": undefined,
+						"sd": undefined,
+						"gaps": 0,
+						"outliers": 0,
+						"peGap": [],
+						"peOut": [],
+						"gapWeight": 0,
+						"outWeight": 0
+					}
+				};
+				
+				//Iterate to get all values, and look for gaps at the same time
+				valueSet = [];
+				lookForGap = false;
+				for (var j = row.length-1; j >= valStart; j--) {
+				
+					value = row[j];
+					newRow.data.unshift(value)
+					
+					if (isNumber(value)) {
+						lookForGap = true;
+						valueSet.push(parseFloat(value));
+					}
+					else if (lookForGap) {
+						newRow.metaData.peGap.push(periods[j]);					
+						newRow.metaData.gaps++;
+					}
+					
+				}
+				
+				//Calculate and store the statistical properties of the set
+				stats = mathService.getStats(valueSet);
+				newRow.metaData.mean = stats.mean;
+				newRow.metaData.var = stats.variance;
+				newRow.metaData.sd = stats.sd;
+				
+				newRow.metaData.maxZ = 0;
+				//Look for outliers
+				for (var j = row.length-1; j >= valStart; j--) {
+				
+					value = row[j];
+					if (isNumber(value)) {
+						value = parseFloat(value);
+						
+						//Calculate zScore
+						zScore = Math.abs((value-stats.mean)/stats.sd);
+						if (zScore > newRow.metaData.maxZ) newRow.metaData.maxZ = zScore;
+						
+						//Check if outlier according to parameters
+						if (zScore >= SD) {
+							newRow.metaData.peOut.push(periods[j]);					
+							newRow.metaData.outliers++;	
+						}
+					}
+				}
+				
+				//check if row should be saved or discarded
+				if (newRow.metaData.outliers > 0 || newRow.metaData.gaps >= maxGap) {
+					newRow.metaData.gapWeight = Math.round(mean*newRow.metaData.gaps*0.25);
+					newRow.metaData.outWeight = Math.round(mean*newRow.metaData.maxZ*0.25);
+					self.result.rows.push(newRow);
+				}
 			}
-			
-			
-			//Set up structures for storing aggregate results
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
 			
 			
 			
@@ -170,17 +234,43 @@
 			
 					
 			//Store result and mark as done, then request more data
-			data.result = {};
 			data.pending = false;
 			data.done = true;
 			self.pendingProcessing--;	
 			
 			if (processingDone()) {
-				console.log("All done");
+				outlierAggregates();
 			}
 			else {
 				processData();	
 			}
+		}
+		
+		
+		function outlierAggregates() {
+			
+			//Get number of gaps per ou
+			//Get number of outliers per ou
+			//Get number of gaps per dx
+			//Get number of outliers per dx
+			//Get number of gaps per pe
+			//Get number of outliers per pe
+			
+			outlierMetadata();
+		}
+		
+		
+		
+		function outlierMetadata() {
+		
+		
+		
+		}
+		
+		
+		function analyseDataValues(dataValues, SD, gaps, low, high) {
+		
+		
 		}
 				
 		
@@ -199,6 +289,7 @@
 			var request = getNextRequest();
 			while (request && self.pendingRequests < self.maxPendingRequests) {
 				
+				self.pendingRequests++;
 				request.pending = true;
 				requestService.getSingle(request.url).then(
 					//success
@@ -213,7 +304,6 @@
 					}
 				);
 				
-				self.pendingRequests++;
 				request = getNextRequest();
 			}
 		}
@@ -272,8 +362,7 @@
 				self.processQueue.push({
 					'data': response.data,
 					'pending': false,
-					'done': false,
-					'result': null
+					'done': false
 				});
 				
 				processData();
@@ -284,15 +373,15 @@
 		function processData() {
 			
 			var data = getNextData();
-			while (data && self.pendingProcessing < 2) {
+			while (data && self.pendingProcessing < 1) {
 				
 				data.pending = true;
-				
-				
+				self.pendingProcessing++;
+								
 				//TODO: check analysis type and forward to right method
 				if (self.type = "outlier") outlierAnalysis(data);
 								
-				self.pendingProcessing++;
+
 				data = getNextData();
 			}
 			
@@ -311,19 +400,26 @@
 		
 		function processingDone() {
 						
-			//If pending requests, processing is not done
-			if (getNextRequest()) {
-				return false;
-			}			
-			
-			var isDone = true;
-			for (var i = 0; i < self.processQueue.length; i++) {
-				
-				if (!self.processQueue[i].done) isDone = false;
-				
+			//Check if all requests are done
+			for (var i = 0; i < self.requestQueue.length; i++) {
+				if (!self.requestQueue[i].done) return false;
 			}
 			
-			return isDone;
+			for (var i = 0; i < self.processQueue.length; i++) {
+				if (!self.processQueue[i].done) return false;
+			}
+			
+			return true;
+		
+		}
+		
+		
+		/** UTILITIES
+		
+		*/
+		function isNumber(number) {
+			
+			return !isNaN(parseFloat(number));
 		
 		}
 				

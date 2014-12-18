@@ -390,12 +390,12 @@
 				var periods = periodService.getISOPeriods(startDate, endDate, dataSet.periodType, chartOptions);
 				
 				var options = angular.copy(chartOptions);
-				options.title = dataSet.name + ' completeness trend';				
+				options.title = dataSet.name + ' trend';				
 				visualisationService.autoLineChart('compPE_'+dataSet.id, periods, [dataSet.id], 'USER_ORGUNIT', options);
 		
 		
 				options = angular.copy(chartOptions);
-				options.title = dataSet.name + ' completeness comparison';
+				options.title = dataSet.name + ' comparison';
 				if (i === self.dataSetsAvailable.length - 1) {
 					options.callBack = function() {console.log("Calling YY"); makeYYtrendCharts();};
 				}
