@@ -3,7 +3,7 @@
 	
 	var app = angular.module('completenessAnalysis', []);
 	
-	app.controller("AnalysisController", function(completenessDataService, metaDataService, periodService, requestService, $scope) {
+	app.controller("AnalysisController", function(completenessDataService, metaDataService, periodService, requestService, dataAnalysisService, $scope, $modal) {
 		var self = this;
 			    
 	    self.result = undefined;
@@ -302,8 +302,6 @@
 			
 			$scope.$watchCollection(function() { return self.boundaryOrgunitSelected; }, 
 				function(newObject, oldObject) {
-				
-					console.log("Selected level changed");
 					if (oldObject && newObject && oldObject.level != newObject.level) {
 						if (self.orgunitLevelSelected && self.orgunitLevelSelected.level <= newObject.level) {
 							self.orgunitLevelSelected = undefined;
@@ -395,6 +393,51 @@
 		
 		}
 		
+		function getPeriods() {
+			
+			var startDate, endDate;
+			if (self.periodOption === "last") {
+				endDate = moment().format("YYYY-MM-DD");
+				if (self.periodTypeSelected.id === 'Weekly') {
+					startDate = moment().subtract(self.periodCountSelected.value, 'weeks').format("YYYY-MM-DD");
+				}
+				else if (self.periodTypeSelected.id === 'Monthly') {
+					startDate = moment().subtract(self.periodCountSelected.value, 'months').format("YYYY-MM-DD");
+				}
+				else if (self.periodTypeSelected.id === 'BiMonthly') {
+					startDate = moment().subtract(self.periodCountSelected.value*2, 'months').format("YYYY-MM-DD");
+				}
+				else if (self.periodTypeSelected.id === 'Quarterly') {
+					startDate = moment().subtract(self.periodCountSelected.value, 'quarters').format("YYYY-MM-DD");
+				}
+				else if (self.periodTypeSelected.id === 'SixMonthly') {
+					startDate = moment().subtract(self.periodCountSelected.value*2, 'quarters').format("YYYY-MM-DD");
+				}
+				else if (self.periodTypeSelected.id === 'Yearly') {
+					startDate = moment().subtract(self.periodCountSelected.value, 'years').format("YYYY-MM-DD");
+				}
+			}
+			else if (self.periodOption === "year") {
+				
+				if (self.yearSelected.name === moment().format('YYYY')) {
+					endDate = moment().format('YYYY-MM-DD');
+				}
+				else {
+					endDate = self.yearSelected.id + "-12-31";
+				}
+			
+				startDate = self.yearSelected.id + "-01-01";
+				
+				
+			}
+			else {
+				startDate = self.date.startDate;
+				endDate = self.date.endDate;
+			}
+			
+			return periodService.getISOPeriods(startDate, endDate, self.periodTypeSelected.id);
+		
+		}
 		
 		function getDataForAnalysis() {
 		
@@ -409,8 +452,7 @@
 			}
 			
 			var dataIDs = [];
-			var coFilter = {};
-			
+			var coFilter = {};			
 			
 			if (self.indicatorGroupsSelected) {
 				
@@ -482,7 +524,6 @@
 			
 			
 			var data = getDataForAnalysis(); 
-			console.log(data);	
 			var period = getPeriodsForAnalysis();
 			
 			var disaggregationType = 'none', disaggregationID = undefined;
@@ -522,12 +563,41 @@
 			 	ouCount = Math.pow(10, levelDiff);
 			}
 			
-			console.log("Expecting " + (dataCount * ouCount) + " rows.");			
-						
 			//Call service to get data
-			completenessDataService.analyseData(data, period, orgunit, parameters);
-				
+			//completenessDataService.analyseData(data, period, orgunit, parameters);
+			dataAnalysis();
 		};
+		
+		
+		function dataAnalysis() {		
+			var data = getDataForAnalysis();
+			var variables = data.dataIDs;
+
+			var parameters = {};
+			parameters.co = data.details;
+			parameters.coFilter = data.coFilter;
+			
+			
+			var periods = getPeriods();
+			
+			
+			var orgunits = [self.boundaryOrgunitSelected.id];
+			if (self.orgunitLevelSelected) {
+				parameters.OUlevel = self.orgunitLevelSelected.level;
+			}
+			else if (self.orgunitGroupSelected) {
+				parameters.OUgroup = self.orgunitGroupSelected.id;
+			}
+			
+			
+			parameters.outlierLimit = self.stdDev;
+			parameters.gapLimit = self.gapLimit;
+			parameters.lowLimit = self.thresholdLow;
+			parameters.highLimit = self.thresholdHigh;
+
+			dataAnalysisService.outlier(receiveResult, variables, periods, orgunits, parameters);
+
+		}
 		
 		
 		/**
@@ -709,7 +779,6 @@
 	    
 	    self.changeSortOrder = function(sortColumn) {	        
 	        if (self.result.sortColumn === sortColumn) {
-	        	console.log("Reverse!");
 	        	self.result.reverse = !self.result.reverse;
 	        }
 	        self.result.sortColumn = sortColumn;
