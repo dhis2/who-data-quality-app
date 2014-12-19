@@ -816,6 +816,12 @@
 			return rows;
 	    }
 	    
+	    var receiveResultNew = function(result) {		    
+	    	    
+			if (!result) console.log("Empty result");
+				    	
+	    };
+	    
 	    	   	       	    
 	    var receiveResult = function(result) {		    
 	    	    

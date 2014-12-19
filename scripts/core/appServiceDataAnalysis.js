@@ -311,6 +311,7 @@
 			self.result.metaData.orgunits = self.orgunits;
 			self.result.metaData.parameters = self.parameters
 			
+			self.callback(self.result);
 		}				
 		
 		
