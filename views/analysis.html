@@ -1,10 +1,13 @@
 <h3>Detailed Data Quality Analysis</h3>
+
 <!-- PARAMETERS -->
 <accordion close-others="aCtrl.oneAtATime">
+
     <accordion-group heading="Data" is-open="aCtrl.status.isFirstOpen">			
-		<div>	
+		<div>
+		<div style="display: inline-block;">
     	<label>Data elements</label><br />
-		<ui-select ng-model="aCtrl.dataElementGroupsSelected"  style="margin-bottom: 10px; min-width: 250px; max-width: 380px;">
+		<ui-select ng-model="aCtrl.dataElementGroupsSelected"  style="margin-bottom: 10px; width: 330px;">
 		  <ui-select-match placeholder="Select data element group...">
 		  	{{aCtrl.dataElementGroupsSelected.name}}
 		  </ui-select-match>
@@ -13,27 +16,22 @@
 		   		<div ng-bind-html="obj.name | highlight: $select.search"></div>
 		</ui-select-choices>
 		</ui-select>
-		<div class="btn-group btn-group-justified" style="margin-bottom: 10px; max-width: 380px;">
+		</div>
+		<div class="btn-group btn-group-justified" style="width: 120px; display: inline-block;">
 				<label class="btn btn-default" ng-model="aCtrl.dataDisaggregation" btn-radio="0">Totals</label>
 		  		<label class="btn btn-default" ng-model="aCtrl.dataDisaggregation" btn-radio="1">Details</label>
 		</div>
-		<ui-select ng-if="aCtrl.dataElementGroupsSelected" ng-disabled="!aCtrl.dataElements" ng-model="aCtrl.dataElementsSelected" multiple  style="margin-bottom: 10px; min-width: 250px; max-width: 380px;">
-		  <ui-select-match placeholder="{{aCtrl.dataElementPlaceholder}}">
-		  	{{$item.name}}
-		  </ui-select-match>
+		<ui-select ng-if="aCtrl.dataElementGroupsSelected" ng-disabled="!aCtrl.dataElements" ng-model="aCtrl.dataElementsSelected"  theme="bootstrap" style="margin-bottom: 10px; max-width: 470px;">
+		  <ui-select-match placeholder="{{aCtrl.dataElementPlaceholder}}">{{aCtrl.dataElementsSelected.name}}</ui-select-match>
 		  <ui-select-choices 
 		  	repeat="obj in aCtrl.dataElements | filter: $select.search">
 		   		<div ng-bind-html="obj.name | highlight: $select.search"></div>
 		  </ui-select-choices>
 		  </ui-select>
 		</div>
-		
-		
-		
-
 		<div ng-show="aCtrl.analysisType != 'gap' && aCtrl.dataDisaggregation === 0">
     	<label>Indicators</label><br />
-    	<ui-select ng-model="aCtrl.indicatorGroupsSelected"  style="margin-bottom: 10px; min-width: 250px; max-width: 380px;">
+    	<ui-select ng-model="aCtrl.indicatorGroupsSelected"  style="margin-bottom: 10px; max-width: 470px;">
     	  <ui-select-match placeholder="Select indicator group...">
     	  	{{aCtrl.indicatorGroupsSelected.name}}
     	  </ui-select-match>
@@ -43,9 +41,9 @@
     	  </ui-select-choices>
     	</ui-select>
     	
-		<ui-select ng-if="aCtrl.indicatorGroupsSelected" ng-disabled="!aCtrl.indicators" ng-model="aCtrl.indicatorsSelected" multiple  style="margin-bottom: 10px; min-width: 250px; max-width: 380px;">
+		<ui-select ng-if="aCtrl.indicatorGroupsSelected" ng-disabled="!aCtrl.indicators" ng-model="aCtrl.indicatorsSelected"  style="margin-bottom: 10px; max-width: 470px;">
 		  <ui-select-match placeholder="{{aCtrl.indicatorPlaceholder}}">
-		  	{{$item.name}}
+		  	{{aCtrl.indicatorsSelected.name}}
 		  </ui-select-match>
 		  <ui-select-choices 
 		  	repeat="obj in aCtrl.indicators | filter: $select.search">
@@ -53,76 +51,73 @@
 		  </ui-select-choices>
 		</ui-select>
 		</div>
-		
-		
-		
-		<br />
-			<label><span style="font-size: 100%" class="glyphicon glyphicon-info-sign"></span>  Info</label>
-		<div ng-show="!aCtrl.dataElementsSelected">Select data for analysis.</div>
-		<div ng-show="aCtrl.dataElementsSelected || aCtrl.indicatorsSelected">Will perform {{aCtrl.analysisType}} analysis on <span style="font-size: 100%;" class="label label-primary" ng-show="aCtrl.dataElementsSelected">{{aCtrl.dataElementsSelected.name}}</span><span style="font-size: 100%;" class="label label-primary" ng-show="aCtrl.indicatorsSelected">{{aCtrl.indicatorsSelected.name}}</span></div>
     </accordion-group>
-       
-    
-    
-    
+           
     <accordion-group heading="Period">
-		<div class="btn-group" style="margin-bottom: 10px;">
+		<div class="btn-group btn-group-justified" style="margin-bottom: 10px; width: 306px;">
 			  <label class="btn btn-default" ng-model="aCtrl.periodOption" btn-radio="'last'">Recent</label>
 			  <label class="btn btn-default" ng-model="aCtrl.periodOption" btn-radio="'year'">By year</label>
 			  <label class="btn btn-default" ng-model="aCtrl.periodOption" btn-radio="'custom'">Custom</label>
 			</div>
+			
+			
 		<div style="margin-bottom: 15px;" ng-show="aCtrl.periodOption === 'last'">
-		
-		<label>Use the last...</label><br />
-		<ui-select ng-model="aCtrl.periodCountSelected"  style="margin-bottom: 10px; min-width: 250px; max-width: 250px;">
-		  <ui-select-match placeholder="Select number of periods...">
-		  	{{aCtrl.periodCountSelected.name}}
-		  </ui-select-match>
-		  <ui-select-choices 
-		  	repeat="obj in aCtrl.periodCounts | filter: $select.search">
-		   		<div ng-bind-html="obj.name | highlight: $select.search"></div>
-		  </ui-select-choices>
-		</ui-select>
-		<ui-select ng-model="aCtrl.periodTypeSelected"  style="margin-bottom: 10px; min-width: 250px; max-width: 250px;">
-		  <ui-select-match placeholder="Select period type...">
-		  	{{aCtrl.periodTypeSelected.name}}
-		  </ui-select-match>
-		  <ui-select-choices 
-		  	repeat="obj in aCtrl.periodTypes | filter: $select.search">
-		   		<div ng-bind-html="obj.name | highlight: $select.search"></div>
-		  </ui-select-choices>
-		</ui-select>
+			<div style="display: inline-block;">
+				<ui-select ng-model="aCtrl.periodCountSelected"  style="margin-bottom: 10px; width: 106px;">
+				  <ui-select-match placeholder="Select number of periods...">
+				  	{{aCtrl.periodCountSelected.name}}
+				  </ui-select-match>
+				  <ui-select-choices 
+				  	repeat="obj in aCtrl.periodCounts | filter: $select.search">
+				   		<div ng-bind-html="obj.name | highlight: $select.search"></div>
+				  </ui-select-choices>
+				</ui-select>
+			</div>
+			<div style="display: inline-block;">
+				<ui-select ng-model="aCtrl.periodTypeSelected"  style="margin-bottom: 10px; width: 196px;">
+				  <ui-select-match placeholder="Select period type...">
+				  	{{aCtrl.periodTypeSelected.name}}
+				  </ui-select-match>
+				  <ui-select-choices 
+				  	repeat="obj in aCtrl.periodTypes | filter: $select.search">
+				   		<div ng-bind-html="obj.name | highlight: $select.search"></div>
+				  </ui-select-choices>
+				</ui-select>
+			</div>
 		</div>
 		
 		
 		
 		<div style="margin-bottom: 15px;" ng-show="aCtrl.periodOption === 'year'">
-		<label>Use...</label><br />
-		<ui-select ng-model="aCtrl.periodTypeSelected"  style="margin-bottom: 10px; min-width: 250px; max-width: 250px;">
-		  <ui-select-match placeholder="Select period type...">
-		  	{{aCtrl.periodTypeSelected.name}}
-		  </ui-select-match>
-		  <ui-select-choices 
-		  	repeat="obj in aCtrl.periodTypes | filter: $select.search">
-		   		<div ng-bind-html="obj.name | highlight: $select.search"></div>
-		  </ui-select-choices>
-		</ui-select>
-		<label>in</label>			
-		<ui-select ng-model="aCtrl.yearSelected"  style="margin-bottom: 10px; min-width: 250px; max-width: 250px;">
-		  <ui-select-match placeholder="Select year...">
-		  	{{aCtrl.yearSelected.name}}
-		  </ui-select-match>
-		  <ui-select-choices 
-		  	repeat="obj in aCtrl.years | filter: $select.search">
-		   		<div ng-bind-html="obj.name | highlight: $select.search"></div>
-		  </ui-select-choices>
-		</ui-select>
+			<div style="display: inline-block;">
+			<ui-select ng-model="aCtrl.periodTypeSelected"  style="margin-bottom: 10px; width: 196px;">
+			  <ui-select-match placeholder="Select period type...">
+			  	{{aCtrl.periodTypeSelected.name}}
+			  </ui-select-match>
+			  <ui-select-choices 
+			  	repeat="obj in aCtrl.periodTypes | filter: $select.search">
+			   		<div ng-bind-html="obj.name | highlight: $select.search"></div>
+			  </ui-select-choices>
+			</ui-select>
+			</div>
+					
+			<div style="display: inline-block;">
+			<ui-select ng-model="aCtrl.yearSelected"  style="margin-bottom: 10px; width: 106px;">
+			  <ui-select-match placeholder="Select year...">
+			  	{{aCtrl.yearSelected.name}}
+			  </ui-select-match>
+			  <ui-select-choices 
+			  	repeat="obj in aCtrl.years | filter: $select.search">
+			   		<div ng-bind-html="obj.name | highlight: $select.search"></div>
+			  </ui-select-choices>
+			</ui-select>
+			</div>
+		</div>		
 		
-		</div>
+		
 		<div ng-show="aCtrl.periodOption === 'custom'">
-		<label>Use...</label><br />
 		<div style="margin-bottom: 10px;">
-		<ui-select ng-model="aCtrl.periodTypeSelected"  style="margin-bottom: 10px; min-width: 250px; max-width: 250px;">
+		<ui-select ng-model="aCtrl.periodTypeSelected"  style="margin-bottom: 10px; width: 306px;">
 		  <ui-select-match placeholder="Select period type...">
 		  	{{aCtrl.periodTypeSelected.name}}
 		  </ui-select-match>
@@ -158,7 +153,7 @@
 		
        <label for="orgunitSelect">Disaggregation</label>
 		<div id="orgunitSelect">
-			<ui-select ng-disabled="aCtrl.orgunitGroupSelected" ng-model="aCtrl.orgunitLevelSelected"  style="margin-bottom: 10px; min-width: 250px; max-width: 380px;">
+			<ui-select ng-disabled="aCtrl.orgunitGroupSelected" ng-model="aCtrl.orgunitLevelSelected"  style="margin-bottom: 10px; max-width: 470px;">
 			  <ui-select-match placeholder="{{aCtrl.getLevelPlaceholder();}}">
 			  	{{aCtrl.orgunitLevelSelected.name}}
 			  </ui-select-match>
@@ -168,7 +163,7 @@
 			  </ui-select-choices>
 			</ui-select>
 			
-			<ui-select ng-disabled="aCtrl.orgunitLevelSelected" ng-model="aCtrl.orgunitGroupSelected"  style="margin-bottom: 10px; min-width: 250px; max-width: 380px;">
+			<ui-select ng-disabled="aCtrl.orgunitLevelSelected" ng-model="aCtrl.orgunitGroupSelected"  style="margin-bottom: 10px; max-width: 470px;">
 				  <ui-select-match placeholder="Select organisation unit group">
 				  	{{aCtrl.orgunitGroupSelected.name}}
 				  </ui-select-match>
@@ -189,8 +184,13 @@
 			<br />
 		</div>
     </accordion-group>
+    
   </accordion>  	
-<button ng-disabled="(!aCtrl.dataElementsSelected && !aCtrl.indicatorsSelected)" type="button" class="btn btn-primary pull-right" ng-click="aCtrl.doAnalysis();">Analyze</button>
+  
+<button type="button" class="btn btn-primary pull-right" ng-click="aCtrl.doAnalysis();">Analyze</button>
+
+
+
 
 <!-- RESULT -->
 <div ng-show="aCtrl.result === undefined" style="height: 400px;"></div>

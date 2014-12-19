@@ -33,7 +33,7 @@
 	    	
 	    	self.dataElements = [];
 	    	self.dataElementPlaceholder = "";
-	    	self.dataElementsSelected = [];
+	    	self.dataElementsSelected = undefined;
 			
 			
 			self.indicatorGroups = [];
@@ -44,7 +44,7 @@
 			
 	    	self.indicators = [];
 	    	self.indicatorPlaceholder = "";
-	    	self.indicatorsSelected = [];
+	    	self.indicatorsSelected = undefined;
 	    	
 	    	
 	    	self.analysisOrgunits = [];
@@ -145,7 +145,7 @@
 				function() {
 					
 					if (self.dataElementGroupsSelected) {
-						self.dataElementsSelected = [];
+						self.dataElementsSelected = undefined;
 						updateDataElementList();	
 					}   
 				}
@@ -196,6 +196,7 @@
 			
 		}
 		
+		
 		self.getLevelPlaceholder = function() {
 			if (!self.filteredOrgunitLevels || self.filteredOrgunitLevels.length === 0) {
 				if (self.boundaryOrgunitSelected && self.boundaryOrgunitSelected.level === self.lowestLevel) return "N/A";
@@ -204,6 +205,7 @@
 			}
 			else return "Select level";
 		}
+		
 		
 	    function initOrgunitTree() {
 			$('#orgunitTree').jstree({
@@ -299,8 +301,9 @@
 	    
 	    
 	    function updateDataElementList() {
+	    	console.log("Update liste");
 	   		self.dataElements = [];
-	   		self.dataElementsSelected = [];
+	   		self.dataElementsSelected = undefined;
 	    	if (self.dataDisaggregation === 0) {	    	
 	    		self.dataElementPlaceholder = "Loading...";
 		    	metaDataService.getDataElementGroupMembers(self.dataElementGroupsSelected.id)
@@ -326,7 +329,7 @@
 	    
   	    function updateIndicatorList() {
   	    	self.indicators = [];
-	   		self.indicatorsSelected = [];
+	   		self.indicatorsSelected = undefined;
   	    	self.indicatorPlaceholder = "Loading...";
   	    	metaDataService.getIndicatorGroupMembers(self.indicatorGroupsSelected.id)
   	    		.then(function(data) { 
@@ -349,23 +352,6 @@
 		}
 		
 		
-		function userOrgunitString() {
-			
-			if (self.userOrgunits.length <= 1) {
-				self.userOrgunitLabel = self.userOrgunits[0].name;
-			}
-			else {
-				for (var i = 0; i < self.userOrgunits.length; ) {
-					self.userOrgunitLabel += self.userOrgunits[i++].name;
-	
-					if (i < self.userOrgunits.length) {
-						self.userOrgunitLabel += ", ";	
-					}
-				}
-			}					
-		}
-		
-
 		function getPeriods() {
 			
 			var startDate, endDate;
@@ -415,41 +401,26 @@
 		
 		function getDataForAnalysis() {
 		
-			var details = false;
-			if (self.dataDisaggregation != 0) {
-				
-				//Only data elements are allowed, no indicator/completeness
-				self.indicatorsSelected = [];
-				self.indicatorGroupsSelected = undefined;
-				
-				details = true;
-			}
+			var details = (self.dataDisaggregation != 0);
 			
 			var dataIDs = [];
-			var coFilter = {};			
-			
-			if (self.indicatorGroupsSelected) {
-				
-				if (self.indicatorsSelected.length > 0) {
-					for (var i = 0; i < self.indicatorsSelected.length; i++) {
-						dataIDs.push(self.indicatorsSelected[i].id);
-					}
+			if (!details && self.indicatorGroupsSelected) {
+				if (self.indicatorsSelected) {
+					dataIDs.push(self.indicatorsSelected.id);
 				}
 				else { //Selected group but did not specify = all
 					for (var i = 0; i < self.indicators.length; i++) {
 						dataIDs.push(self.indicators[i].id);
 					}
 				}
-				
 			}
 			
+			var coFilter = {};
 			if (self.dataElementGroupsSelected) {
 				if (details) {
-					if (self.dataElementsSelected.length > 0) {
-						for (var i = 0; i < self.dataElementsSelected.length; i++) {
-							coFilter[self.dataElementsSelected[i].id] = true;
-							dataIDs.push(self.dataElementsSelected[i].dataElementId);
-						}
+					if (self.dataElementsSelected) {
+						coFilter[self.dataElementsSelected.id] = true;
+						dataIDs.push(self.dataElementsSelected.dataElementId);
 					}
 					else { //Selected group but did not specify = all
 						for (var i = 0; i < self.dataElements.length; i++) {
@@ -459,10 +430,8 @@
 					}
 				}
 				else {
-					if (self.dataElementsSelected.length > 0) {
-						for (var i = 0; i < self.dataElementsSelected.length; i++) {
-							dataIDs.push(self.dataElementsSelected[i].id);
-						}
+					if (self.dataElementsSelected) {
+						dataIDs.push(self.dataElementsSelected.id);
 					}
 					else { //Selected group but did not specify = all
 						for (var i = 0; i < self.dataElements.length; i++) {
@@ -474,7 +443,8 @@
 			}
 					
 			
-			return {'dataIDs': uniqueArray(dataIDs),
+			return {
+				'dataIDs': uniqueArray(dataIDs),
 				'details': details,  
 				'coFilter': coFilter
 				};
@@ -493,6 +463,7 @@
 		
 		
 		self.doAnalysis = function() {
+			
 			//Collapse open panels
 			$('.panel-collapse').removeClass('in');
 			
