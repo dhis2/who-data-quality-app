@@ -3,6 +3,14 @@
 	
 	var app = angular.module('completenessAnalysis', []);
 	
+	app.filter('startFrom', function() {
+	    return function(input, start) {
+	        start = +start; //parse to int
+	        if (input) return input.slice(start);
+	        else return input;
+	    }
+	});
+	
 	app.controller("AnalysisController", function(completenessDataService, metaDataService, periodService, requestService, dataAnalysisService, $scope, $modal) {
 		var self = this;
 			    
@@ -595,7 +603,7 @@
 			parameters.lowLimit = self.thresholdLow;
 			parameters.highLimit = self.thresholdHigh;
 
-			dataAnalysisService.outlier(receiveResult, variables, periods, orgunits, parameters);
+			dataAnalysisService.outlier(receiveResultNew, variables, periods, orgunits, parameters);
 
 		}
 		
@@ -746,100 +754,38 @@
         	
         }
                 
-
-        // calculate page in place
-        function paginateRows(rows) {
-            var pagedItems = [];
-    
-            for (var i = 0; i < rows.length; i++) {
-                if (i % self.itemsPerPage === 0) {
-                    pagedItems[Math.floor(i / self.itemsPerPage)] = [ rows[i] ];
-                } else {
-                    pagedItems[Math.floor(i / self.itemsPerPage)].push(rows[i]);
-                }
-            }
-            
-            return pagedItems;
-            
-        }           
-            
-        
-	    self.updateCurrentView = function() {
-	    	var result = self.result;
-	    	var rows = result.rows;
-	    	
-    		rows = sortRows(rows, result.sortColumn, result.reverse); 
-    		result.pages = paginateRows(rows);
-	    	
-	    	result.currentPage = 1;
-	    		    	
-	    	return result;
-	    };
-	    
-	    
-	    self.changeSortOrder = function(sortColumn) {	        
-	        if (self.result.sortColumn === sortColumn) {
-	        	self.result.reverse = !self.result.reverse;
-	        }
-	        self.result.sortColumn = sortColumn;
-	        
-	        self.updateCurrentView()
-	    }
-	    
-	    
-	    function sortRows(rows, sortCol, reverse) {
-			
-			if (rows.length === 0) return rows;
-			
-			var tmp;
-			if (isNaN(parseFloat(rows[0].data[sortCol]))) {
-				rows.sort(function (a, b) {
-					if (reverse) {
-						var tmp = a;
-						a = b;
-						b = tmp;
-					}
-					return a.data[sortCol].toLowerCase().localeCompare(b.data[sortCol].toLowerCase());	
-				});
-			}
-			else {
-				rows.sort(function (a, b) {
-					if (reverse) {
-						var tmp = a;
-						a = b;
-						b = tmp;
-					}
-					return (parseFloat(b.data[sortCol]) - parseFloat(a.data[sortCol]));	
-				});
-			}
-			
-			return rows;
-	    }
-	    
+ 
 	    var receiveResultNew = function(result) {		    
 	    	    
 			if (!result) console.log("Empty result");
-				    	
-	    };
-	    
-	    	   	       	    
-	    var receiveResult = function(result) {		    
-	    	    
-		    self.result = result;
-		    
-		    self.result.alerts = [];
-		    self.result.sortColumn = self.result.headers.length-1;
-		    self.result.sortRevers = false;
-		    
-		    if (result.rows.length === 0) {
-		    	self.result.alerts.push({type: 'success', msg: 'No data!'});
-		    }
-	    
-		    self.updateCurrentView();
+			self.result = angular.copy(result);
 			
+			//Store paging variables
+			self.currentPage = 1;
+			self.pageSize = 10;   	
+			self.totalRows = result.rows.length;
+			
+			//Default sort column
+			self.sortCol = 'metaData.ouName';
+			self.reverse = false;
+			
+			//Get nice period names
+			self.periods = [];
+			for (var i = 0; i < result.metaData.periods.length; i++) {
+				var period = result.metaData.periods[i];
+				self.periods.push(periodService.shortPeriodName(period));
+			}
+			
+			//Calculate total number of columns in table
+			self.totalColumns = self.periods.length + 6;
 	    };
-   	    completenessDataService.resultsCallback = receiveResult;
-    
+	     
+	    self.isOutlier = function (value, mean, sd, lim) {
+	   		var z = (value-mean)/sd;
+	   		if (z > lim) return true;
+	   		else return false;
+	   	}    
+    	    
 		return self;
 	});
 	

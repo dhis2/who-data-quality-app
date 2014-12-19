@@ -239,40 +239,46 @@
   	
 <button ng-disabled="(!aCtrl.dataElementsSelected && !aCtrl.indicatorsSelected)" type="button" class="btn btn-primary" ng-click="aCtrl.doAnalysis();">Analyze</button>
 <br>
+
+
 <div ng-show="aCtrl.result === undefined" style="height: 400px;"></div>
 <div ng-show="aCtrl.result">
 			<alert style="margin-top: 10px; margin-bottom: 10px;"ng-repeat="alert in aCtrl.result.alerts track by $index" type="{{alert.type}}" close="aCtrl.result.alerts.splice($index, 1)">{{alert.msg}}</alert>
 			<div style="margin-top: 10px; font-size: 90%;" class="table-responsive">
+				
+				
 				<table class="table table-bordered table-striped table-condensed table-hover">
 					
+			        
 			        <thead>
-			            <tr>
-			            	<th nowrap ng-class="{headerCellWide: header.name === 'Data'}" ng-click="aCtrl.changeSortOrder($index)" ng-repeat="header in aCtrl.result.headers" ng-if="!header.hidden"><span>{{header.name}}</span><span ng-if="header.meta && !header.hidden" class="glyphicon glyphicon-sort"></span></th>
+			            <tr>	
+			            	<th nowrap ng-click="aCtrl.sortCol = 'metaData.ouName'; aCtrl.reverse=!aCtrl.reverse">Organisation Unit</th>
+			            	<th nowrap ng-click="aCtrl.sortCol = 'metaData.dxName'; aCtrl.reverse=!aCtrl.reverse">Data</th>
+			            	<th ng-repeat="period in aCtrl.periods" nowrap>{{period}}</th>
+			            	<th ng-click="aCtrl.sortCol = 'metaData.maxZ'; aCtrl.reverse=!aCtrl.reverse">Max zScore</th>
+			            	<th ng-click="aCtrl.sortCol = 'metaData.gapWeight'; aCtrl.reverse=!aCtrl.reverse">Gap weight</th>
+			            	<th ng-click="aCtrl.sortCol = 'metaData.outWeight'; aCtrl.reverse=!aCtrl.reverse">Outlier weight</th>
 			            	<th></th>
 			            </tr>
 			        </thead>
-			        
+
 			        <tfoot>
-			            <td colspan="{{1+aCtrl.result.headers.length}}">
-				            <div style="margin-left:20px; margin-top:27px" class="pull-left">
-				            <span style="font-size: 100%;" class="label label-danger">{{aCtrl.result.metaData.outlierRows}}</span> rows with violations of <span style="font-size: 100%;" class="label label-primary">{{aCtrl.result.metaData.totalRows}}</span> rows analysed</div>
-				            
-				            
-				            <pagination total-items="aCtrl.result.metaData.outlierRows" items-per-page="aCtrl.itemsPerPage" max-size="5" ng-model="aCtrl.result.currentPage" class="pagination-sm pull-right" boundary-links="true" rotate="true"></pagination>
+			            <td colspan="{{aCtrl.totalColumns}}">
+				            <pagination total-items="aCtrl.totalRows" items-per-page="aCtrl.pageSize" max-size="5" ng-model="aCtrl.currentPage" class="pagination-sm pull-right" boundary-links="true" rotate="true"></pagination>
 			            </td>
 			        </tfoot>
 			        
 			        <tbody>
-			        	<tr valign="middle" ng-repeat="row in aCtrl.result.pages[aCtrl.result.currentPage-1]">
-			                
-			                <!-- IF: Outlier and threshold -->
-			                <td ng-if="aCtrl.result.type != 'gap'" ng-repeat="value in row.data track by $index" ng-class="{danger: (value < row.metaData.lowLimit || value > row.metaData.highLimit) && value != '' && !aCtrl.result.headers[$index].meta, valueCell: aCtrl.result.headers[$index].type != 'java.lang.String'}">
-								{{value}}
-			                </td>
-			                
-			                <!-- IF: Gap -->
-			                <td ng-if="aCtrl.result.type === 'gap'" ng-repeat="value in row.data track by $index" ng-class="{warning: (value === '' && !aCtrl.result.headers[$index].meta), valueCell: aCtrl.result.headers[$index].type != 'java.lang.String'}">{{value}}
-			                </td>
+			        	<tr valign="middle" ng-repeat="row in aCtrl.result.rows | orderBy:aCtrl.sortCol:aCtrl.reverse | startFrom:(aCtrl.currentPage-1)*aCtrl.pageSize | limitTo:aCtrl.pageSize">
+			                <td>{{row.metaData.ouName}}</td>
+			                <td>{{row.metaData.dxName}}</td>
+			                <td ng-repeat="value in row.data track by $index" 
+			                	class="valueCell"
+			                	ng-class="{warning: value==='', danger: aCtrl.isOutlier(value, row.metaData.mean, row.metaData.sd, aCtrl.stdDev)}"
+			                	>{{value}}</td>
+			                <td class="valueCell">{{row.metaData.maxZ}}</td>
+			                <td class="valueCell">{{row.metaData.gapWeight}}</td>
+			                <td class="valueCell">{{row.metaData.outWeight}}</td>
 			                
 			                <td>
 			                	<span class="dropdown" on-toggle="toggled(open)">
@@ -289,6 +295,7 @@
 			                </td>    
 			            </tr>
 			    	</tbody>
+
 			    	
 				</table>
 			</div>

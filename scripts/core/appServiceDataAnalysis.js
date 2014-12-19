@@ -181,7 +181,7 @@
 				for (var j = row.length-1; j >= valStart; j--) {
 				
 					value = row[j];
-					newRow.data.unshift(value)
+					newRow.data.unshift(value);
 					
 					if (isNumber(value)) {
 						lookForGap = true;
@@ -209,7 +209,7 @@
 						value = parseFloat(value);
 						
 						//Calculate zScore
-						zScore = Math.abs((value-stats.mean)/stats.sd);
+						zScore = Math.round(100*Math.abs((value-stats.mean)/stats.sd))/100;
 						if (zScore > newRow.metaData.maxZ) newRow.metaData.maxZ = zScore;
 						
 						//Check if outlier according to parameters
@@ -239,7 +239,7 @@
 			self.pendingProcessing--;	
 			
 			if (processingDone()) {
-				outlierAggregates();
+				outlierAggregatesAndMetaData();
 			}
 			else {
 				processData();	
@@ -272,8 +272,8 @@
 				else ouOut[meta.ouID] = meta.outliers;
 								
 				//Get number of gaps per dx
-				if (dxGaps[dxID]) dxGaps[dxID] += meta.gaps;
-				else dxGaps[dxID] = meta.gaps;
+				if (dxGaps[meta.dxID]) dxGaps[meta.dxID] += meta.gaps;
+				else dxGaps[meta.dxID] = meta.gaps;
 				
 				//Get number of outliers per dx
 				if (dxOut[meta.dxID]) dxOut[meta.dxID] += meta.outliers;
