@@ -156,76 +156,86 @@
 			var row, value, valueSet, newRow, stats, lookForGap, gapCount, zScore;
 			for (var i = 0; i < rows.length; i++) {
 				row = rows[i];
-				newRow = {
-					"data": [],
-					"metaData": {
-						"ouName": names[row[ou]],
-						"ouID": row[ou],
-						"dxName": co != undefined ? names[row[dx]] + ' ' + names[row[co]] : names[row[dx]],
-						"dxID": co != undefined ? row[dx] + '.' + row[co] : row[dx],
-						"mean": undefined,
-						"var": undefined,
-						"maxZ": undefined,
-						"sd": undefined,
-						"gaps": 0,
-						"outliers": 0,
-						"peGap": [],
-						"peOut": [],
-						"gapWeight": 0,
-						"outWeight": 0
-					}
-				};
 				
-				//Iterate to get all values, and look for gaps at the same time
-				valueSet = [];
-				lookForGap = false;
-				for (var j = row.length-1; j >= valStart; j--) {
-				
-					value = row[j];
-					newRow.data.unshift(value);
-					
-					if (isNumber(value)) {
-						lookForGap = true;
-						valueSet.push(parseFloat(value));
-					}
-					else if (lookForGap) {
-						newRow.metaData.peGap.push(periods[j]);					
-						newRow.metaData.gaps++;
-					}
-					
+				var dxID, filteredOut = false;
+				if (self.parameters.co) {
+					 dxID = row[dx] + '.' + row[co];
+					 if (!self.parameters.coFilter[dxID]) filteredOut = true;
 				}
 				
-				//Calculate and store the statistical properties of the set
-				stats = mathService.getStats(valueSet);
-				newRow.metaData.mean = stats.mean;
-				newRow.metaData.var = stats.variance;
-				newRow.metaData.sd = stats.sd;
 				
-				newRow.metaData.maxZ = 0;
-				//Look for outliers
-				for (var j = row.length-1; j >= valStart; j--) {
-				
-					value = row[j];
-					if (isNumber(value)) {
-						value = parseFloat(value);
+				if (!filteredOut) {
+					newRow = {
+						"data": [],
+						"metaData": {
+							"ouName": names[row[ou]],
+							"ouID": row[ou],
+							"dxName": co != undefined ? names[row[dx]] + ' ' + names[row[co]] : names[row[dx]],
+							"dxID": co != undefined ? row[dx] + '.' + row[co] : row[dx],
+							"mean": undefined,
+							"var": undefined,
+							"maxZ": undefined,
+							"sd": undefined,
+							"gaps": 0,
+							"outliers": 0,
+							"peGap": [],
+							"peOut": [],
+							"gapWeight": 0,
+							"outWeight": 0
+						}
+					};
+					
+					//Iterate to get all values, and look for gaps at the same time
+					valueSet = [];
+					lookForGap = false;
+					for (var j = row.length-1; j >= valStart; j--) {
+					
+						value = row[j];
+						newRow.data.unshift(value);
 						
-						//Calculate zScore
-						zScore = Math.round(100*Math.abs((value-stats.mean)/stats.sd))/100;
-						if (zScore > newRow.metaData.maxZ) newRow.metaData.maxZ = zScore;
+						if (isNumber(value)) {
+							lookForGap = true;
+							valueSet.push(parseFloat(value));
+						}
+						else if (lookForGap) {
+							newRow.metaData.peGap.push(periods[j]);					
+							newRow.metaData.gaps++;
+						}
 						
-						//Check if outlier according to parameters
-						if (zScore >= SD) {
-							newRow.metaData.peOut.push(periods[j]);					
-							newRow.metaData.outliers++;	
+					}
+					
+					//Calculate and store the statistical properties of the set
+					stats = mathService.getStats(valueSet);
+					newRow.metaData.mean = stats.mean;
+					newRow.metaData.var = stats.variance;
+					newRow.metaData.sd = stats.sd;
+					
+					newRow.metaData.maxZ = 0;
+					//Look for outliers
+					for (var j = row.length-1; j >= valStart; j--) {
+					
+						value = row[j];
+						if (isNumber(value)) {
+							value = parseFloat(value);
+							
+							//Calculate zScore
+							zScore = Math.round(100*Math.abs((value-stats.mean)/stats.sd))/100;
+							if (zScore > newRow.metaData.maxZ) newRow.metaData.maxZ = zScore;
+							
+							//Check if outlier according to parameters
+							if (zScore >= SD) {
+								newRow.metaData.peOut.push(periods[j]);					
+								newRow.metaData.outliers++;	
+							}
 						}
 					}
-				}
-				
-				//check if row should be saved or discarded
-				if (newRow.metaData.outliers > 0 || newRow.metaData.gaps >= maxGap) {
-					newRow.metaData.gapWeight = Math.round(stats.mean*newRow.metaData.gaps);
-					newRow.metaData.outWeight = getOutlierWeight(valueSet, stats.mean, stats.sd);
-					self.result.rows.push(newRow);
+					
+					//check if row should be saved or discarded
+					if (newRow.metaData.outliers > 0 || newRow.metaData.gaps >= maxGap) {
+						newRow.metaData.gapWeight = Math.round(stats.mean*newRow.metaData.gaps);
+						newRow.metaData.outWeight = getOutlierWeight(valueSet, stats.mean, stats.sd);
+						self.result.rows.push(newRow);
+					}
 				}
 			}
 								
