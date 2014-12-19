@@ -7,6 +7,7 @@
 		self.maxPendingRequests = 3;
 		
 		function reset() {
+			self.debugCount = 0;
 			self.analysisType = null;
 			self.result = null;
 			self.callback = null;	
@@ -117,7 +118,7 @@
 	
 		
 		function outlierAnalysis(data) {
-						
+				
 			var headers = data.data.headers;
 			var names = data.data.metaData.names;
 			var rows = data.data.rows;
@@ -222,17 +223,12 @@
 				
 				//check if row should be saved or discarded
 				if (newRow.metaData.outliers > 0 || newRow.metaData.gaps >= maxGap) {
-					newRow.metaData.gapWeight = Math.round(stats.mean*newRow.metaData.gaps*0.25);
-					newRow.metaData.outWeight = Math.round(stats.mean*newRow.metaData.maxZ*0.25);
+					newRow.metaData.gapWeight = Math.round(stats.mean*newRow.metaData.gaps);
+					newRow.metaData.outWeight = getOutlierWeight(valueSet, stats.mean, stats.sd);
 					self.result.rows.push(newRow);
 				}
 			}
-			
-			
-			
-			
-			
-					
+								
 			//Store result and mark as done, then request more data
 			data.pending = false;
 			data.done = true;
@@ -246,8 +242,26 @@
 			}
 		}
 		
+		function getOutlierWeight(dataValueSet, mean, sd) {
+			
+			var normCount = 0, normSum = 0, total = 0;
+			for (var i = 0; i < dataValueSet.length; i++) {
+				var value = dataValueSet[i];
+				if (((value-mean)/sd) < 1.5) {
+					normSum += value;
+					normCount++;
+				}
+				total += value;
+			}
+			var normMean = normSum/normCount;
+			var expectedTotal = normMean * dataValueSet.length;
+			return Math.round(total-expectedTotal);
+		}
+		
 		
 		function outlierAggregatesAndMetaData() {
+			
+			console.log("Summarising");
 			
 			var ouGaps = {};
 			var ouOut = {};
@@ -295,7 +309,6 @@
 				
 				names[meta.ouID] = meta.ouName;
 				names[meta.dxID] = meta.dxName
-				
 			}
 			
 			self.result.aggregates.ouGaps;
@@ -310,6 +323,8 @@
 			self.result.metaData.periods = self.periods;
 			self.result.metaData.orgunits = self.orgunits;
 			self.result.metaData.parameters = self.parameters
+			
+			console.log("Returning");
 			
 			self.callback(self.result);
 		}				

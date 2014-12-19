@@ -1,56 +1,10 @@
 <h3>Detailed Data Quality Analysis</h3>
+<!-- PARAMETERS -->
 <accordion close-others="aCtrl.oneAtATime">
-
-    <accordion-group heading="Analysis type" is-open="aCtrl.status.isFirstOpen">
-		<div class="btn-group btn-group-justified" style="margin-bottom: 5px; max-width: 380px;">
-			  <label class="btn btn-default" ng-model="aCtrl.analysisType" btn-radio="'outlier'">Outlier</label>
-				  <label class="btn btn-default" ng-model="aCtrl.analysisType" btn-radio="'gap'">Gap</label>
-			  <label class="btn btn-default" ng-model="aCtrl.analysisType" btn-radio="'threshold'">Threshold</label>
-		</div>
-		
-		<div ng-show="aCtrl.analysisType === 'threshold'"><br />
-			<label for="threshold">Threshold low limit</label><br />
-			<input style="width: 100px;" id="thresholdLow" class="selector" type="number" min="0" max="100000" ng-model="aCtrl.thresholdLow"/><br />
-			<label for="threshold">Threshold high limit</label><br />
-			<input style="width: 100px;" id="thresholdHigh" class="selector" type="number" min="0" max="100000" ng-model="aCtrl.thresholdHigh"/>
-			<br />
-			<br />
-			<label><span style="font-size: 100%" class="glyphicon glyphicon-info-sign"></span>  Info</label>
-			<p>Organisation units with values below <span style="font-size: 100%;" class="label label-primary">{{aCtrl.thresholdLow}}</span> or above <span style="font-size: 100%;" class="label label-primary">{{aCtrl.thresholdHigh}}</span> will be displayed.</p>	
-		</div>
-		
-		
-		<div ng-show="aCtrl.analysisType === 'gap'"><br />
-			<label for="threshold">Gap threshold (missing values)</label><br />
-			<div class="btn-group btn-group-justified" style="margin-bottom: 5px; max-width: 380px;">
-			  	<label class="btn btn-default" ng-model="aCtrl.gapLimit" btn-radio="1">1 or more</label>
-			  	<label class="btn btn-warning" ng-model="aCtrl.gapLimit" btn-radio="2">2 or more</label>
-				<label class="btn btn-danger" ng-model="aCtrl.gapLimit" btn-radio="3">3 or more</label>
-			</div>
-			<br />
-			<label><span style="font-size: 100%" class="glyphicon glyphicon-info-sign"></span>  Info</label>
-			<p>Organisation units with more than <span style="font-size: 100%;" class="label label-primary">{{aCtrl.gapLimit}}</span> missing values be displayed.</p>	
-		</div>
-		
-		
-		<div ng-show="aCtrl.analysisType === 'outlier'"><br />
-			<label for="threshold">Standard deviations</label><br />
-			<div class="btn-group btn-group-justified" style="margin-bottom: 5px; max-width: 380px;">
-					<label class="btn btn-default" ng-model="aCtrl.stdDev" btn-radio="1.5">Mild (1.5 SD)</label>
-			  		<label class="btn btn-warning" ng-model="aCtrl.stdDev" btn-radio="2">Moderate (2 SD)</label>
-					<label class="btn btn-danger" ng-model="aCtrl.stdDev" btn-radio="3">Extreme (3 SD)</label>
-			</div>
-			<br />
-			<label><span style="font-size: 100%" class="glyphicon glyphicon-info-sign"></span>  Info</label>
-			<p>Organisation units with values more than <span style="font-size: 100%;" class="label label-primary">{{aCtrl.stdDev}}</span> standard deviations from the mean will be displayed.</p>
-		</div>	
-    </accordion-group>
-    
-    
-    <accordion-group heading="Data">			
+    <accordion-group heading="Data" is-open="aCtrl.status.isFirstOpen">			
 		<div>	
     	<label>Data elements</label><br />
-		<ui-select ng-model="aCtrl.dataElementGroupsSelected" theme="bootstrap" style="margin-bottom: 10px; min-width: 250px; max-width: 380px;">
+		<ui-select ng-model="aCtrl.dataElementGroupsSelected"  style="margin-bottom: 10px; min-width: 250px; max-width: 380px;">
 		  <ui-select-match placeholder="Select data element group...">
 		  	{{aCtrl.dataElementGroupsSelected.name}}
 		  </ui-select-match>
@@ -63,7 +17,7 @@
 				<label class="btn btn-default" ng-model="aCtrl.dataDisaggregation" btn-radio="0">Totals</label>
 		  		<label class="btn btn-default" ng-model="aCtrl.dataDisaggregation" btn-radio="1">Details</label>
 		</div>
-		<ui-select ng-if="aCtrl.dataElementGroupsSelected" ng-model="aCtrl.dataElementsSelected" multiple theme="bootstrap" style="margin-bottom: 10px; min-width: 250px; max-width: 380px;">
+		<ui-select ng-if="aCtrl.dataElementGroupsSelected" ng-disabled="!aCtrl.dataElements" ng-model="aCtrl.dataElementsSelected" multiple  style="margin-bottom: 10px; min-width: 250px; max-width: 380px;">
 		  <ui-select-match placeholder="{{aCtrl.dataElementPlaceholder}}">
 		  	{{$item.name}}
 		  </ui-select-match>
@@ -79,7 +33,7 @@
 
 		<div ng-show="aCtrl.analysisType != 'gap' && aCtrl.dataDisaggregation === 0">
     	<label>Indicators</label><br />
-    	<ui-select ng-model="aCtrl.indicatorGroupsSelected" theme="bootstrap" style="margin-bottom: 10px; min-width: 250px; max-width: 380px;">
+    	<ui-select ng-model="aCtrl.indicatorGroupsSelected"  style="margin-bottom: 10px; min-width: 250px; max-width: 380px;">
     	  <ui-select-match placeholder="Select indicator group...">
     	  	{{aCtrl.indicatorGroupsSelected.name}}
     	  </ui-select-match>
@@ -89,7 +43,7 @@
     	  </ui-select-choices>
     	</ui-select>
     	
-		<ui-select ng-if="aCtrl.indicatorGroupsSelected" ng-model="aCtrl.indicatorsSelected" multiple theme="bootstrap" style="margin-bottom: 10px; min-width: 250px; max-width: 380px;">
+		<ui-select ng-if="aCtrl.indicatorGroupsSelected" ng-disabled="!aCtrl.indicators" ng-model="aCtrl.indicatorsSelected" multiple  style="margin-bottom: 10px; min-width: 250px; max-width: 380px;">
 		  <ui-select-match placeholder="{{aCtrl.indicatorPlaceholder}}">
 		  	{{$item.name}}
 		  </ui-select-match>
@@ -113,14 +67,14 @@
     
     <accordion-group heading="Period">
 		<div class="btn-group" style="margin-bottom: 10px;">
-			  <label class="btn btn-default" ng-model="aCtrl.periodOption" btn-radio="'last'">Recent periods</label>
-			  <label class="btn btn-default" ng-model="aCtrl.periodOption" btn-radio="'year'">Periods in year</label>
-			  <label class="btn btn-default" ng-model="aCtrl.periodOption" btn-radio="'custom'">Custom range</label>
+			  <label class="btn btn-default" ng-model="aCtrl.periodOption" btn-radio="'last'">Recent</label>
+			  <label class="btn btn-default" ng-model="aCtrl.periodOption" btn-radio="'year'">By year</label>
+			  <label class="btn btn-default" ng-model="aCtrl.periodOption" btn-radio="'custom'">Custom</label>
 			</div>
 		<div style="margin-bottom: 15px;" ng-show="aCtrl.periodOption === 'last'">
 		
 		<label>Use the last...</label><br />
-		<ui-select ng-model="aCtrl.periodCountSelected" theme="bootstrap" style="margin-bottom: 10px; min-width: 250px; max-width: 250px;">
+		<ui-select ng-model="aCtrl.periodCountSelected"  style="margin-bottom: 10px; min-width: 250px; max-width: 250px;">
 		  <ui-select-match placeholder="Select number of periods...">
 		  	{{aCtrl.periodCountSelected.name}}
 		  </ui-select-match>
@@ -129,7 +83,7 @@
 		   		<div ng-bind-html="obj.name | highlight: $select.search"></div>
 		  </ui-select-choices>
 		</ui-select>
-		<ui-select ng-model="aCtrl.periodTypeSelected" theme="bootstrap" style="margin-bottom: 10px; min-width: 250px; max-width: 250px;">
+		<ui-select ng-model="aCtrl.periodTypeSelected"  style="margin-bottom: 10px; min-width: 250px; max-width: 250px;">
 		  <ui-select-match placeholder="Select period type...">
 		  	{{aCtrl.periodTypeSelected.name}}
 		  </ui-select-match>
@@ -144,7 +98,7 @@
 		
 		<div style="margin-bottom: 15px;" ng-show="aCtrl.periodOption === 'year'">
 		<label>Use...</label><br />
-		<ui-select ng-model="aCtrl.periodTypeSelected" theme="bootstrap" style="margin-bottom: 10px; min-width: 250px; max-width: 250px;">
+		<ui-select ng-model="aCtrl.periodTypeSelected"  style="margin-bottom: 10px; min-width: 250px; max-width: 250px;">
 		  <ui-select-match placeholder="Select period type...">
 		  	{{aCtrl.periodTypeSelected.name}}
 		  </ui-select-match>
@@ -154,7 +108,7 @@
 		  </ui-select-choices>
 		</ui-select>
 		<label>in</label>			
-		<ui-select ng-model="aCtrl.yearSelected" theme="bootstrap" style="margin-bottom: 10px; min-width: 250px; max-width: 250px;">
+		<ui-select ng-model="aCtrl.yearSelected"  style="margin-bottom: 10px; min-width: 250px; max-width: 250px;">
 		  <ui-select-match placeholder="Select year...">
 		  	{{aCtrl.yearSelected.name}}
 		  </ui-select-match>
@@ -168,7 +122,7 @@
 		<div ng-show="aCtrl.periodOption === 'custom'">
 		<label>Use...</label><br />
 		<div style="margin-bottom: 10px;">
-		<ui-select ng-model="aCtrl.periodTypeSelected" theme="bootstrap" style="margin-bottom: 10px; min-width: 250px; max-width: 250px;">
+		<ui-select ng-model="aCtrl.periodTypeSelected"  style="margin-bottom: 10px; min-width: 250px; max-width: 250px;">
 		  <ui-select-match placeholder="Select period type...">
 		  	{{aCtrl.periodTypeSelected.name}}
 		  </ui-select-match>
@@ -193,17 +147,19 @@
     
     <accordion-group heading="Orgunit" is-open="status.open">
     	<label>Boundary</label><br />
-    	<div class="btn-group" style="margin-bottom: 10px; max-width: 600px;">
+    	<div class="btn-group" style="margin-bottom: 10px; max-width: 400px;">
     	  	<label ng-repeat="orgunit in aCtrl.userOrgunits track by $index" class="btn btn-default" ng-model="aCtrl.boundarySelectionType" btn-radio="$index">{{orgunit.name}}</label>
     	  	<label class="btn btn-default" ng-model="aCtrl.boundarySelectionType" btn-radio="aCtrl.userOrgunits.length">Manual</label>
     	</div>
-		<br />	    		    	
-    	<div style="margin-bottom: 10px; width: 380px;" ng-show="aCtrl.userOrgunits.length === aCtrl.boundarySelectionType" id="orgunitTree"></div>
-
+		<br />	  
+		<div ng-show="aCtrl.userOrgunits.length === aCtrl.boundarySelectionType" style="margin-bottom: 10px; width: 330px; height: 330px; overflow: auto;">
+    	<div id="orgunitTree"></div>
+		</div>  		    	
+		
        <label for="orgunitSelect">Disaggregation</label>
 		<div id="orgunitSelect">
-			<ui-select ng-disabled="aCtrl.orgunitGroupSelected" ng-model="aCtrl.orgunitLevelSelected" theme="bootstrap" style="margin-bottom: 10px; min-width: 250px; max-width: 380px;">
-			  <ui-select-match placeholder="Select organisation unit level">
+			<ui-select ng-disabled="aCtrl.orgunitGroupSelected" ng-model="aCtrl.orgunitLevelSelected"  style="margin-bottom: 10px; min-width: 250px; max-width: 380px;">
+			  <ui-select-match placeholder="{{aCtrl.getLevelPlaceholder();}}">
 			  	{{aCtrl.orgunitLevelSelected.name}}
 			  </ui-select-match>
 			  <ui-select-choices 
@@ -212,7 +168,7 @@
 			  </ui-select-choices>
 			</ui-select>
 			
-			<ui-select ng-disabled="aCtrl.orgunitLevelSelected" ng-model="aCtrl.orgunitGroupSelected" theme="bootstrap" style="margin-bottom: 10px; min-width: 250px; max-width: 380px;">
+			<ui-select ng-disabled="aCtrl.orgunitLevelSelected" ng-model="aCtrl.orgunitGroupSelected"  style="margin-bottom: 10px; min-width: 250px; max-width: 380px;">
 				  <ui-select-match placeholder="Select organisation unit group">
 				  	{{aCtrl.orgunitGroupSelected.name}}
 				  </ui-select-match>
@@ -231,29 +187,42 @@
 			
 			<p ng-show="!aCtrl.orgunitGroupSelected && !aCtrl.orgunitLevelSelected"><span style="font-size: 100%;" class="label label-primary">{{aCtrl.userOrgunitLabel}}</span></p>
 			<br />
-			<label><span style="font-size: 100%" class="glyphicon glyphicon-info-sign"></span>  Info</label>
-			<p>Organisation units with no data for the selected variable in the given time period are not included in the result.</p>
 		</div>
     </accordion-group>
-  </accordion>
-  	
-<button ng-disabled="(!aCtrl.dataElementsSelected && !aCtrl.indicatorsSelected)" type="button" class="btn btn-primary" ng-click="aCtrl.doAnalysis();">Analyze</button>
-<br>
+  </accordion>  	
+<button ng-disabled="(!aCtrl.dataElementsSelected && !aCtrl.indicatorsSelected)" type="button" class="btn btn-primary pull-right" ng-click="aCtrl.doAnalysis();">Analyze</button>
 
-
+<!-- RESULT -->
 <div ng-show="aCtrl.result === undefined" style="height: 400px;"></div>
 <div ng-show="aCtrl.result">
-			<alert style="margin-top: 10px; margin-bottom: 10px;"ng-repeat="alert in aCtrl.result.alerts track by $index" type="{{alert.type}}" close="aCtrl.result.alerts.splice($index, 1)">{{alert.msg}}</alert>
+<div style="display: inline-block; margin-right: 15px;">
+	<label for="threshold">Outliers</label>
+	<div class="btn-group btn-group-justified" ng-click="aCtrl.updateFilter();" style="margin-bottom: 5px; max-width: 350px;">
+			<label ng-disabled="aCtrl.gapLimit === 0" class="btn btn-default" ng-model="aCtrl.stdDev" btn-radio="0">Any</label>
+			<label class="btn btn-default" ng-model="aCtrl.stdDev" btn-radio="1.5">Minor</label>
+	  		<label class="btn btn-warning" ng-model="aCtrl.stdDev" btn-radio="2">Moderate</label>
+			<label class="btn btn-danger" ng-model="aCtrl.stdDev" btn-radio="3">Extreme</label>
+	</div>
+</div>
+<div style="display: inline-block;">
+	<label for="threshold">Gaps</label>
+		<div class="btn-group btn-group-justified" ng-click="aCtrl.updateFilter();" style="margin-bottom: 5px; max-width: 350px;">
+		  	<label ng-disabled="aCtrl.stdDev === 0" class="btn btn-default" ng-model="aCtrl.gapLimit" btn-radio="0">Any</label>
+		  	<label class="btn btn-default" ng-model="aCtrl.gapLimit" btn-radio="1">1+</label>
+		  	<label class="btn btn-warning" ng-model="aCtrl.gapLimit" btn-radio="2">2+</label>
+			<label class="btn btn-danger" ng-model="aCtrl.gapLimit" btn-radio="3">3+</label>
+		</div>
+</div>
+
+			<alert style="margin-top: 10px; margin-bottom: 10px;"ng-repeat="alert in aCtrl.alerts track by $index" type="{{alert.type}}" close="aCtrl.alerts.splice($index, 1)">{{alert.msg}}</alert>
 			<div style="margin-top: 10px; font-size: 90%;" class="table-responsive">
-				
-				
-				<table class="table table-bordered table-striped table-condensed table-hover">
+<table class="table table-bordered table-striped table-condensed table-hover">
 					
 			        
 			        <thead>
 			            <tr>	
 			            	<th nowrap ng-click="aCtrl.sortCol = 'metaData.ouName'; aCtrl.reverse=!aCtrl.reverse">Organisation Unit</th>
-			            	<th nowrap ng-click="aCtrl.sortCol = 'metaData.dxName'; aCtrl.reverse=!aCtrl.reverse">Data</th>
+			            	<th nowrap style="max-width: 250px;" ng-click="aCtrl.sortCol = 'metaData.dxName'; aCtrl.reverse=!aCtrl.reverse">Data</th>
 			            	<th ng-repeat="period in aCtrl.periods" nowrap>{{period}}</th>
 			            	<th ng-click="aCtrl.sortCol = 'metaData.maxZ'; aCtrl.reverse=!aCtrl.reverse">Max zScore</th>
 			            	<th ng-click="aCtrl.sortCol = 'metaData.gapWeight'; aCtrl.reverse=!aCtrl.reverse">Gap weight</th>
@@ -269,7 +238,7 @@
 			        </tfoot>
 			        
 			        <tbody>
-			        	<tr valign="middle" ng-repeat="row in aCtrl.result.rows | orderBy:aCtrl.sortCol:aCtrl.reverse | startFrom:(aCtrl.currentPage-1)*aCtrl.pageSize | limitTo:aCtrl.pageSize">
+			        	<tr valign="middle" ng-repeat="row in aCtrl.filteredRows | orderBy:aCtrl.sortCol:aCtrl.reverse | startFrom:(aCtrl.currentPage-1)*aCtrl.pageSize | limitTo:aCtrl.pageSize">
 			                <td>{{row.metaData.ouName}}</td>
 			                <td>{{row.metaData.dxName}}</td>
 			                <td ng-repeat="value in row.data track by $index" 

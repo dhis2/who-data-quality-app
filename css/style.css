@@ -91,6 +91,12 @@
 		font-weight: bold;
 		font-family: sans-serif;
 	}
+	
+	.ui-select-multiple.ui-select-bootstrap {
+	    min-height: 34px;        
+	    height: auto;
+	    padding: .3em;
+	}
 }
 
 
