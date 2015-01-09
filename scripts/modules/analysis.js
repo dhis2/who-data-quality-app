@@ -301,7 +301,6 @@
 	    
 	    
 	    function updateDataElementList() {
-	    	console.log("Update liste");
 	   		self.dataElements = [];
 	   		self.dataElementsSelected = undefined;
 	    	if (self.dataDisaggregation === 0) {	    	
