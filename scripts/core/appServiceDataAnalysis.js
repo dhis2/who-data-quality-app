@@ -230,11 +230,11 @@
 					}
 					
 					//check if row should be saved or discarded
-					if (newRow.metaData.outliers > 0 || newRow.metaData.gaps >= maxGap) {
+					//if (newRow.metaData.outliers > 0 || newRow.metaData.gaps >= maxGap) {
 						newRow.metaData.gapWeight = Math.floor(getMedian(valueSet)*newRow.metaData.gaps);
 						newRow.metaData.outWeight = getOutlierWeight(valueSet, stats.mean, stats.sd);
 						self.result.rows.push(newRow);
-					}
+					//}
 				}
 			}
 								
