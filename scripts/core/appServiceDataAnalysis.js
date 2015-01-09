@@ -188,17 +188,15 @@
 					
 					//Iterate to get all values, and look for gaps at the same time
 					valueSet = [];
-					lookForGap = false;
 					for (var j = row.length-1; j >= valStart; j--) {
 					
 						value = row[j];
 						newRow.data.unshift(value);
 						
 						if (isNumber(value)) {
-							lookForGap = true;
 							valueSet.push(parseFloat(value));
 						}
-						else if (lookForGap) {
+						else {
 							newRow.metaData.peGap.push(periods[j]);					
 							newRow.metaData.gaps++;
 						}
