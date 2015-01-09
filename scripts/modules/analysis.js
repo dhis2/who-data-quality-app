@@ -635,6 +635,12 @@
 			}
 			self.result = result;
 			
+			
+			//Reset filter
+			self.stdDev = 2;
+			self.gapLimit = 0;
+			
+			
 			self.updateFilter();
 			
 			//Default sort column
