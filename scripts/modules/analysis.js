@@ -492,6 +492,7 @@
 			parameters.highLimit = self.thresholdHigh;
 			
 			console.log("Requesting data");
+			self.result = null;
 			dataAnalysisService.outlier(receiveResultNew, variables, periods, orgunits, parameters);
 		};
 		
@@ -589,6 +590,9 @@
 					}
 					self.result.metaData.parameters.OUlevel = undefined;
 					self.result.metaData.parameters.OUgroup = undefined;
+					
+					self.result = null;
+					
 					dataAnalysisService.outlier(receiveResultNew, self.result.metaData.variables, self.result.metaData.periods, orgunits, self.result.metaData.parameters);
 					
         		}
@@ -613,6 +617,8 @@
         			var orgunits = [metaData.parent.id];
         			self.result.metaData.parameters.OUlevel = undefined;
         			self.result.metaData.parameters.OUgroup = undefined;
+
+					self.result = null;
 
 					dataAnalysisService.outlier(receiveResultNew, self.result.metaData.variables, self.result.metaData.periods, orgunits, self.result.metaData.parameters);
         		}
