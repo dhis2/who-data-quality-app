@@ -491,7 +491,8 @@
 			parameters.gapLimit = self.gapLimit;
 			parameters.lowLimit = self.thresholdLow;
 			parameters.highLimit = self.thresholdHigh;
-
+			
+			console.log("Requesting data");
 			dataAnalysisService.outlier(receiveResultNew, variables, periods, orgunits, parameters);
 		};
 		
@@ -634,7 +635,10 @@
 				console.log("Empty result");
 				self.alerts.push({type: 'warning', msg: 'No data!'});
 			}
-			else (self.alerts = []);
+			else {
+				self.alerts = [];
+				console.log("Received " + result.rows.length + " rows");
+			}
 			
 			self.result = result;
 			

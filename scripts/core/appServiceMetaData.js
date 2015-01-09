@@ -116,17 +116,14 @@
 	  		
 	  		//available locally
 	  		if (dataSets.available) {
-	  			console.log("Data sets available locally");
 	  			deferred.resolve(dataSets.data);
 	  		}
 	  		//waiting for server
 	  		else if (!dataSets.available && dataSets.promise) {
-	  			console.log("Data sets already requested");
 	  			return dataSets.promise;
 	  		}
 	  		//need to be fetched
 			else {
-				console.log("Requesting data sets");
 	  			var requestURL = '/api/dataSets.json?'; 
 	  			requestURL += 'fields=id,name,periodType&paging=false';
 	  			  
@@ -184,17 +181,14 @@
 	  			
   			//available locally
   			if (indicatorGroups.available) {
-  				console.log("Indicator groups available locally");
   				deferred.resolve(indicatorGroups.data);
   			}
   			//waiting for server
   			else if (!indicatorGroups.available && indicatorGroups.promise) {
-  				console.log("Indicator groups already requested");
   				return indicatorGroups.promise;
   			}
   			//need to be fetched
 	  		else {
-	  			console.log("Requesting indicator groups");
 	  			var requestURL = '/api/indicatorGroups.json?'; 
 	  			requestURL += 'fields=id,name&paging=false';
 	  			
@@ -220,9 +214,7 @@
 	  	self.getIndicatorGroupMembers = function(indicatorGroupID) { 
 	  		
 	  		var deferred = $q.defer();
-	  		
-	  		console.log("Requesting indicator group members");
-	  		
+	  			  		
 	  		var requestURL = '/api/indicators.json?'; 
 	  		requestURL += 'fields=name,id&paging=false&filter=indicatorGroups.id:eq:' + indicatorGroupID;
 	  			  
@@ -247,17 +239,14 @@
 				
 				//available locally
 				if (indicators.available) {
-					console.log("Indicators available locally");
 					deferred.resolve(indicators.data);
 				}
 				//waiting for server
 				else if (!indicators.available && indicators.promise) {
-					console.log("Indicators already requested");
 					return indicators.promise;
 				}
 				//need to be fetched
 			else {
-				console.log("Requesting indicators");
 				var requestURL = '/api/indicators.json?'; 
 				requestURL += 'fields=id,name,numerator,denominator&paging=false';
 				
@@ -358,17 +347,14 @@
 				
 				//available locally
 				if (dataElementGroups.available) {
-					console.log("Data element groups available locally");
 					deferred.resolve(dataElementGroups.data);
 				}
 				//waiting for server
 				else if (!dataElementGroups.available && dataElementGroups.promise) {
-					console.log("Data element groups already requested");
 					return dataElementGroupss.promise;
 				}
 				//need to be fetched
 			else {
-				console.log("Requesting data element groups");
 				var requestURL = '/api/dataElementGroups.json?'; 
 				requestURL += 'fields=name,id&paging=false';
 					  
@@ -396,9 +382,7 @@
 		self.getDataElementGroupMemberOperands = function(dataElementGroupID) { 
 			
 			var deferred = $q.defer();
-			
-			console.log("Requesting data element operand group members");
-			
+						
 			var requestURL = '/api/dataElementOperands.json?'; 
 			requestURL += 'fields=name,id,dataElementId,optionComboId&paging=false&filter=dataElement.dataElementGroups.id:eq:' + dataElementGroupID;
 				  
@@ -419,8 +403,6 @@
 		self.getDataElementGroupMembers = function(dataElementGroupID) { 
 			
 			var deferred = $q.defer();
-			
-			console.log("Requesting data element group members");
 			
 			var requestURL = '/api/dataElements.json?'; 
 			requestURL += 'fields=name,id&paging=false&filter=dataElementGroups.id:eq:' + dataElementGroupID;
@@ -467,17 +449,14 @@
 				
 				//available locally
 				if (dataElements.available) {
-					console.log("Data elements available locally");
 					deferred.resolve(dataElements.data);
 				}
 				//waiting for server
 				else if (!dataElements.available && dataElements.promise) {
-					console.log("Data elements already requested");
 					return dataElements.promise;
 				}
 				//need to be fetched
 			else {
-				console.log("Requesting data elements");
 				var requestURL = '/api/dataElements.json?'; 
 				requestURL += 'fields=id,name&paging=false';
 					  
@@ -532,17 +511,14 @@
 			
 			//available locally
 			if (orgunits.available) {
-				console.log("Orgunits available locally");
 				deferred.resolve(orgunits.data);
 			}
 			//waiting for server
 			else if (!orgunits.available && orgunits.promise) {
-				console.log("Orgunits already requested");
 				return orgunits.promise;
 			}
 			//need to be fetched
 			else {
-				console.log("Requesting orgunits");
 					var requestURL = '/api/organisationUnits.json?'; 
 					  requestURL += 'fields=id,name,children[id]&filter=level:lte:3&paging=false';
 					  
