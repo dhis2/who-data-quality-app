@@ -649,7 +649,7 @@
 			
 			
 			//Reset filter
-			self.stdDev = 2;
+			self.stdDev = 0;
 			self.gapLimit = 0;
 			
 			
