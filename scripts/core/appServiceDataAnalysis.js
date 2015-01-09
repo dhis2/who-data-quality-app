@@ -50,6 +50,7 @@
 			createOutlierRequests();
 		}
 		
+		
 		function createOutlierRequests() {
 			var baseRequest;
 			baseRequest = '/api/analytics.json?';
@@ -232,7 +233,7 @@
 					
 					//check if row should be saved or discarded
 					if (newRow.metaData.outliers > 0 || newRow.metaData.gaps >= maxGap) {
-						newRow.metaData.gapWeight = Math.round(stats.mean*newRow.metaData.gaps);
+						newRow.metaData.gapWeight = Math.floor(getMedian(valueSet)*newRow.metaData.gaps);
 						newRow.metaData.outWeight = getOutlierWeight(valueSet, stats.mean, stats.sd);
 						self.result.rows.push(newRow);
 					}
@@ -252,6 +253,16 @@
 			}
 		}
 		
+		
+		function getMedian(values) {
+			
+			values.sort( function(a,b) {return a - b;} );
+			
+		    var half = Math.floor(values.length/2);
+		
+		    if(values.length % 2) return values[half];
+		    else return (values[half-1] + values[half]) / 2.0;
+		}
 		
 		function getOutlierWeight(dataValueSet, mean, sd) {
 			
