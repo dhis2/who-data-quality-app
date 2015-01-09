@@ -395,12 +395,21 @@
 		
 		
 				options = angular.copy(chartOptions);
-				options.title = dataSet.name + ' comparison';
+				
+				var periodComparison; 
+				if (periods.length < 4) {
+					periodComparison = periods[periods.length - 1];
+				}
+				else {
+					periodComparison = periods[periods.length - 2];
+				}
+				
+				options.title = dataSet.name + ' comparison - ' + periodService.shortPeriodName(periodComparison);
 				if (i === self.dataSetsAvailable.length - 1) {
 					options.callBack = function() {console.log("Calling YY"); makeYYtrendCharts();};
 				}
 				
-				visualisationService.autoOUBarChart('compOU_'+dataSet.id, periods.pop(), [dataSet.id], 'USER_ORGUNIT_CHILDREN', options);
+				visualisationService.autoOUBarChart('compOU_'+dataSet.id, periodComparison, [dataSet.id], 'USER_ORGUNIT_CHILDREN', options);
 				
 			}
 			

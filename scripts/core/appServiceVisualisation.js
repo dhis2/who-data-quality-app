@@ -116,8 +116,14 @@
   			  		values = [];
   			  		chartSeries = {};  			  		
   			  		dataSet = data[i];
-
-  					chartSeries.key = dataSet.metaData.pe[0].substring(0, 4) + ' - ' + dataSet.metaData.pe[dataSet.metaData.pe.length-1].substring(0, 4);
+					
+					
+					if (dataSet.metaData.pe[0].substring(0, 4) === dataSet.metaData.pe[dataSet.metaData.pe.length-1].substring(0, 4)) {
+	  					chartSeries.key = dataSet.metaData.pe[0].substring(0, 4);
+					}
+  					else {
+  						chartSeries.key = dataSet.metaData.pe[0].substring(0, 4) + ' - ' + dataSet.metaData.pe[dataSet.metaData.pe.length-1].substring(0, 4);
+  					}
   					
   					var row, value, values = [];
   					for (var j = 0; j < periods[i].length; j++) {
