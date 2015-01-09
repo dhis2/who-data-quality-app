@@ -252,7 +252,12 @@
 			}
 		}
 		
+		
 		function getOutlierWeight(dataValueSet, mean, sd) {
+			
+			if (dataValueSet.length <= 1 || isNaN(sd) || (mean === 0 && sd === 0)) {
+				return 0;
+			}
 			
 			var normCount = 0, normSum = 0, total = 0;
 			for (var i = 0; i < dataValueSet.length; i++) {
