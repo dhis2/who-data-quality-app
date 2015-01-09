@@ -630,9 +630,12 @@
 
 	    var receiveResultNew = function(result) {		    
 	    	    
-			if (!result) { console.log("Empty result");
+			if (!result) { 
+				console.log("Empty result");
 				self.alerts.push({type: 'warning', msg: 'No data!'});
 			}
+			else (self.alerts = []);
+			
 			self.result = result;
 			
 			
