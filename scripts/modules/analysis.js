@@ -591,9 +591,11 @@
 					self.result.metaData.parameters.OUlevel = undefined;
 					self.result.metaData.parameters.OUgroup = undefined;
 					
-					self.result = null;
+
 					
 					dataAnalysisService.outlier(receiveResultNew, self.result.metaData.variables, self.result.metaData.periods, orgunits, self.result.metaData.parameters);
+					
+					self.result = null;
 					
         		}
         		        		
@@ -618,9 +620,11 @@
         			self.result.metaData.parameters.OUlevel = undefined;
         			self.result.metaData.parameters.OUgroup = undefined;
 
-					self.result = null;
+					
 
 					dataAnalysisService.outlier(receiveResultNew, self.result.metaData.variables, self.result.metaData.periods, orgunits, self.result.metaData.parameters);
+					
+					self.result = null;
         		}
         		else {
 					self.alerts.push({type: 'warning', msg: rowMetaData.ouName + ' does not have a parent'});

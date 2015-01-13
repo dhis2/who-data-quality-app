@@ -109,7 +109,7 @@
 	    	
 	    	for (var i = 0; i < potentialRecipients.length; i++) {
 	    		var orgunit = potentialRecipients[i];
-	    		if (orgunit.users.length > 0) {
+	    		if (orgunit.users && orgunit.users.length > 0) {
 	    			self.recipients.push({
 	    				'orgunit': orgunit.name,
 	    				'id': orgunit.id,
