@@ -97,6 +97,9 @@
 	    height: auto;
 	    padding: .3em;
 	}
+	.ui-select-toggle { /*Overwrite bootstrap btn alignment*/
+		text-align: left;
+	}
 }
 
 

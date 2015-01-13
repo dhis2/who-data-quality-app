@@ -21,8 +21,10 @@
 				<label class="btn btn-default" ng-model="aCtrl.dataDisaggregation" btn-radio="0">Totals</label>
 		  		<label class="btn btn-default" ng-model="aCtrl.dataDisaggregation" btn-radio="1">Details</label>
 		</div>
-		<ui-select ng-if="aCtrl.dataElementGroupsSelected" ng-disabled="!aCtrl.dataElements" ng-model="aCtrl.dataElementsSelected"  theme="bootstrap" style="margin-bottom: 10px; max-width: 470px;">
-		  <ui-select-match placeholder="{{aCtrl.dataElementPlaceholder}}">{{aCtrl.dataElementsSelected.name}}</ui-select-match>
+		<ui-select ng-if="aCtrl.dataElementGroupsSelected" ng-disabled="!aCtrl.dataElements" ng-model="aCtrl.dataElementsSelected" theme="bootstrap" style="margin-bottom: 10px; max-width: 470px;">
+		  <ui-select-match placeholder="{{aCtrl.dataElementPlaceholder}}">
+			  {{aCtrl.dataElementsSelected.name}}
+		  </ui-select-match>
 		  <ui-select-choices 
 		  	repeat="obj in aCtrl.dataElements | filter: $select.search">
 		   		<div ng-bind-html="obj.name | highlight: $select.search"></div>
