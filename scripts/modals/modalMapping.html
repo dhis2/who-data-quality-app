@@ -79,5 +79,5 @@
 </div>
 <div class="modal-footer" style="clear: both;">     
     <button type="button" class="btn btn-default" data-ng-click="mapCtrl.cancel()">Cancel</button>
-    <button type="button" class="btn btn-default" data-ng-click="mapCtrl.save()" ng-disabled="!((mapCtrl.dataDisaggregation === 0 && mapCtrl.dataElementsSelected) || (mapCtrl.dataDisaggregation === 1 && mapCtrl.indicatorsSelected) && mapCtrl.dataSetsSelected)">Save</button>
+    <button type="button" class="btn btn-default" data-ng-click="mapCtrl.save()" ng-disabled="!(((mapCtrl.dataDisaggregation === 0 && mapCtrl.dataElementsSelected != undefined) || (mapCtrl.dataDisaggregation === 1 && mapCtrl.indicatorsSelected != undefined)) && mapCtrl.dataSetsSelected != undefined)">Save</button>
 </div>
