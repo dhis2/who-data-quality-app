@@ -343,17 +343,17 @@
 		/**Data element groups*/
 		self.getDataElementGroups = function() { 
 			
-				var deferred = $q.defer();
-				
-				//available locally
-				if (dataElementGroups.available) {
-					deferred.resolve(dataElementGroups.data);
-				}
-				//waiting for server
-				else if (!dataElementGroups.available && dataElementGroups.promise) {
-					return dataElementGroups.promise;
-				}
-				//need to be fetched
+			var deferred = $q.defer();
+			
+			//available locally
+			if (dataElementGroups.available) {
+				deferred.resolve(dataElementGroups.data);
+			}
+			//waiting for server
+			else if (!dataElementGroups.available && dataElementGroups.promise) {
+				return dataElementGroups.promise;
+			}
+			//need to be fetched
 			else {
 				var requestURL = '/api/dataElementGroups.json?'; 
 				requestURL += 'fields=name,id&paging=false';
