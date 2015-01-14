@@ -351,7 +351,7 @@
 				}
 				//waiting for server
 				else if (!dataElementGroups.available && dataElementGroups.promise) {
-					return dataElementGroupss.promise;
+					return dataElementGroups.promise;
 				}
 				//need to be fetched
 			else {
