@@ -4,7 +4,7 @@
 	var app = angular.module('dashboard', []);
 	
 	
-	app.controller("DashboardController", function(metaDataService, periodService, requestService, visualisationService, mathService, $scope, $window, $timeout) {
+	app.controller("DashboardController", function(metaDataService, periodService, requestService, visualisationService, mathService, dataAnalysisService, $scope, $window, $timeout) {
 
 	    var self = this;
 
@@ -25,6 +25,7 @@
     		
     		self.dataSetsAvailable = [];
     		self.dataAvailable = [];
+    		self.periodTypes = [];
     		self.dataSetIsSet = false;
     		self.dataIsSet = false;
     		
@@ -82,6 +83,7 @@
     		if (!self.dataIsSet) {
     			getAvailableData();
     			self.dataIsSet = true;
+    			getPeriodTypes();
     		}
     		self.done = true;
     		makeCompletenessTrendCharts();
@@ -122,6 +124,20 @@
 					self.dataAvailable.push(data);
 				}
 			}
+       	}
+       	
+       	
+       	function getPeriodTypes() {
+       	
+       		var data, pTypes = {};
+       		for (var i = 0; i < self.dataAvailable.length; i++) {
+       			pTypes[self.dataAvailable[i].periodType] = true;
+       		}
+       		
+			for (pt in pTypes) {
+				self.periodTypes.push({'pt': pt});
+			}
+       	
        	}
        	
        	
@@ -342,8 +358,47 @@
     	  	
     	
     	function makeOutlierCharts() {
+			
+			console.log("Making outlier charts");
+			
+			var variables = [];
+			
+			for (var i = 0; i < self.dataAvailable.length; i++) {
+				variables.push(self.dataAvailable[i].localData.id);
+			}
+						
+			//Rewind one period
+			var endDate = moment();
+			var startDate = moment(endDate).subtract(12, 'months').add(1, 'day');
+			startDate = moment(startDate).subtract(1, 'month');
+			endDate = moment(endDate).subtract(1, 'month');
+			
+			var pe = periodService.getISOPeriods(startDate, endDate, 'Monthly').join(';'); 
+			
+			
+			/** OUTLIER ANALYSIS
+			@param callback			function to send result to
+			@param variables		array of data element, dataset or indicator IDs
+			@param periods			array of periods in ISO format
+			@param orgunits			array of orgunit IDs
+			@param parameters		object with the following properties
+				.outlierLimit	int		SD from mean to count as outlier
+				.gapLimit		int		number of gaps/missing data to count as violation
+				.OUgroup		string	ID of orgunit group for disaggregation.
+				.OUlevel		int 	orgunit level for disaggregation.
+				.co				bool	whether or not include categoryoptions
+				.coFilter		array of strings of data element operands to include in result
+			self.outlier = function (callback, variables, periods, orgunits, parameters) {*/
+			
+			//dataAnalysisService.outlier(drawOutlierCharts, variables
+			    	
+    	}
     	
     	
+    	function drawOutlierCharts(result) {
+    		
+    		console.log("Received result:");
+    		console.log(result);
     	
     	}
     	
@@ -415,7 +470,7 @@
       			
       			var options = angular.copy(chartOptions);
       			if (i === self.dataAvailable.length-1) {
-	      			options.callBack = function() {console.log("Calling gap"); fetchOutlierGapChartsData();};
+	      			options.callBack = function() {console.log("Calling gap"); makeOutlierCharts();};
       			}
       			
       			options.title = data.localData.name;

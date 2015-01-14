@@ -37,8 +37,12 @@
 		
 		
 		<div ng-class="{hideDiv: dashCtrl.analysisType != 'out'}">
-		
-			<div class="chartHolder" id="out_all"><svg class="bigChart"></svg></div>
+					
+			<div style="display: inline-block; width: 100%;" ng-repeat="periodType in dashCtrl.periodTypes">
+			
+				<div class="chartHolder chartFull" style="display: inline-block;" id="out_{{periodType.pt}}"><svg class="bigChart"></svg></div>
+				
+			</div>
 					
 				
 			<div class="chartHolder" ng-class="{chartFull: dashCtrl.singleCol, chartHalf: !dashCtrl.singleCol}" style="display: inline-block;"  id="out_ou"><svg class="smallPie" ></svg></div>
