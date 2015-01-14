@@ -62,10 +62,10 @@
     	
     	self.updateCharts = function() {
     		$timeout(function() {		
-		    		for (var i = 0; i < nv.graphs.length; i++) {
-		    			nv.graphs[i].update();
-		    		}
-	    		});
+	    		for (var i = 0; i < nv.graphs.length; i++) {
+	    			nv.graphs[i].update();
+	    		}
+	    	});
     	}
     	
     	
@@ -131,7 +131,7 @@
        		}
        	}
        	    	
-       	
+       	//REMOVE
        	function fetchOutlierGapChartsData() {
        		
        		var variables = [];
@@ -168,7 +168,7 @@
        		       	
        	}
     	
-	
+		//REMOVE
     	function processOutlierGapCharts(data) {
     		
     		var periods = data.metaData.pe;
@@ -323,7 +323,7 @@
 
 		}
     	  	
-    	
+    	//REMOVE
     	function makeSeries(reference, data, metaData,name) {
     		var values = [];
     		var series = {};
@@ -340,6 +340,13 @@
     		return series;
     	}
     	  	
+    	
+    	function makeOutlierCharts() {
+    	
+    	
+    	
+    	}
+    	
     	
     	function makeCompletenessTrendCharts() {
     		
