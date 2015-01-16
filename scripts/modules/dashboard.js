@@ -361,36 +361,55 @@
 			
 			console.log("Making outlier charts");
 			
-			var variables = [];
-			
-			for (var i = 0; i < self.dataAvailable.length; i++) {
-				variables.push(self.dataAvailable[i].localData.id);
+			var periodType;			
+			for (var k = 0; k < self.periodTypes.length; k++) {
+				periodType = self.periodTypes[k].pt;
+				
+							
+				//Rewind one period
+				var endDate = moment();
+				var startDate = moment(endDate).subtract(12, 'months').add(1, 'day');
+				startDate = moment(startDate).subtract(1, 'month');
+				endDate = moment(endDate).subtract(1, 'month');
+				var pe = periodService.getISOPeriods(startDate, endDate, periodType);
+				
+				
+				var variables = [];
+				for (var i = 0; i < self.dataAvailable.length; i++) {
+					
+					if (self.dataAvailable[i].periodType === periodType) {
+						variables.push(self.dataAvailable[i].localData.id);
+					}
+				}
+				
+				
+				var orgunit = ["USER_ORGUNIT_CHILDREN"];
+				
+				
+				var parameters = {
+					'outlierLimit': 2.0,
+					'co': false
+				};
+				
+				
+				
+				
+				/** OUTLIER ANALYSIS
+				@param callback			function to send result to
+				@param variables		array of data element, dataset or indicator IDs
+				@param periods			array of periods in ISO format
+				@param orgunits			array of orgunit IDs
+				@param parameters		object with the following properties
+					.outlierLimit	int		SD from mean to count as outlier
+					.gapLimit		int		number of gaps/missing data to count as violation
+					.OUgroup		string	ID of orgunit group for disaggregation.
+					.OUlevel		int 	orgunit level for disaggregation.
+					.co				bool	whether or not include categoryoptions
+					.coFilter		array of strings of data element operands to include in result
+				self.outlier = function (callback, variables, periods, orgunits, parameters) {*/
+				console.log("PT: " + periodType);
+				dataAnalysisService.outlier(drawOutlierCharts, variables, pe, orgunit, parameters);
 			}
-						
-			//Rewind one period
-			var endDate = moment();
-			var startDate = moment(endDate).subtract(12, 'months').add(1, 'day');
-			startDate = moment(startDate).subtract(1, 'month');
-			endDate = moment(endDate).subtract(1, 'month');
-			
-			var pe = periodService.getISOPeriods(startDate, endDate, 'Monthly').join(';'); 
-			
-			
-			/** OUTLIER ANALYSIS
-			@param callback			function to send result to
-			@param variables		array of data element, dataset or indicator IDs
-			@param periods			array of periods in ISO format
-			@param orgunits			array of orgunit IDs
-			@param parameters		object with the following properties
-				.outlierLimit	int		SD from mean to count as outlier
-				.gapLimit		int		number of gaps/missing data to count as violation
-				.OUgroup		string	ID of orgunit group for disaggregation.
-				.OUlevel		int 	orgunit level for disaggregation.
-				.co				bool	whether or not include categoryoptions
-				.coFilter		array of strings of data element operands to include in result
-			self.outlier = function (callback, variables, periods, orgunits, parameters) {*/
-			
-			//dataAnalysisService.outlier(drawOutlierCharts, variables
 			    	
     	}
     	
