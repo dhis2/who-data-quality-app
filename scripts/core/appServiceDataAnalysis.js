@@ -324,6 +324,8 @@
 			var dxOut = {};
 			var peGaps = {};
 			var peOut = {};
+			
+			var dxPeOut = {};
 
 			//When iterating through all rows, make a name dictionary as well 
 			var names = {};
@@ -355,16 +357,34 @@
 				
 				//Get number of gaps per pe
 				for (var j = 0; j < meta.peGap.length; j++) {
-					//Get number of outliers per dx
+					//Get number of gaps per pe
 					if (peGaps[meta.peGap[j]]) peGaps[meta.peGap[j]]++;
 					else peGaps[meta.peGap[j]] = 1;
 				}
 				
 				//Get number of outliers per pe
 				for (var j = 0; j < meta.peOut.length; j++) {
-					//Get number of outliers per dx
+					//Get number of outliers per pe
 					if (peOut[meta.peOut[j]]) peOut[meta.peOut[j]]++;
-					else peOut[meta.peOut[j]] = 1;	
+					else peOut[meta.peOut[j]] = 1;
+					
+					//Get the number of outliers per dx AND pe
+					
+					if (dxPeOut[meta.dxID]) {
+						
+						dxPeOut[meta.dxID][meta.peOut[j]]++;
+						
+					}
+					else {
+						dxPeOut[meta.dxID] = {};
+						
+						for (var i = 0; i < self.periods.length; i++) {
+							dxPeOut[meta.dxID][self.periods[i]] = 0;
+						}
+						
+						dxPeOut[meta.dxID][meta.peOut[j]]++;
+					}
+					 	
 				}
 				
 				names[meta.ouID] = meta.ouName;
@@ -378,6 +398,7 @@
 			self.result.aggregates.dxOut = dxOut;
 			self.result.aggregates.peGaps = peGaps;
 			self.result.aggregates.peOut = peOut;
+			self.result.aggregates.dxPeOut = dxPeOut;
 			
 			self.result.metaData.names = names;
 			self.result.metaData.variables = self.variables;
