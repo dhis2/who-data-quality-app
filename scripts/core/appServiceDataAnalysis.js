@@ -6,6 +6,8 @@
 		var self = this;
 		self.maxPendingRequests = 3;
 		
+		self.analysisQueue = [];
+		
 		function reset() {
 			self.debugCount = 0;
 			self.analysisType = null;
@@ -22,7 +24,35 @@
 			self.periods = null;
 			self.orgunits = null;
 			self.parameters = null;
+			
+			self.inProgress = false;
 		}
+		
+		
+		function nextAnalysis() {
+		
+			if (self.inProgress) return;
+			
+			var queueItem = self.analysisQueue.pop();
+			
+			if (!queueItem) return;
+			
+			reset();
+			self.callback = queueItem.callback;
+			self.variables = queueItem.variables; 
+			self.periods = queueItem.periods; 
+			self.orgunits = queueItem.orgunits; 
+			self.parameters = queueItem.param;
+			self.analysisType = queueItem.type;					
+			
+			self.inProgress = true;
+			
+			if (self.analysisType === 'outlier') {
+				resetOutlierResult();
+				createOutlierRequests();
+			}
+		}
+		
 		
 		/** OUTLIER ANALYSIS
 		@param callback			function to send result to
@@ -38,16 +68,17 @@
 			.coFilter		array of strings of data element operands to include in result
 		*/
 		self.outlier = function (callback, variables, periods, orgunits, parameters) {
-			reset();
-			self.callback = callback;
-			self.variables = variables; 
-			self.periods = periods; 
-			self.orgunits = orgunits; 
-			self.parameters = parameters;
-			self.analysisType = 'outlier';						
+			var queueItem = {
+				'callback': callback,
+				'variables': variables,
+				'periods': periods, 
+				'orgunits': orgunits,
+				'param': parameters,
+				'type': 'outlier'
+			};
+			self.analysisQueue.push(queueItem);
 			
-			resetOutlierResult();
-			createOutlierRequests();
+			nextAnalysis();
 		}
 		
 		
@@ -351,6 +382,9 @@
 			console.log("Returning");
 			
 			self.callback(self.result);
+			
+			self.inProgress = false;
+			nextAnalysis();
 		}				
 		
 		
