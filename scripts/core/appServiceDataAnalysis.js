@@ -228,7 +228,7 @@
 							valueSet.push(parseFloat(value));
 						}
 						else {
-							newRow.metaData.peGap.push(periods[periods.length - (row.length - j - 1)]);			
+							newRow.metaData.peGap.push(periods[periods.length - (row.length - j)]);			
 							newRow.metaData.gaps++;
 						}
 						
@@ -254,7 +254,7 @@
 							
 							//Check if outlier according to parameters
 							if (zScore >= SD) {
-								newRow.metaData.peOut.push(periods[periods.length - (row.length - j - 1)]);					
+								newRow.metaData.peOut.push(periods[periods.length - (row.length - j)]);					
 								newRow.metaData.outliers++;	
 							}
 						}
@@ -378,8 +378,8 @@
 					else {
 						dxPeOut[meta.dxID] = {};
 						
-						for (var i = 0; i < self.periods.length; i++) {
-							dxPeOut[meta.dxID][self.periods[i]] = 0;
+						for (var k = 0; k < self.periods.length; k++) {
+							dxPeOut[meta.dxID][self.periods[k]] = 0;
 						}
 						
 						dxPeOut[meta.dxID][meta.peOut[j]]++;
