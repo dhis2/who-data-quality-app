@@ -228,7 +228,7 @@
 							valueSet.push(parseFloat(value));
 						}
 						else {
-							newRow.metaData.peGap.push(periods[j]);					
+							newRow.metaData.peGap.push(periods[periods.length - (row.length - j - 1)]);			
 							newRow.metaData.gaps++;
 						}
 						
@@ -254,7 +254,7 @@
 							
 							//Check if outlier according to parameters
 							if (zScore >= SD) {
-								newRow.metaData.peOut.push(periods[j]);					
+								newRow.metaData.peOut.push(periods[periods.length - (row.length - j - 1)]);					
 								newRow.metaData.outliers++;	
 							}
 						}
@@ -328,6 +328,11 @@
 			//When iterating through all rows, make a name dictionary as well 
 			var names = {};
 			
+			for (var i = 0; i < self.periods.length; i++) {
+				peGaps[self.periods[i]] = 0;
+				peOut[self.periods[i]] = 0;			
+			}
+			
 			var meta;
 			for (var i = 0; i < self.result.rows.length; i++) {
 				meta = self.result.rows[i].metaData;
@@ -351,27 +356,28 @@
 				//Get number of gaps per pe
 				for (var j = 0; j < meta.peGap.length; j++) {
 					//Get number of outliers per dx
-					if (peGaps[meta.peGap[i]]) peGaps[meta.peGap[i]]++;
-					else peGaps[meta.peGap[i]] = 1;
+					if (peGaps[meta.peGap[j]]) peGaps[meta.peGap[j]]++;
+					else peGaps[meta.peGap[j]] = 1;
 				}
 				
 				//Get number of outliers per pe
 				for (var j = 0; j < meta.peOut.length; j++) {
 					//Get number of outliers per dx
-					if (peOut[meta.peOut[i]]) peOut[meta.peOut[i]]++;
-					else peOut[meta.peOut[i]] = 1;	
+					if (peOut[meta.peOut[j]]) peOut[meta.peOut[j]]++;
+					else peOut[meta.peOut[j]] = 1;	
 				}
 				
 				names[meta.ouID] = meta.ouName;
 				names[meta.dxID] = meta.dxName
 			}
 			
-			self.result.aggregates.ouGaps;
-			self.result.aggregates.ouOut;
-			self.result.aggregates.dxGaps;
-			self.result.aggregates.dxOut;
-			self.result.aggregates.peGaps;
-			self.result.aggregates.peOut;
+			self.result.aggregates = {};
+			self.result.aggregates.ouGaps = ouGaps;
+			self.result.aggregates.ouOut = ouOut;
+			self.result.aggregates.dxGaps = dxGaps;
+			self.result.aggregates.dxOut = dxOut;
+			self.result.aggregates.peGaps = peGaps;
+			self.result.aggregates.peOut = peOut;
 			
 			self.result.metaData.names = names;
 			self.result.metaData.variables = self.variables;
