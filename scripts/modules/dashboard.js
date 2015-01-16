@@ -19,13 +19,13 @@
 			
 			nv.graphs = [];
     		    		
-    		self.analysisType = 'comp'; 
     		self.count = 0;
     		self.loaded = {};
     		
     		self.dataSetsAvailable = [];
     		self.dataAvailable = [];
     		self.periodTypes = [];
+    		self.periodTypeAggregates = [];
     		self.dataSetIsSet = false;
     		self.dataIsSet = false;
     		
@@ -381,7 +381,7 @@
 						variables.push(self.dataAvailable[i].localData.id);
 					}
 				}
-				
+							
 				
 				var orgunit = ["USER_ORGUNIT_CHILDREN"];
 				
@@ -391,23 +391,6 @@
 					'co': false
 				};
 				
-				
-				
-				
-				/** OUTLIER ANALYSIS
-				@param callback			function to send result to
-				@param variables		array of data element, dataset or indicator IDs
-				@param periods			array of periods in ISO format
-				@param orgunits			array of orgunit IDs
-				@param parameters		object with the following properties
-					.outlierLimit	int		SD from mean to count as outlier
-					.gapLimit		int		number of gaps/missing data to count as violation
-					.OUgroup		string	ID of orgunit group for disaggregation.
-					.OUlevel		int 	orgunit level for disaggregation.
-					.co				bool	whether or not include categoryoptions
-					.coFilter		array of strings of data element operands to include in result
-				self.outlier = function (callback, variables, periods, orgunits, parameters) {*/
-				console.log("PT: " + periodType);
 				dataAnalysisService.outlier(drawOutlierCharts, variables, pe, orgunit, parameters);
 			}
 			    	
@@ -415,9 +398,54 @@
     	
     	
     	function drawOutlierCharts(result) {
+
+    		var outlierSeries = result.aggregates.dxPeOut;
     		
-    		console.log("Received result:");
-    		console.log(result);
+    		//Outliers
+    		var stackedSeries = [];
+    		for (key in outlierSeries) {
+    			var series = {};
+    			series.key = result.metaData.names[key];
+    			series.values = [];
+    			
+    			var i = 0;
+    			for (pe in outlierSeries[key]) {
+    				series.values.push({'x': i++, 'y': outlierSeries[key][pe]});
+    			}
+    			
+    			stackedSeries.push(series);
+    		}
+    		var categoryNames = [];
+    		for (var i = 0; i < result.metaData.periods.length; i++) {
+    			categoryNames.push(periodService.shortPeriodName(result.metaData.periods[i]));
+    		}
+    		
+    		var periodType = periodService.periodTypeFromPeriod(result.metaData.periods[0]);
+    		
+    		visualisationService.makeMultiBarChart('out_' + periodType, stackedSeries, {'categoryLabels': categoryNames, 'title': "Outliers over time - " + periodType});
+    		
+    		self.periodTypeAggregates[periodType] = result.aggregates;    		
+    		
+    		drawOutlierPieCharts();
+    	}
+    	
+    	
+    	function drawOutlierPieCharts() {
+    		
+    		var count = 0;
+    		for (k in self.periodTypeAggregates) if (self.periodTypeAggregates.hasOwnProperty(k)) count++;
+    		
+    		//Check if all data is here for the summary charts
+    		if (count < self.periodTypes.length) return;
+    		
+    		var periodType;
+    		for (var i = 0; i < self.periodTypes.length; i++) {
+    			periodType = self.periodTypes[i];
+    			
+    			
+    			
+    			
+    		}    	
     	
     	}
     	
