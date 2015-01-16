@@ -245,7 +245,7 @@
 			                <td>{{row.metaData.dxName}}</td>
 			                <td ng-repeat="value in row.data track by $index" 
 			                	class="valueCell"
-			                	ng-class="{warning: value==='', danger: aCtrl.isOutlier(value, row.metaData.mean, row.metaData.sd, aCtrl.stdDev)}"
+			                	ng-class="{warning: value==='', danger: aCtrl.isOutlier(value, row.metaData.mean, row.metaData.sd, aCtrl.stdDev) && aCtrl.stdDev > 0}"
 			                	>{{value}}</td>
 			                <td class="valueCell">{{row.metaData.maxZ}}</td>
 			                <td class="valueCell">{{row.metaData.gapWeight}}</td>

@@ -653,7 +653,7 @@
 			
 			
 			//Reset filter
-			self.stdDev = 0;
+			self.stdDev = 2;
 			self.gapLimit = 0;
 			
 			
@@ -676,7 +676,8 @@
 	     
 	    self.isOutlier = function (value, mean, sd, lim) {
 	   		var z = (value-mean)/sd;
-	   		if (z > self.baseStdDev) return true;
+	   		if (z >= self.stdDev) return true;
+	   		else if (z <= -self.stdDev) return true;
 	   		else return false;
 	   	}
 	   		   	
