@@ -17,6 +17,8 @@
 				setWindowWidth();
 			});
 			
+			self.analysisType = 'comp';
+			
 			nv.graphs = [];
     		    		
     		self.count = 0;
