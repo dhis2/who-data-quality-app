@@ -147,11 +147,10 @@
        		}
        	}
        	    	
+       	
     	  	
     	
     	function makeOutlierCharts() {
-			
-			console.log("Making outlier charts");
 			
 			var periodType;			
 			for (var k = 0; k < self.periodTypes.length; k++) {
@@ -172,14 +171,12 @@
 					if (self.dataAvailable[i].periodType === periodType) {
 						variables.push(self.dataAvailable[i].localData.id);
 					}
-				}
-							
+				}	
 				
 				var orgunit = ["USER_ORGUNIT_CHILDREN"];
 				
-				
 				var parameters = {
-					'outlierLimit': 2.0,
+					'outlierLimit': 2.5,
 					'co': false
 				};
 				
@@ -216,6 +213,7 @@
     		
     		visualisationService.makeMultiBarChart('out_' + periodType, stackedSeries, {'categoryLabels': categoryNames, 'title': "Outliers over time - " + periodType});
     		
+    		result.aggregates.names = result.metaData.names;
     		self.periodTypeAggregates[periodType] = result.aggregates;    		
     		
     		drawOutlierPieCharts();
@@ -231,13 +229,60 @@
     		if (count < self.periodTypes.length) return;
     		
     		var periodType;
+    		
+    		var ouOut = {};
+    		var dxOut = {};
+    		
+    		var aggregates;
+    		var names = [];
     		for (var i = 0; i < self.periodTypes.length; i++) {
-    			periodType = self.periodTypes[i];
+    			periodType = self.periodTypes[i].pt;
+    			aggregates = self.periodTypeAggregates[periodType];
     			
+    			for (dx in aggregates.dxOut) {
+    				if (!dxOut[dx]) dxOut[dx] = aggregates.dxOut[dx];
+    				else dxOut[dx] += aggregates.dxOut[dx];
+    			}
     			
+    			for (ou in aggregates.ouOut) {
+    				if (!ouOut[ou]) ouOut[ou] = aggregates.ouOut[ou];
+    				else ouOut[ou] += aggregates.ouOut[ou];
+    			}
     			
-    			
-    		}    	
+    			for (id in aggregates.names) {
+    				names[id] = aggregates.names[id];
+    			}
+    		}
+    		
+    		var series = [];
+    		for (key in ouOut) {
+    			series.push({
+    				'label': names[key],
+    				'value': ouOut[key]
+    			});
+    		}
+    		series.sort(function (a,b) {
+    			if (a.label < b.label) return -1;
+    			if (a.label > b.label) return 1;
+    			return 0;
+    		});
+    		visualisationService.makePieChart('out_ou', series, {'title': 'Outliers by orgunit'});
+
+			
+    		var series = [];
+    		for (key in dxOut) {
+    			series.push({
+    				'label': names[key],
+    				'value': dxOut[key]
+    			});
+    		}
+    		series.sort(function (a,b) {
+				if (a.label < b.label) return -1;
+				if (a.label > b.label) return 1;
+				return 0;
+			});
+    		visualisationService.makePieChart('out_dx', series, {'title': 'Outliers by variable'});
+
     	
     	}
     	
