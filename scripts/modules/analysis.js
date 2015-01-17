@@ -11,7 +11,7 @@
 	    }
 	});
 	
-	app.controller("AnalysisController", function(completenessDataService, metaDataService, periodService, requestService, dataAnalysisService, $scope, $modal) {
+	app.controller("AnalysisController", function(metaDataService, periodService, requestService, dataAnalysisService, $scope, $modal) {
 		var self = this;
 			    
 	    self.result = undefined;
