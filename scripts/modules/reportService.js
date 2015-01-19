@@ -311,8 +311,14 @@
 			
 			//First get data for parent
 			var boundaryData = ouConsistency(boundary.rows[0].slice(valStart, curVal), boundary.rows[0][curVal]);
+			
+			if (!boundaryData) {
+				self.result.alerts.push({type: 'warning', msg: "Consistency over time: not enough data to include " +  boundary.metaData.names[dataInfo.id] + " in the analysis."});
+				return;
+			}
+			
 			var errors = false;
-			var childData, outliers = 0, outlierNames = [], totalChildren = children.metaData.ou.length;
+			var childData, outliers = 0, outlierNames = [], totalChildren = children.metaData.ou.length;			
 			for (var i = 0; i < children.rows.length; i++) {
 				childData = ouConsistency(children.rows[i].slice(valStart, curVal), children.rows[i][curVal]);
 				if (childData === null) {
@@ -349,7 +355,7 @@
 		
 		function ouConsistency(previousYears, currentYear) {
 			
-			//TODO: ignore missing values (lack of historical data)
+			//TODO: ignore missing values? (lack of historical data)
 			var withData = [];
 			for (var i = 0; i < previousYears.length; i++) {
 				if (previousYears[i] != '') {
@@ -471,7 +477,7 @@
 					}
 				}
 			}
-			else { //outlier = ration above/below a certain value
+			else { //outlier = ratio above/below a certain value
 				for (var ou in childrenValues) {
 					totalChildren++;
 					if (childrenValues[ou].A != '' && childrenValues[ou].B != '') {
@@ -618,13 +624,13 @@
 				    "iConsistency": [
 				        {
 				            "label": "Accuracy of event reporting - extreme outliers",
-				            "description": "The overall score denotes the percentage of values reported during the year that are extreme outliers. For lower level units, more than 2 outlieries qualifies as poor score.",
+				            "description": "The overall score denotes the percentage of values reported during the year that are extreme outliers. \nFor lower level units, more than 2 outlieries qualifies as poor score.",
 				            "type": "extremeOutliers",
 				            "indicators": []
 				        },
 				        {
 				            "label": "Accuracy of event reporting - moderate outliers",
-				            "description": "The overall score denotes the percentage of values reported during the year that are moderate outliers. For lower level units, more than 2 outlieries qualifies as poor score.",
+				            "description": "The overall score denotes the percentage of values reported during the year that are moderate outliers. \nFor lower level units, more than 2 outlieries qualifies as poor score.",
 				            "type": "moderateOutliers",
 				            "indicators": []
 				        },
@@ -636,7 +642,7 @@
 				        },
 				        {
 				            "label": "Internal consistency between indicators - by level",
-				            "description": "The overall score denotes the ratio between the two indicatos.\nFor the lower level units, poor score indicates a large difference in a given units ration compared to the overall ratio.",
+				            "description": "The overall score denotes the ratio between the two indicatos.\nFor the lower level units, poor score indicates a large difference in a given units ratio compared to the overall ratio.",
 				            "type": "consistencyOU",
 				            "indicators": []
 				        },

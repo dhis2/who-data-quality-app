@@ -3,9 +3,9 @@
 	
 	var app = angular.module('reportCard', []);
 	
-	app.controller("ReviewController", function(completenessDataService, metaDataService, periodService, reportService, requestService) {
-		var self = this;
-		    
+	app.controller("ReviewController", function(metaDataService, periodService, reportService, requestService) {
+		var self = this;    
+		
 	    init();
 	    
 	    function init() {
