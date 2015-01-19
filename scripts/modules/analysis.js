@@ -33,7 +33,7 @@
 	    	
 	    	self.dataElements = [];
 	    	self.dataElementPlaceholder = "";
-	    	self.dataElementsSelected = undefined;
+	    	self.dataElementsSelected = [];
 			
 			
 			self.indicatorGroups = [];
@@ -44,7 +44,7 @@
 			
 	    	self.indicators = [];
 	    	self.indicatorPlaceholder = "";
-	    	self.indicatorsSelected = undefined;
+	    	self.indicatorsSelected = [];
 	    	
 	    	
 	    	self.analysisOrgunits = [];
@@ -145,7 +145,7 @@
 				function() {
 					
 					if (self.dataElementGroupsSelected) {
-						self.dataElementsSelected = undefined;
+						self.dataElementsSelected = [];
 						updateDataElementList();	
 					}   
 				}
@@ -302,7 +302,7 @@
 	    
 	    function updateDataElementList() {
 	   		self.dataElements = [];
-	   		self.dataElementsSelected = undefined;
+	   		self.dataElementsSelected = [];
 	    	if (self.dataDisaggregation === 0) {	    	
 	    		self.dataElementPlaceholder = "Loading...";
 		    	metaDataService.getDataElementGroupMembers(self.dataElementGroupsSelected.id)
@@ -328,7 +328,7 @@
 	    
   	    function updateIndicatorList() {
   	    	self.indicators = [];
-	   		self.indicatorsSelected = undefined;
+	   		self.indicatorsSelected = [];
   	    	self.indicatorPlaceholder = "Loading...";
   	    	metaDataService.getIndicatorGroupMembers(self.indicatorGroupsSelected.id)
   	    		.then(function(data) { 
@@ -405,7 +405,9 @@
 			var dataIDs = [];
 			if (!details && self.indicatorGroupsSelected) {
 				if (self.indicatorsSelected) {
-					dataIDs.push(self.indicatorsSelected.id);
+					for (var i = 0; i < self.indicatorsSelected.length; i++) {
+						dataIDs.push(self.indicatorsSelected[i].id);
+					}
 				}
 				else { //Selected group but did not specify = all
 					for (var i = 0; i < self.indicators.length; i++) {
@@ -418,8 +420,10 @@
 			if (self.dataElementGroupsSelected) {
 				if (details) {
 					if (self.dataElementsSelected) {
-						coFilter[self.dataElementsSelected.id] = true;
-						dataIDs.push(self.dataElementsSelected.dataElementId);
+						for (var i = 0; i < self.dataElementsSelected.length; i++) {
+							coFilter[self.dataElementsSelected[i].id] = true;
+							dataIDs.push(self.dataElementsSelected[i].dataElementId);	
+						}
 					}
 					else { //Selected group but did not specify = all
 						for (var i = 0; i < self.dataElements.length; i++) {
@@ -430,7 +434,9 @@
 				}
 				else {
 					if (self.dataElementsSelected) {
-						dataIDs.push(self.dataElementsSelected.id);
+						for (var i = 0; i < self.dataElementsSelected.length; i++) {
+							dataIDs.push(self.dataElementsSelected[i].id);
+						}
 					}
 					else { //Selected group but did not specify = all
 						for (var i = 0; i < self.dataElements.length; i++) {
