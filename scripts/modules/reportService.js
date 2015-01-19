@@ -16,21 +16,15 @@
 		}
 	
 		
-		self.setCallback = function (callback) {
-		
-			console.log("Callback set");
-			
-			self.resultCallback = callback;
-		
-		}
 		
 		
-		self.doAnalysis = function (orgunitBoundaryID, orgunitLevel, year, group) {
+		self.doAnalysis = function (orgunitBoundaryID, orgunitLevel, year, group, callBack) {
 			self.orgunitBoundaryID = orgunitBoundaryID;
 			self.orgunitLevel = orgunitLevel;
 			self.analysisYear = year; 
 			self.group = group;
 			self.core = false;
+			self.resultCallback = callBack;
 			if (group === 'Core') self.core = true;
 			
 			//Result skeleton
@@ -102,6 +96,9 @@
 				if (boundary.headers[i].name === 'value') val = i;
 				if (boundary.headers[i].name === 'dx') dx = i;
 			}
+			
+			var dataSetID = boundary.rows[0][dx];
+			console.log(dataSetCompletenessTarget(dataSetID))
 			
 			if (boundary.rows.length > 0) {
 				dataSetCompleteness.level1 = boundary.rows[0][val];
@@ -602,6 +599,7 @@
 		function analysisParameters() {
 			
 			
+			
 			//TODO - per dataset
 			var parameters = {
 				"completenessTarget": 75
@@ -611,6 +609,19 @@
 			return parameters;
 			
 		}
+		
+		
+		function dataSetCompletenessTarget(dataSetID) {
+			
+			var DSid;
+			for (var i = 0; i < self.map.dataSets.length; i++) {
+				DSid = self.map.dataSets[i].id;
+				if (DSid === dataSetID) return self.map.dataSets[i].threshold;
+			}
+			
+			return -1;
+		}
+		
 		
 		
 		function resultTemplate() {

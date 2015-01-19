@@ -67,13 +67,15 @@
 	    
 	  	
 	  	self.doAnalysis = function() {
-	  		
-			reportService.doAnalysis(self.userOrgunit.id, self.orgunitLevelSelected.level, self.yearSelected.id, self.groupSelected.name);
+	  		self.result = null;
+	  		self.ready = false;
+
+			reportService.doAnalysis(self.userOrgunit.id, self.orgunitLevelSelected.level, self.yearSelected.id, self.groupSelected.name, resultCallback);
 			
 		}
 		
     
-	    var resultCallback = function (result) {
+	    function resultCallback(result) {
     		self.result = result;
     		updateView();
 	    }  
@@ -83,11 +85,7 @@
 	    function updateView() {
 	    	if (self.result != null) self.ready = true;
 	    }
-	    
-	    
-	    
-	    reportService.setCallback(resultCallback);
-	
+	    	
 		return self;
 	});
 		
