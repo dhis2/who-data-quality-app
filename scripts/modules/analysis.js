@@ -557,7 +557,7 @@
         self.sendMessage = function(metaData) {
         	        	
         	var modalInstance = $modal.open({
-	            templateUrl: "modals/modalMessage.html",
+	            templateUrl: "scripts/modals/modalMessage.html",
 	            controller: "ModalMessageController",
 	            controllerAs: 'mmCtrl',
 	            resolve: {

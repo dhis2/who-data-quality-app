@@ -46,7 +46,7 @@
 	    self.mapIndicator = function(indicator) {
 	       	     	
 	    	var modalInstance = $modal.open({
-	            templateUrl: "modals/modalMapping.html",
+	            templateUrl: "scripts/modals/modalMapping.html",
 	            controller: "ModalMappingController",
 	            controllerAs: 'mapCtrl',
 	            resolve: {
