@@ -30,12 +30,21 @@
 		
 		
 		function nextAnalysis() {
-		
-			if (self.inProgress) return;
+			
+			if (self.inProgress) {
+				console.log("Analysis job already in progress.");	
+				return;
+			}			
+			
 			
 			var queueItem = self.analysisQueue.pop();
 			
-			if (!queueItem) return;
+			if (!queueItem) {
+				console.log("No more jobs in queue");
+				return;
+			}
+			
+			console.log("Doing next analysis job");
 			
 			reset();
 			self.callback = queueItem.callback;
@@ -134,6 +143,10 @@
 					"done": false
 				});
 			}
+			
+			console.log(self.requestQueue.length + " requests in queue for this job");
+			
+			if (self.requestQueue.length === 0) self.inProgress = false;
 			
 			requestData();
 		}
