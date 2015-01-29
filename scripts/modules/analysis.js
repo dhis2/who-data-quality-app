@@ -404,7 +404,7 @@
 			
 			var dataIDs = [];
 			if (!details && self.indicatorGroupsSelected) {
-				if (self.indicatorsSelected) {
+				if (self.indicatorsSelected.length > 0) {
 					for (var i = 0; i < self.indicatorsSelected.length; i++) {
 						dataIDs.push(self.indicatorsSelected[i].id);
 					}
@@ -419,7 +419,7 @@
 			var coFilter = {};
 			if (self.dataElementGroupsSelected) {
 				if (details) {
-					if (self.dataElementsSelected) {
+					if (self.dataElementsSelected.length > 0) {
 						for (var i = 0; i < self.dataElementsSelected.length; i++) {
 							coFilter[self.dataElementsSelected[i].id] = true;
 							dataIDs.push(self.dataElementsSelected[i].dataElementId);	
@@ -433,7 +433,7 @@
 					}
 				}
 				else {
-					if (self.dataElementsSelected) {
+					if (self.dataElementsSelected.length > 0) {
 						for (var i = 0; i < self.dataElementsSelected.length; i++) {
 							dataIDs.push(self.dataElementsSelected[i].id);
 						}
