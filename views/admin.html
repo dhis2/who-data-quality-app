@@ -2,18 +2,20 @@
 	<tabset>
 		<tab heading="Data Mapping" active="admCtrl.activeTab">
 			<br />
-			<p>Please map the reference data elements/indicators to the corresponding data element/indicator in this database.</p>
+			<p>Please map the reference data to the corresponding data element/indicator in this database.</p>
 			<table style="font-size: 95%;" class="table table-bordered table-striped table-condensed table-hover">
 				<tr>
-					<th>Group</th>
+					<th>Groups</th>
 					<th>Reference data</th>
+					<th>Core</th>
 					<th>Data element/indicator</th>
-					<th>Dataset (completeness)</th>
+					<th>Dataset</th>
 					<th width="135px"></th>
 				</tr>
-				<tr ng-repeat="indicator in admCtrl.mapping.data | orderBy:['group','name']:false">
-					<td class="vert-align">{{indicator.group}}</td>
+				<tr ng-repeat="indicator in admCtrl.mapping.data | orderBy:admCtrl.sortIndicators">
+					<td class="vert-align">{{admCtrl.dataGroups(indicator.code)}}</td>
 					<td class="vert-align">{{indicator.name}}</td>
+					<td class="vert-align" style="text-align: center;"><span ng-if="admCtrl.isCore(indicator.code)" class="glyphicon glyphicon-ok"></span></td>
 					<td class="vert-align">{{indicator.localData.name}}</td>
 					<td class="vert-align">{{admCtrl.dataSetNameFromID(indicator.dataSetID);}}</td>
 					<td class="vert-align"><button ng-click="admCtrl.mapIndicator(indicator);" class="btn btn-default">Edit</button><button ng-disabled="!indicator.matched" style="margin-left: 5px;" ng-click="admCtrl.deleteMapping(indicator);" class="btn btn-warning">Delete</button></td>	

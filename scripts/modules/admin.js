@@ -95,6 +95,39 @@
         	}
         }
         
+        self.dataGroups = function(dataCode) {
+        	var groups = [];
+        	
+        	var current = self.mapping.groups;
+        	for (var i = 0; i < current.length; i++) {
+        		for (var j = 0; j < current[i].members.length; j++) {
+        			if (current[i].members[j] === dataCode) {
+        				 groups.push(current[i].name);
+        			}
+        		}
+        	}
+        	
+        	return groups.sort().join(', ');
+        }
+        
+        self.sortIndicators = function(indicator) {
+      		
+      		var groups = self.dataGroups(indicator.code);
+      		var firstGroup = groups.split(',')[0];
+      		
+      		return firstGroup + indicator.name;
+        }
+        
+        self.isCore = function(code) {
+        	
+        	var core = self.mapping.coreIndicators;
+        	for (var i = 0; i < core.length; i++) {
+        		if (core[i] === code) return true;
+        	}
+        	return false;
+        
+        }
+        
         
         self.filterMatchedRelations = function(relation) {
         	if (!self.mapping) return false;
