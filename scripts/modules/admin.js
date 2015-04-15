@@ -26,6 +26,8 @@
 	    	self.dataElements = [];
 	    	self.indicators = [];
 	    	self.outlierOptions = makeOutlierOptions();
+	    	
+	    	self.groupSelect = {};
 	    	    		
     		//TODO: check for updates to metaData
     		requestService.getSingle('/api/systemSettings/DQAmapping').then(function(response) {
@@ -52,11 +54,15 @@
 	            resolve: {
 	    	        indicator: function () {
 	    	            return indicator;
+	    	        },
+	    	        groups: function () {
+	    	        	return self.dataGroups(indicator.code);
 	    	        }
 	            }
 	        });
 	
 	        modalInstance.result.then(function (result) {
+	        	console.log(result);
 	        	if (result) {
 	        		updateDataSetListAndSave();
 	        	}
@@ -71,6 +77,9 @@
 			updateDataSetListAndSave();
         }
         
+        self.deleteIndicator = function(indicator) {
+		//TODO
+        }
         
         self.dataSetNameFromID = function(dataSetID) {
         	var current = self.mapping.dataSets;
@@ -109,6 +118,36 @@
         	
         	return groups.sort().join(', ');
         }
+        
+        self.getIndicatorsInGroup = function(groupCode) {
+        	var indicators = [];
+        	
+        	var current = self.mapping.groups;
+        	for (var i = 0; i < current.length; i++) {
+        		
+        		if (current[i].code === groupCode) {
+	        		for (var j = 0; j < current[i].members.length; j++) {
+	        			
+	        			indicators.push(indicatorFromCode(current[i].members[j]));        			
+	        			
+	        		}
+        		}
+        	}     
+        	console.log(indicators);
+        	return indicators;   
+        
+        }
+        
+        function indicatorFromCode(dataCode) {
+        
+        	var current = self.mapping.data;
+        	for (var i = 0; i < current.length; i++) {
+        		if (current[i].code === dataCode) return current[i];
+        	}
+        	
+        	return null;
+        }
+        
         
         self.sortIndicators = function(indicator) {
       		
@@ -155,6 +194,38 @@
 	    self.saveParameterChanges = function () {
 	    	var requestURL = '/api/systemSettings/';	    		    	
 	    	requestService.post(requestURL, {'DQAmapping': angular.toJson(self.mapping)});
+	    }
+	    
+	    self.groupFilter = function (currentMembers) {
+	    	return function(item) {
+	    		
+	    		for (var i = 0; i < currentMembers.length; i++) {
+	    			if (currentMembers[i] === item.code) return false;
+	    		}
+	    		return true;
+	    	}
+	    }
+	    
+	    self.groupIndicator = function(group) {
+	    	
+	    	var current = self.mapping.groups;
+	    	for (var i = 0; i < current.length; i++) {
+	    		if (current[i].code === group.code) {
+	    			current[i].members.push(self.groupSelect[group.code]);
+	    			break;
+	    		}
+	    	}
+	    	
+	    	self.groupSelect[group.code] = null;
+	    	
+	    	
+	    
+	    }
+	    
+	    self.ungroupIndicator = function(group, dataCode) {
+	    	
+	    	
+	    
 	    }
 	    
 	    

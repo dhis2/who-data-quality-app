@@ -1,9 +1,10 @@
 (function(){  
 	/**Controller: Parameters*/
-	angular.module('reportCard').controller("ModalMappingController", function($modalInstance, $scope, requestService, metaDataService, indicator) {
-	    
+	angular.module('reportCard').controller("ModalMappingController", function($modalInstance, $scope, requestService, metaDataService, indicator, groups) {
+	    	    
 	    var self = this; 
 	    self.indicator = indicator;
+	    self.groups = groups;
 	    
 	    self.dataDisaggregation = 0;
 	    self.dataDetails = 0;
@@ -90,7 +91,8 @@
 	    			});
 	    	}
   	    }
-		
+  	    
+  	    		
 		
 		function initWatchers() {
 		

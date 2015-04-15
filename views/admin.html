@@ -18,12 +18,46 @@
 					<td class="vert-align" style="text-align: center;"><span ng-if="admCtrl.isCore(indicator.code)" class="glyphicon glyphicon-ok"></span></td>
 					<td class="vert-align">{{indicator.localData.name}}</td>
 					<td class="vert-align">{{admCtrl.dataSetNameFromID(indicator.dataSetID);}}</td>
-					<td class="vert-align"><button ng-click="admCtrl.mapIndicator(indicator);" class="btn btn-default">Edit</button><button ng-disabled="!indicator.matched" style="margin-left: 5px;" ng-click="admCtrl.deleteMapping(indicator);" class="btn btn-warning">Delete</button></td>	
+					<td class="vert-align"><button ng-click="admCtrl.mapIndicator(indicator);" class="btn btn-default">Edit</button><button ng-if="indicator.custom" style="margin-left: 5px;" ng-click="admCtrl.deleteIndicator(indicator);" class="btn btn-warning">Delete</button><button ng-if="!indicator.custom" ng-disabled="!indicator.matched" style="margin-left: 5px;" ng-click="admCtrl.deleteMapping(indicator);" class="btn btn-warning">Clear</button></td>	
 				</tr>
 			
 			</table>
+			<button type="button" class="btn btn-primary pull-right" ng-click="aCtrl.addIndicator();" style="margin-bottom:20px">Add Indicator</button>
 		</tab>
-		<tab heading="Data Quality Parameters">
+		<tab heading="Data Groups">
+			<br />
+			<p>Use this page to add and remove indicators/data to groups, and to add new groups.</p>
+			<div ng-repeat="group in admCtrl.mapping.groups |orderBy: 'name'">
+				<h4>{{group.name}}</h4>
+				<div ng-init="groupMembers = admCtrl.getIndicatorsInGroup(group.code)">
+				<table style="font-size: 95%;" class="table table-bordered table-striped table-condensed table-hover">
+					<tr>
+						<th>Data</th>
+						<th width="135px"></th>
+					</tr>
+					<tr ng-repeat="indicator in groupMembers | orderBy: 'name'">
+						<td>{{indicator.name}}</td>
+						<td><button ng-click="admCtrl.ungroupIndicator(group, indicator.code);" class="btn btn-danger">Remove</button></td>
+					</tr>
+					<tr>
+						<td><ui-select ng-model="admCtrl.groupSelect[group.code]"  style="margin-bottom: 10px; width: 530px;">
+						  <ui-select-match placeholder="Select item to add to group...">
+						  	{{admCtrl.groupSelect[group.code].name}}
+						  </ui-select-match>
+						  <ui-select-choices 
+						  	repeat="obj in admCtrl.mapping.data | filter: $select.search | filter: admCtrl.groupFilter(group.members)">
+						   		<div ng-bind-html="obj.name | highlight: $select.search"></div>
+						</ui-select-choices>
+						</ui-select></td>
+						<td><button ng-disabled="!admCtrl.groupSelect[group.code]" ng-click="admCtrl.groupIndicator(group);" class="btn btn-success">Add</button></td>
+					</tr>
+					
+				</table>
+				</div>
+			</div>
+			<button type="button" class="btn btn-primary pull-right" ng-click="aCtrl.addIndicator();" style="margin-bottom:20px">Add Group</button>
+		</tab>
+		<tab heading="Quality Parameters">
 			<br />
 			<h4>Outliers</h4>
 			<table style="font-size: 95%;" class="table table-bordered table-striped table-condensed table-hover">
@@ -35,8 +69,8 @@
 					<th>Extreme outlier</th>
 					<th>Consistency</th>
 				</tr>
-				<tr ng-repeat="indicator in admCtrl.mapping.data | filter: {matched: true} | orderBy:['group','name']:false">
-					<td class="vert-align">{{indicator.group}}</td>
+				<tr ng-repeat="indicator in admCtrl.mapping.data | filter: {matched: true} | orderBy:admCtrl.sortIndicators">
+					<td class="vert-align">{{admCtrl.dataGroups(indicator.code)}}</td>
 					<td class="vert-align">{{indicator.name}}</td>
 					<td class="vert-align">{{indicator.localData.name}}</td>
 					<td class="vert-align">
