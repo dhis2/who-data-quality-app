@@ -62,7 +62,6 @@
 	        });
 	
 	        modalInstance.result.then(function (result) {
-	        	console.log(result);
 	        	if (result) {
 	        		updateDataSetListAndSave();
 	        	}
@@ -133,7 +132,7 @@
 	        		}
         		}
         	}     
-        	console.log(indicators);
+
         	return indicators;   
         
         }
@@ -205,6 +204,7 @@
 	    		return true;
 	    	}
 	    }
+	    
 	    
 	    self.groupIndicator = function(group) {
 	    	

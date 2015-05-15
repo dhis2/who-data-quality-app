@@ -18,14 +18,14 @@
 		
 		
 		
-		self.doAnalysis = function (orgunitBoundaryID, orgunitLevel, year, group, callBack) {
+		self.doAnalysis = function (orgunitBoundaryID, orgunitLevel, year, groupCode, callBack) {
 			self.orgunitBoundaryID = orgunitBoundaryID;
 			self.orgunitLevel = orgunitLevel;
 			self.analysisYear = year; 
-			self.group = group;
+			self.group = groupCode;
 			self.core = false;
 			self.resultCallback = callBack;
-			if (group === 'Core') self.core = true;
+			if (groupCode === 'C') self.core = true;
 			
 			//Result skeleton
 			self.result = resultTemplate();
@@ -513,10 +513,8 @@
 			var data, dataSetIDs = {};
 			for (var i = 0; i < self.map.data.length; i++) {
 				data = self.map.data[i];
-				if (data.matched) {
-					if ((data.core && self.core) || (data.group === self.group)) {
-						dataSetIDs[data.dataSetID] = true;
-					}
+				if (data.matched && ((self.core && indicatorIsCore(data.code)) || indicatorInGroup(data.code))) {
+					dataSetIDs[data.dataSetID] = true;
 				}
 			}
 			var IDs = [];
@@ -525,6 +523,29 @@
 			}
 			
 			return IDs;
+		}
+		
+		function indicatorIsCore(code) {
+			for (var j = 0; j < self.map.coreIndicators.length; j++) {
+				if (code === self.map.coreIndicators[j]) {
+					return true;
+				}
+			}
+			
+			return false;
+		}
+		
+		function indicatorInGroup(code) {
+			for (var j = 0; j < self.map.groups.length; j++) {
+				if (self.map.groups[j].code === self.group) {
+					for (var i = 0; i < self.map.groups[j].members.length; i++) {
+						if (self.map.groups[j].members[i] === code)
+						return true;
+					}
+				}
+			}
+			
+			return false;
 		}
 		
 		
@@ -540,7 +561,7 @@
 			var data, dataIDs = [];
 			for (var i = 0; i < self.map.data.length; i++) {
 				data = self.map.data[i];
-				if (data.matched && ((data.core && self.core) || (data.group === self.group))) {
+				if (data.matched && ((self.core && indicatorIsCore(data.code)) || indicatorInGroup(data.code))) {
 					
 					dataIDs.push({
 						'id': data.localData.id,
@@ -563,7 +584,7 @@
 			var data;
 			for (var i = 0; i < self.map.data.length; i++) {
 				data = self.map.data[i];
-				if (data.matched && ((data.core && self.core) || (data.group === self.group)) && data.code === code) {
+				if (data.matched && ((self.core && indicatorIsCore(data.code)) || indicatorInGroup(data.code)) && data.code === code) {
 					return self.map.data[i].localData.id;
 				}
 			}

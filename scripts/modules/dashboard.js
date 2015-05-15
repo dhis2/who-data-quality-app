@@ -32,7 +32,7 @@
     		self.dataIsSet = false;
     		
     		//Makes it possible to switch later if necessary
-    		self.group = 'Core';
+    		self.group = 'None';
     		self.core = true;
     		
     		if (self.metaData) return;
@@ -97,10 +97,9 @@
    			var data, dataSetIDs = {};
    			for (var i = 0; i < self.metaData.data.length; i++) {
    				data = self.metaData.data[i];
-   				if (data.matched) {
-   					if ((data.core && self.core) || (data.group === self.group)) {
-   						dataSetIDs[data.dataSetID] = true;
-   					}
+   				
+   				if (data.matched && ((self.core && indicatorIsCore(data.code)) || (data.group === self.group))) {		
+					dataSetIDs[data.dataSetID] = true;
    				}
    			}
    			var dataSet;
@@ -115,7 +114,7 @@
 			var data;
 			for (var i = 0; i < self.metaData.data.length; i++) {
 				data = self.metaData.data[i];
-				if (data.matched && ((data.core && self.core) || (data.group === self.group))) {
+				if (data.matched && ((self.core && indicatorIsCore(data.code)) || (data.group === self.group))) {
 					
 					for (var j = 0; j < self.dataSetsAvailable.length; j++) {
 						if (self.dataSetsAvailable[j].id === data.dataSetID) {
@@ -126,6 +125,16 @@
 					self.dataAvailable.push(data);
 				}
 			}
+       	}
+       	
+       	function indicatorIsCore(code) {
+			for (var j = 0; j < self.metaData.coreIndicators.length; j++) {
+				if (code === self.metaData.coreIndicators[j]) {
+					return true;
+				}
+			}
+			
+			return false;
        	}
        	
        	

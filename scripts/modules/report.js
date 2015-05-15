@@ -54,14 +54,8 @@
 	    	requestService.getSingle('/api/systemSettings/DQAmapping').then(function(response) {
 	    		
 	    		var indicators = response.data.data;
-	    		var uniqueGroups = {};
-	    		for (var i = 0; i < indicators.length; i++) {
-	    			if (indicators[i].matched) uniqueGroups[indicators[i].group] = true;
-	    		}
-	    		self.groups.push({'name': 'Core'});
-	    		for (key in uniqueGroups) {
-	    			self.groups.push({'name': key});
-	    		}
+	    		self.groups = response.data.groups;
+	    		self.groups.push({'name': 'Core', 'code': 'C'});
 	    	});
 	    }
 	    
@@ -70,7 +64,7 @@
 	  		self.result = null;
 	  		self.ready = false;
 
-			reportService.doAnalysis(self.userOrgunit.id, self.orgunitLevelSelected.level, self.yearSelected.id, self.groupSelected.name, resultCallback);
+			reportService.doAnalysis(self.userOrgunit.id, self.orgunitLevelSelected.level, self.yearSelected.id, self.groupSelected.code, resultCallback);
 			
 		}
 		
