@@ -211,7 +211,8 @@
 	    	var current = self.mapping.groups;
 	    	for (var i = 0; i < current.length; i++) {
 	    		if (current[i].code === group.code) {
-	    			current[i].members.push(self.groupSelect[group.code]);
+	    			current[i].members.push(self.groupSelect[group.code].code);
+	    			self.mapping.groups = current;
 	    			break;
 	    		}
 	    	}
@@ -219,12 +220,31 @@
 	    	self.groupSelect[group.code] = null;
 	    	
 	    	
+	    	saveMapping();
 	    
 	    }
 	    
 	    self.ungroupIndicator = function(group, dataCode) {
 	    	
+	    	for (var i = 0; i < self.mapping.groups.length; i++) {
+	    		if (self.mapping.groups[i].code === group.code) {
+	    			
+	    			var index = self.mapping.groups[i].members.indexOf(dataCode);
+	    			self.mapping.groups[i].members.splice(index, 1);
+	    			
+	    			break;
+	    		}
+	    	}
+	    		    	
+	    	saveMapping();
+	    
+	    }
+	    
+	    
+	    function saveMapping() {
 	    	
+	    	var requestURL = '/api/systemSettings/';
+	    	requestService.post(requestURL, {'DQAmapping': angular.toJson(self.mapping)});
 	    
 	    }
 	    

@@ -29,18 +29,17 @@
 			<p>Use this page to add and remove indicators/data to groups, and to add new groups.</p>
 			<div ng-repeat="group in admCtrl.mapping.groups |orderBy: 'name'">
 				<h4>{{group.name}}</h4>
-				<div ng-init="groupMembers = admCtrl.getIndicatorsInGroup(group.code)">
 				<table style="font-size: 95%;" class="table table-bordered table-striped table-condensed table-hover">
 					<tr>
 						<th>Data</th>
 						<th width="135px"></th>
 					</tr>
-					<tr ng-repeat="indicator in groupMembers | orderBy: 'name'">
-						<td>{{indicator.name}}</td>
-						<td><button ng-click="admCtrl.ungroupIndicator(group, indicator.code);" class="btn btn-danger">Remove</button></td>
+					<tr ng-repeat="indicator in admCtrl.getIndicatorsInGroup(group.code) | orderBy: 'name'">
+						<td class="vert-align">{{indicator.name}}</td>
+						<td class="vert-align"><button ng-click="admCtrl.ungroupIndicator(group, indicator.code);" class="btn btn-danger">Remove</button></td>
 					</tr>
 					<tr>
-						<td><ui-select ng-model="admCtrl.groupSelect[group.code]"  style="margin-bottom: 10px; width: 530px;">
+						<td class="vert-align"><ui-select ng-model="admCtrl.groupSelect[group.code]"  style="margin-bottom: 10px; width: 530px;">
 						  <ui-select-match placeholder="Select item to add to group...">
 						  	{{admCtrl.groupSelect[group.code].name}}
 						  </ui-select-match>
@@ -49,13 +48,12 @@
 						   		<div ng-bind-html="obj.name | highlight: $select.search"></div>
 						</ui-select-choices>
 						</ui-select></td>
-						<td><button ng-disabled="!admCtrl.groupSelect[group.code]" ng-click="admCtrl.groupIndicator(group);" class="btn btn-success">Add</button></td>
+						<td class="vert-align"><button ng-disabled="!admCtrl.groupSelect[group.code]" ng-click="admCtrl.groupIndicator(group)" class="btn btn-success">Add</button></td>
 					</tr>
 					
 				</table>
-				</div>
 			</div>
-			<button type="button" class="btn btn-primary pull-right" ng-click="aCtrl.addIndicator();" style="margin-bottom:20px">Add Group</button>
+			<button type="button" class="btn btn-primary pull-right" ng-click="aCtrl.addGroup();" style="margin-bottom:20px">Add Group</button>
 		</tab>
 		<tab heading="Quality Parameters">
 			<br />
