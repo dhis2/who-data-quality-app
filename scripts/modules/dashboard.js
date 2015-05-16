@@ -184,7 +184,7 @@
 					}
 				}	
 				
-				var orgunit = ["USER_ORGUNIT_GRANDCHILDREN"];
+				var orgunit = ["USER_ORGUNIT_CHILDREN"];
 				
 				var parameters = {
 					'outlierLimit': 2.5,
