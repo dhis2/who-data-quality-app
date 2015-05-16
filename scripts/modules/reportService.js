@@ -87,7 +87,7 @@
 		function analyseCompleteness(boundary, children) {
 			
 			
-			var threshold = parseFloat(analysisParameters().completenessTarget);
+			var threshold = 0;
 			var dataSetCompleteness = {};
 			
 			
@@ -98,7 +98,7 @@
 			}
 			
 			var dataSetID = boundary.rows[0][dx];
-			console.log(dataSetCompletenessTarget(dataSetID))
+			threshold = dataSetCompletenessTarget(dataSetID);
 			
 			if (boundary.rows.length > 0) {
 				dataSetCompleteness.level1 = boundary.rows[0][val];
