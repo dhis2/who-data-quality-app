@@ -205,6 +205,26 @@
 	    	}
 	    }
 	    
+	    self.addIndicator = function () {
+
+	    	var modalInstance = $modal.open({
+	            templateUrl: "scripts/modals/modalAddIndicator.html",
+	            controller: "ModalAddIndicatorController",
+	            controllerAs: 'addCtrl',
+	            resolve: {
+	                groups: function () {
+	                	return self.mapping.groups;
+	                }
+	            }
+	        });
+	
+	        modalInstance.result.then(function (result) {
+	        	if (result) {
+	        		console.log(result);
+	        	}
+	        });
+	    }
+	    
 	    
 	    self.groupIndicator = function(group) {
 	    	
