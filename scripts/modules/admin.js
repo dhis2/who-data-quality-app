@@ -573,7 +573,32 @@
 	    }
 	    
 	    self.editRelation = function(relation) {
-	    	
+	    
+	    	var data = [];
+	    	for (var i = 0; i < self.mapping.data.length; i++) {
+	    		if (self.mapping.data[i].matched) data.push(self.mapping.data[i]);
+	    	}
+	    
+	    	var modalInstance = $modal.open({
+	            templateUrl: "scripts/modals/modalAddEditRelation.html",
+	            controller: "ModalAddEditRelationController",
+	            controllerAs: 'addCtrl',
+	            resolve: {
+	    	        indicators: function () {
+	    	            return data;
+	    	        },
+	    	        relation: function () {
+	    	        	return relation;
+	    	        }
+	            }
+	        });
+	
+	        modalInstance.result.then(function (result) {
+	        	if (result) {
+	        		console.log(result);
+	        		//TODO: Save relation
+	        	}
+	        });
 	    
 	    }
 	    
