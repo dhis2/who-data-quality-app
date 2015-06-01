@@ -4,7 +4,21 @@
 <div class="modal-body">
 
 <table class="table table-bordered">
-	<tr><th>Groups</th><td>{{mapCtrl.groups}}</td></tr>
-	<tr><th>Name</th><td>{{mapCtrl.indicator.name}}</td></tr>
-	<tr><th>Definition</th><td>{{mapCtrl.indicator.definition}}</td>
+	<tr><th>Group</th><td>
+	<ui-select ng-model="addCtrl.groupSelected" theme="bootstrap" style="width: 100%;">
+	  <ui-select-match placeholder="Select data element group...">
+	  	{{addCtrl.groupSelected.name}}
+	  </ui-select-match>
+	  <ui-select-choices 
+	  	repeat="obj in addCtrl.groups | filter: $select.search">
+	   		<div ng-bind-html="obj.name | highlight: $select.search"></div>
+	</ui-select-choices>
+	</ui-select>
+	</td></tr>
+	<tr><th>Name</th><td><input type="text" style="width: 100%;" ng-model="addCtrl.name"/></td></tr>
+	<tr><th>Definition</th><td><textarea style="width: 100%;" ng-model="addCtrl.definition"></textarea></td>
 </table>
+<div class="modal-footer" style="clear: both;">     
+    <button type="button" class="btn btn-default" data-ng-click="addCtrl.cancel()">Cancel</button>
+    <button type="button" class="btn btn-default" data-ng-click="addCtrl.save()" ng-disabled="addCtrl.name === '' || addCtrl.groupSelected.code === undefined">Save</button>
+</div>

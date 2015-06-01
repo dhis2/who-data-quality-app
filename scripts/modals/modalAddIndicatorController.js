@@ -4,8 +4,8 @@
 	    	    
 	    var self = this; 
 	    
-	    self.name = "";
-	    self.definition = "";
+	    self.name = '';
+	    self.definition = '';
 	    self.groups = groups;
 	    self.groupSelected = null;
 	    
@@ -16,7 +16,7 @@
 	    
 	    self.save = function () {
 	    		    	
-	        $modalInstance.close({'name': self.name, 'definition': self.definition});
+	        $modalInstance.close({'group': self.groupSelected.code, 'name': self.name, 'definition': self.definition});
 	    };
 	    
 	});

@@ -28,21 +28,41 @@
 	    	self.outlierOptions = makeOutlierOptions();
 	    	
 	    	self.groupSelect = {};
+	    	
+	    	var needUpdate = false;
 	    	    		
     		//TODO: check for updates to metaData
     		requestService.getSingle('/api/systemSettings/DQAmapping').then(function(response) {
     			if (response.data != "") {
     				self.mapping = response.data;
-    				
+    				if (needUpdate) updateMeta();
     			}
     			else {
     			
     				requestService.getSingleLocal('data/metaData.json').then(function(response) {
     					self.mapping = response.data;
+    					
+    					
     				});
     			}
     		});	
 	    }
+	    
+		function updateMeta() {
+			
+			needUpdate = false;
+			
+			for (var i = 0; i < self.mapping.data.length; i++) {
+				if (self.mapping.data[i].code.charAt(0) === 'C') {
+					self.mapping.data.splice(i, 1);
+				}
+			}
+			
+			removeIndicatorFromGroup("C01", "G1");
+			
+			saveMapping();
+
+		}
 	    
 	    	    
 	    self.mapIndicator = function(indicator) {
@@ -77,7 +97,17 @@
         }
         
         self.deleteIndicator = function(indicator) {
-		//TODO
+			removeIndicator(indicator.code);
+			
+			saveMapping();
+        }
+        
+        function removeIndicator(dataCode) {
+        	for (var i = 0; i < self.mapping.data.length; i++) {
+        		if (self.mapping.data[i].code === dataCode) {
+        			self.mapping.data.splice(i, 1);
+        		}
+        	}
         }
         
         self.dataSetNameFromID = function(dataSetID) {
@@ -220,42 +250,91 @@
 	
 	        modalInstance.result.then(function (result) {
 	        	if (result) {
-	        		console.log(result);
+	        		var dataCode = getNewIndicatorCode();
+	        		
+	        		//Add indicator
+	        		self.mapping.data.push({
+	        			"name": result.name,
+	        			"definition": "Total number of outpatient visits", 
+	        			"code": dataCode,
+	        			"extremeOutlier": 3,
+	        			"localData": {},
+	        			"matched": false,
+	        			"moderateOutlier": 2, 
+	        			"extremeOutlier": 3,
+	        			"consistency": 0.33,
+       					"custom": true,
+	        		});
+	        		
+	        		//Add to group membership
+	        		addIndicatorToGroup(dataCode, result.group);
+	        		
+	        		//Save
+	        		saveMapping();
+	        		
 	        	}
 	        });
 	    }
+	        
 	    
+	    function getNewIndicatorCode() {
 	    
-	    self.groupIndicator = function(group) {
+	    	//Get and return next possible code
+	    	var current, found;
+	    	for (var i = 0; i <= self.mapping.data.length; i++) {
+	    		
+	    		current = "C" + parseInt(i+1);
+	    		existing = false;
+	    		
+		    	for (var j = 0; j < self.mapping.data.length; j++) {	    			
+	    			if (self.mapping.data[j].code === current) existing = true;
+	    		}
+	    		
+	    		if (!existing) return current;
+	    	} 	
 	    	
+	    	console.log("Error finding new data code");
+	    }
+	    
+	    function addIndicatorToGroup(dataCode, groupCode) {
 	    	var current = self.mapping.groups;
 	    	for (var i = 0; i < current.length; i++) {
-	    		if (current[i].code === group.code) {
-	    			current[i].members.push(self.groupSelect[group.code].code);
+	    		if (current[i].code === groupCode) {
+	    			current[i].members.push(dataCode);
 	    			self.mapping.groups = current;
 	    			break;
 	    		}
 	    	}
+	    
+	    }
+	    
+	    function removeIndicatorFromGroup(dataCode, groupCode) {
 	    	
+	    	for (var i = 0; i < self.mapping.groups.length; i++) {
+	    		if (self.mapping.groups[i].code === groupCode) {
+	    			
+	    			var index = self.mapping.groups[i].members.indexOf(dataCode);
+	    			self.mapping.groups[i].members.splice(index, 1);
+	    			
+	    			return;
+	    		}
+	    	}
+	    	
+	    
+	    }
+	    
+	    
+	    self.groupIndicator = function(group) {
+	    	addIndicatorToGroup(self.groupSelect[group.code].code, group.code);
 	    	self.groupSelect[group.code] = null;
-	    	
 	    	
 	    	saveMapping();
 	    
 	    }
 	    
 	    self.ungroupIndicator = function(group, dataCode) {
+	    	removeIndicatorFromGroup(dataCode, group.code);
 	    	
-	    	for (var i = 0; i < self.mapping.groups.length; i++) {
-	    		if (self.mapping.groups[i].code === group.code) {
-	    			
-	    			var index = self.mapping.groups[i].members.indexOf(dataCode);
-	    			self.mapping.groups[i].members.splice(index, 1);
-	    			
-	    			break;
-	    		}
-	    	}
-	    		    	
 	    	saveMapping();
 	    
 	    }
