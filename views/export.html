@@ -47,4 +47,6 @@
 	  </ui-select-choices>
 	</ui-select>
 	<br />
-	<button type="button" class="btn btn-primary" ng-click="exportCtrl.doExport();" ng-disabled="exportCtrl.orgunitLevelSelected === undefined || (exportCtrl.dataElementSelected === undefined && exportCtrl.indicatorSelected === undefined) || exportCtrl.yearSelected === undefined">Download</button>
+	<button type="button" class="btn btn-primary" ng-click="exportCtrl.doOuExport();" ng-disabled="exportCtrl.orgunitLevelSelected === undefined">Download Admin Units</button>
+	<button type="button" class="btn btn-primary" ng-click="exportCtrl.doTrendExport();" ng-disabled="exportCtrl.orgunitLevelSelected === undefined || (exportCtrl.dataElementSelected === undefined && exportCtrl.indicatorSelected === undefined) || exportCtrl.yearSelected === undefined">Download Trend Data</button>
+	<button type="button" class="btn btn-primary" ng-click="exportCtrl.doExport();" ng-disabled="exportCtrl.orgunitLevelSelected === undefined || (exportCtrl.dataElementSelected === undefined && exportCtrl.indicatorSelected === undefined) || exportCtrl.yearSelected === undefined">Download Service Data</button>
