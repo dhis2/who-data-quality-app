@@ -18,7 +18,7 @@
 					<td class="vert-align" style="text-align: center;"><span ng-if="admCtrl.isCore(indicator.code)" class="glyphicon glyphicon-ok"></span></td>
 					<td class="vert-align">{{indicator.localData.name}}</td>
 					<td class="vert-align">{{admCtrl.dataSetNameFromID(indicator.dataSetID);}}</td>
-					<td class="vert-align"><button ng-click="admCtrl.mapIndicator(indicator);" class="btn btn-default">Edit</button><button ng-if="indicator.custom" style="margin-left: 5px;" ng-click="admCtrl.deleteIndicator(indicator);" class="btn btn-warning">Delete</button><button ng-if="!indicator.custom" ng-disabled="!indicator.matched" style="margin-left: 5px;" ng-click="admCtrl.deleteMapping(indicator);" class="btn btn-warning">Clear</button></td>	
+					<td class="vert-align"><button ng-click="admCtrl.mapIndicator(indicator);" class="btn btn-default">Edit</button><button ng-if="indicator.custom" style="margin-left: 5px;" ng-click="admCtrl.deleteIndicator(indicator);" class="btn btn-danger">Delete</button><button ng-if="!indicator.custom" ng-disabled="!indicator.matched" style="margin-left: 5px;" ng-click="admCtrl.deleteMapping(indicator);" class="btn btn-warning">Clear</button></td>	
 				</tr>
 			
 			</table>
@@ -53,7 +53,8 @@
 					
 				</table>
 			</div>
-			<button type="button" class="btn btn-primary pull-right" ng-click="aCtrl.addGroup();" style="margin-bottom:20px">Add Group</button>
+			<button type="button" class="btn btn-primary pull-right" ng-click="admCtrl.addIndicatorGroup();" style="margin-bottom:20px;margin-left: 10px;">Add Group</button>
+			<button type="button" class="btn btn-danger pull-right" ng-click="admCtrl.deleteIndicatorGroup();" style="margin-bottom:20px">Delete Group</button>
 		</tab>
 		<tab heading="Quality Parameters">
 			<br />

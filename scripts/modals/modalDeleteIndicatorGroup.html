@@ -1,0 +1,22 @@
+<div class="modal-header">
+<h3>Delete group</h3>
+</div>
+<div class="modal-body">
+
+<table class="table table-bordered">
+	<tr><th>Group</th><td>
+	<ui-select ng-model="addCtrl.groupSelected" theme="bootstrap" style="width: 100%;">
+	  <ui-select-match placeholder="Select data element group...">
+	  	{{addCtrl.groupSelected.name}}
+	  </ui-select-match>
+	  <ui-select-choices 
+	  	repeat="obj in addCtrl.groups | filter: $select.search">
+	   		<div ng-bind-html="obj.name | highlight: $select.search"></div>
+	</ui-select-choices>
+	</ui-select>
+	</td></tr>
+</table>
+<div class="modal-footer" style="clear: both;">     
+    <button type="button" class="btn btn-default" data-ng-click="addCtrl.cancel()">Cancel</button>
+    <button type="button" class="btn btn-default" data-ng-click="addCtrl.save()" ng-disabled="addCtrl.groupSelected.code === undefined">Delete</button>
+</div>

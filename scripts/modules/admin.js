@@ -29,7 +29,7 @@
 	    	
 	    	self.groupSelect = {};
 	    	
-	    	var needUpdate = false;
+	    	var needUpdate = true;
 	    	    		
     		//TODO: check for updates to metaData
     		requestService.getSingle('/api/systemSettings/DQAmapping').then(function(response) {
@@ -51,14 +51,9 @@
 		function updateMeta() {
 			
 			needUpdate = false;
-			
-			for (var i = 0; i < self.mapping.data.length; i++) {
-				if (self.mapping.data[i].code.charAt(0) === 'C') {
-					self.mapping.data.splice(i, 1);
-				}
-			}
-			
-			removeIndicatorFromGroup("C01", "G1");
+		
+			removeIndicatorFromAllGroups("C1");
+			removeIndicatorFromAllGroups("C2");	
 			
 			saveMapping();
 
@@ -98,6 +93,7 @@
         
         self.deleteIndicator = function(indicator) {
 			removeIndicator(indicator.code);
+			removeIndicatorFromAllGroups(indicator.code);
 			
 			saveMapping();
         }
@@ -275,6 +271,91 @@
 	        	}
 	        });
 	    }
+	    
+	    self.addIndicatorGroup = function () {
+
+	    	var modalInstance = $modal.open({
+	            templateUrl: "scripts/modals/modalAddIndicatorGroup.html",
+	            controller: "ModalAddIndicatorGroupController",
+	            controllerAs: 'addCtrl'
+	        });
+	
+	        modalInstance.result.then(function (result) {
+	        	if (result) {
+	        		var dataCode = getNewIndicatorGroupCode();
+	        		
+	        		//Add indicator
+	        		self.mapping.groups.push({
+	        			"name": result.name,
+	        			"code": dataCode,
+	        			"members": []
+	        		});
+	        			        		
+	        		//Save
+	        		saveMapping();
+	        		
+	        	}
+	        });
+	    }
+	    
+	    self.deleteIndicatorGroup = function () {
+	    
+	    	var modalInstance = $modal.open({
+	            templateUrl: "scripts/modals/modalDeleteIndicatorGroup.html",
+	            controller: "ModalDeleteIndicatorGroupController",
+	            controllerAs: 'addCtrl',
+	            resolve: {
+	                groups: function () {
+	                	return self.mapping.groups;
+	                }
+	            }
+	        });
+	
+	        modalInstance.result.then(function (result) {
+	        	if (result) {
+	        		
+	        		//delete group
+	        		var groupCode = result.group;
+	        		removeIndicatorGroup(groupCode);
+	        		      		
+	        		//Save
+	        		saveMapping();
+	        		
+	        	}
+	        });
+	    }
+	    
+	    function removeIndicatorGroup(groupCode) {
+	    	for (var i = 0; i < self.mapping.groups.length; i++) {
+	    		if (self.mapping.groups[i].code === groupCode) {
+	    			
+	    			self.mapping.groups.splice(i, 1);
+	    				    			
+	    			return;
+	    		}
+	    	}
+	    }
+	    
+	    
+	    
+	    function getNewIndicatorGroupCode() {
+	    
+	    	//Get and return next possible code
+	    	var current, found;
+	    	for (var i = 0; i <= self.mapping.groups.length; i++) {
+	    		
+	    		current = "CG" + parseInt(i+1);
+	    		existing = false;
+	    		
+	        	for (var j = 0; j < self.mapping.groups.length; j++) {	    			
+	    			if (self.mapping.groups[j].code === current) existing = true;
+	    		}
+	    		
+	    		if (!existing) return current;
+	    	} 	
+	    	
+	    	console.log("Error finding new data group code");
+	    }
 	        
 	    
 	    function getNewIndicatorCode() {
@@ -314,7 +395,9 @@
 	    		if (self.mapping.groups[i].code === groupCode) {
 	    			
 	    			var index = self.mapping.groups[i].members.indexOf(dataCode);
-	    			self.mapping.groups[i].members.splice(index, 1);
+	    			if (index >= 0) {	    			
+	    				self.mapping.groups[i].members.splice(index, 1);
+	    			}
 	    			
 	    			return;
 	    		}
@@ -324,6 +407,14 @@
 	    }
 	    
 	    
+	    function removeIndicatorFromAllGroups(dataCode) {
+	    	
+	    	for (var i = 0; i < self.mapping.groups.length; i++) {
+	    		removeIndicatorFromGroup(dataCode, self.mapping.groups[i].code);
+	    	}
+	    
+	    }
+	    
 	    self.groupIndicator = function(group) {
 	    	addIndicatorToGroup(self.groupSelect[group.code].code, group.code);
 	    	self.groupSelect[group.code] = null;
@@ -331,6 +422,7 @@
 	    	saveMapping();
 	    
 	    }
+	    
 	    
 	    self.ungroupIndicator = function(group, dataCode) {
 	    	removeIndicatorFromGroup(dataCode, group.code);
