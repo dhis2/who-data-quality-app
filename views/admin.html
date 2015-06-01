@@ -32,15 +32,15 @@
 				<table style="font-size: 95%;" class="table table-bordered table-striped table-condensed table-hover">
 					<tr>
 						<th>Data</th>
-						<th width="135px"></th>
+						<th nowrap></th>
 					</tr>
 					<tr ng-repeat="indicator in admCtrl.getIndicatorsInGroup(group.code) | orderBy: 'name'">
 						<td class="vert-align">{{indicator.name}}</td>
 						<td class="vert-align"><button ng-click="admCtrl.ungroupIndicator(group, indicator.code);" class="btn btn-danger">Remove</button></td>
 					</tr>
 					<tr>
-						<td class="vert-align"><ui-select ng-model="admCtrl.groupSelect[group.code]"  style="margin-bottom: 10px; width: 530px;">
-						  <ui-select-match placeholder="Select item to add to group...">
+						<td class="vert-align"><ui-select ng-model="admCtrl.groupSelect[group.code]"  style="width: 530px;">
+						  <ui-select-match placeholder="Select item to add to {{group.name}} group...">
 						  	{{admCtrl.groupSelect[group.code].name}}
 						  </ui-select-match>
 						  <ui-select-choices 
@@ -56,6 +56,40 @@
 			<button type="button" class="btn btn-primary pull-right" ng-click="admCtrl.addIndicatorGroup();" style="margin-bottom:20px;margin-left: 10px;">Add Group</button>
 			<button type="button" class="btn btn-danger pull-right" ng-click="admCtrl.deleteIndicatorGroup();" style="margin-bottom:20px">Delete Group</button>
 		</tab>
+		
+		<tab heading="Data Relations">
+		<br />
+					<h4>Internal consistency</h4>
+					<table style="font-size: 95%;" class="table table-bordered table-striped table-condensed table-hover">
+						<tr>
+							<th nowrap>Name</th>
+							<th nowrap>Indicator A</th>
+							<th nowrap>Indicator B</th>
+							<th nowrap>Type</th>
+							<th nowrap>Threshold (%)</th>
+							<th nowrap>Threshold explanation</th>
+							<th nowrap>Description</th>
+							<th></th>
+						</tr>
+						<tr ng-repeat="relation in admCtrl.mapping.relations | orderBy:['A', 'B']:false" ng-if="admCtrl.filterMatchedRelations(relation)">
+							<td class="vert-align">{{relation.name}}</td>
+							<td class="vert-align">{{admCtrl.dataNameFromCode(relation.A);}}</td>
+							<td class="vert-align">{{admCtrl.dataNameFromCode(relation.B);}}</td>
+							<td class="vert-align">{{admCtrl.relationName(relation.type);}}</td>
+							<td class="vert-align">{{relation.criteria}}</td>
+							<td class="vert-align">{{admCtrl.relationThresholdDescription(relation.type);}}</td>
+							<td class="vert-align">{{admCtrl.relationDescription(relation.type);}}</td>
+							<td nowrap><button ng-click="admCtrl.editRelation(relation);" class="btn btn-default">Edit</button><button style="margin-left: 5px;" ng-click="admCtrl.deleteRelation(relation);" class="btn btn-danger">Delete</button></td>
+						</tr>
+					</table>
+					<button style="margin-left: 5px;" ng-click="admCtrl.addRelation();" class="btn btn-primary pull-right">Add</button>
+					
+		
+					
+					
+						
+				</tab>
+				
 		<tab heading="Quality Parameters">
 			<br />
 			<h4>Outliers</h4>
@@ -95,33 +129,8 @@
 				</tr>
 			</table>
 			
-			
-			<h4>Internal consistency</h4>
-			<table style="font-size: 95%; max-width: 800px;" class="table table-bordered table-striped table-condensed table-hover">
-				<tr>
-					<th nowrap>Indicator A</th>
-					<th nowrap>Indicator B</th>
-					<th nowrap>Type</th>
-					<th nowrap>Threshold</th>
-					<th nowrap>Description</th>
-				</tr>
-				<tr ng-repeat="relation in admCtrl.mapping.relations | orderBy:['A', 'B']:false" ng-if="admCtrl.filterMatchedRelations(relation)">
-					<td class="vert-align">{{admCtrl.dataNameFromCode(relation.A);}}</td>
-					<td class="vert-align">{{admCtrl.dataNameFromCode(relation.B);}}</td>
-					<td class="vert-align">{{relation.type}}</td>
-					<td style="width: 150px;" class="vert-align"><input type="number" class="form-control" ng-model="relation.criteria" min="0" max="2"/></td>
-					<td class="vert-align">
-					<span ng-if="relation.type === 'levelRatio'">Districts will be marked as outliers if their ratio of {{admCtrl.dataNameFromCode(relation.A);}} to {{admCtrl.dataNameFromCode(relation.B);}} is more than {{relation.criteria}} higher or lower than the national ratio.</span>
-					<span ng-if="relation.type === 'internalRatio'">Districts will be marked as outliers if the ratio of {{admCtrl.dataNameFromCode(relation.A);}} to {{admCtrl.dataNameFromCode(relation.B);}} is more than {{relation.criteria}}</span>
-					</td>
-					
-				</tr>
-			</table>
-			
-			
-			
-			
 			<button class="btn btn-primary pull-right" ng-click="admCtrl.saveParameterChanges();">Save changes</button>
-				
-		</tab>
+			
+			</tab>
+			
 	</tabset>

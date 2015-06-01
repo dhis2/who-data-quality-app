@@ -52,8 +52,25 @@
 			
 			needUpdate = false;
 		
-			removeIndicatorFromAllGroups("C1");
-			removeIndicatorFromAllGroups("C2");	
+			self.mapping.relations = [
+			{
+				"A": "D1",
+				"B": "D19",
+				"type": "eq",
+				"criteria": 0.1,
+				"name": "ANC 1 - TT1 ratio",
+				"code": "R1"
+				
+			},
+			{
+				"A": "D10",
+				"B": "D3",
+				"type": "do",
+				"criteria": null,
+				"name": "DPT 1 to 3 dropout rate",
+				"code": "R2"
+				
+			}];	
 			
 			saveMapping();
 
@@ -102,6 +119,14 @@
         	for (var i = 0; i < self.mapping.data.length; i++) {
         		if (self.mapping.data[i].code === dataCode) {
         			self.mapping.data.splice(i, 1);
+        		}
+        	}
+        }
+        
+        function removeRelation(code) {
+        	for (var i = 0; i < self.mapping.relations.length; i++) {
+        		if (self.mapping.relations[i].code === code) {
+        			self.mapping.relations.splice(i, 1);
         		}
         	}
         }
@@ -335,7 +360,7 @@
 	    		}
 	    	}
 	    }
-	    
+	    		
 	    
 	    
 	    function getNewIndicatorGroupCode() {
@@ -344,7 +369,7 @@
 	    	var current, found;
 	    	for (var i = 0; i <= self.mapping.groups.length; i++) {
 	    		
-	    		current = "CG" + parseInt(i+1);
+	    		current = "G" + parseInt(i+1);
 	    		existing = false;
 	    		
 	        	for (var j = 0; j < self.mapping.groups.length; j++) {	    			
@@ -523,6 +548,48 @@
 	    	return opts;
 	    }
 	    
+	    
+	    self.relationName = function(typeCode) {
+	    
+	    	if (typeCode === 'eq') return "Equal";
+	    	if (typeCode === 'aGTb') return "A > B";
+	    	if (typeCode === 'do') return "Dropout";
+	    	
+	    }
+	    
+	    self.relationDescription = function(typeCode) {
+	    
+	    	if (typeCode === 'eq') return "A and B should be roughly equal.";
+	    	if (typeCode === 'aGTb') return "Comparison. A should be greater than B.";
+	    	if (typeCode === 'do') return "Droupout rate. A should be greater than B.";
+	    	
+	    }
+	    
+	    self.relationThresholdDescription = function(typeCode) {
+	    
+	    	if (typeCode === 'eq' || typeCode === 'aGTb') return "% difference from national figure that is accepted for a sub-national unit.";
+	    	if (typeCode === 'do') return "Should not be negative.";
+	    	
+	    }
+	    
+	    self.editRelation = function(relation) {
+	    	
+	    
+	    }
+	    
+	    
+	    
+	    self.deleteRelation = function(relation) {
+	    	removeRelation(relation.code);
+	    	
+	    	saveMapping();
+	    
+	    }
+	    
+	    self.addRelation = function() {
+	    
+	    
+	    }
 	        
 		return self;
 		
