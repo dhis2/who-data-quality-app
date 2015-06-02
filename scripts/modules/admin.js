@@ -29,7 +29,7 @@
 	    	
 	    	self.groupSelect = {};
 	    	
-	    	var needUpdate = true;
+	    	var needUpdate = false;
 	    	    		
     		//TODO: check for updates to metaData
     		requestService.getSingle('/api/systemSettings/DQAmapping').then(function(response) {
@@ -57,7 +57,7 @@
 				"A": "D1",
 				"B": "D19",
 				"type": "eq",
-				"criteria": 0.1,
+				"criteria": 10,
 				"name": "ANC 1 - TT1 ratio",
 				"code": "R1"
 				
@@ -68,6 +68,15 @@
 				"type": "do",
 				"criteria": null,
 				"name": "DPT 1 to 3 dropout rate",
+				"code": "R2"
+				
+			},
+			{
+				"A": "D1",
+				"B": "D40",
+				"type": "do",
+				"criteria": null,
+				"name": "ANC 1 to 4 dropout rate",
 				"code": "R2"
 				
 			}];	
@@ -594,12 +603,50 @@
 	        });
 	
 	        modalInstance.result.then(function (result) {
-	        	if (result) {
-	        		console.log(result);
-	        		//TODO: Save relation
+	        	if (result) {	        		
+	        		//check if new or existing (= has code already)
+	        		if (result.relation.code != null) {
+		        		saveEditedRelation(result.relation);
+	        		}
+	        		else {
+						result.relation.code = getNewRelationCode();
+						self.mapping.relations.push(result.relation);
+						saveMapping();        			
+	        		}
 	        	}
 	        });
 	    
+	    }
+	    
+	    function getNewRelationCode() {
+	    
+	    	//Get and return next possible code
+	    	var current, found;
+	    	for (var i = 0; i <= self.mapping.relations.length; i++) {
+	    		
+	    		current = "R" + parseInt(i+1);
+	    		existing = false;
+	    		
+	        	for (var j = 0; j < self.mapping.relations.length; j++) {	    			
+	    			if (self.mapping.relations[j].code === current) existing = true;
+	    		}
+	    		
+	    		if (!existing) return current;
+	    	} 	
+	    	
+	    	console.log("Error finding new relation code");
+	    }
+	    
+	    function saveEditedRelation(relation) {
+	    
+	    	for (var i = 0; i < self.mapping.relations.length; i++) {
+	    		if (self.mapping.relations[i].code === relation.code) {
+	    			self.mapping.relations[i] = relation;
+	    			break;
+	    		}
+	    	}
+	    	
+	    	saveMapping();
 	    }
 	    
 	    
@@ -613,6 +660,7 @@
 	    
 	    self.addRelation = function() {
 	    
+	    	self.editRelation(null);
 	    
 	    }
 	        

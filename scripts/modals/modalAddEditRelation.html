@@ -1,24 +1,49 @@
 <div class="modal-header">
-<h3>Add indicator</h3>
+<h3>{{addCtrl.title}}</h3>
 </div>
 <div class="modal-body">
 
 <table class="table table-bordered">
-	<tr><th>Group</th><td>
-	<ui-select ng-model="addCtrl.groupSelected" theme="bootstrap" style="width: 100%;">
-	  <ui-select-match placeholder="Select data element group...">
-	  	{{addCtrl.groupSelected.name}}
+	<tr><th>Name</th><td><input type="text" style="width: 100%;" ng-model="addCtrl.relation.name"/></td></tr>
+	<tr><th>Type</th><td>
+	<ui-select ng-model="addCtrl.typeSelected" theme="bootstrap" style="width: 100%;">
+	  <ui-select-match placeholder="Select type...">
+	  	{{addCtrl.typeSelected.name}}
 	  </ui-select-match>
 	  <ui-select-choices 
-	  	repeat="obj in addCtrl.groups | filter: $select.search">
+	  	repeat="obj in addCtrl.types | filter: $select.search">
+	   		<div ng-bind-html="obj.name | highlight: $select.search"></div>
+	</ui-select-choices>
+	</ui-select>
+	</td>
+	<tr><th>Indicator A</th><td>
+	<ui-select ng-model="addCtrl.aSelected" theme="bootstrap" style="width: 100%;">
+	  <ui-select-match placeholder="Select indicator...">
+	  	{{addCtrl.aSelected.name}}
+	  </ui-select-match>
+	  <ui-select-choices 
+	  	repeat="obj in addCtrl.indicators | filter: $select.search">
+	   		<div ng-bind-html="obj.name | highlight: $select.search"></div>
+	</ui-select-choices>
+	</ui-select>
+	</td>
+	<tr><th>Indicator B</th><td>
+	<ui-select ng-model="addCtrl.bSelected" theme="bootstrap" style="width: 100%;">
+	  <ui-select-match placeholder="Select indicator...">
+	  	{{addCtrl.bSelected.name}}
+	  </ui-select-match>
+	  <ui-select-choices 
+	  	repeat="obj in addCtrl.indicators | filter: $select.search">
 	   		<div ng-bind-html="obj.name | highlight: $select.search"></div>
 	</ui-select-choices>
 	</ui-select>
 	</td></tr>
-	<tr><th>Name</th><td><input type="text" style="width: 100%;" ng-model="addCtrl.name"/></td></tr>
-	<tr><th>Definition</th><td><textarea style="width: 100%;" ng-model="addCtrl.definition"></textarea></td>
+	<tr ng-if="addCtrl.typeSelected.code != 'do'"><th>Threshold (+/-)</th><td><input type="number" style="width: 100px;" ng-model="addCtrl.relation.criteria"/> %</td></tr>
 </table>
+<div ng-if="addCtrl.typeSelected.code != 'do'" style="margin-bottom: 10px;">
+<strong>Threshold</strong> denotes the % difference from national figure that is accepted for a sub-national unit.
+</div>
 <div class="modal-footer" style="clear: both;">     
     <button type="button" class="btn btn-default" data-ng-click="addCtrl.cancel()">Cancel</button>
-    <button type="button" class="btn btn-default" data-ng-click="addCtrl.save()" ng-disabled="addCtrl.name === '' || addCtrl.groupSelected.code === undefined">Save</button>
+    <button type="button" class="btn btn-default" data-ng-click="addCtrl.save()" ng-disabled="addCtrl.relation.name === '' || addCtrl.typeSelected === undefined || addCtrl.aSelected === undefined || addCtrl.bSelected === undefined || (addCtrl.typeSelected.code != 'do' && addCtrl.relation.criteria === null)">Save</button>
 </div>

@@ -348,7 +348,7 @@
 		"A": "D1",
 		"B": "D19",
 		"type": "eq",
-		"criteria": 0.1,
+		"criteria": 10,
 		"name": "ANC 1 - TT1 ratio",
 		"code": "R1"
 		
@@ -359,6 +359,15 @@
 		"type": "do",
 		"criteria": null,
 		"name": "DPT 1 to 3 dropout rate",
+		"code": "R2"
+		
+	},
+	{
+		"A": "D1",
+		"B": "D40",
+		"type": "do",
+		"criteria": null,
+		"name": "ANC 1 to 4 dropout rate",
 		"code": "R2"
 		
 	}
