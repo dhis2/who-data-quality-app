@@ -3,7 +3,7 @@
 	
 	var app = angular.module('reportCard', []);
 	
-	app.controller("ReviewController", function(metaDataService, periodService, mathService, requestService) {
+	app.controller("ReviewController", function(metaDataService, periodService, mathService, requestService, dataAnalysisService) {
 		var self = this;    
 		
 	    init();
@@ -11,7 +11,7 @@
 	    function init() {
 	    	self.notPossible = false;
 	    	self.ready = false;
-	    	self.result = null;
+	    	self.completeness = null;
 	    	
 	    	self.orgunitLevels = [];
 	    	self.orgunitLevelSelected = undefined;
@@ -59,51 +59,77 @@
 	    
 	  	
 	  	self.doAnalysis = function() {
+	  		
+	  		self.completeness = {};
+	  		
+	  		//1 Get dataset completeness
+	  		var cb = function (result) { self.completeness.datasets = result;}
+	  		dataAnalysisService.datasetCompletenessAnalysis(cb, dataSetsForCompleteness(), self.yearSelected.id, precedingYears(self.yearSelected.id, 3), self.userOrgunit.id, self.orgunitLevelSelected.level);
 	  	
-	  		//To-Do...
+	  	}
+	  	
+	  	
+	  	function precedingYears(year, numberOfYears) {
+	  		
+	  		
+	  		
+	  		var start = parseInt(year);
+	  		var years = [];
+	  		for (var i = 1; i <= numberOfYears; i++) {
+	  			years.push(start-i);
+	  		}
+	  		
+	  		return years;
 	  	
 	  	}
 		
 		
 		function dataSetsForCompleteness() {
 			
-			var data, dataSetIDs = {};
+			var datasetIDs = {};
+			var indicatorIDs = indicatorIDsForAnalysis();
+			for (var i = 0; i < indicatorIDs.length; i++) {
+			
+				var indicator = indicatorFromCode(indicatorIDs[i]);				
+				if (indicator.matched) datasetIDs[indicator.dataSetID] = true;
+			}
+			
+			var dataset = [];
+			for (key in datasetIDs) {
+				dataset.push(datasetFromID(key));			
+			}
+			
+			return dataset;
+		}
+		
+		
+		function indicatorIDsForAnalysis() {
+			if (self.groupSelected.code === 'C') {
+				return self.map.coreIndicators;
+			}
+			
+			for (var i = 0; i < self.map.groups.length; i++) {
+				if (self.map.groups[i].code === self.groupSelected.code) {
+					return self.map.groups[i].members;
+				}
+			}
+		
+		}
+		
+		
+		function indicatorFromCode(code) {
 			for (var i = 0; i < self.map.data.length; i++) {
-				data = self.map.data[i];
-				if (data.matched && ((self.core && indicatorIsCore(data.code)) || indicatorInGroup(data.code))) {
-					dataSetIDs[data.dataSetID] = true;
-				}
+				if (self.map.data[i].code === code) return self.map.data[i];
 			}
-			var IDs = [];
-			for (key in dataSetIDs) {
-				IDs.push(key);
-			}
-			
-			return IDs;
 		}
 		
-		function indicatorIsCore(code) {
-			for (var j = 0; j < self.map.coreIndicators.length; j++) {
-				if (code === self.map.coreIndicators[j]) {
-					return true;
-				}
-			}
+		function datasetFromID(id) {
 			
-			return false;
+			for (var i = 0; i < self.map.dataSets.length; i++) {
+				if (self.map.dataSets[i].id === id) return self.map.dataSets[i];
+			}
 		}
 		
-		function indicatorInGroup(code) {
-			for (var j = 0; j < self.map.groups.length; j++) {
-				if (self.map.groups[j].code === self.group) {
-					for (var i = 0; i < self.map.groups[j].members.length; i++) {
-						if (self.map.groups[j].members[i] === code)
-						return true;
-					}
-				}
-			}
-			
-			return false;
-		}
 		
 		
 		function periodTypeFromDataSet(dataSetID) {

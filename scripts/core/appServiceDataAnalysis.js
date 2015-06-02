@@ -438,6 +438,165 @@
 			
 		
 		
+		
+		/** COMPLETENESS ANALYSIS
+		Completeness analysis used by Annual Review
+		
+		@param callback			function to send result to
+		@param datasets			array of objects with:		
+									name, 
+									id, 
+									periodtype 
+									threshold for completeness
+									threshold for consistency
+									trend
+		@param period			analysis period
+		@param refPeriods		reference periods (for consistency over time)
+		@param bounaryOrgunit	ID of boundary orgunit
+		@param level			level for sub-boundary orgunits
+		@returns				datasets objects array, with these additional properties:
+									boundary completeness
+			 						boundary consistency over time
+									subunit count < threshold
+									subunit percent < threshold
+									subunit names < threshold
+									subunit count < consistency threshold
+									subunit percent < consistency threshold
+									subunit names < consistency threshold
+		*/
+		self.datasetCompletenessAnalysis = function(callback, datasets, period, refPeriods, boundaryOrgunit, level) {
+			
+			//Only need a few queries, so don't need queuing
+			self.dsc = {};
+			self.dsc.callback = callback;
+			self.dsc.datasets = datasets;
+			self.dsc.period = period;
+			self.dsc.refPeriods = refPeriods;
+			self.dsc.boundary = boundaryOrgunit;
+			self.dsc.level = level;
+			
+			//periods to request
+			var pe = refPeriods;
+			pe.push(period);
+			
+			//datasets to request
+			var ds = [];
+			for (var i = 0; i < datasets.length; i++) {
+				ds.push(datasets[i].id);
+			}
+			
+			//1 request boundary completeness data for the four years
+			self.boundaryCompleteness = null;
+			var requestURL = '/api/analytics.json?dimension=dx:' + ds.join(';') + '&dimension=ou:' + boundaryOrgunit + '&dimension=pe:' + pe.join(';') + '&displayProperty=NAME';
+			
+			requestService.getSingle(requestURL).then(
+					//success
+					function(response) {
+					    self.boundaryCompleteness = response.data;	
+					    startDatasetCompletenessAnalysis();				
+					}, 
+					//error
+					function(response) {
+					    console.log("Error fetching data");
+					}
+				);
+			
+			
+			//2 request subunit completeness data for the four years
+			self.subunitCompleteness = null;
+			var requestURL = '/api/analytics.json?dimension=dx:' + ds.join(';') + '&dimension=ou:' + boundaryOrgunit + ';LEVEL-' + level + '&dimension=pe:' + pe.join(';') + '&displayProperty=NAME';
+			
+			requestService.getSingle(requestURL).then(
+					//success
+					function(response) {
+					    self.subunitCompleteness = response.data;	
+					    startDatasetCompletenessAnalysis();
+					}, 
+					//error
+					function(response) {
+					    console.log("Error fetching data");
+					}
+				);
+			
+		}
+		
+		function startDatasetCompletenessAnalysis() {
+			if (self.boundaryCompleteness === null || self.subunitCompleteness === null) return;
+			else console.log("Received required dataset completeness data - start analysis");
+			
+			var year = self.dsc.period;
+			var boundary = self.dsc.boundary;
+			var subunits = self.subunitCompleteness.metaData.ou;
+			var data = self.boundaryCompleteness.rows.concat(self.subunitCompleteness.rows);
+			var headers = self.boundaryCompleteness.headers;
+
+			var names = self.subunitCompleteness.metaData.names;
+			for (key in self.boundaryCompleteness.metaData.names) {
+				names[key] = self.boundaryCompleteness.metaData.names[key];
+			}
+			
+			
+			var ds;
+			var value;
+			for (var i = 0; i < self.dsc.datasets.length; i++) {
+				ds = self.dsc.datasets[i];
+				
+				
+				//1 straight data set completeness
+				var subunitsAbove = 0;
+				var subunitsBelow = 0;
+				var subunitNames = [];
+				for (var j = 0; j < subunits.length; j++) {
+					value = dataValue(headers, data, ds.id, year, subunits[j], null);
+					if (value) {
+						if (value > ds.threshold) subunitsAbove++;
+						else {
+							subunitsBelow++;
+							subunitNames.push(names[subunits[j]]);						
+						}
+					}
+					//else not expected to report
+				}
+				ds.boundary = dataValue(headers, data, ds.id, year, boundary, null);				
+				ds.count = subunitsBelow;
+				ds.percent = 100*subunitsBelow/(subunitsBelow + subunitsAbove);
+				ds.percent = Math.round(ds.percent*10)/10;
+				ds.names = subunitNames;
+				
+				//2 consistency over time
+				
+			}
+			
+			console.log(self.dsc.datasets);
+			self.dsc.callback(self.dsc.datasets);
+		
+		
+		}
+		
+		function dataValue(header, dataValues, de, pe, ou, co) {
+			var dxi, pei, oui, coi, vali;
+			for (var i = 0; i < header.length; i++) {
+				if (header[i].name === 'dx' && !header[i].hidden) dxi = i;
+				if (header[i].name === 'ou' && !header[i].hidden) oui = i;
+				if (header[i].name === 'pe' && !header[i].hidden) pei = i;
+				if (header[i].name === 'co' && !header[i].hidden) coi = i;
+				if (header[i].name === 'value' && !header[i].hidden) vali = i;
+			}
+			
+			var data;
+			for (var i = 0; i < dataValues.length; i++) {
+				data = dataValues[i];
+				if (
+					(dxi === undefined || data[dxi] === de) &&
+					(pei === undefined || data[pei] === pe.toString()) &&
+					(oui === undefined || data[oui] === ou) &&
+					(coi === undefined || data[coi] === co)
+				) return parseFloat(data[vali]);
+			}		
+		}
+		
+		
+		
 		/** DATA REQUESTS AND QUEUING */
 		function requestData() {
 			var request = getNextRequest();

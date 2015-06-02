@@ -29,7 +29,7 @@
 	    	
 	    	self.groupSelect = {};
 	    	
-	    	var needUpdate = false;
+	    	var needUpdate = true;
 	    	    		
     		//TODO: check for updates to metaData
     		requestService.getSingle('/api/systemSettings/DQAmapping').then(function(response) {
@@ -52,34 +52,12 @@
 			
 			needUpdate = false;
 		
-			self.mapping.relations = [
-			{
-				"A": "D1",
-				"B": "D19",
-				"type": "eq",
-				"criteria": 10,
-				"name": "ANC 1 - TT1 ratio",
-				"code": "R1"
-				
-			},
-			{
-				"A": "D10",
-				"B": "D3",
-				"type": "do",
-				"criteria": null,
-				"name": "DPT 1 to 3 dropout rate",
-				"code": "R2"
-				
-			},
-			{
-				"A": "D1",
-				"B": "D40",
-				"type": "do",
-				"criteria": null,
-				"name": "ANC 1 to 4 dropout rate",
-				"code": "R2"
-				
-			}];	
+			self.mapping.coreIndicators = [
+			"D1",
+			"D3",
+			"D5",
+			"D8"
+			];	
 			
 			saveMapping();
 

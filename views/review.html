@@ -38,22 +38,31 @@
 </div>
 <hr />
 
-
-<div ng-if="revCtrl.ready">
+<tabset>
+<tab heading="Summary">
+<br />
+<div>
 	<table style="font-size: 90%;" class="table table-bordered table-condensed">
+		<tbody>
+		
 		<tr bgcolor="#f9f9f9">
 		 	<th>Completeness</th><th>Data set</th><th>Overall Completeness</th><th># Units with poor score</th><th>% Units with poor score</th>
 	    </tr>
-	   	<tr ng-repeat="dataSet in revCtrl.result.completeness.dataSets track by $index | orderBy:'label':false">
-    		<th width="40%" ng-if="$index === 0" rowspan="{{revCtrl.result.completeness.dataSets.length}}">Completeness of facility reporting</th>
-    		<td>{{dataSet.label}}</td>
-    		<td class="valueCell">{{dataSet.level1}}%</td>
-    		<td class="valueCell">{{dataSet.level2c}}</td>
-    		<td class="valueCell">{{dataSet.level2p}}%</td>
+	    
+	    <tr ng-if="!revCtrl.completeness"><td colspan="5">Reporting completeness from the facility - the percentage of expected reports that have been entered and completed.</td></tr>
+	    
+	    
+	   	<tr ng-repeat="dataset in revCtrl.completeness.datasets track by $index | orderBy:'label':false">
+    		<th width="40%" ng-if="$index === 0" rowspan="{{revCtrl.completeness.datasets.length}}">Completeness of facility reporting. The percentage of expected reports that have been entered and completed.</th>
+    		<td>{{dataset.name}}</td>
+    		<td class="valueCell">{{dataset.boundary}}%</td>
+    		<td class="valueCell">{{dataset.count}}</td>
+    		<td class="valueCell">{{dataset.percent}}%</td>
     	</tr>
+    	</tbody>
     </table>
     
-    <table style="font-size: 90%;" class="table table-bordered table-condensed">
+    <!--<table style="font-size: 90%;" class="table table-bordered table-condensed">
     	<thead>
     	<tr bgcolor="#f9f9f9">
     	 	<th rowspan="2">Internal consistency</th><th rowspan="2">Indicator</th><th rowspan="2">Overall Score</th><th colspan="2">Units with poor score</th>
@@ -73,6 +82,58 @@
     			<td class="valueCell">{{indicator.level2p}}%</td>
     		</tr>
 		</tbody>
-	</table>
+	</table>-->
 </div>
+</tab>
+<tab heading="Completeness">
+<h4>Completeness of facility reporting</h4>
+<table style="font-size: 90%;" class="table table-bordered table-condensed">
+	<tbody>
+	<tr bgcolor="#f9f9f9">
+	 	<th>Dataset</th><th>Indicator</th><th>{{revCtrl.yearSelected.name}}</th>
+    </tr>
+    <tbody ng-repeat="dataset in revCtrl.completeness.datasets | orderBy:'label':false">
+  	<tr >
+		<th rowspan="4" width="20%">{{dataset.name}}</td>
+		<td>National completeness</td>
+		<td class="valueCell">{{dataset.boundary}}%</td>
+	</tr>
+	<tr>
+		<td># district with completeness below {{dataset.threshold}}%</td>
+		<td class="valueCell">{{dataset.count}}</td>	
+	</tr>
+	<tr>
+		<td>% district with completeness below {{dataset.threshold}}%</td>
+		<td class="valueCell">{{dataset.percent}}%</td>	
+	</tr>
+	<tr>
+		<td>District with completeness below {{dataset.threshold}}%</td>
+		<td class="valueCell">{{dataset.names.join(', ')}}.</td>	
+	</tr>
+	</tbody>
+	
+	
+	
+	
+	<!--<tr ng-repeat="dataset in revCtrl.completeness.datasets track by $index | orderBy:'label':false">
+		<th width="40%" ng-if="$index === 0" rowspan="{{revCtrl.completeness.datasets.length}}">Number of districts with completeness below {{dataset.threshold}}%</th>
+		<td>{{dataset.name}}</td>
+		<td class="valueCell">{{dataset.count}}</td>
+	</tr>
+	<tr ng-repeat="dataset in revCtrl.completeness.datasets track by $index | orderBy:'label':false">
+		<th width="40%" ng-if="$index === 0" rowspan="{{revCtrl.completeness.datasets.length}}">Percentage of districts with completeness below {{dataset.threshold}}%</th>
+		<td>{{dataset.name}}</td>
+		<td class="valueCell">{{dataset.percent}}</td>
+	</tr>
+	<tr ng-repeat="dataset in revCtrl.completeness.datasets track by $index | orderBy:'label':false">
+		<td>{{dataset.name}}</td>
+		<td colspan="2" class="valueCell">{{dataset.names.join(', ')}}</td>
+	</tr>-->
+	</tbody>
+</table>
+</tab>
+
+<tab heading="Internal Consistency">
+</tab>
+</tabset>
 <alert style="margin-top: 10px; margin-bottom: 10px;"ng-repeat="alert in revCtrl.result.alerts track by $index" type="{{alert.type}}" close="revCtrl.result.alerts.splice($index, 1)">{{alert.msg}}</alert>
