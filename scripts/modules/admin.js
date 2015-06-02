@@ -52,12 +52,10 @@
 			
 			needUpdate = false;
 		
-			self.mapping.coreIndicators = [
-			"D1",
-			"D3",
-			"D5",
-			"D8"
-			];	
+		
+			for (var i = 0; i < self.mapping.data.length; i++) {
+				self.mapping.data[i].trend = 'constant';
+			}
 			
 			saveMapping();
 
