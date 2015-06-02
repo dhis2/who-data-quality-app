@@ -1,6 +1,6 @@
 	<h3>Annual Data Quality Review</h3>
 
-<div ng-if="!revCtrl.notPossible">
+<div class="no-print" ng-if="!revCtrl.notPossible">
 <span style="white-space:nowrap;"><label>Year:</label>
 <ui-select ng-model="revCtrl.yearSelected" theme="bootstrap" style="width: 100px; display: inline-block;">
   <ui-select-match placeholder="Select year...">
@@ -53,7 +53,7 @@
 	    
 	    
 	   	<tr ng-repeat="dataset in revCtrl.completeness.datasets track by $index | orderBy:'label':false">
-    		<th width="40%" ng-if="$index === 0" rowspan="{{revCtrl.completeness.datasets.length}}">Completeness of facility reporting. The percentage of expected reports that have been entered and completed.</th>
+    		<td width="40%" ng-if="$index === 0" rowspan="{{revCtrl.completeness.datasets.length}}"><em>Completeness of facility reporting.</em><br />The percentage of expected reports that have been entered and completed.</th>
     		<td>{{dataset.name}}</td>
     		<td class="valueCell">{{dataset.boundary}}%</td>
     		<td class="valueCell">{{dataset.count}}</td>
@@ -90,25 +90,25 @@
 <table style="font-size: 90%;" class="table table-bordered table-condensed">
 	<tbody>
 	<tr bgcolor="#f9f9f9">
-	 	<th>Dataset</th><th>Indicator</th><th>{{revCtrl.yearSelected.name}}</th>
+	 	<th width="150">Dataset</th>
+	 	<th width="250">Indicator</th>
+	 	<th width="50">{{revCtrl.yearSelected.name}}</th>
+	 	<th>Names</th>
     </tr>
-    <tbody ng-repeat="dataset in revCtrl.completeness.datasets | orderBy:'label':false">
+    <tbody ng-repeat="dataset in revCtrl.completeness.datasets track by $index| orderBy:'label':false">
   	<tr >
-		<th rowspan="4" width="20%">{{dataset.name}}</td>
+		<th rowspan="3">{{dataset.name}}</td>
 		<td>National completeness</td>
 		<td class="valueCell">{{dataset.boundary}}%</td>
+		<td rowspan="3">{{dataset.names.join(', ')}}.</td>
 	</tr>
 	<tr>
-		<td># district with completeness below {{dataset.threshold}}%</td>
+		<td># units with completeness below {{dataset.threshold}}%</td>
 		<td class="valueCell">{{dataset.count}}</td>	
 	</tr>
 	<tr>
-		<td>% district with completeness below {{dataset.threshold}}%</td>
+		<td>% units with completeness below {{dataset.threshold}}%</td>
 		<td class="valueCell">{{dataset.percent}}%</td>	
-	</tr>
-	<tr>
-		<td>District with completeness below {{dataset.threshold}}%</td>
-		<td class="valueCell">{{dataset.names.join(', ')}}.</td>	
 	</tr>
 	</tbody>
 	
