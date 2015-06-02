@@ -63,7 +63,7 @@
 		}
 		
 		
-		/** OUTLIER ANALYSIS
+		/** OUTLIER AND GAP ANALYSIS
 		@param callback			function to send result to
 		@param variables		array of data element, dataset or indicator IDs
 		@param periods			array of periods in ISO format
@@ -305,6 +305,7 @@
 		    if(values.length % 2) return values[half];
 		    else return (values[half-1] + values[half]) / 2.0;
 		}
+		
 		
 		function getOutlierWeight(dataValueSet, mean, sd) {
 			

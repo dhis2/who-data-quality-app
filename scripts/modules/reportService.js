@@ -23,9 +23,9 @@
 			self.orgunitLevel = orgunitLevel;
 			self.analysisYear = year; 
 			self.group = groupCode;
-			self.core = false;
 			self.resultCallback = callBack;
 			if (groupCode === 'C') self.core = true;
+			else self.core = false;
 			
 			//Result skeleton
 			self.result = resultTemplate();
@@ -616,21 +616,7 @@
 			return relations;	
 		}
 		
-		
-		function analysisParameters() {
-			
-			
-			
-			//TODO - per dataset
-			var parameters = {
-				"completenessTarget": 75
-			};
-			
-			
-			return parameters;
-			
-		}
-		
+				
 		
 		function dataSetCompletenessTarget(dataSetID) {
 			
