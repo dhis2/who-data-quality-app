@@ -45,20 +45,27 @@
 			}
 			
 			console.log("Doing next analysis job");
-			
-			reset();
-			self.callback = queueItem.callback;
-			self.variables = queueItem.variables; 
-			self.periods = queueItem.periods; 
-			self.orgunits = queueItem.orgunits; 
-			self.parameters = queueItem.param;
-			self.analysisType = queueItem.type;					
-			
 			self.inProgress = true;
 			
-			if (self.analysisType === 'outlier') {
-				resetOutlierResult();
-				createOutlierRequests();
+			if (queueItem.type === 'indicatorCompleteness') {
+				indicatorCompletenessAnalysis(queueItem.parameters);
+			}
+			else if (queueItem.type === 'datasetCompleteness') {
+				datasetCompletenessAnalysis(queueItem.parameters);
+			}
+			else {	
+				reset();
+				self.callback = queueItem.callback;
+				self.variables = queueItem.variables; 
+				self.periods = queueItem.periods; 
+				self.orgunits = queueItem.orgunits; 
+				self.parameters = queueItem.param;
+				self.analysisType = queueItem.type;					
+
+				if (self.analysisType === 'outlier') {
+					resetOutlierResult();
+					createOutlierRequests();
+				}
 			}
 		}
 		
@@ -464,30 +471,46 @@
 									subunit percent < consistency threshold
 									subunit names < consistency threshold
 		*/
-		self.datasetCompletenessAnalysis = function(callback, datasets, period, refPeriods, boundaryOrgunit, level) {
+		self.datasetCompleteness = function(callback, datasets, period, refPeriods, boundaryOrgunit, level) {
+						
+			var queueItem = {
+				'type': 'datasetCompleteness',
+				'parameters': {
+					'callback': callback,
+					'datasets': datasets,
+					'period': period,
+					'refPeriods': refPeriods,
+					'boundaryOrgunit': boundaryOrgunit, 
+					'level': level
+				}
+			}
 			
-			//Only need a few queries, so don't need queuing
-			self.dsc = {};
-			self.dsc.callback = callback;
-			self.dsc.datasets = datasets;
-			self.dsc.period = period;
-			self.dsc.refPeriods = refPeriods.sort(function(a, b){return a-b});
-			self.dsc.boundary = boundaryOrgunit;
-			self.dsc.level = level;
+			self.analysisQueue.push(queueItem);
+			nextAnalysis();
+		}
+		
+		
+		function datasetCompletenessAnalysis(parameters) {
+			//Start
+			self.dsc = parameters;
 			
+			//Reset
+			self.boundaryCompleteness = null;
+			self.subunitCompleteness = null;
+									
 			//periods to request
-			var pe = [].concat(refPeriods);
-			pe.push(period);
+			self.dsc.refPeriods = self.dsc.refPeriods.sort(function(a, b){return a-b});
+			var pe = [].concat(self.dsc.refPeriods);
+			pe.push(self.dsc.period);
 			
 			//datasets to request
 			var ds = [];
-			for (var i = 0; i < datasets.length; i++) {
-				ds.push(datasets[i].id);
+			for (var i = 0; i < self.dsc.datasets.length; i++) {
+				ds.push(self.dsc.datasets[i].id);
 			}
 			
 			//1 request boundary completeness data for the four years
-			self.boundaryCompleteness = null;
-			var requestURL = '/api/analytics.json?dimension=dx:' + ds.join(';') + '&dimension=ou:' + boundaryOrgunit + '&dimension=pe:' + pe.join(';') + '&displayProperty=NAME';
+			var requestURL = '/api/analytics.json?dimension=dx:' + ds.join(';') + '&dimension=ou:' + self.dsc.boundaryOrgunit + '&dimension=pe:' + pe.join(';') + '&displayProperty=NAME';
 			
 			requestService.getSingle(requestURL).then(
 					//success
@@ -503,8 +526,7 @@
 			
 			
 			//2 request subunit completeness data for the four years
-			self.subunitCompleteness = null;
-			var requestURL = '/api/analytics.json?dimension=dx:' + ds.join(';') + '&dimension=ou:' + boundaryOrgunit + ';LEVEL-' + level + '&dimension=pe:' + pe.join(';') + '&displayProperty=NAME';
+			var requestURL = '/api/analytics.json?dimension=dx:' + ds.join(';') + '&dimension=ou:' + self.dsc.boundaryOrgunit + ';LEVEL-' + self.dsc.level + '&dimension=pe:' + pe.join(';') + '&displayProperty=NAME';
 			
 			requestService.getSingle(requestURL).then(
 					//success
@@ -519,6 +541,7 @@
 				);
 			
 		}
+				
 		
 		function startDatasetCompletenessAnalysis() {
 			if (self.boundaryCompleteness === null || self.subunitCompleteness === null) return;
@@ -526,7 +549,7 @@
 			
 			var year = self.dsc.period;
 			var refYears = self.dsc.refPeriods;
-			var boundary = self.dsc.boundary;
+			var boundary = self.dsc.boundaryOrgunit;
 			var subunits = self.subunitCompleteness.metaData.ou;
 			var data = self.boundaryCompleteness.rows.concat(self.subunitCompleteness.rows);
 			var headers = self.boundaryCompleteness.headers;
@@ -609,13 +632,130 @@
 				
 			}
 			
-			console.log(self.dsc.datasets);
 			self.dsc.callback(self.dsc.datasets);
+			
+			self.inProgress = false;
+			nextAnalysis();
+		}
+		
+		
+		/*
+		Completeness analysis used by Annual Review
+		
+		@param callback			function to send result to
+		@param datasets			array of objects with:		
+									name, 
+									id, 
+									periodtype 
+									threshold for completeness
+									threshold for consistency
+									trend
+		@param period			analysis period
+		@param refPeriods		reference periods (for consistency over time)
+		@param bounaryOrgunit	ID of boundary orgunit
+		@param level			level for sub-boundary orgunits
+		@returns				datasets objects array, with these additional properties:
+									boundary completeness
+			 						boundary consistency over time
+									subunit count < threshold
+									subunit percent < threshold
+									subunit names < threshold
+									subunit count < consistency threshold
+									subunit percent < consistency threshold
+									subunit names < consistency threshold
+		*/
+		self.indicatorCompleteness = function(callback, indicator, periods, boundaryOrgunit, level) {
+			
+			var queueItem = {
+				'type': 'indicatorCompleteness',
+				'parameters': {
+					'callback': callback,
+					'indicator': indicator,
+					'periods': periods,
+					'boundaryOrgunit': boundaryOrgunit, 
+					'level': level
+				}
+			}
+			
+			self.analysisQueue.push(queueItem);
+			nextAnalysis();
+			
+		}
+		
+		function indicatorCompletenessAnalysis(parameters) {
+			self.ic = parameters;
+						
+			var requestURL = '/api/analytics.json?dimension=dx:' + self.ic.indicator.localData.id + '&dimension=ou:' + self.ic.boundaryOrgunit + ';LEVEL-' + self.ic.level + '&dimension=pe:' + self.ic.periods.join(';') + '&displayProperty=NAME';
+			
+			requestService.getSingle(requestURL).then(
+					//success
+					function(response) {
+					    self.ic.data = response.data;	
+					    startIndicatorCompletenessAnalysis();				
+					}, 
+					//error
+					function(response) {
+					    console.log("Error fetching data");
+					}
+			);
+			
 		}
 		
 		
 		
-		/**
+		function startIndicatorCompletenessAnalysis() {
+			
+			
+			var rows = self.ic.data.rows;
+			var headers = self.ic.data.headers;
+			var subunits = self.ic.data.metaData.ou;
+			var periods = self.ic.data.metaData.pe;
+			var names = self.ic.data.metaData.names;
+			
+			var totalExpected = subunits.length * periods.length;
+			var totalValues = 0;
+			
+			var totalDistricts = subunits.length;
+			var subunitsBelow = 0;
+			var subunitNames = [];
+
+			var de = self.ic.indicator.localData.id;
+			var threshold = 90; //TODO: self.ic.indicator.threshold;
+			
+			var valid, value, completeness;
+			for (var i = 0; i < subunits.length; i++) {
+				
+				valid = 0;
+				for (var j = 0; j < periods.length; j++) {
+					
+					value = dataValue(headers, rows, de, periods[j], subunits[i], null);
+					if (isNumber(value) && parseFloat(value) != 0) valid++;
+					
+				}
+				 totalValues += valid;
+
+				 completeness = 100*valid/periods.length;
+				 if (completeness < threshold) {
+				 	subunitNames.push(names[subunits[i]]);
+				 	subunitsBelow++;
+				 }
+			}
+			
+			self.ic.indicator.boundary = round(100*totalValues/totalExpected, 1);
+			self.ic.indicator.count = subunitsBelow;
+			self.ic.indicator.percent = round(100*subunitsBelow/subunits.length, 1);
+			self.ic.indicator.names = subunitNames;
+			
+			self.ic.callback(self.ic.indicator);
+			self.inProgress = false;
+			nextAnalysis();
+		}
+		
+		
+		
+		
+		
+		/*
 		Calculates ratio between current value and the mean or forecast of reference values. Forecast is set to max = 100, e.g. for use with completeness or indicators
 		
 		@param refValues			array of reference values
@@ -650,7 +790,7 @@
 		
 		
 		
-		/**
+		/*
 		@param values			array of values
 		
 		@returns				mean of values, excluding null values
@@ -668,7 +808,7 @@
 			return (sum/valueCount);
 		}
 		
-		/**
+		/*
 		@param values			array of preceding values (time trend)
 		
 		@returns				forecasted value based on change across years
@@ -684,7 +824,7 @@
 			return forecast.equation[0]*i + forecast.equation[1];
 		}
 		
-		/**
+		/*
 		@param value			value to round
 		@param decimals			number of decimals to include
 		
@@ -697,7 +837,7 @@
 		}
 		
 		
-		/**
+		/*
 		Requires DHIS analytics data in json format. 
 		@param header			response header from analytics
 		@param dataValues		response rows from analytics

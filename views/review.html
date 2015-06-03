@@ -47,9 +47,9 @@
 		<tbody>
 
 		<tr bgcolor="#f9f9f9">
-		 	<th>Dataset</th><th>Overall Completeness</th><th># Units with poor score</th><th>% Units with poor score</th>
+		 	<th>Dataset</th><th>Overall score (%)</th><th># {{revCtrl.orgunitLevelSelected.name}}s with poor score</th><th>% {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
 	    </tr>
-	 	<tr ng-repeat="dataset in revCtrl.completeness.datasets track by $index | orderBy:'label':false">
+	 	<tr ng-repeat="dataset in revCtrl.completeness.datasets | orderBy : 'name'">
     		<td>{{dataset.name}}</td>
     		<td class="valueCell">{{dataset.boundary}}%</td>
     		<td class="valueCell">{{dataset.count}}</td>
@@ -57,17 +57,31 @@
     	</tr>
     	</tbody>
     </table>
-	<em>2) Completeness of indicator data (missing/zero values)</em>
-    <br />
+	<em>2) Completeness of indicator data (missing or zero values)</em>
+    {{self.completeness.indicators}}
+    <table style="font-size: 90%;" class="table table-bordered table-condensed">
+    		<tbody>
+    
+    		<tr bgcolor="#f9f9f9">
+    		 	<th>Dataset</th><th>Overall score (%)</th><th># {{revCtrl.orgunitLevelSelected.name}}s with poor score</th><th>% {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
+    	    </tr>	    
+    	   	<tr ng-repeat="indicator in revCtrl.completeness.indicators | orderBy : 'name'">
+        		<td>{{indicator.name}}</td>
+        		<td class="valueCell">{{indicator.boundary}}%</td>
+        		<td class="valueCell">{{indicator.count}}</td>
+        		<td class="valueCell">{{indicator.percent}}%</td>
+        	</tr>
+        	</tbody>
+        </table>
     
 	<em>3) Consistency of dataset completeness over time. </em>Completeness of datasets in {{revCtrl.yearSelected.id}} compared to previous three years.
 	<table style="font-size: 90%;" class="table table-bordered table-condensed">
 		<tbody>
 
 		<tr bgcolor="#f9f9f9">
-		 	<th>Dataset</th><th>Consistency</th><th># Units with poor score</th><th>% Units with poor score</th>
+		 	<th>Dataset</th><th>Overall score (%)</th><th># {{revCtrl.orgunitLevelSelected.name}}s with poor score</th><th>% {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
 	    </tr>	    
-	   	<tr ng-repeat="dataset in revCtrl.completeness.datasets track by $index | orderBy:'label':false">
+	   	<tr ng-repeat="dataset in revCtrl.completeness.datasets | orderBy:'name'">
     		<td>{{dataset.name}}</td>
     		<td class="valueCell">{{dataset.boundaryTrend}}%</td>
     		<td class="valueCell">{{dataset.countTrend}}</td>
@@ -93,19 +107,19 @@
 	 	<th width="50">{{revCtrl.yearSelected.name}}</th>
 	 	<th>Names</th>
     </tr>
-    <tbody ng-repeat="dataset in revCtrl.completeness.datasets track by $index| orderBy:'label':false">
+    <tbody ng-repeat="dataset in revCtrl.completeness.datasets| orderBy:'name':false">
   	<tr >
 		<td rowspan="3">{{dataset.name}}</td>
-		<td>National completeness</td>
+		<td>Overall score (%)</td>
 		<td class="valueCell">{{dataset.boundary}}%</td>
 		<td rowspan="3">{{dataset.names.join(', ')}}.</td>
 	</tr>
 	<tr>
-		<td># units with completeness below {{dataset.threshold}}%</td>
+		<td># {{revCtrl.orgunitLevelSelected.name}}s with completeness below {{dataset.threshold}}%</td>
 		<td class="valueCell">{{dataset.count}}</td>	
 	</tr>
 	<tr>
-		<td>% units with completeness below {{dataset.threshold}}%</td>
+		<td>% {{revCtrl.orgunitLevelSelected.name}}s with completeness below {{dataset.threshold}}%</td>
 		<td class="valueCell">{{dataset.percent}}%</td>	
 	</tr>
 	</tbody>
@@ -114,6 +128,24 @@
 	<textarea style="width: 100%; height: 150px; list-style: outside; margin-bottom: 50px;"></textarea>
 
 <em>2) Completeness of indicator data (missing/zero values).</em>
+<table style="font-size: 90%;" class="table table-bordered table-condensed">
+		<tbody>
+
+		<tr bgcolor="#f9f9f9">
+		 	<th>Indicator</th><th>Threshold</th><th>Overall score (%)</th><th># {{revCtrl.orgunitLevelSelected.name}}s with poor score</th><th>% {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
+		 	<th>Names</th>
+	    </tr>	    
+	   	<tr ng-repeat="indicator in revCtrl.completeness.indicators | orderBy : 'name'">
+    		<td>{{indicator.name}}</td>
+    		<td>{{indicator.threshold}}</td>
+    		<td class="valueCell">{{indicator.boundary}}%</td>
+    		<td class="valueCell">{{indicator.count}}</td>
+    		<td class="valueCell">{{indicator.percent}}%</td>
+    		<td class="valueCell">{{indicator.names.join(', ')}}</td>
+    	</tr>
+    	</tbody>
+    </table>
+
 <h5>Interpretations</h5>
 <textarea style="width: 100%; height: 150px; list-style: outside; margin-bottom: 50px;"></textarea>
 <br />
@@ -125,11 +157,11 @@
 <th>Expected trend</th>
 <th>Quality threshold</th>
 <th>Overall score (%)</th>
-<th># Units with poor score</th>
-<th>% Units with poor score</th>
+<th># {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
+<th>% {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
 <th>Names</th>
 </tr>
-<tr ng-repeat="dataset in revCtrl.completeness.datasets track by $index| orderBy:'label':false">
+<tr ng-repeat="dataset in revCtrl.completeness.datasets| orderBy:'name':false">
 <td>{{dataset.name}}</td>
 <td>{{dataset.trend}}</td>
 <td class="valueCell">{{dataset.consistencyThreshold}}%</td>

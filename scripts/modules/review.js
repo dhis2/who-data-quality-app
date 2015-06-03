@@ -60,11 +60,30 @@
 	  	self.doAnalysis = function() {
 	  		
 	  		self.completeness = {};
+	  		self.completeness.indicators = [];
 	  		
 	  		//1 Get dataset completeness
-	  		var cb = function (result) { self.completeness.datasets = result;}
-	  		dataAnalysisService.datasetCompletenessAnalysis(cb, dataSetsForCompleteness(), self.yearSelected.id, precedingYears(self.yearSelected.id, 3), self.userOrgunit.id, self.orgunitLevelSelected.level);
-	  	
+	  		var dscCallback = function (result) { self.completeness.datasets = result;}
+	  		dataAnalysisService.datasetCompleteness(dscCallback, dataSetsForCompleteness(), self.yearSelected.id, precedingYears(self.yearSelected.id, 3), self.userOrgunit.id, self.orgunitLevelSelected.level);
+			
+			//2 Get indicator completeness
+	  		var icCallback = function (result) { self.completeness.indicators.push(result);}
+	  		var indicators = indicatorIDsForAnalysis();
+	  		for (var i = 0; i < indicators.length; i++) {
+	  		
+	  			
+	  			var indicator = indicatorFromCode(indicators[i])
+	  			var dataset = datasetFromID(indicator.dataSetID);
+	  			
+	  			var startDate = self.yearSelected.id.toString() + "-01-01";
+	  			var endDate = self.yearSelected.id.toString() + "-12-31";
+	  			var periods = periodService.getISOPeriods(startDate, endDate, dataset.periodType);	  			
+	  			
+				dataAnalysisService.indicatorCompleteness(icCallback, indicator, periods, self.userOrgunit.id, self.orgunitLevelSelected.level);
+	  		}	  		
+	  		
+	  		
+
 	  	}
 	  	
 	  	
