@@ -275,7 +275,7 @@
 					
 					//check if row should be saved or discarded
 					//if (newRow.metaData.outliers > 0 || newRow.metaData.gaps >= maxGap) {
-						newRow.metaData.gapWeight = Math.floor(getMedian(valueSet)*newRow.metaData.gaps);
+						newRow.metaData.gapWeight = Math.floor(median(valueSet)*newRow.metaData.gaps);
 						newRow.metaData.outWeight = getOutlierWeight(valueSet, stats.mean, stats.sd);
 						self.result.rows.push(newRow);
 					//}
@@ -296,7 +296,7 @@
 		}
 		
 		
-		function getMedian(values) {
+		function median(values) {
 			
 			values.sort( function(a,b) {return a - b;} );
 			
@@ -471,12 +471,12 @@
 			self.dsc.callback = callback;
 			self.dsc.datasets = datasets;
 			self.dsc.period = period;
-			self.dsc.refPeriods = refPeriods;
+			self.dsc.refPeriods = refPeriods.sort(function(a, b){return a-b});
 			self.dsc.boundary = boundaryOrgunit;
 			self.dsc.level = level;
 			
 			//periods to request
-			var pe = refPeriods;
+			var pe = [].concat(refPeriods);
 			pe.push(period);
 			
 			//datasets to request
@@ -525,6 +525,7 @@
 			else console.log("Received required dataset completeness data - start analysis");
 			
 			var year = self.dsc.period;
+			var refYears = self.dsc.refPeriods;
 			var boundary = self.dsc.boundary;
 			var subunits = self.subunitCompleteness.metaData.ou;
 			var data = self.boundaryCompleteness.rows.concat(self.subunitCompleteness.rows);
@@ -542,10 +543,15 @@
 				ds = self.dsc.datasets[i];
 				
 				
-				//1 straight data set completeness
+				//1 data set completeness
 				var subunitsAbove = 0;
 				var subunitsBelow = 0;
 				var subunitNames = [];
+				
+				//Get boundary value
+				ds.boundary = dataValue(headers, data, ds.id, year, boundary, null);
+				
+				//Get subunit values
 				for (var j = 0; j < subunits.length; j++) {
 					value = dataValue(headers, data, ds.id, year, subunits[j], null);
 					if (value) {
@@ -557,22 +563,148 @@
 					}
 					//else not expected to report
 				}
-				ds.boundary = dataValue(headers, data, ds.id, year, boundary, null);				
+				//Summarise			
 				ds.count = subunitsBelow;
 				ds.percent = 100*subunitsBelow/(subunitsBelow + subunitsAbove);
 				ds.percent = Math.round(ds.percent*10)/10;
 				ds.names = subunitNames;
 				
-				//2 consistency over time
+				
+				
+				
+				//2 dataset completeness consistency over time
+				subunitsAbove = 0;
+				subunitsBelow = 0;
+				subunitNames = [];
+				
+				var values = [];
+				for (var k = 0; k < refYears.length; k++) {
+					values.push(dataValue(headers, data, ds.id, refYears[k], boundary, null));
+				}	
+				ds.boundaryTrend = timeConsistency(values, ds.boundary, ds.trend);
+				
+				//Get subunit values
+				for (var j = 0; j < subunits.length; j++) {
+					
+					var values = [], trend;
+					for (var k = 0; k < refYears.length; k++) {
+						values.push(dataValue(headers, data, ds.id, refYears[k], boundary, null));
+					}
+					trend = timeConsistency(values, dataValue(headers, data, ds.id, year, subunits[j], null), ds.trend);
+					
+					if (trend > (100 + ds.consistencyThreshold) || trend < (100-ds.consistencyThreshold)) {
+						subunitsBelow++;
+						subunitNames.push(names[subunits[j]]);						
+					}
+					else {
+						subunitsAbove++;
+					}				
+				}
+				
+				//Summarise			
+				ds.countTrend = subunitsBelow;
+				ds.percentTrend = round(100*subunitsBelow/(subunitsBelow + subunitsAbove),1);
+				ds.namesTrend = subunitNames;
+				
 				
 			}
 			
 			console.log(self.dsc.datasets);
 			self.dsc.callback(self.dsc.datasets);
-		
-		
 		}
 		
+		
+		
+		/**
+		Calculates ratio between current value and the mean or forecast of reference values. Forecast is set to max = 100, e.g. for use with completeness or indicators
+		
+		@param refValues			array of reference values
+		@param currentvalue			value for current period
+		@param type					type of consistency - constant (mean) or increase/decrease (forecast)
+		
+		@returns					ratio current/reference
+		*/
+		function timeConsistency(refvalues, currentvalue, type) {
+			var refVal;
+			if (type && type != 'constant') {
+				refVal = forecast(refvalues);
+				if (refVal > 100) refVal = 100; //Complenetess = max 100%
+				if (refVal < refvalues[1] && refVal < refvalues[2]) {
+					console.log("Ignored first year of completenesss, too low: " + refvalues.shift());
+					refVal = forecast(refvalues);
+		
+				}				
+			}
+			else {
+				refVal = mean(refvalues);
+				
+				if (refVal < refvalues[1] && refVal < refvalues[2]) {
+					console.log("Ignored first year of completenesss, too low: " + refvalues.shift());
+					refVal = mean(refvalues);
+				}
+			}
+
+			return round(100*currentvalue/refVal, 1);
+		}
+		
+		
+		
+		
+		/**
+		@param values			array of values
+		
+		@returns				mean of values, excluding null values
+		*/
+		function mean(values) {
+			var valueCount = 0;
+			var sum = 0;
+			for (var i = 0; i < values.length; i++) {
+				if (values[i]) {
+					valueCount++;
+					sum += parseFloat(values[i]);
+				}
+			}
+			
+			return (sum/valueCount);
+		}
+		
+		/**
+		@param values			array of preceding values (time trend)
+		
+		@returns				forecasted value based on change across years
+		*/		
+		function forecast(values) {
+		
+			var i, points = [];
+			for (i = 0; i < values.length; i++) {
+				if (values[i]) points.push([i, parseFloat(values[i])]);
+				else points.push([i, null]);
+			}
+			var forecast = regression('linear', points);
+			return forecast.equation[0]*i + forecast.equation[1];
+		}
+		
+		/**
+		@param value			value to round
+		@param decimals			number of decimals to include
+		
+		@returns				value rounded to given decimals
+		*/
+		function round(value, decimals) {
+			var factor = Math.pow(10,decimals);
+			return Math.round(value*factor)/factor;
+			
+		}
+		
+		
+		/**
+		Requires DHIS analytics data in json format. 
+		@param header			response header from analytics
+		@param dataValues		response rows from analytics
+		@param de, pe, ou, co	IDs
+		
+		@returns float of datavalue, or null if not found
+		*/
 		function dataValue(header, dataValues, de, pe, ou, co) {
 			var dxi, pei, oui, coi, vali;
 			for (var i = 0; i < header.length; i++) {
@@ -592,7 +724,9 @@
 					(oui === undefined || data[oui] === ou) &&
 					(coi === undefined || data[coi] === co)
 				) return parseFloat(data[vali]);
-			}		
+			}
+			
+			return null;		
 		}
 		
 		
