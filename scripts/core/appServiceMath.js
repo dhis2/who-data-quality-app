@@ -16,6 +16,7 @@
 		};
 		
 		
+		
 		self.getVariance = function(valueSet, mean) {
 			
 
@@ -31,11 +32,29 @@
 		};
 		
 	
+	
 		self.getStandardDeviation = function(valueSet) {
 		
 			return Math.sqrt(self.getVariance(valueSet));
 		
 		};
+		
+		
+		
+		self.MAD = function(valueSet, median) {
+		
+			if (!median) median = self.median(valueSet);
+			
+			var absoluteDeviations = [];
+			for (var i = 0; i < valueSet.length; i++) {
+				absoluteDeviations.push(Math.abs(valueSet[i]-median));	
+			}
+			
+			return self.median(absoluteDeviations);
+		
+		}
+		
+		
 		
 		
 		self.getStats = function (valueSet) {
@@ -49,10 +68,24 @@
 			//SD of population
 			var sd = Math.sqrt(variance);
 		
-			return {"mean": mean, "variance": variance, "sd": sd};
+			//Median
+			var median = self.median(valueSet);
+			
+			//Median Absolute Derivative
+			var MAD = self.MAD(valueSet, median);
+		
+			return {
+				"mean": mean, 
+				"variance": variance, 
+				"sd": sd, 
+				"median": median,
+				"MAD": MAD
+			};
 		
 		
 		}
+		
+		
 		
 		self.median = function (values) {
 			
@@ -63,6 +96,8 @@
 		    if(values.length % 2) return values[half];
 		    else return (values[half-1] + values[half]) / 2.0;
 		}
+		
+		
 		
 		/*
 		@param values			array of preceding values (time trend)
@@ -79,8 +114,6 @@
 			var forecast = regression('linear', points);
 			return forecast.equation[0]*i + forecast.equation[1];
 		}
-		
-		
 		
 		
 				

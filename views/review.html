@@ -41,8 +41,8 @@
 <tabset ng-if="revCtrl.completeness">
 <tab heading="Summary">
 <div>
-	<h4>Completeness</h4>
-	<em>1) Completeness of facility reporting.</em> The percentage of expected reports that have been entered and completed.
+	<h4>1 Completeness</h4>
+	<em>1a Completeness of facility reporting.</em> The percentage of expected reports that have been entered and completed.
 	<table style="font-size: 90%;" class="table table-bordered table-condensed">
 		<tbody>
 
@@ -60,7 +60,7 @@
     	</tr>
     	</tbody>
     </table>
-	<em>2) Completeness of indicator data (missing or zero values)</em>
+	<em>1b Completeness of indicator data (missing or zero values)</em>
     {{self.completeness.indicators}}
     <table style="font-size: 90%;" class="table table-bordered table-condensed">
     		<tbody>
@@ -80,7 +80,7 @@
         	</tbody>
         </table>
     
-	<em>3) Consistency of dataset completeness over time. </em>Completeness of datasets in {{revCtrl.yearSelected.id}} compared to previous three years.
+	<em>1c Consistency of dataset completeness over time. </em>Completeness of datasets in {{revCtrl.yearSelected.id}} compared to previous three years.
 	<table style="font-size: 90%;" class="table table-bordered table-condensed">
 		<tbody>
 
@@ -99,15 +99,65 @@
     	</tbody>
     </table>
     <hr />
-	<h4>Internal consistency</h4>
-    
+	<h4>2 Internal consistency</h4>
+	<em>2a Extreme outliers.</em>
+    <table style="font-size: 90%;" class="table table-bordered table-condensed">
+    		<tbody>
+    		<tr bgcolor="#f9f9f9">
+    		 	<th width="275">Indicator</th>
+    		 	<th width="175">Overall score (%)</th>
+    		 	<th width="175"># {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
+    		 	<th width="175">% {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
+    	    </tr>	    
+    	   	<tr ng-repeat="indicator in revCtrl.consistency.outliers | orderBy:'name'">
+        		<td>{{indicator.name}}</td>
+        		<td class="valueCell">{{indicator.boundaryExtreme}}%</td>
+        		<td class="valueCell">{{indicator.countExtreme}}</td>
+        		<td class="valueCell">{{indicator.percentExtreme}}%</td>
+        	</tr>
+        	</tbody>
+        </table>
+	<em>2b Moderate outliers.</em> Outliers relative to the mean.
+	<table style="font-size: 90%;" class="table table-bordered table-condensed">
+		<tbody>
+		<tr bgcolor="#f9f9f9">
+		 	<th width="275">Indicator</th>
+		 	<th width="175">Overall score (%)</th>
+		 	<th width="175"># {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
+		 	<th width="175">% {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
+	    </tr>	    
+	   	<tr ng-repeat="indicator in revCtrl.consistency.outliers | orderBy:'name'">
+    		<td>{{indicator.name}}</td>
+    		<td class="valueCell">{{indicator.boundaryModerate}}%</td>
+    		<td class="valueCell">{{indicator.countModerate}}</td>
+    		<td class="valueCell">{{indicator.percentModerate}}%</td>
+    	</tr>
+    	</tbody>
+    </table>
+    <em>2c Moderate outliers.</em> Outliers relative to the median (modified Z-score > 3.5).
+    <table style="font-size: 90%;" class="table table-bordered table-condensed">
+    	<tbody>
+    	<tr bgcolor="#f9f9f9">
+    	 	<th width="275">Indicator</th>
+    	 	<th width="175">Overall score (%)</th>
+    	 	<th width="175"># {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
+    	 	<th width="175">% {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
+        </tr>	    
+       	<tr ng-repeat="indicator in revCtrl.consistency.outliers | orderBy:'name'">
+    		<td>{{indicator.name}}</td>
+    		<td class="valueCell">{{indicator.boundaryZscore}}%</td>
+    		<td class="valueCell">{{indicator.countZscore}}</td>
+    		<td class="valueCell">{{indicator.percentZscore}}%</td>
+    	</tr>
+    	</tbody>
+    </table>
     
 </div>
 </tab>
 <tab heading="Completeness">
 <div>
-<h4>Completeness of facility reporting</h4>
-<em>1) Completeness of facility reporting.</em><br />The percentage of expected reports that have been entered and completed.
+<br />
+<em>1a  Completeness of facility reporting.</em><br />The percentage of expected reports that have been entered and completed.
 <table style="font-size: 90%;" class="table table-bordered table-condensed">
 	<tbody>
 	<tr bgcolor="#f9f9f9">
@@ -136,7 +186,7 @@
 	<h5>Interpretations</h5>
 	<textarea style="width: 100%; height: 150px; list-style: outside; margin-bottom: 50px;"></textarea>
 
-<em>2) Completeness of indicator data (missing/zero values).</em>
+<em>1b  Completeness of indicator data (missing/zero values).</em>
 <table style="font-size: 90%;" class="table table-bordered table-condensed">
 		<tbody>
 
@@ -163,7 +213,7 @@
 <textarea style="width: 100%; height: 150px; list-style: outside; margin-bottom: 50px;"></textarea>
 <br />
 
-<em>3) Consistency of dataset completeness over time.</em><br />Difference between the current year completeness and either the average of the 3 preceding years (if expected trend is constant), or the forecasted value.
+<em>1c  Consistency of dataset completeness over time.</em><br />Difference between the current year completeness and either the average of the 3 preceding years (if expected trend is constant), or the forecasted value.
 <table style="font-size: 90%;" class="table table-bordered table-condensed">
 <tr bgcolor="#f9f9f9">
 <th width="200">Dataset</th>
@@ -196,6 +246,77 @@
 </tab>
 
 <tab heading="Internal Consistency">
+<br />
+<em>2a  Extreme outliers.</em>
+	<table style="font-size: 90%;" class="table table-bordered table-condensed">
+		<tbody>
+
+		<tr bgcolor="#f9f9f9">
+		 	<th width="200">Indicator</th>
+		 	<th width="80">Threshold</th>
+		 	<th width="80">Overall score (%)</th>
+		 	<th width="110"># {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
+		 	<th width="110">% {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
+		 	<th>Names</th>
+	    </tr>	    
+	   	<tr ng-repeat="indicator in revCtrl.completeness.indicators | orderBy : 'name'">
+    		<td>{{indicator.name}}</td>
+    		<td class="valueCell">{{indicator.extremeOutlier}} SD</td>
+    		<td class="valueCell">{{indicator.boundaryExtreme}}%</td>
+    		<td class="valueCell">{{indicator.countExtreme}}</td>
+    		<td class="valueCell">{{indicator.percentExtreme}}%</td>
+    		<td class="valueCell">{{indicator.namesExtreme.join(', ')}}</td>
+    	</tr>
+    	</tbody>
+    </table>
+
+<em>2b  Moderate outliers.</em>
+	<table style="font-size: 90%;" class="table table-bordered table-condensed">
+		<tbody>
+
+		<tr bgcolor="#f9f9f9">
+		 	<th width="200">Indicator</th>
+		 	<th width="80">Threshold</th>
+		 	<th width="80">Overall score (%)</th>
+		 	<th width="110"># {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
+		 	<th width="110">% {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
+		 	<th>Names</th>
+	    </tr>	    
+	   	<tr ng-repeat="indicator in revCtrl.completeness.indicators | orderBy : 'name'">
+    		<td>{{indicator.name}}</td>
+    		<td class="valueCell">{{indicator.extremeOutlier}} SD</td>
+    		<td class="valueCell">{{indicator.boundaryModerate}}%</td>
+    		<td class="valueCell">{{indicator.countModerate}}</td>
+    		<td class="valueCell">{{indicator.percentModerate}}%</td>
+    		<td class="valueCell">{{indicator.namesModerate.join(', ')}}</td>
+    	</tr>
+    	</tbody>
+    </table>
+
+<em>2c  Moderate outliers.</em> Based on median (modified Z score).
+	<table style="font-size: 90%;" class="table table-bordered table-condensed">
+		<tbody>
+
+		<tr bgcolor="#f9f9f9">
+		 	<th width="200">Indicator</th>
+		 	<th width="80">Threshold</th>
+		 	<th width="80">Overall score (%)</th>
+		 	<th width="110"># {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
+		 	<th width="110">% {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
+		 	<th>Names</th>
+	    </tr>	    
+	   	<tr ng-repeat="indicator in revCtrl.completeness.indicators | orderBy : 'name'">
+    		<td>{{indicator.name}}</td>
+    		<td class="valueCell">3.5</td>
+    		<td class="valueCell">{{indicator.boundaryZscore}}%</td>
+    		<td class="valueCell">{{indicator.countZscore}}</td>
+    		<td class="valueCell">{{indicator.percentZscore}}%</td>
+    		<td class="valueCell">{{indicator.namesZscore.join(', ')}}</td>
+    	</tr>
+    	</tbody>
+    </table>
+
+
 
 </tab>
 </tabset>

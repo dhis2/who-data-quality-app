@@ -7,6 +7,7 @@
 		self.maxPendingRequests = 3;
 		
 		self.analysisQueue = [];
+		self.z = 0.6745;
 		
 		function reset() {
 			self.debugCount = 0;
@@ -816,23 +817,27 @@
 			var totalValues = 0;
 			var totalExtremeOutliers = 0;
 			var totalModerateOutliers = 0;
+			var totalZscoreOutliers = 0;
 						
 			var totalDistricts = subunits.length;
 			var subunitsExtreme = 0;
 			var subunitsModerate = 0;
 			var subunitExtremeNames = [];
 			var subunitModerateNames = [];
+			var subunitsZscore = 0;
+			var subunitZscoreNames = [];
 
 
 			var de = self.io.indicator.localData.id;
-			var extremeLimit = self.io.indicator.extreme;
-			var moderateLimit = self.io.indicator.moderate;
+			var extremeLimit = self.io.indicator.extremeOutlier;
+			var moderateLimit = self.io.indicator.moderateOutlier;
 						
-			var valueSet, extremeCount, moderateCount;
+			var valueSet, extremeCount, moderateCount, zCount;
 			for (var i = 0; i < subunits.length; i++) {
 				valueSet = [];
 				extremeCount = 0;
 				moderateCount = 0;
+				zCount = 0;
 				
 				for (var j = 0; j < periods.length; j++) {	
 					value = dataValue(headers, rows, de, periods[j], subunits[i], null);
@@ -855,6 +860,13 @@
 						moderateCount++;
 						totalModerateOutliers++;
 					}
+					
+					//Modified Z-score
+					if ((self.z*(valueSet[j]-stats.median)/stats.MAD) > 3.5) {
+						zCount++;
+						totalZscoreOutliers++;
+					}
+					
 				}
 				
 				if (extremeCount > 0) {
@@ -864,6 +876,10 @@
 				if (moderateCount > 1) {
 					subunitsModerate++;
 					subunitModerateNames.push(names[subunits[i]]);
+				}
+				if (zCount > 1) {
+					subunitsZscore++;
+					subunitZscoreNames.push(names[subunits[i]]);
 				}
 			}
 			
@@ -877,6 +893,11 @@
 			self.io.indicator.countModerate = subunitsModerate;
 			self.io.indicator.percentModerate = mathService.round(100*subunitsModerate/subunits.length, 1);
 			self.io.indicator.namesModerate = subunitModerateNames;
+			
+			self.io.indicator.boundaryZscore = mathService.round(100*totalZscoreOutliers/totalValues, 1);
+			self.io.indicator.countZscore = subunitsZscore;
+			self.io.indicator.percentZscore = mathService.round(100*subunitsZscore/subunits.length, 1);
+			self.io.indicator.namesZscore = subunitZscoreNames;
 			
 			self.io.callback(self.io.indicator);
 			self.inProgress = false;
