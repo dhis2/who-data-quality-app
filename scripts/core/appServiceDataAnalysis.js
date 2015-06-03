@@ -720,7 +720,7 @@
 			var subunitNames = [];
 
 			var de = self.ic.indicator.localData.id;
-			var threshold = 90; //TODO: self.ic.indicator.threshold;
+			var threshold = self.ic.indicator.missing;
 			
 			var valid, value, completeness;
 			for (var i = 0; i < subunits.length; i++) {

@@ -29,7 +29,7 @@
 	    	
 	    	self.groupSelect = {};
 	    	
-	    	var needUpdate = true;
+	    	var needUpdate = false;
 	    	    		
     		//TODO: check for updates to metaData
     		requestService.getSingle('/api/systemSettings/DQAmapping').then(function(response) {
@@ -50,11 +50,11 @@
 	    
 		function updateMeta() {
 			
-			needUpdate = false;
+			needUpdate = true;
 		
 		
 			for (var i = 0; i < self.mapping.data.length; i++) {
-				self.mapping.data[i].trend = 'constant';
+				self.mapping.data[i].missing = 90;
 			}
 			
 			saveMapping();

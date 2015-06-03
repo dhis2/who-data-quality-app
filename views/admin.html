@@ -106,6 +106,7 @@
 				 	<li>For values expected to be constant over time: Percent difference between the ratio of current year indicator value and the average of the preceding three years and the same national level ratio (for indicators expected to remain constant).</li>
 				 	<li>For values expected to increase/decrease over time: Percent difference between the ratio of current year indicator value and the predicted value for the year based on the trend in the preceding three years and the same national level ratio.</li>
 				 </ul></li>
+			<li><em>Missing/zero values.</em> Units with fewer non-zero/non-missing values will be flagged.</li>
 			 </ul>
 			<table class="table table-bordered table-striped table-condensed table-hover minimized">
 				<tr>
@@ -116,6 +117,7 @@
 					<th>Extreme outlier (SD)</th>
 					<th>Consistency (%)</th>
 					<th>Expected trend</th>
+					<th>Missing/zero values (%)</th>
 				</tr>
 				<tr ng-repeat="indicator in admCtrl.mapping.data | filter: {matched: true} | orderBy:admCtrl.sortIndicators">
 					<td class="vert-align">{{admCtrl.dataGroups(indicator.code)}}</td>
@@ -136,6 +138,7 @@
 						<option value="increasing">Increasing</option>
 						<option value="decreasing">Decreasing</option>
 					</options></select></td>
+					<td align="middle" style="width: 150px;" class="vert-align"><input type="number" style="text-align: right;" ng-model="indicator.missing" min="0" max="100"/></td>
 				</tr>			
 			</table>
 			<h4>Dataset completeness</h4>
