@@ -196,6 +196,7 @@
 </tab>
 
 <tab heading="Internal Consistency">
+
 </tab>
 </tabset>
 <alert style="margin-top: 10px; margin-bottom: 10px;"ng-repeat="alert in revCtrl.result.alerts track by $index" type="{{alert.type}}" close="revCtrl.result.alerts.splice($index, 1)">{{alert.msg}}</alert>

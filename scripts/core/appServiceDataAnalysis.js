@@ -53,6 +53,9 @@
 			else if (queueItem.type === 'datasetCompleteness') {
 				datasetCompletenessAnalysis(queueItem.parameters);
 			}
+			else if (queueItem.type === 'indicatorOutlier') {
+				indicatorOutlierAnalysis(queueItem.parameters);
+			}
 			else {	
 				reset();
 				self.callback = queueItem.callback;
@@ -282,7 +285,7 @@
 					
 					//check if row should be saved or discarded
 					//if (newRow.metaData.outliers > 0 || newRow.metaData.gaps >= maxGap) {
-						newRow.metaData.gapWeight = Math.floor(median(valueSet)*newRow.metaData.gaps);
+						newRow.metaData.gapWeight = Math.floor(mathService.median(valueSet)*newRow.metaData.gaps);
 						newRow.metaData.outWeight = getOutlierWeight(valueSet, stats.mean, stats.sd);
 						self.result.rows.push(newRow);
 					//}
@@ -300,17 +303,6 @@
 			else {
 				processData();	
 			}
-		}
-		
-		
-		function median(values) {
-			
-			values.sort( function(a,b) {return a - b;} );
-			
-		    var half = Math.floor(values.length/2);
-		
-		    if(values.length % 2) return values[half];
-		    else return (values[half-1] + values[half]) / 2.0;
 		}
 		
 		
@@ -626,7 +618,7 @@
 				
 				//Summarise			
 				ds.countTrend = subunitsBelow;
-				ds.percentTrend = round(100*subunitsBelow/(subunitsBelow + subunitsAbove),1);
+				ds.percentTrend = mathService.round(100*subunitsBelow/(subunitsBelow + subunitsAbove),1);
 				ds.namesTrend = subunitNames;
 				
 				
@@ -682,6 +674,7 @@
 			
 		}
 		
+		
 		function indicatorCompletenessAnalysis(parameters) {
 			self.ic = parameters;
 						
@@ -701,8 +694,7 @@
 			
 		}
 		
-		
-		
+	
 		function startIndicatorCompletenessAnalysis() {
 			
 			
@@ -741,9 +733,9 @@
 				 }
 			}
 			
-			self.ic.indicator.boundary = round(100*totalValues/totalExpected, 1);
+			self.ic.indicator.boundary = mathService.round(100*totalValues/totalExpected, 1);
 			self.ic.indicator.count = subunitsBelow;
-			self.ic.indicator.percent = round(100*subunitsBelow/subunits.length, 1);
+			self.ic.indicator.percent = mathService.round(100*subunitsBelow/subunits.length, 1);
 			self.ic.indicator.names = subunitNames;
 			
 			self.ic.callback(self.ic.indicator);
@@ -752,6 +744,145 @@
 		}
 		
 		
+		/*
+		Completeness analysis used by Annual Review
+		
+		@param callback			function to send result to
+		@param datasets			array of objects with:		
+									name, 
+									id, 
+									periodtype 
+									threshold for completeness
+									threshold for consistency
+									trend
+		@param period			analysis period
+		@param refPeriods		reference periods (for consistency over time)
+		@param bounaryOrgunit	ID of boundary orgunit
+		@param level			level for sub-boundary orgunits
+		@returns				datasets objects array, with these additional properties:
+									boundary completeness
+			 						boundary consistency over time
+									subunit count < threshold
+									subunit percent < threshold
+									subunit names < threshold
+									subunit count < consistency threshold
+									subunit percent < consistency threshold
+									subunit names < consistency threshold
+		*/
+		self.indicatorOutlier = function(callback, indicator, periods, boundaryOrgunit, level) {
+			
+			var queueItem = {
+				'type': 'indicatorOutlier',
+				'parameters': {
+					'callback': callback,
+					'indicator': indicator,
+					'periods': periods,
+					'boundaryOrgunit': boundaryOrgunit, 
+					'level': level
+				}
+			}
+			
+			self.analysisQueue.push(queueItem);
+			nextAnalysis();
+			
+		}
+		
+		function indicatorOutlierAnalysis(parameters) {
+			self.io = parameters;
+						
+			var requestURL = '/api/analytics.json?dimension=dx:' + self.io.indicator.localData.id + '&dimension=ou:' + self.io.boundaryOrgunit + ';LEVEL-' + self.io.level + '&dimension=pe:' + self.io.periods.join(';') + '&displayProperty=NAME';
+			
+			requestService.getSingle(requestURL).then(
+					//success
+					function(response) {
+					    self.io.data = response.data;	
+					    startIndicatorOutlierAnalysis();				
+					}, 
+					//error
+					function(response) {
+					    console.log("Error fetching data");
+					}
+			);
+			
+		}
+		
+		function startIndicatorOutlierAnalysis() {
+			var rows = self.io.data.rows;
+			var headers = self.io.data.headers;
+			var subunits = self.io.data.metaData.ou;
+			var periods = self.io.data.metaData.pe;
+			var names = self.io.data.metaData.names;
+			
+			var totalValues = 0;
+			var totalExtremeOutliers = 0;
+			var totalModerateOutliers = 0;
+						
+			var totalDistricts = subunits.length;
+			var subunitsExtreme = 0;
+			var subunitsModerate = 0;
+			var subunitExtremeNames = [];
+			var subunitModerateNames = [];
+
+
+			var de = self.io.indicator.localData.id;
+			var extremeLimit = self.io.indicator.extreme;
+			var moderateLimit = self.io.indicator.moderate;
+						
+			var valueSet, extremeCount, moderateCount;
+			for (var i = 0; i < subunits.length; i++) {
+				valueSet = [];
+				extremeCount = 0;
+				moderateCount = 0;
+				
+				for (var j = 0; j < periods.length; j++) {	
+					value = dataValue(headers, rows, de, periods[j], subunits[i], null);
+					if (isNumber(value)) valueSet.push(parseFloat(value));
+				}
+				totalValues += valueSet.length;
+				
+				var stats = mathService.getStats(valueSet);
+				var modMax = stats.mean + stats.sd*moderateLimit;
+				var modMin = stats.mean - stats.sd*moderateLimit;
+				var extMax = stats.mean + stats.sd*extremeLimit;
+				var extMin = stats.mean - stats.sd*extremeLimit;
+				
+				for (var j = 0; j < valueSet.length; j++) {
+					if (valueSet[j] > extMax || valueSet[j] < extMin) {
+						extremeCount++;
+						totalExtremeOutliers++;
+					}
+					else if (valueSet[j] > modMax || valueSet[j] < modMin) {
+						moderateCount++;
+						totalModerateOutliers++;
+					}
+				}
+				
+				if (extremeCount > 0) {
+					subunitsExtreme++;
+					subunitExtremeNames.push(names[subunits[i]]);
+				}
+				if (moderateCount > 1) {
+					subunitsModerate++;
+					subunitModerateNames.push(names[subunits[i]]);
+				}
+			}
+			
+			
+			self.io.indicator.boundaryExtreme = mathService.round(100*totalExtremeOutliers/totalValues, 1);
+			self.io.indicator.countExtreme = subunitsExtreme;
+			self.io.indicator.percentExtreme = mathService.round(100*subunitsExtreme/subunits.length, 1);
+			self.io.indicator.namesExtreme = subunitExtremeNames;
+			
+			self.io.indicator.boundaryModerate = mathService.round(100*totalModerateOutliers/totalValues, 1);
+			self.io.indicator.countModerate = subunitsModerate;
+			self.io.indicator.percentModerate = mathService.round(100*subunitsModerate/subunits.length, 1);
+			self.io.indicator.namesModerate = subunitModerateNames;
+			
+			self.io.callback(self.io.indicator);
+			self.inProgress = false;
+			nextAnalysis();
+		
+		}
 		
 		
 		
@@ -767,75 +898,27 @@
 		function timeConsistency(refvalues, currentvalue, type) {
 			var refVal;
 			if (type && type != 'constant') {
-				refVal = forecast(refvalues);
+				refVal = mathService.forecast(refvalues);
 				if (refVal > 100) refVal = 100; //Complenetess = max 100%
 				if (refVal < refvalues[1] && refVal < refvalues[2]) {
 					console.log("Ignored first year of completenesss, too low: " + refvalues.shift());
-					refVal = forecast(refvalues);
+					refVal = mathService.forecast(refvalues);
 		
 				}				
 			}
 			else {
-				refVal = mean(refvalues);
+				refVal = mathService.getMean(refvalues);
 				
 				if (refVal < refvalues[1] && refVal < refvalues[2]) {
 					console.log("Ignored first year of completenesss, too low: " + refvalues.shift());
-					refVal = mean(refvalues);
+					refVal = mathService.getMean(refvalues);
 				}
 			}
 
-			return round(100*currentvalue/refVal, 1);
+			return mathService.round(100*currentvalue/refVal, 1);
 		}
 		
-		
-		
-		
-		/*
-		@param values			array of values
-		
-		@returns				mean of values, excluding null values
-		*/
-		function mean(values) {
-			var valueCount = 0;
-			var sum = 0;
-			for (var i = 0; i < values.length; i++) {
-				if (values[i]) {
-					valueCount++;
-					sum += parseFloat(values[i]);
-				}
-			}
-			
-			return (sum/valueCount);
-		}
-		
-		/*
-		@param values			array of preceding values (time trend)
-		
-		@returns				forecasted value based on change across years
-		*/		
-		function forecast(values) {
-		
-			var i, points = [];
-			for (i = 0; i < values.length; i++) {
-				if (values[i]) points.push([i, parseFloat(values[i])]);
-				else points.push([i, null]);
-			}
-			var forecast = regression('linear', points);
-			return forecast.equation[0]*i + forecast.equation[1];
-		}
-		
-		/*
-		@param value			value to round
-		@param decimals			number of decimals to include
-		
-		@returns				value rounded to given decimals
-		*/
-		function round(value, decimals) {
-			var factor = Math.pow(10,decimals);
-			return Math.round(value*factor)/factor;
-			
-		}
-		
+	
 		
 		/*
 		Requires DHIS analytics data in json format. 
@@ -868,8 +951,7 @@
 			
 			return null;		
 		}
-		
-		
+			
 		
 		/** DATA REQUESTS AND QUEUING */
 		function requestData() {
@@ -1008,8 +1090,8 @@
 			return !isNaN(parseFloat(number));
 		
 		}
-				
-		return self;
+		
+		
 	
 	}]);
 	

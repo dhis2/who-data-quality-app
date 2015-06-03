@@ -16,11 +16,12 @@
 		};
 		
 		
-		self.getVariance = function(valueSet) {
+		self.getVariance = function(valueSet, mean) {
 			
-			var variance = 0;
-			var mean = self.getMean(valueSet);
-			
+
+			if (!mean) mean = self.getMean(valueSet);
+
+			var variance = 0;			
 			for (var i = 0; i < valueSet.length; i++) {
 				variance += Math.pow((valueSet[i] - mean), 2);
 			}
@@ -40,25 +41,59 @@
 		self.getStats = function (valueSet) {
 		
 			//Mean
-			var total = 0;
-			for (var i = 0; i < valueSet.length; i++) {
-				total += valueSet[i];
-			}
-			var mean = (total/valueSet.length);
+			var mean = self.getMean(valueSet);
 			
 			//Variance
-			var variance = 0;			
-			for (var i = 0; i < valueSet.length; i++) {
-				variance += Math.pow((valueSet[i] - mean), 2);
-			}
-			variance = variance/(valueSet.length-1);
+			var variance = self.getVariance(valueSet, mean);
 			
-			//zScore
+			//SD of population
 			var sd = Math.sqrt(variance);
 		
 			return {"mean": mean, "variance": variance, "sd": sd};
 		
 		
+		}
+		
+		self.median = function (values) {
+			
+			values.sort( function(a,b) {return a - b;} );
+			
+		    var half = Math.floor(values.length/2);
+		
+		    if(values.length % 2) return values[half];
+		    else return (values[half-1] + values[half]) / 2.0;
+		}
+		
+		/*
+		@param values			array of preceding values (time trend)
+		
+		@returns				forecasted value based on change across years. Linear regression
+		*/		
+		self.forecast = function(values) {
+		
+			var i, points = [];
+			for (i = 0; i < values.length; i++) {
+				if (values[i]) points.push([i, parseFloat(values[i])]);
+				else points.push([i, null]);
+			}
+			var forecast = regression('linear', points);
+			return forecast.equation[0]*i + forecast.equation[1];
+		}
+		
+		
+		
+		
+				
+		/*
+		@param value			value to round
+		@param decimals			number of decimals to include
+		
+		@returns				value rounded to given decimals
+		*/
+		self.round = function(value, decimals) {
+			var factor = Math.pow(10,decimals);
+			return Math.round(value*factor)/factor;
+			
 		}
 		
 		return self;

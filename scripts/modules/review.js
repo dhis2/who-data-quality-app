@@ -61,6 +61,12 @@
 	  		
 	  		self.completeness = {};
 	  		self.completeness.indicators = [];
+	  		self.consistency = {};
+	  		self.consistency.outliers = [];
+	  		
+	  		
+	  		var datasets = dataSetsForCompleteness();
+	  		var indicatorIDs = indicatorIDsForAnalysis();
 	  		
 	  		//1 Get dataset completeness
 	  		var dscCallback = function (result) { self.completeness.datasets = result;}
@@ -68,11 +74,9 @@
 			
 			//2 Get indicator completeness
 	  		var icCallback = function (result) { self.completeness.indicators.push(result);}
-	  		var indicators = indicatorIDsForAnalysis();
-	  		for (var i = 0; i < indicators.length; i++) {
+	  		for (var i = 0; i < indicatorIDs.length; i++) {
 	  		
-	  			
-	  			var indicator = indicatorFromCode(indicators[i])
+	  			var indicator = indicatorFromCode(indicatorIDs[i])
 	  			var dataset = datasetFromID(indicator.dataSetID);
 	  			
 	  			var startDate = self.yearSelected.id.toString() + "-01-01";
@@ -81,11 +85,11 @@
 	  			
 				dataAnalysisService.indicatorCompleteness(icCallback, indicator, periods, self.userOrgunit.id, self.orgunitLevelSelected.level);
 	  		}
-	  			  		
-	  		var datasets = dataSetsForCompleteness();
-	  		var ds = [];
+	  		 		
+	  		//3 Completeness chart
+	  		var datasetIDs = [];
 	  		for (var i = 0; i < datasets.length; i++) {
-	  			ds.push(datasets[i].id);
+	  			datasetIDs.push(datasets[i].id);
 	  		}
 	  		var pe = precedingYears(self.yearSelected.id, 3);
 	  		pe.push(self.yearSelected.id);
@@ -96,16 +100,27 @@
 	  		chartOptions.yLabel = 'Completeness (%)';
 	  		chartOptions.title = 'Completeness trend';
 	  		chartOptions.showLegend = true;
+	  		visualisationService.autoLineChart('completeness', pe, datasetIDs, self.userOrgunit.id, chartOptions);
 	  		
-	  		visualisationService.autoLineChart('completeness', pe, ds, self.userOrgunit.id, chartOptions);
 	  		
+	  		//4 Indicator outliers
+	  		var coCallback = function (result) { self.consistency.outliers.push(result);}
+  			for (var i = 0; i < indicatorIDs.length; i++) {
+  			
+  				var indicator = indicatorFromCode(indicatorIDs[i])
+  				var dataset = datasetFromID(indicator.dataSetID);
+  				
+  				var startDate = self.yearSelected.id.toString() + "-01-01";
+  				var endDate = self.yearSelected.id.toString() + "-12-31";
+  				var periods = periodService.getISOPeriods(startDate, endDate, dataset.periodType);	  			
+  				
+  			dataAnalysisService.indicatorOutlier(coCallback, indicator, periods, self.userOrgunit.id, self.orgunitLevelSelected.level);
+  			}
 
 	  	}
 	  	
 	  	
 	  	function precedingYears(year, numberOfYears) {
-	  		
-	  		
 	  		
 	  		var start = parseInt(year);
 	  		var years = [];
@@ -113,7 +128,7 @@
 	  			years.push(start-i);
 	  		}
 	  		
-	  		return years;
+	  		return years.sort(function(a, b){return a-b});
 	  	
 	  	}
 		
@@ -157,13 +172,13 @@
 			}
 		}
 		
+		
 		function datasetFromID(id) {
 			
 			for (var i = 0; i < self.map.dataSets.length; i++) {
 				if (self.map.dataSets[i].id === id) return self.map.dataSets[i];
 			}
 		}
-		
 		
 		
 		function periodTypeFromDataSet(dataSetID) {
