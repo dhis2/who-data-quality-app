@@ -3,7 +3,7 @@
 	
 	var app = angular.module('reportCard', []);
 	
-	app.controller("ReviewController", function(metaDataService, periodService, mathService, requestService, dataAnalysisService) {
+	app.controller("ReviewController", function(metaDataService, periodService, mathService, requestService, dataAnalysisService, visualisationService) {
 		var self = this;    
 		
 	    init();
@@ -80,8 +80,24 @@
 	  			var periods = periodService.getISOPeriods(startDate, endDate, dataset.periodType);	  			
 	  			
 				dataAnalysisService.indicatorCompleteness(icCallback, indicator, periods, self.userOrgunit.id, self.orgunitLevelSelected.level);
-	  		}	  		
+	  		}
+	  			  		
+	  		var datasets = dataSetsForCompleteness();
+	  		var ds = [];
+	  		for (var i = 0; i < datasets.length; i++) {
+	  			ds.push(datasets[i].id);
+	  		}
+	  		var pe = precedingYears(self.yearSelected.id, 3);
+	  		pe.push(self.yearSelected.id);
+	  		pe.sort(function(a, b){return a-b});
 	  		
+	  		var chartOptions = {};
+	  		chartOptions.range = {'min': 0, 'max': 110};
+	  		chartOptions.yLabel = 'Completeness (%)';
+	  		chartOptions.title = 'Completeness trend';
+	  		chartOptions.showLegend = true;
+	  		
+	  		visualisationService.autoLineChart('completeness', pe, ds, self.userOrgunit.id, chartOptions);
 	  		
 
 	  	}
