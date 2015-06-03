@@ -10,7 +10,6 @@
 	    
 	    function init() {
 	    	self.notPossible = false;
-	    	self.ready = false;
 	    	self.completeness = null;
 	    	
 	    	self.orgunitLevels = [];
@@ -197,66 +196,6 @@
 			
 			
 			return relations;	
-		}
-		
-				
-		
-		function dataSetCompletenessTarget(dataSetID) {
-			
-			var DSid;
-			for (var i = 0; i < self.map.dataSets.length; i++) {
-				DSid = self.map.dataSets[i].id;
-				if (DSid === dataSetID) return self.map.dataSets[i].threshold;
-			}
-			
-			return -1;
-		}
-		
-		
-		
-		function resultTemplate() {
-			
-			return {	
-					"alerts": [],
-				    "completeness": {
-				    	"descriptions": "Reporting completeness from the facility - the percentage of expected reports that have been entered and completed.",
-				        "dataSets": []
-				    },
-				    "iConsistency": [
-				        {
-				            "label": "Accuracy of event reporting - extreme outliers",
-				            "description": "The overall score denotes the percentage of values reported during the year that are extreme outliers. \nFor lower level units, more than 2 outlieries qualifies as poor score.",
-				            "type": "extremeOutliers",
-				            "indicators": []
-				        },
-				        {
-				            "label": "Accuracy of event reporting - moderate outliers",
-				            "description": "The overall score denotes the percentage of values reported during the year that are moderate outliers. \nFor lower level units, more than 2 outlieries qualifies as poor score.",
-				            "type": "moderateOutliers",
-				            "indicators": []
-				        },
-				        {
-				            "label": "Consistency over time",
-				            "description": "The overall score is the ratio of the year of analysis against the average for the three previous years.\nFor lower level units, poor score indicates that there is a large variation in a given units ratio compared to the overall ratio.",
-				            "type": "consistencyTime",
-				            "indicators": []
-				        },
-				        {
-				            "label": "Internal consistency between indicators - by level",
-				            "description": "The overall score denotes the ratio between the two indicatos.\nFor the lower level units, poor score indicates a large difference in a given units ratio compared to the overall ratio.",
-				            "type": "consistencyOU",
-				            "indicators": []
-				        },
-				        {
-				            "label": "Internal consistency between indicators - internal",
-				            "description": "The overall score denotes the ratio between the two indicatos.\nFor the lower level units, poor score indicates a ratio that is different from what is expected for the two indicators.",
-				            "type": "consistencyInternal",
-				            "indicators": []
-				        }
-				    ]
-					
-				};
-		
 		}
 	    
 	    

@@ -38,22 +38,18 @@
 </div>
 <hr />
 
-<tabset>
+<tabset ng-if="revCtrl.completeness">
 <tab heading="Summary">
-<br />
 <div>
+	<h4>Completeness</h4>
+	<em>1) Completeness of facility reporting.</em> The percentage of expected reports that have been entered and completed.
 	<table style="font-size: 90%;" class="table table-bordered table-condensed">
 		<tbody>
-		
+
 		<tr bgcolor="#f9f9f9">
-		 	<th>Completeness</th><th>Data set</th><th>Overall Completeness</th><th># Units with poor score</th><th>% Units with poor score</th>
+		 	<th>Dataset</th><th>Overall Completeness</th><th># Units with poor score</th><th>% Units with poor score</th>
 	    </tr>
-	    
-	    <tr ng-if="!revCtrl.completeness"><td colspan="5">Reporting completeness from the facility - the percentage of expected reports that have been entered and completed.</td></tr>
-	    
-	    
-	   	<tr ng-repeat="dataset in revCtrl.completeness.datasets track by $index | orderBy:'label':false">
-    		<td width="40%" ng-if="$index === 0" rowspan="{{revCtrl.completeness.datasets.length}}"><em>Completeness of facility reporting.</em><br />The percentage of expected reports that have been entered and completed.</th>
+	 	<tr ng-repeat="dataset in revCtrl.completeness.datasets track by $index | orderBy:'label':false">
     		<td>{{dataset.name}}</td>
     		<td class="valueCell">{{dataset.boundary}}%</td>
     		<td class="valueCell">{{dataset.count}}</td>
@@ -61,32 +57,34 @@
     	</tr>
     	</tbody>
     </table>
+	<em>2) Completeness of indicator data (missing/zero values)</em>
+    <br />
     
-    <!--<table style="font-size: 90%;" class="table table-bordered table-condensed">
-    	<thead>
-    	<tr bgcolor="#f9f9f9">
-    	 	<th rowspan="2">Internal consistency</th><th rowspan="2">Indicator</th><th rowspan="2">Overall Score</th><th colspan="2">Units with poor score</th>
-        </tr>
-        <tr bgcolor="#f9f9f9"><th>Number</th><th>Percentage</th></tr>
-    	</thead>
-    	<tbody ng-repeat="section in revCtrl.result.iConsistency track by $index">
-    		<tr ng-repeat="indicator in section.indicators | orderBy:'label':false">
-    			<td width="40%" ng-if="$index === 0" rowspan="{{section.indicators.length}}">
-    				<strong>{{section.label}}</strong>
-    				<br/>
-    				{{section.description}}
-    			</td>
-    			<td>{{indicator.label}}</td>
-    			<td class="valueCell">{{indicator.level1}}</td>
-    			<td class="valueCell">{{indicator.level2c}}</td>
-    			<td class="valueCell">{{indicator.level2p}}%</td>
-    		</tr>
-		</tbody>
-	</table>-->
+	<em>3) Consistency of dataset completeness over time. </em>Completeness of datasets in {{revCtrl.yearSelected.id}} compared to previous three years.
+	<table style="font-size: 90%;" class="table table-bordered table-condensed">
+		<tbody>
+
+		<tr bgcolor="#f9f9f9">
+		 	<th>Dataset</th><th>Consistency</th><th># Units with poor score</th><th>% Units with poor score</th>
+	    </tr>	    
+	   	<tr ng-repeat="dataset in revCtrl.completeness.datasets track by $index | orderBy:'label':false">
+    		<td>{{dataset.name}}</td>
+    		<td class="valueCell">{{dataset.boundaryTrend}}%</td>
+    		<td class="valueCell">{{dataset.countTrend}}</td>
+    		<td class="valueCell">{{dataset.percentTrend}}%</td>
+    	</tr>
+    	</tbody>
+    </table>
+    <hr />
+	<h4>Internal consistency</h4>
+    
+    
 </div>
 </tab>
 <tab heading="Completeness">
+<div>
 <h4>Completeness of facility reporting</h4>
+<em>1) Completeness of facility reporting.</em><br />The percentage of expected reports that have been entered and completed.
 <table style="font-size: 90%;" class="table table-bordered table-condensed">
 	<tbody>
 	<tr bgcolor="#f9f9f9">
@@ -97,7 +95,7 @@
     </tr>
     <tbody ng-repeat="dataset in revCtrl.completeness.datasets track by $index| orderBy:'label':false">
   	<tr >
-		<th rowspan="3">{{dataset.name}}</td>
+		<td rowspan="3">{{dataset.name}}</td>
 		<td>National completeness</td>
 		<td class="valueCell">{{dataset.boundary}}%</td>
 		<td rowspan="3">{{dataset.names.join(', ')}}.</td>
@@ -111,26 +109,47 @@
 		<td class="valueCell">{{dataset.percent}}%</td>	
 	</tr>
 	</tbody>
-	
-	
-	
-	
-	<!--<tr ng-repeat="dataset in revCtrl.completeness.datasets track by $index | orderBy:'label':false">
-		<th width="40%" ng-if="$index === 0" rowspan="{{revCtrl.completeness.datasets.length}}">Number of districts with completeness below {{dataset.threshold}}%</th>
-		<td>{{dataset.name}}</td>
-		<td class="valueCell">{{dataset.count}}</td>
-	</tr>
-	<tr ng-repeat="dataset in revCtrl.completeness.datasets track by $index | orderBy:'label':false">
-		<th width="40%" ng-if="$index === 0" rowspan="{{revCtrl.completeness.datasets.length}}">Percentage of districts with completeness below {{dataset.threshold}}%</th>
-		<td>{{dataset.name}}</td>
-		<td class="valueCell">{{dataset.percent}}</td>
-	</tr>
-	<tr ng-repeat="dataset in revCtrl.completeness.datasets track by $index | orderBy:'label':false">
-		<td>{{dataset.name}}</td>
-		<td colspan="2" class="valueCell">{{dataset.names.join(', ')}}</td>
-	</tr>-->
-	</tbody>
+	</table>
+	<h5>Interpretations</h5>
+	<textarea style="width: 100%; height: 150px; list-style: outside; margin-bottom: 50px;"></textarea>
+
+<em>2) Completeness of indicator data (missing/zero values).</em>
+<h5>Interpretations</h5>
+<textarea style="width: 100%; height: 150px; list-style: outside; margin-bottom: 50px;"></textarea>
+<br />
+
+<em>3) Consistency of dataset completeness over time.</em><br />Difference between the current year completeness and either the average of the 3 preceding years (if expected trend is constant), or the forecasted value.
+<table style="font-size: 90%;" class="table table-bordered table-condensed">
+<tr bgcolor="#f9f9f9">
+<th>Dataset</th>
+<th>Expected trend</th>
+<th>Quality threshold</th>
+<th>Overall score (%)</th>
+<th># Units with poor score</th>
+<th>% Units with poor score</th>
+<th>Names</th>
+</tr>
+<tr ng-repeat="dataset in revCtrl.completeness.datasets track by $index| orderBy:'label':false">
+<td>{{dataset.name}}</td>
+<td>{{dataset.trend}}</td>
+<td class="valueCell">{{dataset.consistencyThreshold}}%</td>
+<td class="valueCell">{{dataset.boundaryTrend}}%</td>
+<td class="valueCell">{{dataset.countTrend}}</td>
+<td class="valueCell">{{dataset.percentTrend}}%</td>
+<td>{{dataset.namesTrend.join(', ')}}</td>
+</tr>
+
+
 </table>
+
+
+<br />
+<h5>Interpretations</h5>
+<textarea style="width: 100%; height: 150px; list-style: outside; margin-bottom: 50px;"></textarea>
+<h5>[Chart]</h5>
+	
+	
+</div>
 </tab>
 
 <tab heading="Internal Consistency">
