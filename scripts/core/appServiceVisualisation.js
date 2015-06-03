@@ -96,7 +96,6 @@
   				  
   				chart.margin({left: 50})  //t chart margins to give the x-axis some breathing room.
   				       .useInteractiveGuideline(true)  //We want nice looking tooltips and a guideline!
-  				       .transitionDuration(250)  //how fast do you want the lines to transition?
   				       .showLegend(true)       //Show the legend, allowing users to turn on/off line series.
   				       .tooltips(true)
   				       .showYAxis(true)        //Show the y-axis
@@ -219,7 +218,6 @@
 				  .staggerLabels(false)    //Too many bars and not enough room? Try staggering labels.
 				  .tooltips(true)        //Don't show tooltips
 				  .showValues(false)       //...instead, show the bar value right on top of each bar.
-				  .transitionDuration(250)
 				  ;
 				
 				
@@ -308,7 +306,6 @@
 	  			  
 	  			chart.margin({left: 50})  //Adjust chart margins to give the x-axis some breathing room.
 	  			       .useInteractiveGuideline(false)  //We want nice looking tooltips and a guideline!
-	  			       .transitionDuration(250)  //how fast do you want the lines to transition?
 	  			       .showLegend(false)       //Show the legend, allowing users to turn on/off line series.
 	  			       .tooltips(true)
 	  			       .showYAxis(true)        //Show the y-axis
@@ -335,7 +332,7 @@
 	  				
 	  				var row, value, values = [];
 	  				for (var j = 0; j < data.rows.length; j++) {
-	  				 	row = data.rows[i];
+	  				 	row = data.rows[j];
 	  				 	
 	  				 	if (row[dataIDColumn] === dataID) {
 	  				 		count = 0;
@@ -365,9 +362,10 @@
 	  			}
 	  			
 	  			//Get XAxis labels = periods from series[0]
-	  			var periodNames = [];
+	  			var periodNames = [], pe;
 	  			for (var i = 0; i < periods.length; i++) {
-	  				periodNames.push(periodService.shortPeriodName(periods[i]));
+	  				pe = periods[i].toString();
+	  				periodNames.push(periodService.shortPeriodName(pe));
 	  			}
 	  			
 		  			
@@ -387,8 +385,12 @@
 	  			
 	  			if (options && options.yLabel) chart.yAxis.axisLabel = options.yLabel;
 	  			
-	  			if (options.title) {
+	  			if (options && options.title) {
 	  				$('#' + elementID + ' svg').parent().prepend('<div class="chart-title">' + options.title + '</div>');
+	  			}
+	  			
+	  			if (options && options.showLegend) {
+	  				chart.showLegend(true);
 	  			}
 	  				  			
 	  			chart.yAxis
@@ -423,7 +425,6 @@
   			  .staggerLabels(false)    //Too many bars and not enough room? Try staggering labels.
   			  .tooltips(true)        //Don't show tooltips
   			  .showValues(false)       //...instead, show the bar value right on top of each bar.
-  			  .transitionDuration(250)
   			  ;
   			
   			
@@ -453,7 +454,6 @@
   				
 			nv.addGraph(function() {
 			    var chart = nv.models.multiBarChart()
-			      .transitionDuration(250)
 			      .reduceXTicks(false)   //If 'false', every single x-axis tick label will be rendered.
 			      .rotateLabels(0)      //Angle to rotate x-axis labels.
 			      .showControls(true)   //Allow user to switch between 'Grouped' and 'Stacked' mode.
@@ -491,6 +491,7 @@
 			    return chart;
 			});
 		}
+	  	
 	  	
 	  	
 	  	self.makePieChart = function(elementID, series, options) {
