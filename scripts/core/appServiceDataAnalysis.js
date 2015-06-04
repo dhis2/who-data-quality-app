@@ -29,7 +29,7 @@
 			self.inProgress = false;
 		}
 		
-		
+		/**ANALYSIS JOB QUEUE*/
 		function nextAnalysis() {
 			
 			if (self.inProgress) {
@@ -57,6 +57,9 @@
 			else if (queueItem.type === 'indicatorOutlier') {
 				indicatorOutlierAnalysis(queueItem.parameters);
 			}
+			else if (queueItem.type === 'indicatorConsistency') {
+				indicatorConsistencyAnalysis(queueItem.parameters);
+			}
 			else {	
 				reset();
 				self.callback = queueItem.callback;
@@ -74,7 +77,7 @@
 		}
 		
 		
-		/** OUTLIER AND GAP ANALYSIS
+		/** ANALYSIS - OUTLIER AND GAP ANALYSIS
 		@param callback			function to send result to
 		@param variables		array of data element, dataset or indicator IDs
 		@param periods			array of periods in ISO format
@@ -429,7 +432,7 @@
 		}				
 		
 		
-		/** CONSISTENCY ANALYSIS
+		/**ANALYSIS - CONSISTENCY
 		
 		
 		
@@ -439,7 +442,9 @@
 		
 		
 		
-		/** COMPLETENESS ANALYSIS
+		
+		/**REVIEW DATASET COMPLETENESS ANALYSIS*/
+		/*
 		Completeness analysis used by Annual Review
 		
 		@param callback			function to send result to
@@ -632,6 +637,7 @@
 		}
 		
 		
+		/**REVIEW INDICATOR COMPLETENESS ANALYSIS*/
 		/*
 		Completeness analysis used by Annual Review
 		
@@ -745,6 +751,7 @@
 		}
 		
 		
+		/**REVIEW INDICATOR OUTLIER ANALYSIS*/
 		/*
 		Completeness analysis used by Annual Review
 		
@@ -906,41 +913,167 @@
 		}
 		
 		
-		
+		/**REVIEW INDICATOR CONSISTENCY ANALAYSIS*/	
 		/*
-		Calculates ratio between current value and the mean or forecast of reference values. Forecast is set to max = 100, e.g. for use with completeness or indicators
+		Indicator consistency analysis used by Annual Review
 		
-		@param refValues			array of reference values
-		@param currentvalue			value for current period
-		@param type					type of consistency - constant (mean) or increase/decrease (forecast)
-		
-		@returns					ratio current/reference
+		@param callback			function to send result to
+		@param indicator		indicator object
+		@param period			analysis period
+		@param refPeriods		reference periods (for consistency over time)
+		@param bounaryOrgunit	ID of boundary orgunit
+		@param level			level for sub-boundary orgunits
+		@returns				datasets objects array, with these additional properties:
+									boundary completeness
+			 						boundary consistency over time
+									subunit count < threshold
+									subunit percent < threshold
+									subunit names < threshold
+									subunit count < consistency threshold
+									subunit percent < consistency threshold
+									subunit names < consistency threshold
 		*/
-		function timeConsistency(refvalues, currentvalue, type) {
-			var refVal;
-			if (type && type != 'constant') {
-				refVal = mathService.forecast(refvalues);
-				if (refVal > 100) refVal = 100; //Complenetess = max 100%
-				if (refVal < refvalues[1] && refVal < refvalues[2]) {
-					console.log("Ignored first year of completenesss, too low: " + refvalues.shift());
-					refVal = mathService.forecast(refvalues);
-		
-				}				
-			}
-			else {
-				refVal = mathService.getMean(refvalues);
-				
-				if (refVal < refvalues[1] && refVal < refvalues[2]) {
-					console.log("Ignored first year of completenesss, too low: " + refvalues.shift());
-					refVal = mathService.getMean(refvalues);
+		self.indicatorConsistency = function(callback, indicator, period, refPeriods, boundaryOrgunit, level) {
+						
+			var queueItem = {
+				'type': 'indicatorConsistency',
+				'parameters': {
+					'callback': callback,
+					'indicator': indicator,
+					'period': period,
+					'refPeriods': refPeriods,
+					'boundaryOrgunit': boundaryOrgunit, 
+					'level': level
 				}
 			}
+			
+			self.analysisQueue.push(queueItem);
+			nextAnalysis();
+		}
+		
+		
+		function indicatorConsistencyAnalysis(parameters) {
+			//Start
+			self.icc = parameters;
+			
+			//Reset
+			self.icc.boundaryData = null;
+			self.icc.subunitData = null;
+									
+			//periods to request
+			self.icc.refPeriods = self.icc.refPeriods.sort(function(a, b){return a-b});
+			var pe = [].concat(self.icc.refPeriods);
+			pe.push(self.icc.period);
+			
+			//1 request boundary completeness data for the four years
+			var requestURL = '/api/analytics.json?dimension=dx:' + self.icc.indicator.localData.id + '&dimension=ou:' + self.icc.boundaryOrgunit + '&dimension=pe:' + pe.join(';') + '&displayProperty=NAME';
+			
+			requestService.getSingle(requestURL).then(
+					//success
+					function(response) {
+					    self.icc.boundaryData = response.data;	
+					    startIndicatorConsistencyAnalysis();				
+					}, 
+					//error
+					function(response) {
+					    console.log("Error fetching data");
+					}
+				);
+			
+			
+			//2 request subunit completeness data for the four years
+			var requestURL = '/api/analytics.json?dimension=dx:' + self.icc.indicator.localData.id + '&dimension=ou:' + self.icc.boundaryOrgunit + ';LEVEL-' + self.icc.level + '&dimension=pe:' + pe.join(';') + '&displayProperty=NAME';
+			
+			requestService.getSingle(requestURL).then(
+					//success
+					function(response) {
+					    self.icc.subunitData = response.data;	
+					    startIndicatorConsistencyAnalysis();
+					}, 
+					//error
+					function(response) {
+					    console.log("Error fetching data");
+					}
+				);
+			
+		}
+				
+		
+		function startIndicatorConsistencyAnalysis() {
+			if (self.icc.boundaryData === null || self.icc.subunitData === null) return;
+			else console.log("Received required indicator completeness data - start analysis");
+			
+			var year = self.icc.period;
+			var refYears = self.icc.refPeriods;
+			var boundary = self.icc.boundaryOrgunit;
+			var subunits = self.icc.subunitData.metaData.ou;
+			var data = self.icc.boundaryData.rows.concat(self.icc.subunitData.rows);
+			var headers = self.icc.boundaryData.headers;
 
-			return mathService.round(100*currentvalue/refVal, 1);
+			var names = self.icc.subunitData.metaData.names;
+			for (key in self.icc.boundaryData.metaData.names) {
+				names[key] = self.icc.boundaryData.metaData.names[key];
+			}
+			
+			var indicator = self.icc.indicator;
+			var dataID = indicator.localData.id;
+			
+			var subunitOutliers = 0;
+			var subunitNames = [];
+			var subunitDatapoints = []; //needed for graphing
+						
+			var consistency, boundaryConsistency, boundarySubunitRatio, value, refValue, refValues = [];
+			for (var k = 0; k < refYears.length; k++) {
+				refValues.push(dataValue(headers, data, dataID, refYears[k], boundary, null));
+			}
+			value = dataValue(headers, data, dataID, year, boundary, null)
+			indicator.boundaryValue = value;
+			indicator.boundaryConsistency = timeConsistency(refValues, value, indicator.trend);
+			boundaryConsistency = indicator.boundaryConsistency;
+			indicator.boundaryRefvalue = value/boundaryConsistency;
+
+			
+			//Get subunit values
+			for (var j = 0; j < subunits.length; j++) {
+				refValues = [];
+				for (var k = 0; k < refYears.length; k++) {
+					refValues.push(dataValue(headers, data, dataID, refYears[k], subunits[j], null));
+				}
+				value = dataValue(headers, data, dataID, year, subunits[j], null)
+				ratio = timeConsistency(refValues, value, indicator.trend);		
+				refValue = value/(ratio/100);
+				
+				boundarySubunitRatio = ratio/boundaryConsistency;
+				if (boundarySubunitRatio > (1.0+indicator.consistency/100) || boundarySubunitRatio < (1.0-indicator.consistency/100)) {
+					subunitOutliers++;
+					subunitNames.push(names[subunits[j]]);
+				}
+				if (isNumber(ratio)) {
+					subunitDatapoints.push({
+						'value': value,
+						'refValue': refValue,
+						'ratio': ratio,
+						'id': subunits[j],
+						'name': names[subunits[j]]
+					});
+				}
+			}
+			
+			//Summarise
+			indicator.datapoints = subunitDatapoints;
+			indicator.consistencyCount = subunitOutliers;
+			indicator.consistencyPercent = mathService.round(100*subunitOutliers/subunits.length, 1);
+			indicator.consistencyNames = subunitNames;
+						
+			self.icc.callback(indicator);
+			
+			self.inProgress = false;
+			nextAnalysis();
 		}
 		
 	
 		
+		/**COMMON DATA FUNCTIONS*/
 		/*
 		Requires DHIS analytics data in json format. 
 		@param header			response header from analytics
@@ -974,7 +1107,42 @@
 		}
 			
 		
-		/** DATA REQUESTS AND QUEUING */
+		
+				
+		/*
+		Calculates ratio between current value and the mean or forecast of reference values. Forecast is set to max = 100, e.g. for use with completeness or indicators
+		
+		@param refValues			array of reference values
+		@param currentvalue			value for current period
+		@param type					type of consistency - constant (mean) or increase/decrease (forecast)
+		
+		@returns					ratio current/reference
+		*/
+		function timeConsistency(refvalues, currentvalue, type) {
+			var refVal;
+			if (type && type != 'constant') {
+				refVal = mathService.forecast(refvalues);
+				if (refVal > 100) refVal = 100; //Complenetess = max 100%
+				if (refVal < refvalues[1] && refVal < refvalues[2]) {
+					console.log("Ignored first year of completenesss, too low: " + refvalues.shift());
+					refVal = mathService.forecast(refvalues);
+		
+				}				
+			}
+			else {
+				refVal = mathService.getMean(refvalues);
+				
+				if (refVal < refvalues[1] && refVal < refvalues[2]) {
+					console.log("Ignored first year of completenesss, too low: " + refvalues.shift());
+					refVal = mathService.getMean(refvalues);
+				}
+			}
+
+			return mathService.round(100*currentvalue/refVal, 1);
+		}
+		
+		
+		/** DATA REQUESTS QUEUING */
 		function requestData() {
 			var request = getNextRequest();
 			while (request && self.pendingRequests < self.maxPendingRequests) {
@@ -1103,9 +1271,7 @@
 		}
 		
 		
-		/** UTILITIES
-		
-		*/
+		/** UTILITIES*/
 		function isNumber(number) {
 			
 			return !isNaN(parseFloat(number));

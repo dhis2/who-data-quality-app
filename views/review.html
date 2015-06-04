@@ -98,7 +98,9 @@
     	</tr>
     	</tbody>
     </table>
+    <br />
     <hr />
+    <br />
 	<h4>2 Internal consistency</h4>
 	<em>2a Extreme outliers.</em>
     <table style="font-size: 90%;" class="table table-bordered table-condensed">
@@ -151,6 +153,24 @@
     	</tr>
     	</tbody>
     </table>
+    <em>2d Consistency over time.</em>
+    <table style="font-size: 90%;" class="table table-bordered table-condensed">
+	<tbody>
+
+	<tr bgcolor="#f9f9f9">
+	 	<th width="275">Indicator</th>
+	 	<th width="175">Overall score (%)</th>
+	 	<th width="175"># {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
+	 	<th width="175">% {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
+    </tr>	    
+   	<tr ng-repeat="indicator in revCtrl.consistency.consistency | orderBy:'name'">
+		<td>{{indicator.name}}</td>
+		<td class="valueCell">{{indicator.boundaryConsistency}}%</td>
+		<td class="valueCell">{{indicator.consistencyCount}}</td>
+		<td class="valueCell">{{indicator.consistencyPercent}}%</td>
+	</tr>
+	</tbody>
+</table>
     
 </div>
 </tab>
@@ -315,7 +335,27 @@
     	</tr>
     	</tbody>
     </table>
-
+	<em>2d  Consistency of indicator values over time.</em><br />Difference between the current year and either the average of the 3 preceding years (if expected trend is constant), or the forecasted value.
+	<table style="font-size: 90%;" class="table table-bordered table-condensed">
+		<tr bgcolor="#f9f9f9">
+		<th width="200">Indicator</th>
+		<th width="80">Expected trend</th>
+		<th width="80">Quality threshold</th>
+		<th width="80">Overall score (%)</th>
+		<th width="110"># {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
+		<th width="110">% {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
+		<th>Names</th>
+		</tr>
+		<tr ng-repeat="indicator in revCtrl.consistency.consistency | orderBy:'name'">
+			<td>{{indicator.name}}</td>
+			<td>{{indicator.trend}}</td>
+			<td class="valueCell">{{indicator.consistency}}%</td>
+			<td class="valueCell">{{indicator.boundaryConsistency}}%</td>
+			<td class="valueCell">{{indicator.consistencyCount}}</td>
+			<td class="valueCell">{{indicator.consistencyPercent}}%</td>
+			<td>{{indicator.consistencyNames.join(', ')}}</td>
+		</tr>
+	</table>
 
 
 </tab>

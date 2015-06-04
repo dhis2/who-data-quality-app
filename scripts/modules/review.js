@@ -63,14 +63,17 @@
 	  		self.completeness.indicators = [];
 	  		self.consistency = {};
 	  		self.consistency.outliers = [];
+	  		self.consistency.consistency = [];
 	  		
 	  		
 	  		var datasets = dataSetsForCompleteness();
 	  		var indicatorIDs = indicatorIDsForAnalysis();
 	  		
+	  		var refYears = precedingYears(self.yearSelected.id, 3);
+	  		
 	  		//1 Get dataset completeness
 	  		var dscCallback = function (result) { self.completeness.datasets = result;}
-	  		dataAnalysisService.datasetCompleteness(dscCallback, dataSetsForCompleteness(), self.yearSelected.id, precedingYears(self.yearSelected.id, 3), self.userOrgunit.id, self.orgunitLevelSelected.level);
+	  		dataAnalysisService.datasetCompleteness(dscCallback, dataSetsForCompleteness(), self.yearSelected.id, refYears, self.userOrgunit.id, self.orgunitLevelSelected.level);
 			
 			//2 Get indicator completeness
 	  		var icCallback = function (result) { self.completeness.indicators.push(result);}
@@ -114,9 +117,17 @@
   				var endDate = self.yearSelected.id.toString() + "-12-31";
   				var periods = periodService.getISOPeriods(startDate, endDate, dataset.periodType);	  			
   				
-  			dataAnalysisService.indicatorOutlier(coCallback, indicator, periods, self.userOrgunit.id, self.orgunitLevelSelected.level);
+  				dataAnalysisService.indicatorOutlier(coCallback, indicator, periods, self.userOrgunit.id, self.orgunitLevelSelected.level);
   			}
-
+	
+  			//5 Indicator consistency
+  			var ccCallback = function (result) { self.consistency.consistency.push(result);}
+			for (var i = 0; i < indicatorIDs.length; i++) {
+				
+				var indicator = indicatorFromCode(indicatorIDs[i]);  			
+					
+				dataAnalysisService.indicatorConsistency(ccCallback, indicator, self.yearSelected.id, refYears, self.userOrgunit.id, self.orgunitLevelSelected.level);
+			}
 	  	}
 	  	
 	  	
