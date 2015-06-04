@@ -32,8 +32,7 @@
 		/**ANALYSIS JOB QUEUE*/
 		function nextAnalysis() {
 			
-			if (self.inProgress) {
-				console.log("Analysis job already in progress.");	
+			if (self.inProgress) {	
 				return;
 			}			
 			
@@ -45,7 +44,6 @@
 				return;
 			}
 			
-			console.log("Doing next analysis job");
 			self.inProgress = true;
 			
 			if (queueItem.type === 'indicatorCompleteness') {
@@ -336,8 +334,6 @@
 		
 		function outlierAggregatesAndMetaData() {
 			
-			console.log("Summarising");
-			
 			var ouGaps = {};
 			var ouOut = {};
 			var dxGaps = {};
@@ -426,7 +422,6 @@
 			self.result.metaData.orgunits = self.orgunits;
 			self.result.metaData.parameters = self.parameters
 			
-			console.log("Returning");
 			
 			self.callback(self.result);
 			
@@ -546,7 +541,6 @@
 		
 		function startDatasetCompletenessAnalysis() {
 			if (self.boundaryCompleteness === null || self.subunitCompleteness === null) return;
-			else console.log("Received required dataset completeness data - start analysis");
 			
 			var year = self.dsc.period;
 			var refYears = self.dsc.refPeriods;
@@ -563,9 +557,10 @@
 			
 			var ds;
 			var value;
+			var errors = [];
 			for (var i = 0; i < self.dsc.datasets.length; i++) {
 				ds = self.dsc.datasets[i];
-				
+				refYears = self.dsc.refPeriods.slice();
 				
 				//1 data set completeness
 				var subunitsAbove = 0;
@@ -592,10 +587,10 @@
 				ds.percent = 100*subunitsBelow/(subunitsBelow + subunitsAbove);
 				ds.percent = Math.round(ds.percent*10)/10;
 				ds.names = subunitNames;
-				
-				
-				
-				
+						
+						
+							
+								
 				//2 dataset completeness consistency over time
 				subunitsAbove = 0;
 				subunitsBelow = 0;
@@ -604,8 +599,20 @@
 				var values = [];
 				for (var k = 0; k < refYears.length; k++) {
 					values.push(dataValue(headers, data, ds.id, refYears[k], boundary, null));
-				}	
-				ds.boundaryTrend = timeConsistency(values, ds.boundary, ds.trend);
+				}
+				
+				//Need to check whether to include all years
+				while (values.length > 1 && values[0]*2 < values[1]) {
+					var droppedValue = values.shift();
+					var droppedYear = refYears.shift();
+					errors.push("Missing data: Ignoring " + droppedYear + " from consistency of completeness report for dataset " + ds.name + " due to low reporting");
+				}
+				values = [];
+				for (var k = 0; k < refYears.length; k++) {
+					values.push(dataValue(headers, data, ds.id, refYears[k], boundary, null));
+				}
+				
+				ds.boundaryTrend = timeConsistency(values, ds.boundary, ds.trend, 100);
 				
 				//Get subunit values
 				for (var j = 0; j < subunits.length; j++) {
@@ -614,7 +621,7 @@
 					for (var k = 0; k < refYears.length; k++) {
 						values.push(dataValue(headers, data, ds.id, refYears[k], boundary, null));
 					}
-					trend = timeConsistency(values, dataValue(headers, data, ds.id, year, subunits[j], null), ds.trend);
+					trend = timeConsistency(values, dataValue(headers, data, ds.id, year, subunits[j], null), ds.trend, 100);
 					
 					if (trend > (100 + ds.consistencyThreshold) || trend < (100-ds.consistencyThreshold)) {
 						subunitsBelow++;
@@ -634,9 +641,16 @@
 			}
 			
 			self.dsc.callback(self.dsc.datasets);
-			
+			printError(errors);
 			self.inProgress = false;
 			nextAnalysis();
+		}
+		
+		function printError(errors) {
+			for (var i = 0; i < errors.length; i++) {
+				console.log(errors[i]);
+			}
+		
 		}
 		
 		
@@ -1004,7 +1018,6 @@
 		
 		function startIndicatorConsistencyAnalysis() {
 			if (self.icc.boundaryData === null || self.icc.subunitData === null) return;
-			else console.log("Received required indicator completeness data - start analysis");
 			
 			var year = self.icc.period;
 			var refYears = self.icc.refPeriods;
@@ -1029,21 +1042,35 @@
 			for (var k = 0; k < refYears.length; k++) {
 				refValues.push(dataValue(headers, data, dataID, refYears[k], boundary, null));
 			}
+						
+			//Need to check whether to include all years
+			var errors = [];
+			while (refValues.length > 1 && refValues[0]*10 < refValues[1]) {
+				var droppedValue = refValues.shift();
+				var droppedYear = refYears.shift();
+				errors.push("Missing data: Ignoring " + droppedYear + " from consistency analysis of " + indicator.name + " due to possible incomplete data: " + droppedValue + " compared to " + refValues[0] + " in " + refYears[0] + ".");
+			}
+			
+			//Redo with (possibly) fewer years
+			for (var k = 0; k < refYears.length; k++) {
+				refValues.push(dataValue(headers, data, dataID, refYears[k], boundary, null));
+			}
+			
 			value = dataValue(headers, data, dataID, year, boundary, null)
 			indicator.boundaryValue = value;
-			indicator.boundaryConsistency = timeConsistency(refValues, value, indicator.trend);
+			indicator.boundaryConsistency = timeConsistency(refValues, value, indicator.trend, null);
 			boundaryConsistency = indicator.boundaryConsistency;
 			indicator.boundaryRefvalue = value/boundaryConsistency;
-
-			
+						
 			//Get subunit values
 			for (var j = 0; j < subunits.length; j++) {
 				refValues = [];
 				for (var k = 0; k < refYears.length; k++) {
 					refValues.push(dataValue(headers, data, dataID, refYears[k], subunits[j], null));
 				}
+							
 				value = dataValue(headers, data, dataID, year, subunits[j], null)
-				ratio = timeConsistency(refValues, value, indicator.trend);		
+				ratio = timeConsistency(refValues, value, indicator.trend, null);		
 				refValue = value/(ratio/100);
 				
 				boundarySubunitRatio = ratio/boundaryConsistency;
@@ -1067,7 +1094,9 @@
 			indicator.consistencyCount = subunitOutliers;
 			indicator.consistencyPercent = mathService.round(100*subunitOutliers/subunits.length, 1);
 			indicator.consistencyNames = subunitNames.sort();
-						
+			
+			printError(errors);
+				
 			self.icc.callback(indicator);
 			
 			self.inProgress = false;
@@ -1150,7 +1179,6 @@
 		
 		function startIndicatorRelationAnalysis() {
 			if (self.ir.boundaryData === null || self.ir.subunitData === null) return;
-			else console.log("Received required indicator relation data - start analysis");
 			
 			var year = self.ir.period;
 			var boundary = self.ir.boundaryOrgunit;
@@ -1172,7 +1200,7 @@
 			var subunitNames = [];
 			var subunitDatapoints = []; //needed for graphing
 						
-			var subunitRatio, boundaryRatio, boundarySubunitRatio, valueA, valueB;
+			var result, boundaryRatio, boundarySubunitRatio, valueA, valueB;
 			valueA = dataValue(headers, data, dataA, year, boundary, null);
 			valueB = dataValue(headers, data, dataB, year, boundary, null);
 			
@@ -1192,28 +1220,36 @@
 				valueA = dataValue(headers, data, dataA, year, subunits[j], null);
 				valueB = dataValue(headers, data, dataB, year, subunits[j], null);
 				
-				//criteria for drop out flagging is different	
+				//Drop out
 				if (relation.type === 'do') {
-					subunitRatio = Math.round(dropOutRate(valueA, valueB), 1);
-					if (subunitRatio < 0) {
+					result = Math.round(dropOutRate(valueA, valueB), 1);
+					if (result < 0) {
 						subunitOutliers++;
 						subunitNames.push(names[subunits[j]]);
 					}
 				}
+				//A > B
+				else if (relation.type === 'aGTb') {
+					result = Math.round(100*valueA/valueB, 1);
+					if (result < (100-relation.criteria)) {
+						subunitOutliers++;
+						subunitNames.push(names[subunits[j]]);
+					}
+				}
+				//A = B
 				else {
-					subunitRatio = Math.round(100*valueA/valueB, 1);
-					boundarySubunitRatio = subunitRatio/boundaryRatio;
-					if (boundarySubunitRatio > (1.0+relation.criteria/100) || boundarySubunitRatio < (1.0-relation.criteria/100)) {
+					result = Math.round(100*valueA/valueB, 1);
+					if (result > (1.0+relation.criteria/100) || result < (1.0-relation.criteria/100)) {
 						subunitOutliers++;
 						subunitNames.push(names[subunits[j]]);
 					}
 				}
 				
-				if (isNumber(subunitRatio)) {
+				if (isNumber(result)) {
 					subunitDatapoints.push({
 						'valueA': valueA,
 						'valueB': valueB,
-						'ratio': subunitRatio,
+						'result': result,
 						'id': subunits[j],
 						'name': names[subunits[j]]
 					});
@@ -1271,32 +1307,22 @@
 		
 				
 		/*
-		Calculates ratio between current value and the mean or forecast of reference values. Forecast is set to max = 100, e.g. for use with completeness or indicators
-		
+		Calculates ratio between current value and the mean or forecast of reference values.		
 		@param refValues			array of reference values
 		@param currentvalue			value for current period
 		@param type					type of consistency - constant (mean) or increase/decrease (forecast)
+		@param maxVal				optional - max value for forecast (e.g. 100% for completeness)
 		
 		@returns					ratio current/reference
 		*/
-		function timeConsistency(refvalues, currentvalue, type) {
+		function timeConsistency(refvalues, currentvalue, type, maxVal) {
 			var refVal;
 			if (type && type != 'constant') {
 				refVal = mathService.forecast(refvalues);
-				if (refVal > 100) refVal = 100; //Complenetess = max 100%
-				if (refVal < refvalues[1] && refVal < refvalues[2]) {
-					console.log("Ignored first year of completenesss, too low: " + refvalues.shift());
-					refVal = mathService.forecast(refvalues);
-		
-				}				
+				if (maxVal && refVal > maxVal) refVal = maxVal;
 			}
 			else {
 				refVal = mathService.getMean(refvalues);
-				
-				if (refVal < refvalues[1] && refVal < refvalues[2]) {
-					console.log("Ignored first year of completenesss, too low: " + refvalues.shift());
-					refVal = mathService.getMean(refvalues);
-				}
 			}
 
 			return mathService.round(100*currentvalue/refVal, 1);
