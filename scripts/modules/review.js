@@ -7,7 +7,7 @@
 		var self = this;    
 		
 	    init();
-	    
+
 	    function init() {
 	    	self.notPossible = false;
 	    	self.completeness = null;
@@ -65,7 +65,7 @@
 	  		self.consistency.outliers = [];
 	  		self.consistency.consistency = [];
 	  		self.consistency.relations = [];
-	  		
+	  		self.consistency.consistencyChart = [];
 	  		
 	  		var datasets = dataSetsForCompleteness();
 	  		var indicatorIDs = indicatorIDsForAnalysis();
@@ -98,14 +98,7 @@
 	  		var pe = precedingYears(self.yearSelected.id, 3);
 	  		pe.push(self.yearSelected.id);
 	  		pe.sort(function(a, b){return a-b});
-	  		
-	  		var chartOptions = {};
-	  		chartOptions.range = {'min': 0, 'max': 110};
-	  		chartOptions.yLabel = 'Completeness (%)';
-	  		chartOptions.title = 'Completeness trend';
-	  		chartOptions.showLegend = true;
-	  		visualisationService.autoLineChart('completeness', pe, datasetIDs, self.userOrgunit.id, chartOptions);
-	  		
+	  			  		
 	  		
 	  		//4 Indicator outliers
 	  		var coCallback = function (result) { self.consistency.outliers.push(result);}
@@ -122,7 +115,10 @@
   			}
 	
   			//5 Indicator consistency
-  			var ccCallback = function (result) { self.consistency.consistency.push(result);}
+  			var ccCallback = function (result) { 
+  				self.consistency.consistency.push(result);
+  				self.consistency.consistencyChart.push(result.chartSerie);
+  			}
 			for (var i = 0; i < indicatorIDs.length; i++) {
 				
 				var indicator = indicatorFromCode(indicatorIDs[i]);  			
@@ -288,10 +284,60 @@
 	    	
 	    }
 	    
-	    	
+	    self.chartConfigurations = {
+	    	'completeness': {
+			   	"chart": {
+			        "type": "multiBarChart",
+			        "height": 350,
+			        "margin": {
+			          "top": 20,
+			          "right": 20,
+			          "bottom": 40,
+			          "left": 60
+			        },
+			        "clipEdge": true,
+			        "staggerLabels": true,
+			        "transitionDuration": 1,
+			        "stacked": false,
+			        "xAxis": {
+			          "showMaxMin": false
+			        },
+			        "yAxis": {
+			          "axisLabel": "% Completeness",
+			          "axisLabelDistance": 20
+			        },
+			        "forceY": [0,100],
+			        "showControls": false
+			    }
+	    	},
+	    	'consistency': {
+	    	   	"chart": {
+	    	        "type": "multiBarChart",
+	    	        "height": 350,
+	    	        "margin": {
+	    	          "top": 20,
+	    	          "right": 20,
+	    	          "bottom": 40,
+	    	          "left": 80
+	    	        },
+	    	        "clipEdge": true,
+	    	        "staggerLabels": true,
+	    	        "transitionDuration": 1,
+	    	        "stacked": false,
+	    	        "xAxis": {
+	    	          "showMaxMin": false
+	    	        },
+	    	        "yAxis": {
+	    	          "axisLabelDistance": 20,
+	    	          "tickFormat": d3.format('g')
+	    	        },
+	    	        "showControls": false
+	    	    }
+	    	}
+	    };
+	    
 		return self;
 	});
-		
-		
+	
 })();
 

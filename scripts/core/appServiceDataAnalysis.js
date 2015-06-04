@@ -555,13 +555,17 @@
 			}
 			
 			
+			var chartSeries = [];
+						
 			var ds;
 			var value;
 			var errors = [];
 			for (var i = 0; i < self.dsc.datasets.length; i++) {
 				ds = self.dsc.datasets[i];
-				refYears = self.dsc.refPeriods.slice();
+
 				
+				refYears = self.dsc.refPeriods.slice();
+							
 				//1 data set completeness
 				var subunitsAbove = 0;
 				var subunitsBelow = 0;
@@ -607,12 +611,13 @@
 					var droppedYear = refYears.shift();
 					errors.push("Missing data: Ignoring " + droppedYear + " from consistency of completeness report for dataset " + ds.name + " due to low reporting");
 				}
-				values = [];
+				var val, values = [];
 				for (var k = 0; k < refYears.length; k++) {
-					values.push(dataValue(headers, data, ds.id, refYears[k], boundary, null));
+					val = dataValue(headers, data, ds.id, refYears[k], boundary, null);
+					values.push(val);
 				}
-				
 				ds.boundaryTrend = timeConsistency(values, ds.boundary, ds.trend, 100);
+				
 				
 				//Get subunit values
 				for (var j = 0; j < subunits.length; j++) {
@@ -638,8 +643,25 @@
 				ds.namesTrend = subunitNames.sort();
 				
 				
+				
+				
+				//chart data
+				chartSerie = {
+					"key": ds.name,
+					"values": []
+					
+				};
+				
+				for (var k = 0; k < refYears.length; k++) {
+					val = dataValue(headers, data, ds.id, refYears[k], boundary, null);
+					chartSerie.values.push({"x": refYears[k], "y": val});
+				}				
+				chartSerie.values.push({"x": year, "y": ds.boundary});
+				
+				chartSeries.push(chartSerie);
+				
 			}
-			
+			self.dsc.datasets.completenessChart = chartSeries;
 			self.dsc.callback(self.dsc.datasets);
 			printError(errors);
 			self.inProgress = false;
@@ -1062,6 +1084,20 @@
 			boundaryConsistency = indicator.boundaryConsistency;
 			indicator.boundaryRefvalue = value/boundaryConsistency;
 						
+						
+			//chart data
+			var chartSerie = {
+				"key": indicator.name,
+				"values": []
+				
+			};
+			
+			for (var k = 0; k < refYears.length; k++) {
+				chartSerie.values.push({"x": refYears[k], "y": dataValue(headers, data, dataID, refYears[k], boundary, null)});
+			}			
+			chartSerie.values.push({"x": year, "y": indicator.boundaryValue});
+			
+			
 			//Get subunit values
 			for (var j = 0; j < subunits.length; j++) {
 				refValues = [];
@@ -1094,6 +1130,7 @@
 			indicator.consistencyCount = subunitOutliers;
 			indicator.consistencyPercent = mathService.round(100*subunitOutliers/subunits.length, 1);
 			indicator.consistencyNames = subunitNames.sort();
+			indicator.chartSerie = chartSerie;
 			
 			printError(errors);
 				

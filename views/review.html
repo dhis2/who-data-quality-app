@@ -284,7 +284,9 @@
 <br />
 <h5>Interpretations</h5>
 <textarea style="width: 100%; height: 150px; list-style: outside; margin-bottom: 20px;"></textarea>
-<div class="chartHolder chartFull" id="completeness"><svg class="bigChart"></svg></div>
+
+<nvd3 options='revCtrl.chartConfigurations.completeness' data='revCtrl.completeness.datasets.completenessChart'></nvd3>
+
 </div>
 </tab>
 
@@ -399,7 +401,9 @@
 	<textarea style="width: 100%; height: 150px; list-style: outside; margin-bottom: 20px;"></textarea>
 	<br />
 	
-	<div class="chartHolder chartFull" id="consistencyMain"><svg class="bigChart"></svg></div>
+
+	<nvd3 options='revCtrl.chartConfigurations.consistency' data='revCtrl.consistency.consistencyChart'></nvd3>
+	
 	<br />
 	<em>2e  Consistency between related indicators</em>
 	<div style="display: inline-block; width: 100%; margin-bottom: 10px;" ng-repeat="relation in revCtrl.consistency.relations | orderBy:'name'">
