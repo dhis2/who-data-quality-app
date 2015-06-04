@@ -60,6 +60,9 @@
 			else if (queueItem.type === 'indicatorConsistency') {
 				indicatorConsistencyAnalysis(queueItem.parameters);
 			}
+			else if (queueItem.type === 'indicatorRelation') {
+				indicatorRelationAnalysis(queueItem.parameters);
+			}
 			else {	
 				reset();
 				self.callback = queueItem.callback;
@@ -625,7 +628,7 @@
 				//Summarise			
 				ds.countTrend = subunitsBelow;
 				ds.percentTrend = mathService.round(100*subunitsBelow/(subunitsBelow + subunitsAbove),1);
-				ds.namesTrend = subunitNames;
+				ds.namesTrend = subunitNames.sort();
 				
 				
 			}
@@ -743,7 +746,7 @@
 			self.ic.indicator.boundary = mathService.round(100*totalValues/totalExpected, 1);
 			self.ic.indicator.count = subunitsBelow;
 			self.ic.indicator.percent = mathService.round(100*subunitsBelow/subunits.length, 1);
-			self.ic.indicator.names = subunitNames;
+			self.ic.indicator.names = subunitNames.sort();
 			
 			self.ic.callback(self.ic.indicator);
 			self.inProgress = false;
@@ -894,17 +897,17 @@
 			self.io.indicator.boundaryExtreme = mathService.round(100*totalExtremeOutliers/totalValues, 1);
 			self.io.indicator.countExtreme = subunitsExtreme;
 			self.io.indicator.percentExtreme = mathService.round(100*subunitsExtreme/subunits.length, 1);
-			self.io.indicator.namesExtreme = subunitExtremeNames;
+			self.io.indicator.namesExtreme = subunitExtremeNames.sort();
 			
 			self.io.indicator.boundaryModerate = mathService.round(100*totalModerateOutliers/totalValues, 1);
 			self.io.indicator.countModerate = subunitsModerate;
 			self.io.indicator.percentModerate = mathService.round(100*subunitsModerate/subunits.length, 1);
-			self.io.indicator.namesModerate = subunitModerateNames;
+			self.io.indicator.namesModerate = subunitModerateNames.sort();
 			
 			self.io.indicator.boundaryZscore = mathService.round(100*totalZscoreOutliers/totalValues, 1);
 			self.io.indicator.countZscore = subunitsZscore;
 			self.io.indicator.percentZscore = mathService.round(100*subunitsZscore/subunits.length, 1);
-			self.io.indicator.namesZscore = subunitZscoreNames;
+			self.io.indicator.namesZscore = subunitZscoreNames.sort();
 			
 			self.io.callback(self.io.indicator);
 			self.inProgress = false;
@@ -1063,7 +1066,7 @@
 			indicator.datapoints = subunitDatapoints;
 			indicator.consistencyCount = subunitOutliers;
 			indicator.consistencyPercent = mathService.round(100*subunitOutliers/subunits.length, 1);
-			indicator.consistencyNames = subunitNames;
+			indicator.consistencyNames = subunitNames.sort();
 						
 			self.icc.callback(indicator);
 			
@@ -1071,7 +1074,165 @@
 			nextAnalysis();
 		}
 		
-	
+		/**REVIEW INDICATOR RELATIONS ANALAYSIS*/	
+		/*
+		Indicator consistency analysis used by Annual Review
+		
+		@param callback			function to send result to
+		@param relation			relation object
+		@param indicatorA/B		indicator object
+		@param period			analysis period
+		@param bounaryOrgunit	ID of boundary orgunit
+		@param level			level for sub-boundary orgunits
+		@returns				relation object with results
+		*/
+		self.indicatorRelation = function(callback, relation, indicatorA, indicatorB, period, boundaryOrgunit, level) {
+						
+			var queueItem = {
+				'type': 'indicatorRelation',
+				'parameters': {
+					'callback': callback,
+					'relation': relation,
+					'indicatorA': indicatorA,
+					'indicatorB': indicatorB,
+					'period': period,
+					'boundaryOrgunit': boundaryOrgunit, 
+					'level': level
+				}
+			}
+			
+			self.analysisQueue.push(queueItem);
+			nextAnalysis();
+		}
+		
+		
+		function indicatorRelationAnalysis(parameters) {
+			//Start
+			self.ir = parameters;
+			
+			//Reset
+			self.ir.boundaryData = null;
+			self.ir.subunitData = null;
+			
+			//1 request boundary completeness data for the four years
+			var requestURL = '/api/analytics.json?dimension=dx:' + self.ir.indicatorA.localData.id + ';' + self.ir.indicatorB.localData.id + '&dimension=ou:' + self.ir.boundaryOrgunit + '&dimension=pe:' + self.ir.period + '&displayProperty=NAME';
+			
+			requestService.getSingle(requestURL).then(
+					//success
+					function(response) {
+					    self.ir.boundaryData = response.data;	
+					    startIndicatorRelationAnalysis();				
+					}, 
+					//error
+					function(response) {
+					    console.log("Error fetching data");
+					}
+				);
+			
+			
+			//2 request subunit completeness data for the four years
+			var requestURL = '/api/analytics.json?dimension=dx:' + self.ir.indicatorA.localData.id + ';' + self.ir.indicatorB.localData.id + '&dimension=ou:' + self.ir.boundaryOrgunit + ';LEVEL-' + self.ir.level + '&dimension=pe:' + self.ir.period + '&displayProperty=NAME';
+			
+			requestService.getSingle(requestURL).then(
+					//success
+					function(response) {
+					    self.ir.subunitData = response.data;	
+					    startIndicatorRelationAnalysis();
+					}, 
+					//error
+					function(response) {
+					    console.log("Error fetching data");
+					}
+				);
+			
+		}
+				
+		
+		function startIndicatorRelationAnalysis() {
+			if (self.ir.boundaryData === null || self.ir.subunitData === null) return;
+			else console.log("Received required indicator relation data - start analysis");
+			
+			var year = self.ir.period;
+			var boundary = self.ir.boundaryOrgunit;
+			var subunits = self.ir.subunitData.metaData.ou;
+			var data = self.ir.boundaryData.rows.concat(self.ir.subunitData.rows);
+			var headers = self.ir.boundaryData.headers;
+
+			var names = self.ir.subunitData.metaData.names;
+			for (key in self.ir.boundaryData.metaData.names) {
+				names[key] = self.ir.boundaryData.metaData.names[key];
+			}
+			
+			var relation = self.ir.relation;
+			
+			var dataA = self.ir.indicatorA.localData.id;
+			var dataB = self.ir.indicatorB.localData.id;
+			
+			var subunitOutliers = 0;
+			var subunitNames = [];
+			var subunitDatapoints = []; //needed for graphing
+						
+			var subunitRatio, boundaryRatio, boundarySubunitRatio, valueA, valueB;
+			valueA = dataValue(headers, data, dataA, year, boundary, null);
+			valueB = dataValue(headers, data, dataB, year, boundary, null);
+			
+			if (relation.type === 'do') {
+				relation.boundaryValue = Math.round(dropOutRate(valueA, valueB), 1);
+				boundaryRatio = relation.boundaryValue;	
+			}
+			else {
+				relation.boundaryValue = Math.round(100*valueA/valueB, 1);
+				boundaryRatio = relation.boundaryValue;
+			}
+			
+			//Get subunit values
+			for (var j = 0; j < subunits.length; j++) {
+			
+			
+				valueA = dataValue(headers, data, dataA, year, subunits[j], null);
+				valueB = dataValue(headers, data, dataB, year, subunits[j], null);
+				
+				//criteria for drop out flagging is different	
+				if (relation.type === 'do') {
+					subunitRatio = Math.round(dropOutRate(valueA, valueB), 1);
+					if (subunitRatio < 0) {
+						subunitOutliers++;
+						subunitNames.push(names[subunits[j]]);
+					}
+				}
+				else {
+					subunitRatio = Math.round(100*valueA/valueB, 1);
+					boundarySubunitRatio = subunitRatio/boundaryRatio;
+					if (boundarySubunitRatio > (1.0+relation.criteria/100) || boundarySubunitRatio < (1.0-relation.criteria/100)) {
+						subunitOutliers++;
+						subunitNames.push(names[subunits[j]]);
+					}
+				}
+				
+				if (isNumber(subunitRatio)) {
+					subunitDatapoints.push({
+						'valueA': valueA,
+						'valueB': valueB,
+						'ratio': subunitRatio,
+						'id': subunits[j],
+						'name': names[subunits[j]]
+					});
+				}
+			}
+			
+			//Summarise
+			relation.datapoints = subunitDatapoints;
+			relation.count = subunitOutliers;
+			relation.percent = mathService.round(100*subunitOutliers/subunits.length, 1);
+			relation.names = subunitNames.sort();
+						
+			self.ir.callback(relation);
+			
+			self.inProgress = false;
+			nextAnalysis();
+		}
+		
+				
 		
 		/**COMMON DATA FUNCTIONS*/
 		/*
@@ -1139,6 +1300,14 @@
 			}
 
 			return mathService.round(100*currentvalue/refVal, 1);
+		}
+		
+		
+		function dropOutRate(valueA, valueB) {
+			
+			return 100*((valueA - valueB)/valueA);
+		
+		
 		}
 		
 		

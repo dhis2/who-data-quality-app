@@ -39,8 +39,10 @@
 <hr />
 
 <tabset ng-if="revCtrl.completeness">
-<tab heading="Summary">
+<!--SUMMARY-->
+<tab heading="Summary"> 
 <div>
+	<br />
 	<h4>1 Completeness</h4>
 	<em>1a Completeness of facility reporting.</em> The percentage of expected reports that have been entered and completed.
 	<table style="font-size: 90%;" class="table table-bordered table-condensed">
@@ -171,15 +173,36 @@
 	</tr>
 	</tbody>
 </table>
+
+<em>2e Consistency between related indicators.</em>
+    <table style="font-size: 90%;" class="table table-bordered table-condensed">
+	<tbody>
+
+	<tr bgcolor="#f9f9f9">
+	 	<th width="275">Indicator</th>
+	 	<th width="175">Overall score (%)</th>
+	 	<th width="175"># {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
+	 	<th width="175">% {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
+    </tr>	    
+   	<tr ng-repeat="relation in revCtrl.consistency.relations | orderBy:'name'">
+		<td>{{relation.name}}</td>
+		<td class="valueCell">{{relation.boundaryValue}}%</td>
+		<td class="valueCell">{{relation.count}}</td>
+		<td class="valueCell">{{relation.percent}}%</td>
+	</tr>
+	</tbody>
+</table>
     
 </div>
 </tab>
+
+<!--COMPLETENESS-->
 <tab heading="Completeness">
 <div>
 <br />
 <em>1a  Completeness of facility reporting.</em><br />The percentage of expected reports that have been entered and completed.
 <table style="font-size: 90%;" class="table table-bordered table-condensed">
-	<tbody>
+
 	<tr bgcolor="#f9f9f9">
 	 	<th width="200">Dataset</th>
 	 	<th width="260">Indicator</th>
@@ -265,7 +288,9 @@
 </div>
 </tab>
 
+<!--INTERNAL CONSISTENCY-->
 <tab heading="Internal Consistency">
+
 <br />
 <em>2a  Extreme outliers.</em>
 	<table style="font-size: 90%;" class="table table-bordered table-condensed">
@@ -371,12 +396,53 @@
 	</table>
 	
 	<h5>Interpretations</h5>
-	<textarea style="width: 100%; height: 150px; list-style: outside; margin-bottom: 50px;"></textarea>
+	<textarea style="width: 100%; height: 150px; list-style: outside; margin-bottom: 20px;"></textarea>
 	<br />
 	
 	<div class="chartHolder chartFull" id="consistencyMain"><svg class="bigChart"></svg></div>
-	
-
+	<br />
+	<em>2e  Consistency between related indicators</em>
+	<div style="display: inline-block; width: 100%; margin-bottom: 10px;" ng-repeat="relation in revCtrl.consistency.relations | orderBy:'name'">
+	<div style="width: 49%; display: inline-block;">
+	<table style="font-size: 90%; margin-bottom: 10px;" class="table table-bordered table-condensed">
+		<tr bgcolor="#f9f9f9"><th colspan="2">{{relation.name}}</th></tr>
+		<tr>
+			<td>Year</td>
+			<td>{{revCtrl.yearSelected.name}}</td>
+		</tr>
+		<tr>
+		<td>Expected relationship</td>
+		<td>{{revCtrl.relationName(relation.type)}}</td>
+		</tr>
+		<tr>
+		<td>Quality threshold</td>
+		<td ng-if="relation.type != 'do'">{{relation.criteria}}</td>
+		<td ng-if="relation.type === 'do'">Not negative</td>
+		</tr>
+		<tr>
+		<td>National score</td>
+		<td>{{relation.boundaryValue}}%</td>
+		</tr>
+		<tr>
+		<td># {{revCtrl.orgunitLevelSelected.name}}s with poor score</td>
+		<td>{{relation.count}}</td>
+		</tr>
+		<tr>
+		<td>% {{revCtrl.orgunitLevelSelected.name}}s with poor score</td>
+		<td>{{relation.percent}}%</td>
+		</tr>
+		<tr ng-if="relation.names.length > 0">
+			<td colspan="2">Names:</td>
+		</tr>
+		<tr ng-if="relation.names.length > 0">
+			<td colspan="2">{{relation.names.join(', ')}}</td>
+		</tr>
+	</table>
+	</div>
+	<div style="border: 1px solid gray; width: 49%; min-height: 204px; display: inline-block; margin-bottom: 10px;"></div>
+	<h5 style="margin-top: 5px;">Interpretations</h5>
+	<textarea style="width: 100%; height: 150px; list-style: outside; margin-bottom: 30px;"></textarea>
+	</div>
 
 </tab>
 </tabset>

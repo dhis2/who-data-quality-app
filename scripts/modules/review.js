@@ -64,6 +64,7 @@
 	  		self.consistency = {};
 	  		self.consistency.outliers = [];
 	  		self.consistency.consistency = [];
+	  		self.consistency.relations = [];
 	  		
 	  		
 	  		var datasets = dataSetsForCompleteness();
@@ -139,6 +140,16 @@
 			chartOptions.title = 'Consistency trend';
 			chartOptions.showLegend = true;
 			visualisationService.autoLineChart('consistencyMain', pe, indicatorUIDs, self.userOrgunit.id, chartOptions);
+			
+			//7 Indicator relations
+			var relations = applicableRelations();
+			var irCallback = function (result) { self.consistency.relations.push(result);}
+			for (var i = 0; i < relations.length; i++) {
+				var relation = relations[i];
+				var indicatorA = indicatorFromCode(relation.A);
+				var indicatorB = indicatorFromCode(relation.B);
+				dataAnalysisService.indicatorRelation(irCallback, relation, indicatorA, indicatorB, self.yearSelected.id, self.userOrgunit.id, self.orgunitLevelSelected.level);
+			}
 	  	}
 	  	
 	  	
@@ -246,30 +257,36 @@
 			return null;
 		}
 		
-		
-		function dataRelations() {
-			
-			var data, relations = [];
-			for (var i = 0; i < self.map.relations.length; i++) {
-				data = self.map.relations[i];
-				
-				var codeA = localDataIDfromCode(data.A);
-				var codeB = localDataIDfromCode(data.B);
-				
-				if (codeA && codeB) {
-					relations.push({
-						'A': codeA,
-						'B': codeB,
-						'type': data.type,
-						'criteria': data.criteria
-					});
-				}
+		//Returns true/false depending on whether indicator is in selected group
+		function indicatorIsRelevant(code) {
+			for (var i = 0; i < self.map.data.length; i++) {				
+				if (self.map.data[i].code === code) return true
 			}
 			
+			return false;
+		}
+		
+		//Returns relations relevant for the selected group (i.e. both indicators are in the group)
+		function applicableRelations() {
 			
+			var dataIDs = indicatorIDsForAnalysis(), relation, relations = [];
+			for (var i = 0; i < self.map.relations.length; i++) {
+				relation = self.map.relations[i];
+				
+				if (indicatorIsRelevant(relation.A) && indicatorIsRelevant(relation.B)) {
+					relations.push(relation);
+				}
+			}
 			return relations;	
 		}
 	    
+	    self.relationName = function(typeCode) {
+	    
+	    	if (typeCode === 'eq') return "Equal";
+	    	if (typeCode === 'aGTb') return "A > B";
+	    	if (typeCode === 'do') return "Dropout";
+	    	
+	    }
 	    
 	    	
 		return self;
