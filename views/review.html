@@ -289,6 +289,10 @@
     	</tr>
     	</tbody>
     </table>
+    
+    <h5>Interpretations</h5>
+    <textarea style="width: 100%; height: 150px; list-style: outside; margin-bottom: 50px;"></textarea>
+    <br />
 
 <em>2b  Moderate outliers.</em>
 	<table style="font-size: 90%;" class="table table-bordered table-condensed">
@@ -312,6 +316,10 @@
     	</tr>
     	</tbody>
     </table>
+    
+    <h5>Interpretations</h5>
+    <textarea style="width: 100%; height: 150px; list-style: outside; margin-bottom: 50px;"></textarea>
+    <br />
 
 <em>2c  Moderate outliers.</em> Based on median (modified Z score).
 	<table style="font-size: 90%;" class="table table-bordered table-condensed">
@@ -335,6 +343,11 @@
     	</tr>
     	</tbody>
     </table>
+    
+    <h5>Interpretations</h5>
+    <textarea style="width: 100%; height: 150px; list-style: outside; margin-bottom: 50px;"></textarea>
+    <br />
+    
 	<em>2d  Consistency of indicator values over time.</em><br />Difference between the current year and either the average of the 3 preceding years (if expected trend is constant), or the forecasted value.
 	<table style="font-size: 90%;" class="table table-bordered table-condensed">
 		<tr bgcolor="#f9f9f9">
@@ -356,6 +369,13 @@
 			<td>{{indicator.consistencyNames.join(', ')}}</td>
 		</tr>
 	</table>
+	
+	<h5>Interpretations</h5>
+	<textarea style="width: 100%; height: 150px; list-style: outside; margin-bottom: 50px;"></textarea>
+	<br />
+	
+	<div class="chartHolder chartFull" id="consistencyMain"><svg class="bigChart"></svg></div>
+	
 
 
 </tab>

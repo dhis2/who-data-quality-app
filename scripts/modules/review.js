@@ -128,6 +128,17 @@
 					
 				dataAnalysisService.indicatorConsistency(ccCallback, indicator, self.yearSelected.id, refYears, self.userOrgunit.id, self.orgunitLevelSelected.level);
 			}
+			
+			//6 Indicator consistency chart
+			var indicatorUIDs = [];
+			for (var i = 0; i < indicatorIDs.length; i++) {
+				indicatorUIDs.push(indicatorFromCode(indicatorIDs[i]).localData.id);
+			}
+			
+			chartOptions = {};
+			chartOptions.title = 'Consistency trend';
+			chartOptions.showLegend = true;
+			visualisationService.autoLineChart('consistencyMain', pe, indicatorUIDs, self.userOrgunit.id, chartOptions);
 	  	}
 	  	
 	  	
