@@ -115,9 +115,12 @@
   			}
 	
   			//5 Indicator consistency
-  			var ccCallback = function (result) { 
+  			var ccCallback = function (result) {
+				result.chartOptions = JSON.parse(JSON.stringify(self.chartConfigurations.consistencySmall));
+				result.chartData = makeDataPoints(result.datapoints, result.boundaryConsistency, result.consistency, result.chartOptions);
   				self.consistency.consistency.push(result);
   				self.consistency.consistencyChart.push(result.chartSerie);
+  				
   			}
 			for (var i = 0; i < indicatorIDs.length; i++) {
 				
@@ -139,7 +142,15 @@
 			
 			//7 Indicator relations
 			var relations = applicableRelations();
-			var irCallback = function (result) { self.consistency.relations.push(result);}
+			var irCallback = function (result) {
+				result.chartOptions = JSON.parse(JSON.stringify(self.chartConfigurations.consistencySmall));
+				result.chartData = makeDataPoints(result.datapoints, result.boundaryValue, result.criteria, chartOptions);
+				
+				result.chartOptions.chart.xAxis.axisLabel = indicatorFromCode(result.A).name;
+				result.chartOptions.chart.yAxis.axisLabel = indicatorFromCode(result.B).name;
+				
+				self.consistency.relations.push(result);
+			}
 			for (var i = 0; i < relations.length; i++) {
 				var relation = relations[i];
 				var indicatorA = indicatorFromCode(relation.A);
@@ -283,6 +294,65 @@
 	    	if (typeCode === 'do') return "Dropout";
 	    	
 	    }
+	    	    
+	    function makeDataPoints(datapoints, nationalRatio, consistency, chartOptions) {	    		    	
+	    	var chartSeries = [];
+	    	var chartSerie = {
+	    		'key': "Districts",
+	    		'values': []
+	    	}
+	    	
+	    	for (var i = 0; i < datapoints.length; i++) {
+	    		chartSerie.values.push({
+	    			'x': datapoints[i].refValue,
+	    			'y': datapoints[i].value
+	    		});
+	    	}
+
+	    	chartSeries.push(chartSerie);
+	    	chartSeries.push(
+	    		{
+	    			'key': "National",
+	    			'color': '#ffff',
+	    			'values': [{
+	    			'x': 0,
+	    			'y': 0,
+	    			'size': 0
+	    			}
+	    			],
+	    			'slope': nationalRatio/100,
+	    			'intercept': 0.001
+	    		},
+	    		{
+	    			'key': "High",
+	    			'color': '#ff7f0e',
+	    			'values': [{
+	    			'x': 0,
+	    			'y': 0,
+	    			'size': 0
+	    			}
+	    			],
+	    			'slope': (nationalRatio+consistency)/100,
+	    			'intercept': 0.001
+	    		},
+	    		{
+	    			'key': "Low",
+	    			'color': '#ff7f0e',
+	    			'values': [{
+	    			'x': 0,
+	    			'y': 0,
+	    			'size': 0
+	    			}
+	    			],
+	    			'slope': (nationalRatio-consistency)/100,
+	    			'intercept': 0.001
+	    		}
+	    	);
+	    	
+	    	//Todo: update axis etc
+	    	
+	    	return chartSeries;
+	    }
 	    
 	    self.chartConfigurations = {
 	    	'completeness': {
@@ -333,8 +403,93 @@
 	    	        },
 	    	        "showControls": false
 	    	    }
+	    	},
+	    	'consistencySmall': {
+	    	   	"chart": {
+	    	        "type": "scatterChart",
+	    	        "height": 350,
+	    	        "margin": {
+	    	          "top": 25,
+	    	          "right": 15,
+	    	          "bottom": 100,
+	    	          "left": 100
+	    	        },
+	    	        "scatter": {
+	    	        	"onlyCircles": false
+	    	        },
+	    	        "clipEdge": false,
+	    	        "staggerLabels": true,
+	    	        "transitionDuration": 1,
+	    	        "showDistX": true,
+    	            "showDistY": true,
+    	            "xAxis": {
+    	                  "axisLabel": "Previous periods",
+    	                  "axisLabelDistance": 30,
+    	                  "tickFormat": d3.format('g'),
+    	                  "showMaxMin": false
+    	            },
+    	            "yAxis": {
+    	            	"axisLabel": "Current period",
+    	                "axisLabelDistance": 30,
+    	                "tickFormat": d3.format('g')
+    	            }
+	    	    }
 	    	}
 	    };
+	    
+	    self.testData = [
+	    	{
+		    	'key': "Districts",
+		    	'values': [
+		    		{
+		    		'x': 1,
+		    		'y': 3
+		    		},
+		    		{
+		    		'x': 2,
+		    		'y': 6
+		    		},
+		    		{
+		    		'x': 3,
+		    		'y': 7
+		    		}
+		    	]
+	    	},
+	    	{
+	    		'key': "National",
+	    		'values': [{
+	    		'x': 0,
+	    		'y': 0,
+	    		'size': 0
+	    		}
+	    		],
+	    		'slope': 1,
+	    		'intercept': 0.001
+	    	},
+	    	{
+	    		'key': "+30%",
+	    		'values': [{
+	    		'x': 0,
+	    		'y': 0,
+	    		'size': 0
+	    		}
+	    		],
+	    		'slope': 1.3,
+	    		'intercept': 0.001
+	    	},
+	    	{
+	    		'key': "-30%",
+	    		'values': [{
+	    		'x': 0,
+	    		'y': 0,
+	    		'size': 0
+	    		}
+	    		],
+	    		'slope': 0.7,
+	    		'intercept': 0.001
+	    	}
+	    	
+	    ];
 	    
 		return self;
 	});

@@ -396,7 +396,7 @@
 			<td>{{indicator.consistencyNames.join(', ')}}</td>
 		</tr>
 	</table>
-	
+		
 	<h5>Interpretations</h5>
 	<textarea style="width: 100%; height: 150px; list-style: outside; margin-bottom: 20px;"></textarea>
 	<br />
@@ -404,7 +404,15 @@
 
 	<nvd3 options='revCtrl.chartConfigurations.consistency' data='revCtrl.consistency.consistencyChart'></nvd3>
 	
-	<br />
+	<div style="width: 100%; display: inline-block; margin-top: 30px; margin-bottom: 30px;">
+		<div style="width: 49%; display: inline-block; margin-bottom: 10px; text-align: center;" ng-repeat="indicator in revCtrl.consistency.consistency | orderBy:'name'">
+		<nvd3 options='indicator.chartOptions' data='indicator.chartData'></nvd3>
+		<strong>{{indicator.name}}</strong>
+		</div>
+	</div>	
+	
+	<br style="margin-top: 30px;" />
+	
 	<em>2e  Consistency between related indicators</em>
 	<div style="display: inline-block; width: 100%; margin-bottom: 10px;" ng-repeat="relation in revCtrl.consistency.relations | orderBy:'name'">
 	<div style="width: 49%; display: inline-block;">
@@ -443,7 +451,9 @@
 		</tr>
 	</table>
 	</div>
-	<div style="border: 1px solid gray; width: 49%; min-height: 204px; display: inline-block; margin-bottom: 10px;"></div>
+	<div style="vertical-align: top; border: 1px solid #f9f9f9; width: 49%; min-height: 204px; display: inline-block; margin-bottom: 10px;">
+	<nvd3 options='relation.chartOptions' data='relation.chartData'></nvd3>
+	</div>
 	<h5 style="margin-top: 5px;">Interpretations</h5>
 	<textarea style="width: 100%; height: 150px; list-style: outside; margin-bottom: 30px;"></textarea>
 	</div>

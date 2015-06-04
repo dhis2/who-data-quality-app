@@ -1284,8 +1284,8 @@
 				
 				if (isNumber(result)) {
 					subunitDatapoints.push({
-						'valueA': valueA,
-						'valueB': valueB,
+						'value': valueA,
+						'refValue': valueB,
 						'result': result,
 						'id': subunits[j],
 						'name': names[subunits[j]]
