@@ -560,6 +560,7 @@
 			var ds;
 			var value;
 			var errors = [];
+			var noConsistency = false;
 			for (var i = 0; i < self.dsc.datasets.length; i++) {
 				ds = self.dsc.datasets[i];
 
@@ -600,56 +601,57 @@
 				subunitsBelow = 0;
 				subunitNames = [];
 				
-				var values = [];
+				var val, values = [];
 				for (var k = 0; k < refYears.length; k++) {
 					values.push(dataValue(headers, data, ds.id, refYears[k], boundary, null));
 				}
 				
 				//Need to check whether to include all years
-				while (values.length > 1 && values[0]*2 < values[1]) {
+				while (values.length > 0 && (values[0] === null || values[0]*2 < values[1])) {
 					var droppedValue = values.shift();
 					var droppedYear = refYears.shift();
-					errors.push("Missing data: Ignoring " + droppedYear + " from consistency of completeness report for dataset " + ds.name + " due to low reporting");
+					errors.push({'type': "warning", 'item': ds.name, 'msg': "Missing data: Ignoring " + droppedYear + " from consistency of completeness report for dataset " + ds.name + " due to low reporting"});
 				}
-				var val, values = [];
-				for (var k = 0; k < refYears.length; k++) {
-					val = dataValue(headers, data, ds.id, refYears[k], boundary, null);
-					values.push(val);
+				
+				//Can we get consistency at all?
+				if (refYears.length === 0) {
+					noConsistency = true;
 				}
-				ds.boundaryTrend = timeConsistency(values, ds.boundary, ds.trend, 100);
-				
-				
-				//Get subunit values
-				for (var j = 0; j < subunits.length; j++) {
-					
-					var values = [], trend;
+				else {
 					for (var k = 0; k < refYears.length; k++) {
-						values.push(dataValue(headers, data, ds.id, refYears[k], boundary, null));
+						val = dataValue(headers, data, ds.id, refYears[k], boundary, null);
+						values.push(val);
 					}
-					trend = timeConsistency(values, dataValue(headers, data, ds.id, year, subunits[j], null), ds.trend, 100);
+					ds.boundaryTrend = timeConsistency(values, ds.boundary, ds.trend, 100);
 					
-					if (trend > (100 + ds.consistencyThreshold) || trend < (100-ds.consistencyThreshold)) {
-						subunitsBelow++;
-						subunitNames.push(names[subunits[j]]);						
-					}
-					else {
-						subunitsAbove++;
-					}				
+					
+					//Get subunit values
+					for (var j = 0; j < subunits.length; j++) {
+						
+						var values = [], trend;
+						for (var k = 0; k < refYears.length; k++) {
+							values.push(dataValue(headers, data, ds.id, refYears[k], boundary, null));
+						}
+						trend = timeConsistency(values, dataValue(headers, data, ds.id, year, subunits[j], null), ds.trend, 100);
+						
+						if (trend > (100 + ds.consistencyThreshold) || trend < (100-ds.consistencyThreshold)) {
+							subunitsBelow++;
+							subunitNames.push(names[subunits[j]]);						
+						}
+						else {
+							subunitsAbove++;
+						}
+					}			
 				}
-				
 				//Summarise			
 				ds.countTrend = subunitsBelow;
 				ds.percentTrend = mathService.round(100*subunitsBelow/(subunitsBelow + subunitsAbove),1);
 				ds.namesTrend = subunitNames.sort();
 				
-				
-				
-				
 				//chart data
 				chartSerie = {
 					"key": ds.name,
 					"values": []
-					
 				};
 				
 				for (var k = 0; k < refYears.length; k++) {
@@ -660,19 +662,13 @@
 				
 				chartSeries.push(chartSerie);
 				
+				
 			}
 			self.dsc.datasets.completenessChart = chartSeries;
-			self.dsc.callback(self.dsc.datasets);
-			printError(errors);
+			self.dsc.callback(self.dsc.datasets, errors);
+	
 			self.inProgress = false;
 			nextAnalysis();
-		}
-		
-		function printError(errors) {
-			for (var i = 0; i < errors.length; i++) {
-				console.log(errors[i]);
-			}
-		
 		}
 		
 		
@@ -1067,75 +1063,81 @@
 						
 			//Need to check whether to include all years
 			var errors = [];
-			while (refValues.length > 1 && refValues[0]*10 < refValues[1]) {
+			while (refValues.length > 0 && (refValues[0] === null || refValues[0]*10 < refValues[1])) {
 				var droppedValue = refValues.shift();
 				var droppedYear = refYears.shift();
-				errors.push("Missing data: Ignoring " + droppedYear + " from consistency analysis of " + indicator.name + " due to possible incomplete data: " + droppedValue + " compared to " + refValues[0] + " in " + refYears[0] + ".");
+				errors.push({'type': "warning", 'item': indicator.name, 'msg': "Missing data: Ignoring period " + droppedYear + " from consistency analysis of " + indicator.name + " due to possible incomplete data: " + droppedValue + " in "+ droppedYear +" compared to " + refValues[0] + " in " + refYears[0] + "."});
 			}
 			
-			//Redo with (possibly) fewer years
-			for (var k = 0; k < refYears.length; k++) {
-				refValues.push(dataValue(headers, data, dataID, refYears[k], boundary, null));
+			//Can we get consistency at all?
+			if (refYears.length === 0) {
+				errors.push({'type': "danger", 'item': indicator.name, 'msg': "Missing data: Not possible to analyse consistency of " + indicator.name + " - no data for previous years"});
+				self.icc.callback(null, errors);
 			}
-			
-			value = dataValue(headers, data, dataID, year, boundary, null)
-			indicator.boundaryValue = value;
-			indicator.boundaryConsistency = timeConsistency(refValues, value, indicator.trend, null);
-			boundaryConsistency = indicator.boundaryConsistency;
-			indicator.boundaryRefvalue = value/boundaryConsistency;
-						
-						
-			//chart data
-			var chartSerie = {
-				"key": indicator.name,
-				"values": []
-				
-			};
-			
-			for (var k = 0; k < refYears.length; k++) {
-				chartSerie.values.push({"x": refYears[k], "y": dataValue(headers, data, dataID, refYears[k], boundary, null)});
-			}			
-			chartSerie.values.push({"x": year, "y": indicator.boundaryValue});
-			
-			
-			//Get subunit values
-			for (var j = 0; j < subunits.length; j++) {
-				refValues = [];
+			else {
+				//Redo with (possibly) fewer years
 				for (var k = 0; k < refYears.length; k++) {
-					refValues.push(dataValue(headers, data, dataID, refYears[k], subunits[j], null));
+					refValues.push(dataValue(headers, data, dataID, refYears[k], boundary, null));
 				}
+				
+				
+				
+				value = dataValue(headers, data, dataID, year, boundary, null)
+				indicator.boundaryValue = value;
+				indicator.boundaryConsistency = timeConsistency(refValues, value, indicator.trend, null);
+				boundaryConsistency = indicator.boundaryConsistency;
+				indicator.boundaryRefvalue = value/boundaryConsistency;
 							
-				value = dataValue(headers, data, dataID, year, subunits[j], null)
-				ratio = timeConsistency(refValues, value, indicator.trend, null);		
-				refValue = value/(ratio/100);
+							
+				//chart data
+				var chartSerie = {
+					"key": indicator.name,
+					"values": []
+					
+				};
 				
-				boundarySubunitRatio = ratio/boundaryConsistency;
-				if (boundarySubunitRatio > (1.0+indicator.consistency/100) || boundarySubunitRatio < (1.0-indicator.consistency/100)) {
-					subunitOutliers++;
-					subunitNames.push(names[subunits[j]]);
+				for (var k = 0; k < refYears.length; k++) {
+					chartSerie.values.push({"x": refYears[k], "y": dataValue(headers, data, dataID, refYears[k], boundary, null)});
+				}			
+				chartSerie.values.push({"x": year, "y": indicator.boundaryValue});
+				
+				
+				//Get subunit values
+				for (var j = 0; j < subunits.length; j++) {
+					refValues = [];
+					for (var k = 0; k < refYears.length; k++) {
+						refValues.push(dataValue(headers, data, dataID, refYears[k], subunits[j], null));
+					}
+								
+					value = dataValue(headers, data, dataID, year, subunits[j], null)
+					ratio = timeConsistency(refValues, value, indicator.trend, null);		
+					refValue = value/(ratio/100);
+					
+					boundarySubunitRatio = ratio/boundaryConsistency;
+					if (boundarySubunitRatio > (1.0+indicator.consistency/100) || boundarySubunitRatio < (1.0-indicator.consistency/100)) {
+						subunitOutliers++;
+						subunitNames.push(names[subunits[j]]);
+					}
+					if (isNumber(ratio)) {
+						subunitDatapoints.push({
+							'value': value,
+							'refValue': refValue,
+							'ratio': ratio,
+							'id': subunits[j],
+							'name': names[subunits[j]]
+						});
+					}
 				}
-				if (isNumber(ratio)) {
-					subunitDatapoints.push({
-						'value': value,
-						'refValue': refValue,
-						'ratio': ratio,
-						'id': subunits[j],
-						'name': names[subunits[j]]
-					});
-				}
+				
+				//Summarise
+				indicator.datapoints = subunitDatapoints;
+				indicator.consistencyCount = subunitOutliers;
+				indicator.consistencyPercent = mathService.round(100*subunitOutliers/subunits.length, 1);
+				indicator.consistencyNames = subunitNames.sort();
+				indicator.chartSerie = chartSerie;
+				
+				self.icc.callback(indicator, errors);
 			}
-			
-			//Summarise
-			indicator.datapoints = subunitDatapoints;
-			indicator.consistencyCount = subunitOutliers;
-			indicator.consistencyPercent = mathService.round(100*subunitOutliers/subunits.length, 1);
-			indicator.consistencyNames = subunitNames.sort();
-			indicator.chartSerie = chartSerie;
-			
-			printError(errors);
-				
-			self.icc.callback(indicator);
-			
 			self.inProgress = false;
 			nextAnalysis();
 		}
@@ -1361,8 +1363,9 @@
 			else {
 				refVal = mathService.getMean(refvalues);
 			}
-
-			return mathService.round(100*currentvalue/refVal, 1);
+			var value = mathService.round(100*currentvalue/refVal, 1);
+			if (isNaN(value)) return null;
+			else return value;
 		}
 		
 		

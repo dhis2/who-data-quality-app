@@ -405,9 +405,9 @@
 	<nvd3 options='revCtrl.chartConfigurations.consistency' data='revCtrl.consistency.consistencyChart'></nvd3>
 	
 	<div style="width: 100%; display: inline-block; margin-top: 30px; margin-bottom: 30px;">
-		<div style="width: 49%; display: inline-block; margin-bottom: 10px; text-align: center;" ng-repeat="indicator in revCtrl.consistency.consistency | orderBy:'name'">
-		<nvd3 options='indicator.chartOptions' data='indicator.chartData'></nvd3>
+		<div style="width: 49%; display: inline-block; margin-bottom: 10px; text-align: left;" ng-repeat="indicator in revCtrl.consistency.consistency | orderBy:'name'">
 		<strong>{{indicator.name}}</strong>
+		<nvd3 style="vertical-align: top; margin-top: 0px;" options='indicator.chartOptions' data='indicator.chartData'></nvd3>
 		</div>
 	</div>	
 	
@@ -452,12 +452,18 @@
 	</table>
 	</div>
 	<div style="vertical-align: top; border: 1px solid #f9f9f9; width: 49%; min-height: 204px; display: inline-block; margin-bottom: 10px;">
-	<nvd3 options='relation.chartOptions' data='relation.chartData'></nvd3>
+	<nvd3 style="vertical-align: top;" options='relation.chartOptions' data='relation.chartData'></nvd3>
 	</div>
 	<h5 style="margin-top: 5px;">Interpretations</h5>
 	<textarea style="width: 100%; height: 150px; list-style: outside; margin-bottom: 30px;"></textarea>
 	</div>
 
 </tab>
+<tab heading="Remarks" ng-if="revCtrl.alerts.length > 0">
+<table class="table table-bordered" style="font-size: 90%; margin-top: 20px;">
+<tr><th>Item</th><th>Remarks</th></tr>
+<tr ng-repeat="alert in revCtrl.alerts track by $index"><td>{{alert.item}}</td><td>{{alert.msg}}</td></tr>
+</table>
+</tab>
+
 </tabset>
-<alert style="margin-top: 10px; margin-bottom: 10px;"ng-repeat="alert in revCtrl.result.alerts track by $index" type="{{alert.type}}" close="revCtrl.result.alerts.splice($index, 1)">{{alert.msg}}</alert>

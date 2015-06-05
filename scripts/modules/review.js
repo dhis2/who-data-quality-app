@@ -12,6 +12,8 @@
 	    	self.notPossible = false;
 	    	self.completeness = null;
 	    	
+	    	self.alerts = [];
+	    	
 	    	self.orgunitLevels = [];
 	    	self.orgunitLevelSelected = undefined;
 	    	
@@ -77,7 +79,11 @@
 	  		dataAnalysisService.datasetCompleteness(dscCallback, dataSetsForCompleteness(), self.yearSelected.id, refYears, self.userOrgunit.id, self.orgunitLevelSelected.level);
 			
 			//2 Get indicator completeness
-	  		var icCallback = function (result) { self.completeness.indicators.push(result);}
+	  		var icCallback = function (result, errors) { 
+	  			self.completeness.indicators.push(result);
+	  			
+ 				if (errors) self.alerts = self.alerts.concat(errors);
+	  		}
 	  		for (var i = 0; i < indicatorIDs.length; i++) {
 	  		
 	  			var indicator = indicatorFromCode(indicatorIDs[i])
@@ -115,13 +121,17 @@
   			}
 	
   			//5 Indicator consistency
-  			var ccCallback = function (result) {
-				result.chartOptions = JSON.parse(JSON.stringify(self.chartConfigurations.consistencySmall));
-				result.chartData = makeDataPoints(result.datapoints, result.boundaryConsistency, result.consistency, result.chartOptions);
-  				self.consistency.consistency.push(result);
-  				self.consistency.consistencyChart.push(result.chartSerie);
-  				
+  			var ccCallback = function (result, errors) {
+				if (result) {
+					result.chartOptions = JSON.parse(JSON.stringify(self.chartConfigurations.consistencySmall));
+					if (result.datapoints) result.chartData = makeDataPoints(result.datapoints, result.boundaryConsistency, result.consistency, result.chartOptions);
+					self.consistency.consistency.push(result);
+					self.consistency.consistencyChart.push(result.chartSerie);
+				}  				
+  				if (errors) self.alerts = self.alerts.concat(errors);
   			}
+  			
+  			
 			for (var i = 0; i < indicatorIDs.length; i++) {
 				
 				var indicator = indicatorFromCode(indicatorIDs[i]);  			
@@ -193,16 +203,29 @@
 		
 		
 		function indicatorIDsForAnalysis() {
-			if (self.groupSelected.code === 'C') {
-				return self.map.coreIndicators;
-			}
 			
-			for (var i = 0; i < self.map.groups.length; i++) {
-				if (self.map.groups[i].code === self.groupSelected.code) {
-					return self.map.groups[i].members;
+			//First find all that might be relevant
+			var IDs;
+			if (self.groupSelected.code === 'C') {
+				IDs = self.map.coreIndicators;
+			}
+			else {
+				for (var i = 0; i < self.map.groups.length; i++) {
+					if (self.map.groups[i].code === self.groupSelected.code) {
+						IDs = self.map.groups[i].members;
+					}
 				}
 			}
-		
+			
+			//Then filter out the ones matched to local data
+			var matchedIDs = [];
+			for (var i = 0; i < IDs.length; i++) {
+				if (indicatorFromCode(IDs[i]).matched) matchedIDs.push(IDs[i]);
+			}
+			
+			return matchedIDs;
+			
+			
 		}
 		
 		
@@ -266,10 +289,13 @@
 		
 		//Returns true/false depending on whether indicator is in selected group
 		function indicatorIsRelevant(code) {
-			for (var i = 0; i < self.map.data.length; i++) {				
-				if (self.map.data[i].code === code) return true
+		
+			var indicators = indicatorIDsForAnalysis();
+		
+			for (var i = 0; i < indicators.length; i++) {				
+				if (indicators[i] === code) return true
 			}
-			
+
 			return false;
 		}
 		
@@ -325,7 +351,7 @@
 	    		},
 	    		{
 	    			'key': "High",
-	    			'color': '#ff7f0e',
+	    			'color': '#F00',
 	    			'values': [{
 	    			'x': 0,
 	    			'y': 0,
@@ -337,7 +363,7 @@
 	    		},
 	    		{
 	    			'key': "Low",
-	    			'color': '#ff7f0e',
+	    			'color': '#00F',
 	    			'values': [{
 	    			'x': 0,
 	    			'y': 0,
@@ -409,7 +435,7 @@
 	    	        "type": "scatterChart",
 	    	        "height": 350,
 	    	        "margin": {
-	    	          "top": 25,
+	    	          "top": 40,
 	    	          "right": 15,
 	    	          "bottom": 100,
 	    	          "left": 100
@@ -492,6 +518,7 @@
 	    ];
 	    
 		return self;
+		
 	});
 	
 })();
