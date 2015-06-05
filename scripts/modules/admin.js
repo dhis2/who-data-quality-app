@@ -30,9 +30,13 @@
 	    	self.groupSelect = {};
 	    	
 	    	var needUpdate = false;
+	    	var needReset = false;
 	    	    		
     		//TODO: check for updates to metaData
     		requestService.getSingle('/api/systemSettings/DQAmapping').then(function(response) {
+    			
+    			if (needReset) response.data = ""; 
+    			
     			if (response.data != "") {
     				self.mapping = response.data;
     				if (needUpdate) updateMeta();
@@ -50,12 +54,26 @@
 	    
 		function updateMeta() {
 			
-			needUpdate = true;
-		
+			needUpdate = false;
 		
 			for (var i = 0; i < self.mapping.data.length; i++) {
-				self.mapping.data[i].missing = 90;
+				if (!self.mapping.data[i].trend) {
+					self.mapping.data[i].trend = "constant";
+					self.mapping.data[i].missing = 90;
+				}
+				
+				if (!self.mapping.data[i].matched) {
+					self.mapping.data[i].matched = false;
+				}
+			}			
+			
+			for (var i = 0; i < self.mapping.coreIndicators.length; i++) {
+				if (self.mapping.coreIndicators[i] === "D14") {
+					self.mapping.coreIndicators[i] = "D27";
+				}
 			}
+			
+			self.mapping.relations.shift();
 			
 			saveMapping();
 
