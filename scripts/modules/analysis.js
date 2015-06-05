@@ -513,7 +513,6 @@
 			$('#detailedResult').html('<div id="detailChart"><svg class="bigChart"></svg></div>');
         	
         	var chart = nv.models.multiBarChart()
-        			      .transitionDuration(500)
         			      .reduceXTicks(true)   //If 'false', every single x-axis tick label will be rendered.
         			      .rotateLabels(0)      //Angle to rotate x-axis labels.
         			      .groupSpacing(0.1)    //Distance between each group of bars.
