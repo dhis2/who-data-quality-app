@@ -73,11 +73,11 @@
     		 	<th width="175"># {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
     		 	<th width="175">% {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
     	    </tr>	    
-    	   	<tr ng-repeat="indicator in revCtrl.completeness.indicators | orderBy : 'name'">
-        		<td>{{indicator.name}}</td>
-        		<td class="valueCell">{{indicator.boundary}}%</td>
-        		<td class="valueCell">{{indicator.count}}</td>
-        		<td class="valueCell">{{indicator.percent}}%</td>
+    	   	<tr ng-repeat="indicator in revCtrl.completeness.indicators | orderBy : 'dxName'">
+        		<td>{{indicator.dxName}}</td>
+				<td class="valueCell">{{indicator.boundaryValue}}%</td>
+				<td class="valueCell">{{indicator.subunitsOutsideThreshold}}</td>
+				<td class="valueCell">{{indicator.subunitViolationPercentage}}%</td>
         	</tr>
         	</tbody>
         </table>
@@ -94,7 +94,7 @@
 	    </tr>	    
 	   	<tr ng-repeat="dataset in revCtrl.completeness.consistency | orderBy:'dxName'">
     		<td>{{dataset.dxName}}</td>
-    		<td class="valueCell">{{dataset.boundaryValue}}%</td>
+    		<td class="valueCell">{{dataset.boundaryPercentage}}%</td>
     		<td class="valueCell">{{dataset.subunitsOutsideThreshold}}</td>
     		<td class="valueCell">{{dataset.subunitViolationPercentage}}%</td>
     	</tr>
@@ -113,7 +113,7 @@
     		 	<th width="175"># {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
     		 	<th width="175">% {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
     	    </tr>	    
-    	   	<tr ng-repeat="indicator in revCtrl.consistency.outliers | orderBy:'name'">
+    	   	<tr ng-repeat="indicator in revCtrl.outliers | orderBy:'name'">
         		<td>{{indicator.name}}</td>
         		<td class="valueCell">{{indicator.boundaryExtreme}}%</td>
         		<td class="valueCell">{{indicator.countExtreme}}</td>
@@ -130,7 +130,7 @@
 		 	<th width="175"># {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
 		 	<th width="175">% {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
 	    </tr>	    
-	   	<tr ng-repeat="indicator in revCtrl.consistency.outliers | orderBy:'name'">
+	   	<tr ng-repeat="indicator in revCtrl.outliers | orderBy:'name'">
     		<td>{{indicator.name}}</td>
     		<td class="valueCell">{{indicator.boundaryModerate}}%</td>
     		<td class="valueCell">{{indicator.countModerate}}</td>
@@ -147,7 +147,7 @@
     	 	<th width="175"># {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
     	 	<th width="175">% {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
         </tr>	    
-       	<tr ng-repeat="indicator in revCtrl.consistency.outliers | orderBy:'name'">
+       	<tr ng-repeat="indicator in revCtrl.outliers | orderBy:'name'">
     		<td>{{indicator.name}}</td>
     		<td class="valueCell">{{indicator.boundaryZscore}}%</td>
     		<td class="valueCell">{{indicator.countZscore}}</td>
@@ -165,11 +165,11 @@
 	 	<th width="175"># {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
 	 	<th width="175">% {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
     </tr>	    
-   	<tr ng-repeat="indicator in revCtrl.consistency.consistency | orderBy:'name'">
-		<td>{{indicator.name}}</td>
-		<td class="valueCell">{{indicator.boundaryConsistency}}%</td>
-		<td class="valueCell">{{indicator.consistencyCount}}</td>
-		<td class="valueCell">{{indicator.consistencyPercent}}%</td>
+   	<tr ng-repeat="indicator in revCtrl.consistency.data | orderBy:'dxName'">
+		<td>{{indicator.dxName}}</td>
+		<td class="valueCell">{{indicator.boundaryPercentage}}%</td>
+		<td class="valueCell">{{indicator.subunitsOutsideThreshold}}</td>
+		<td class="valueCell">{{indicator.subunitViolationPercentage}}%</td>
 	</tr>
 	</tbody>
 </table>
@@ -241,13 +241,13 @@
 		 	<th width="110">% {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
 		 	<th>Names</th>
 	    </tr>	    
-	   	<tr ng-repeat="indicator in revCtrl.completeness.indicators | orderBy : 'name'">
-    		<td>{{indicator.name}}</td>
-    		<td>{{indicator.missing}}%</td>
-    		<td class="valueCell">{{indicator.boundary}}%</td>
-    		<td class="valueCell">{{indicator.count}}</td>
-    		<td class="valueCell">{{indicator.percent}}%</td>
-    		<td class="valueCell">{{indicator.names.join(', ')}}</td>
+	   	<tr ng-repeat="indicator in revCtrl.completeness.indicators | orderBy : 'dxName'">
+    		<td>{{indicator.dxName}}</td>
+    		<td>{{indicator.threshold}}%</td>
+    		<td class="valueCell">{{indicator.boundaryValue}}%</td>
+    		<td class="valueCell">{{indicator.subunitsOutsideThreshold}}</td>
+    		<td class="valueCell">{{indicator.subunitViolationPercentage}}%</td>
+    		<td class="valueCell">{{indicator.subunitViolationNames.join(', ')}}</td>
     	</tr>
     	</tbody>
     </table>
@@ -271,7 +271,7 @@
 <td>{{dataset.dxName}}</td>
 <td>{{dataset.type}}</td>
 <td class="valueCell">{{dataset.threshold}}%</td>
-<td class="valueCell">{{dataset.boundaryValue}}%</td>
+<td class="valueCell">{{dataset.boundaryPercentage}}%</td>
 <td class="valueCell">{{dataset.subunitsOutsideThreshold}}</td>
 <td class="valueCell">{{dataset.subunitViolationPercentage}}%</td>
 <td>{{dataset.subunitViolationNames.join(', ')}}</td>
@@ -291,7 +291,6 @@
 
 <!--INTERNAL CONSISTENCY-->
 <tab heading="Internal Consistency">
-
 <br />
 <em>2a  Extreme outliers.</em>
 	<table style="font-size: 90%;" class="table table-bordered table-condensed">
@@ -305,7 +304,7 @@
 		 	<th width="110">% {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
 		 	<th>Names</th>
 	    </tr>	    
-	   	<tr ng-repeat="indicator in revCtrl.completeness.indicators | orderBy : 'name'">
+	   	<tr ng-repeat="indicator in revCtrl.outliers | orderBy : 'name'">
     		<td>{{indicator.name}}</td>
     		<td class="valueCell">{{indicator.extremeOutlier}} SD</td>
     		<td class="valueCell">{{indicator.boundaryExtreme}}%</td>
@@ -332,7 +331,7 @@
 		 	<th width="110">% {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
 		 	<th>Names</th>
 	    </tr>	    
-	   	<tr ng-repeat="indicator in revCtrl.completeness.indicators | orderBy : 'name'">
+	   	<tr ng-repeat="indicator in revCtrl.outliers | orderBy : 'name'">
     		<td>{{indicator.name}}</td>
     		<td class="valueCell">{{indicator.extremeOutlier}} SD</td>
     		<td class="valueCell">{{indicator.boundaryModerate}}%</td>
@@ -359,7 +358,7 @@
 		 	<th width="110">% {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
 		 	<th>Names</th>
 	    </tr>	    
-	   	<tr ng-repeat="indicator in revCtrl.completeness.indicators | orderBy : 'name'">
+	   	<tr ng-repeat="indicator in revCtrl.outliers | orderBy : 'name'">
     		<td>{{indicator.name}}</td>
     		<td class="valueCell">3.5</td>
     		<td class="valueCell">{{indicator.boundaryZscore}}%</td>
@@ -385,14 +384,14 @@
 		<th width="110">% {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
 		<th>Names</th>
 		</tr>
-		<tr ng-repeat="indicator in revCtrl.consistency.consistency | orderBy:'name'">
-			<td>{{indicator.name}}</td>
-			<td>{{indicator.trend}}</td>
-			<td class="valueCell">{{indicator.consistency}}%</td>
-			<td class="valueCell">{{indicator.boundaryConsistency}}%</td>
-			<td class="valueCell">{{indicator.consistencyCount}}</td>
-			<td class="valueCell">{{indicator.consistencyPercent}}%</td>
-			<td>{{indicator.consistencyNames.join(', ')}}</td>
+		<tr ng-repeat="indicator in revCtrl.consistency.data | orderBy:'dxName'">
+			<td>{{indicator.dxName}}</td>
+			<td>{{indicator.type}}</td>
+			<td class="valueCell">{{indicator.threshold}}%</td>
+			<td class="valueCell">{{indicator.boundaryPercentage}}%</td>
+			<td class="valueCell">{{indicator.subunitsOutsideThreshold}}</td>
+			<td class="valueCell">{{indicator.subunitViolationPercentage}}%</td>
+			<td>{{indicator.subunitViolationNames.join(', ')}}</td>
 		</tr>
 	</table>
 		

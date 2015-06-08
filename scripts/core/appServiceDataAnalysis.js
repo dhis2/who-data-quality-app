@@ -52,8 +52,8 @@
 			else if (queueItem.type === 'timeConsistency') {
 				  timeConsistencyAnalysis(queueItem.parameters);
 			}
-			else if (queueItem.type === 'indicatorCompleteness') {
-				indicatorCompletenessAnalysis(queueItem.parameters);
+			else if (queueItem.type === 'dataCompleteness') {
+				dataCompletenessAnalysis(queueItem.parameters);
 			}
 			else if (queueItem.type === 'indicatorConsistency') {
 				indicatorConsistencyAnalysis(queueItem.parameters);
@@ -739,13 +739,14 @@
 			
 			result.boundaryValue = value;
 			result.boundaryRefValue = mathService.round(refValue, 1);
-			result.boundaryRatio = mathService.round(value/refValue, 1);
+			result.boundaryRatio = mathService.round(value/refValue, 3);
+			result.boundaryPercentage = mathService.round(100*value/refValue, 1);
 			
 			var subunit;	
 			for (var i = 0; i < ouSubunitIDs.length; i++) {
 				subunit = ouSubunitIDs[i];
 				
-				value = dataValue(headers, data, dxID, pe, ouBoundary, null);
+				value = dataValue(headers, data, dxID, pe, subunit, null);
 				
 				values = [];
 				for (var k = 0; k < refPe.length; k++) {
@@ -755,7 +756,7 @@
 				
 				ratio = value/refValue;
 				
-				if (ratio > (1+0.01*threshold) || ratio > (1-0.01*threshold)) {
+				if (ratio > (1+0.01*threshold) || ratio < (1-0.01*threshold)) {
 					subunitsOutsideThreshold++;
 					subunitViolationNames.push(names[subunit]);
 				} 
@@ -768,7 +769,7 @@
 					'id': subunit,
 					'value': value,
 					'refValue': mathService.round(refValue, 1),
-					'ratio': mathService.round(ratio, 1)
+					'ratio': mathService.round(ratio, 3)
 				});
 			}
 			
@@ -797,7 +798,7 @@
 		
 		
 		
-		/**REVIEW INDICATOR COMPLETENESS ANALYSIS*/
+		/** DATA/INDICATOR COMPLETENESS ANALYSIS*/
 		/*
 		Completeness analysis used by Annual Review
 		
@@ -823,16 +824,18 @@
 									subunit percent < consistency threshold
 									subunit names < consistency threshold
 		*/
-		self.indicatorCompleteness = function(callback, indicator, periods, boundaryOrgunit, level) {
+		self.dataCompleteness = function(callback, threshold, dataID, coID, periods, ouBoundary, ouLevel) {
 			
 			var queueItem = {
-				'type': 'indicatorCompleteness',
+				'type': 'dataCompleteness',
 				'parameters': {
 					'callback': callback,
-					'indicator': indicator,
-					'periods': periods,
-					'boundaryOrgunit': boundaryOrgunit, 
-					'level': level
+					'threshold': threshold,
+					'dxID': dataID,
+					'coID': coID,
+					'pe': periods,
+					'ouBoundary': ouBoundary, 
+					'ouLevel': ouLevel
 				}
 			}
 			
@@ -842,16 +845,16 @@
 		}
 		
 		
-		function indicatorCompletenessAnalysis(parameters) {
-			self.ic = parameters;
+		function dataCompletenessAnalysis(parameters) {
+			self.dc = parameters;
 						
-			var requestURL = '/api/analytics.json?dimension=dx:' + self.ic.indicator.localData.id + '&dimension=ou:' + self.ic.boundaryOrgunit + ';LEVEL-' + self.ic.level + '&dimension=pe:' + self.ic.periods.join(';') + '&displayProperty=NAME';
+			var requestURL = '/api/analytics.json?dimension=dx:' + self.dc.dxID + '&dimension=ou:' + self.dc.ouBoundary + ';LEVEL-' + self.dc.ouLevel + '&dimension=pe:' + self.dc.pe.join(';') + '&displayProperty=NAME';
 			
 			requestService.getSingle(requestURL).then(
 					//success
 					function(response) {
-					    self.ic.data = response.data;	
-					    startIndicatorCompletenessAnalysis();				
+					    self.dc.data = response.data;	
+					    startDataCompletenessAnalysis();				
 					}, 
 					//error
 					function(response) {
@@ -862,53 +865,66 @@
 		}
 		
 	
-		function startIndicatorCompletenessAnalysis() {
+		function startDataCompletenessAnalysis() {
+			
+			var rows = self.dc.data.rows;
+			var headers = self.dc.data.headers;
+			var names = self.dc.data.metaData.names;
+			
+			var subunits = self.dc.data.metaData.ou;
+			var periods = self.dc.data.metaData.pe;
+			var dxID = self.dc.dxID;
+			
+			var threshold = self.dc.threshold;
 			
 			
-			var rows = self.ic.data.rows;
-			var headers = self.ic.data.headers;
-			var subunits = self.ic.data.metaData.ou;
-			var periods = self.ic.data.metaData.pe;
-			var names = self.ic.data.metaData.names;
+			var totalExpectedValues = subunits.length * periods.length;
+			var totalActualValues = 0;
 			
-			var totalExpected = subunits.length * periods.length;
-			var totalValues = 0;
-			
-			var totalDistricts = subunits.length;
-			var subunitsBelow = 0;
-			var subunitNames = [];
+			var totalSubunits = subunits.length;
+			var subunitsOutsideThreshold = 0;
+			var subunitViolationNames = [];
 
-			var de = self.ic.indicator.localData.id;
-			var threshold = self.ic.indicator.missing;
-			
 			var valid, value, completeness;
 			for (var i = 0; i < subunits.length; i++) {
 				
 				valid = 0;
 				for (var j = 0; j < periods.length; j++) {
 					
-					value = dataValue(headers, rows, de, periods[j], subunits[i], null);
+					value = dataValue(headers, rows, dxID, periods[j], subunits[i], null);
 					if (isNumber(value) && parseFloat(value) != 0) valid++;
 					
 				}
-				 totalValues += valid;
+				totalActualValues += valid;
 
-				 completeness = 100*valid/periods.length;
-				 if (completeness < threshold) {
-				 	subunitNames.push(names[subunits[i]]);
-				 	subunitsBelow++;
+				completeness = 100*valid/periods.length;
+				if (completeness < threshold) {
+					subunitViolationNames.push(names[subunits[i]]);
+				 	subunitsOutsideThreshold++;
 				 }
 			}
 			
-			self.ic.indicator.boundary = mathService.round(100*totalValues/totalExpected, 1);
-			self.ic.indicator.count = subunitsBelow;
-			self.ic.indicator.percent = mathService.round(100*subunitsBelow/subunits.length, 1);
-			self.ic.indicator.names = subunitNames.sort();
+			//Summarise result
+			var result = {};
+			var percent = 100*subunitsOutsideThreshold/totalSubunits;
+			result.subunitsOutsideThreshold = subunitsOutsideThreshold;
+			result.subunitViolationPercentage = mathService.round(percent, 1);
+			result.subunitViolationNames = subunitViolationNames;
+			result.boundaryValue = mathService.round(100*totalActualValues/totalExpectedValues, 1);
 			
-			self.ic.callback(self.ic.indicator);
+			//Include some metadata
+			result.dxID = dxID;
+			result.dxName = names[dxID];
+			result.pe = periods;
+			result.threshold = threshold;
+			
+			//Return			
+			self.dc.callback(result);
+
 			self.inProgress = false;
 			nextAnalysis();
 		}
+		
 		
 		
 		/**REVIEW INDICATOR OUTLIER ANALYSIS*/

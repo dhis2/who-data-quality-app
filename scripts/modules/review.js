@@ -91,14 +91,10 @@
 	  		var dsCoCallback = function (result, errors) { 
 	  			self.completeness.datasets.push(result);
 	  			if (errors) self.alerts = self.alerts.concat(errors);
-	  			
-	  			console.log(result);
 	  		}
   			var dsCiCallback = function (result, errors) { 
   				self.completeness.consistency.push(result);
   				if (errors) self.alerts = self.alerts.concat(errors);
-  				
-  				console.log(result);
   			}
 	  		for (var i = 0; i < datasets.length; i++) {
 	  			//completeness
@@ -110,11 +106,25 @@
 	  		}
 	  		
 			
-			//2 Get indicator completeness and consistency
+			//2 Get indicator completeness, consistency, outliers
 	  		var dataCoCallback = function (result, errors) { 
 	  			self.completeness.indicators.push(result);
 	  			
  				if (errors) self.alerts = self.alerts.concat(errors);
+	  		}
+	  		
+	  		var dataCiCallback = function (result, errors) {
+	  			if (result) {
+	  				self.consistency.data.push(result);
+	  			}  				
+	  			if (errors) {
+	  				self.alerts = self.alerts.concat(errors);
+	  			}
+	  		}
+	  		
+	  		var dataOutCallback = function (result) { 
+	  			console.log(result);
+	  			self.outliers.push(result);
 	  		}
 	  		
 	  		for (var i = 0; i < indicators.length; i++) {
@@ -122,60 +132,23 @@
 	  			var indicator = indicators[i];
 	  			var periodType = periodTypeFromIndicator(indicator.code);
 	  			
+	  			//periods for data completeness
 	  			var startDate = self.yearSelected.id.toString() + "-01-01";
 	  			var endDate = self.yearSelected.id.toString() + "-12-31";
 	  			var periods = periodService.getISOPeriods(startDate, endDate, periodType);	  			
 	  			
-				dataAnalysisService.indicatorCompleteness(dataCoCallback, indicator, periods, self.userOrgunit.id, self.orgunitLevelSelected.level);
+				dataAnalysisService.dataCompleteness(dataCoCallback, indicator.missing, indicator.localData.id, null, periods, ouBoundary, ouLevel);
+				
+				dataAnalysisService.timeConsistency(dataCiCallback, indicator.trend, indicator.consistency, null, indicator.localData.id, null, period, refPeriods, ouBoundary, ouLevel);
+				
+				dataAnalysisService.indicatorOutlier(dataOutCallback, indicator, periods, ouBoundary, ouLevel);
 	  		}
+	  		
 	  		
 	  		
 	  		return;	
-	  		//3 Completeness chart
-	  		var datasetIDs = [];
-	  		for (var i = 0; i < datasets.length; i++) {
-	  			datasetIDs.push(datasets[i].id);
-	  		}
-	  		var pe = precedingYears(self.yearSelected.id, 3);
-	  		pe.push(self.yearSelected.id);
-	  		pe.sort(function(a, b){return a-b});
-	  			  		
 	  		
-	  		//4 Indicator outliers
-	  		var coCallback = function (result) { self.consistency.outliers.push(result);}
-  			for (var i = 0; i < indicatorIDs.length; i++) {
-  			
-  				var indicator = indicatorFromCode(indicatorIDs[i])
-  				var dataset = self.datasetFromID(indicator.dataSetID);
-  				
-  				var startDate = self.yearSelected.id.toString() + "-01-01";
-  				var endDate = self.yearSelected.id.toString() + "-12-31";
-  				var periods = periodService.getISOPeriods(startDate, endDate, dataset.periodType);	  			
-  				
-  				dataAnalysisService.indicatorOutlier(coCallback, indicator, periods, self.userOrgunit.id, self.orgunitLevelSelected.level);
-  			}
-	
-  			//5 Indicator consistency
-  			var ccCallback = function (result, errors) {
-				if (result) {
-					result.chartOptions = JSON.parse(JSON.stringify(self.chartConfigurations.consistencySmall));
-					if (result.datapoints) result.chartData = makeDataPoints(result.datapoints, result.boundaryConsistency, result.consistency, result.chartOptions);
-					self.consistency.consistency.push(result);
-					self.consistency.consistencyChart.push(result.chartSerie);
-				}  				
-  				if (errors) self.alerts = self.alerts.concat(errors);
-  			}
-  			
-  			
-			for (var i = 0; i < indicatorIDs.length; i++) {
-				
-				var indicator = indicatorFromCode(indicatorIDs[i]);  			
-					
-				dataAnalysisService.indicatorConsistency(ccCallback, indicator, self.yearSelected.id, refYears, self.userOrgunit.id, self.orgunitLevelSelected.level);
-			}
-			
-			
-			
+	  			  		
 			
 			//6 Indicator consistency chart
 			var indicatorUIDs = [];
@@ -255,7 +228,6 @@
 		self.datasetFromID = function(id) {
 			for (var i = 0; i < self.map.dataSets.length; i++) {
 				if (self.map.dataSets[i].id === id) {
-					console.log(self.map.dataSets[i]);
 					return self.map.dataSets[i];
 				}
 			}
