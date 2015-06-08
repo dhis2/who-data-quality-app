@@ -46,17 +46,20 @@
 			
 			self.inProgress = true;
 			
-			if (queueItem.type === 'indicatorCompleteness') {
-				indicatorCompletenessAnalysis(queueItem.parameters);
-			}
-			else if (queueItem.type === 'datasetCompleteness') {
+			if (queueItem.type === 'datasetCompleteness') {
 				datasetCompletenessAnalysis(queueItem.parameters);
 			}
-			else if (queueItem.type === 'indicatorOutlier') {
-				indicatorOutlierAnalysis(queueItem.parameters);
+			else if (queueItem.type === 'datasetConsistency') {
+				  timeConsistencyAnalysis(queueItem.parameters);
+			}
+			else if (queueItem.type === 'indicatorCompleteness') {
+				indicatorCompletenessAnalysis(queueItem.parameters);
 			}
 			else if (queueItem.type === 'indicatorConsistency') {
 				indicatorConsistencyAnalysis(queueItem.parameters);
+			}
+			else if (queueItem.type === 'indicatorOutlier') {
+				indicatorOutlierAnalysis(queueItem.parameters);
 			}
 			else if (queueItem.type === 'indicatorRelation') {
 				indicatorRelationAnalysis(queueItem.parameters);
@@ -493,7 +496,7 @@
 			//Reset
 			self.boundaryCompleteness = null;
 			self.subunitCompleteness = null;
-									
+													
 			//periods to request
 			self.dsc.refPeriods = self.dsc.refPeriods.sort(function(a, b){return a-b});
 			var pe = [].concat(self.dsc.refPeriods);
@@ -670,6 +673,365 @@
 			self.inProgress = false;
 			nextAnalysis();
 		}
+		
+		
+		
+		/**NEW DATASET COMPLETENESS ANALYSIS*/
+		/*
+		Completeness analysis used by Annual Review
+		
+		@param callback			function to send result to
+		@param dsID				dataset ID
+		@param threshold		threshold for subunits to be flagged
+		@param period			analysis period
+		@param ouBoundary		ID of boundary orgunit
+		@param level			level for sub-boundary orgunits
+		@returns				datasets objects array, with these additional properties:
+									boundary completeness
+									subunit count < threshold
+									subunit percent < threshold
+									subunit names < threshold
+		*/
+		self.datasetCompletenessNew = function(callback, datasetID, threshold, period, ouBondary, ouLevel) {
+						
+			var queueItem = {
+				'type': 'datasetCompleteness',
+				'parameters': {
+					'callback': callback,
+					'dsID': datasetID,
+					'threshold': threshold,
+					'pe': period,
+					'ouBoundary': boundaryOrgunit, 
+					'ouLevel': level
+				}
+			}
+			
+			self.analysisQueue.push(queueItem);
+			nextAnalysis();
+		}
+		
+		
+		function datasetCompletenessAnalysisNew(parameters) {
+			//Start
+			self.dsco = parameters;
+			
+			//Reset
+			self.dsco.boundaryData = null;
+			self.dsco.subunitData = null;						
+									
+								
+			//1 request boundary completeness data
+			var requestURL = '/api/analytics.json?dimension=dx:' + self.dsco.dsID + '&dimension=ou:' + self.dsco.ouBoundary + '&dimension=pe:' + self.dsco.pe + '&displayProperty=NAME';
+			
+			requestService.getSingle(requestURL).then(
+					//success
+					function(response) {
+					    self.dsco.boundaryData = response.data;	
+					    startDatasetCompletenessAnalysisNew();				
+					}, 
+					//error
+					function(response) {
+					    console.log("Error fetching data");
+					}
+				);
+
+			//2 request subunit completeness data			
+			var ou;
+			if (self.dsco.ouBoundary) ou = self.dsco.ouBoundary + ';LEVEL-' + self.dsco.ouLevel;
+			else ou = LEVEL-self.dsco.ouLevel;
+			
+			var requestURL = '/api/analytics.json?dimension=dx:' + self.dsco.dsID + '&dimension=ou:' + ou + '&dimension=pe:' + self.dsco.pe + '&displayProperty=NAME';
+			
+			requestService.getSingle(requestURL).then(
+					//success
+					function(response) {
+					    self.dsci.subunitData = response.data;	
+					    startDatasetCompletenessAnalysisNew();
+					}, 
+					//error
+					function(response) {
+					    console.log("Error fetching data");
+					}
+			);
+		}
+				
+		
+		function startDatasetCompletenessAnalysisNew() {
+		
+			var subunitReady = (self.dsco.subunitCompleteness !== null);
+			var boundaryReady = (self.dsco.boundaryCompleteness !== null);
+			if (!subUnitReady || !boundaryReady) return;
+			
+			var dsID = self.dsco.dsID;
+			var threshold = self.dsco.threshold;
+			var pe = self.dsco.pe;
+			var ouBoundary = self.dsco.ouBondary;
+			var ouSubunitIDs = self.subunitCompleteness.metaData.ou;
+			
+			//reshuffle and concat the data from DHIS a bit to make is easier to use
+			var headers = self.boundaryCompleteness.headers;			
+			var names = self.subunitCompleteness.metaData.names;
+			var data = self.dsco.subunitCompleteness.rows;
+			if (self.dsco.boundaryCompleteness) {
+				data = data.concat(self.dsco.boundaryCompleteness);
+				for (key in self.boundaryCompleteness.metaData.names) {
+					names[key] = self.boundaryCompleteness.metaData.names[key];
+				}
+			}
+			var errors = [];		
+			var result = {};
+			var subunitsAboveThreshold = 0;
+			var subunitsBelowThreshold = 0;
+			var subunitViolationNames = [];
+			
+			//Get boundary value
+			result.boundary = dataValue(headers, data, dsID, pe, ouBoundary, null);
+			
+			//Get subunit values
+			var value;
+			for (var j = 0; j < ouSubunitIDs.length; j++) {
+				value = dataValue(headers, data, dsID, pe, ouSubunitIDs[j], null);
+				if (isNumber(value)) {
+					if (value > threshold) subunitsAboveThreshold++;
+					else {
+						subunitsBelowThreshold++;
+						subunitViolationNames.push(names[ouSubunitIDs[j]]);						
+					}
+				}
+			}
+			//Summarise result
+			var percent = 100*subunitsBelowThreshold/(subunitsBelowThreshold + subunitsAboveThreshold);
+			result.subunitsAboveThreshold = subunitsAboveThreshold;
+			result.subunitsBelowThreshold = subunitsBelowThreshold;
+			result.subunitViolationPercentage = mathService.round(percent, 1);
+			result.subunitViolationNames = subunitViolationNames;
+			
+			//Add key metadata to result
+			result.pe = pe;
+			result.datasetID = dsID;
+			result.datasetName = names[dsID];
+			result.threshold = threshold;
+			
+			self.dsco.callback(result, errors);
+	
+			self.inProgress = false;
+			nextAnalysis();
+		}
+		
+		
+		
+		/**NEW TIME CONSISTENCY ANALYSIS*/
+		/*
+		Consistency over time (completeness, indicator, data element)
+		
+		@param callback			function to send result to
+		@param type				'constant' for average of previous periods, 'forecast' for forecast 
+		@param threshold		threshold for change between current and reference period for subunits to be flagged
+		@param maxForecast		maximum forecasted value, e.g. 100 (%) for completeness forecasts
+		@param dataID			ID of dataset (for completeness), indicator, data element
+		@param coID				categoryoptioncomboid if data element detail, else null
+		@param period			reporting period
+		@param refPeriods		reference periods
+		@param ouBoundary		ID of boundary orgunit
+		@param level			level for sub-boundary orgunits
+		@returns				results object with this and more:
+									boundary consistency
+									subunit count < threshold
+									subunit percent < threshold
+									subunit names < threshold
+		*/
+		self.timeConsistency = function(callback, type, threshold, maxForecast, dataID, coID, period, refPeriods, ouBondary, ouLevel) {
+						
+			var queueItem = {
+				'type': 'timeConsistency',
+				'parameters': {
+					'callback': callback,
+					'dxID': datasetID,
+					'coID': coID,
+					'threshold': threshold,
+					'type': type,
+					'maxForecast': maxForecast,
+					'pe': period,
+					'refPe': refPeriods,
+					'ouBoundary': boundaryOrgunit, 
+					'ouLevel': level
+				}
+			}
+			
+			self.analysisQueue.push(queueItem);
+			nextAnalysis();
+		}
+		
+		
+		function timeConsistencyAnalysis(parameters) {
+			//Start
+			self.dsci = parameters;
+			
+			//Reset
+			self.dsci.boundaryData = null;
+			self.dsci.subunitData = null;				
+			
+			var periods = [].concat(self.dsci.refPe);
+			periods.push(pe);
+								
+			//1 request boundary consistency data for the four years
+			var requestURL = '/api/analytics.json?dimension=dx:' + self.dsci.dxID + '&dimension=ou:' + self.dsci.ouBoundary + '&dimension=pe:' + periods + '&displayProperty=NAME';
+			
+			requestService.getSingle(requestURL).then(
+					//success
+					function(response) {
+					    self.dsci.boundaryData = response.data;	
+					    startTimeConsistencyAnalysis();				
+					}, 
+					//error
+					function(response) {
+					    console.log("Error fetching data");
+					}
+				);
+
+			//2 request subunit completeness data for the four years			
+			var ou;
+			if (self.dsci.ouBoundary) ou = self.dsci.ouBoundary + ';LEVEL-' + self.dsci.ouLevel;
+			else ou = LEVEL-self.dsci.ouLevel;
+			
+			var requestURL = '/api/analytics.json?dimension=dx:' + self.dsci.dxID + '&dimension=ou:' + ou + '&dimension=pe:' + self.dsci.pe + '&displayProperty=NAME';
+			
+			requestService.getSingle(requestURL).then(
+					//success
+					function(response) {
+					    self.dsci.subunitData = response.data;	
+					    startTimeConsistencyAnalysis();
+					}, 
+					//error
+					function(response) {
+					    console.log("Error fetching data");
+					}
+			);
+		}
+				
+		
+		function startTimeConsistencyAnalysis() {
+		
+			var subunitReady = (self.dsci.subunitCompleteness !== null);
+			var boundaryReady = (self.dsci.boundaryCompleteness !== null);
+			if (!subUnitReady || !boundaryReady) return;
+			
+			var dxID = self.dsci.dxID;
+			var threshold = self.dsci.threshold;
+			var type = self.dsci.type;
+			var maxForecast = self.dsci.maxForecast;
+			var pe = self.dsci.pe;
+			var refPe = self.dsci.refPe;
+			var ouBoundary = self.dsci.ouBondary;
+			var ouSubunitIDs = self.subunitCompleteness.metaData.ou;
+			
+			//reshuffle and concat the data from DHIS a bit to make is easier to use
+			var headers = self.boundaryCompleteness.headers;			
+			var names = self.subunitCompleteness.metaData.names;
+			var data = self.dsci.subunitCompleteness.rows;
+			if (self.dsci.boundaryCompleteness) {
+				data = data.concat(self.dsci.boundaryCompleteness);
+				for (key in self.boundaryCompleteness.metaData.names) {
+					names[key] = self.boundaryCompleteness.metaData.names[key];
+				}
+			}
+			var errors = [];		
+			var result = {};
+			var subunitsAboveThreshold = 0;
+			var subunitsBelowThreshold = 0;
+			var subunitViolationNames = [];
+			var subunitDatapoints = [];
+			
+				
+			var values = [];
+			for (var k = 0; k < refPe.length; k++) {
+				values.push(dataValue(headers, data, dxID, refPe[k], ouBoundary, null));
+			}
+			
+			//Check which years to include, based on data for boundary
+			//Look at reference periods, starting from first. Remove if pe is null, pr less than a fifth of the preceeding
+			while (values.length > 0 && (values[0] === null || values[0]*5 < values[1])) {
+				var droppedValue = values.shift();
+				var droppedPeriod = refPe.shift();
+				errors.push({'type': "warning", 'item': names[dxID], 'msg': "Missing data: Ignoring " + droppedPeriod + " from consistency of completeness data due to low completeness (" + droppedValue + ")."});
+			}
+			
+			//Can we get consistency at all?
+			if (refYears.length === 0) {
+				errors.push({'type': "warning", 'item': names[dxID], 'msg': "Not enough reference data to calculate consistency over time."});
+
+				self.dsci.callback(null, errors);
+
+				self.inProgress = false;
+				nextAnalysis();
+
+				return;				
+			}
+			
+			
+			//TODO: the actual consistency analysis
+			
+			var value, refValue, ratio;
+			value = dataValue(headers, data, dxID, pe, ouBoundary, null);
+			refValue = referenceValue(values, type, maxForecast);
+			
+			result.boundaryValue = value;
+			result.boundaryRefValue = math.round(refValue, 1);
+			result.boundaryRatio = math.round(value/refValue, 1);
+			
+			var subunit;	
+			for (var i = 0; i < ouSubunitIDs.length; i++) {
+				subunit = ouSubunitIDs[i];
+				
+				value = dataValue(headers, data, dxID, pe, ouBoundary, null);
+				
+				values = [];
+				for (var k = 0; k < refPe.length; k++) {
+					values.push(dataValue(headers, data, dxID, refPe[k], subunit, null));
+				}				
+				refValue = referenceValue(values, type, maxForecast);
+				
+				ratio = value/refValue;
+				
+				if (ratio > (1+0.01*threshold) || ratio > (1-0.01*threshold)) {
+					subunitsAboveThreshold++;
+					subunitViolationNames.push(names[subunit]);
+				} 
+				else {
+					subunitsBelowThreshold++;
+				}
+								
+				subunitDatapoints.push({
+					'name': names[subunit],
+					'id': subunit,
+					'value': value,
+					'refValue': mathService.round(refValue, 1),
+					'ratio': mathService.round(ratio, 1)
+				});
+			}
+			
+							
+			
+			//Summarise result
+			var percent = 100*subunitsBelowThreshold/(subunitsBelowThreshold + subunitsAboveThreshold);
+			result.subunitsAboveThreshold = subunitsAboveThreshold;
+			result.subunitsBelowThreshold = subunitsBelowThreshold;
+			result.subunitViolationPercentage = mathService.round(percent, 1);
+			result.subunitViolationNames = subunitViolationNames;
+			result.subunitDatapoints = subunitDatapoints;
+			
+			//Add key metadata to result
+			result.pe = pe;
+			result.dataID = dxID;
+			result.dataName = names[dxID];
+			result.threshold = threshold;
+			
+			self.dsci.callback(result, errors);
+	
+			self.inProgress = false;
+			nextAnalysis();
+		}
+		
 		
 		
 		/**REVIEW INDICATOR COMPLETENESS ANALYSIS*/
@@ -1364,6 +1726,29 @@
 				refVal = mathService.getMean(refvalues);
 			}
 			var value = mathService.round(100*currentvalue/refVal, 1);
+			if (isNaN(value)) return null;
+			else return value;
+		}
+		
+		
+		/*
+		Returns either forecast based on refValue, or mean of revalues, limited by maxVal.		
+		@param refValues			array of reference values
+		@param type					type of consistency - constant (mean) or increase/decrease (forecast)
+		@param maxVal				optional - max value for forecast (e.g. 100% for completeness)
+		
+		@returns					ratio current/reference
+		*/
+		function referenceValue(refValues, type, maxVal) {
+			var value;
+			if (type === 'forecast') {
+				value = mathService.forecast(refValues);
+				if (maxVal && value > maxVal) value = maxVal;
+			}
+			else {
+				value = mathService.getMean(refValues);
+				if (maxVal && value > maxVal) value = maxVal;
+			}
 			if (isNaN(value)) return null;
 			else return value;
 		}
