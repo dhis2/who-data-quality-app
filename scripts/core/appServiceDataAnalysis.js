@@ -49,7 +49,7 @@
 			if (queueItem.type === 'datasetCompleteness') {
 				datasetCompletenessAnalysis(queueItem.parameters);
 			}
-			else if (queueItem.type === 'datasetConsistency') {
+			else if (queueItem.type === 'timeConsistency') {
 				  timeConsistencyAnalysis(queueItem.parameters);
 			}
 			else if (queueItem.type === 'indicatorCompleteness') {
@@ -280,7 +280,7 @@
 							value = parseFloat(value);
 							
 							//Calculate zScore
-							zScore = Math.round(100*Math.abs((value-stats.mean)/stats.sd))/100;
+							zScore = mathService.round(100*Math.abs((value-stats.mean)/stats.sd))/100;
 							if (zScore > newRow.metaData.maxZ) newRow.metaData.maxZ = zScore;
 							
 							//Check if outlier according to parameters
@@ -331,7 +331,7 @@
 			}
 			var normMean = normSum/normCount;
 			var expectedTotal = normMean * dataValueSet.length;
-			return Math.round(total-expectedTotal);
+			return mathService.round(total-expectedTotal);
 		}
 		
 		
@@ -443,240 +443,7 @@
 		
 		
 		
-		
-		/**REVIEW DATASET COMPLETENESS ANALYSIS*/
-		/*
-		Completeness analysis used by Annual Review
-		
-		@param callback			function to send result to
-		@param datasets			array of objects with:		
-									name, 
-									id, 
-									periodtype 
-									threshold for completeness
-									threshold for consistency
-									trend
-		@param period			analysis period
-		@param refPeriods		reference periods (for consistency over time)
-		@param bounaryOrgunit	ID of boundary orgunit
-		@param level			level for sub-boundary orgunits
-		@returns				datasets objects array, with these additional properties:
-									boundary completeness
-			 						boundary consistency over time
-									subunit count < threshold
-									subunit percent < threshold
-									subunit names < threshold
-									subunit count < consistency threshold
-									subunit percent < consistency threshold
-									subunit names < consistency threshold
-		*/
-		self.datasetCompleteness = function(callback, datasets, period, refPeriods, boundaryOrgunit, level) {
-						
-			var queueItem = {
-				'type': 'datasetCompleteness',
-				'parameters': {
-					'callback': callback,
-					'datasets': datasets,
-					'period': period,
-					'refPeriods': refPeriods,
-					'boundaryOrgunit': boundaryOrgunit, 
-					'level': level
-				}
-			}
-			
-			self.analysisQueue.push(queueItem);
-			nextAnalysis();
-		}
-		
-		
-		function datasetCompletenessAnalysis(parameters) {
-			//Start
-			self.dsc = parameters;
-			
-			//Reset
-			self.boundaryCompleteness = null;
-			self.subunitCompleteness = null;
-													
-			//periods to request
-			self.dsc.refPeriods = self.dsc.refPeriods.sort(function(a, b){return a-b});
-			var pe = [].concat(self.dsc.refPeriods);
-			pe.push(self.dsc.period);
-			
-			//datasets to request
-			var ds = [];
-			for (var i = 0; i < self.dsc.datasets.length; i++) {
-				ds.push(self.dsc.datasets[i].id);
-			}
-			
-			//1 request boundary completeness data for the four years
-			var requestURL = '/api/analytics.json?dimension=dx:' + ds.join(';') + '&dimension=ou:' + self.dsc.boundaryOrgunit + '&dimension=pe:' + pe.join(';') + '&displayProperty=NAME';
-			
-			requestService.getSingle(requestURL).then(
-					//success
-					function(response) {
-					    self.boundaryCompleteness = response.data;	
-					    startDatasetCompletenessAnalysis();				
-					}, 
-					//error
-					function(response) {
-					    console.log("Error fetching data");
-					}
-				);
-			
-			
-			//2 request subunit completeness data for the four years
-			var requestURL = '/api/analytics.json?dimension=dx:' + ds.join(';') + '&dimension=ou:' + self.dsc.boundaryOrgunit + ';LEVEL-' + self.dsc.level + '&dimension=pe:' + pe.join(';') + '&displayProperty=NAME';
-			
-			requestService.getSingle(requestURL).then(
-					//success
-					function(response) {
-					    self.subunitCompleteness = response.data;	
-					    startDatasetCompletenessAnalysis();
-					}, 
-					//error
-					function(response) {
-					    console.log("Error fetching data");
-					}
-				);
-			
-		}
-				
-		
-		function startDatasetCompletenessAnalysis() {
-			if (self.boundaryCompleteness === null || self.subunitCompleteness === null) return;
-			
-			var year = self.dsc.period;
-			var refYears = self.dsc.refPeriods;
-			var boundary = self.dsc.boundaryOrgunit;
-			var subunits = self.subunitCompleteness.metaData.ou;
-			var data = self.boundaryCompleteness.rows.concat(self.subunitCompleteness.rows);
-			var headers = self.boundaryCompleteness.headers;
-
-			var names = self.subunitCompleteness.metaData.names;
-			for (key in self.boundaryCompleteness.metaData.names) {
-				names[key] = self.boundaryCompleteness.metaData.names[key];
-			}
-			
-			
-			var chartSeries = [];
-						
-			var ds;
-			var value;
-			var errors = [];
-			var noConsistency = false;
-			for (var i = 0; i < self.dsc.datasets.length; i++) {
-				ds = self.dsc.datasets[i];
-
-				
-				refYears = self.dsc.refPeriods.slice();
-							
-				//1 data set completeness
-				var subunitsAbove = 0;
-				var subunitsBelow = 0;
-				var subunitNames = [];
-				
-				//Get boundary value
-				ds.boundary = dataValue(headers, data, ds.id, year, boundary, null);
-				
-				//Get subunit values
-				for (var j = 0; j < subunits.length; j++) {
-					value = dataValue(headers, data, ds.id, year, subunits[j], null);
-					if (value) {
-						if (value > ds.threshold) subunitsAbove++;
-						else {
-							subunitsBelow++;
-							subunitNames.push(names[subunits[j]]);						
-						}
-					}
-					//else not expected to report
-				}
-				//Summarise			
-				ds.count = subunitsBelow;
-				ds.percent = 100*subunitsBelow/(subunitsBelow + subunitsAbove);
-				ds.percent = Math.round(ds.percent*10)/10;
-				ds.names = subunitNames;
-						
-						
-							
-								
-				//2 dataset completeness consistency over time
-				subunitsAbove = 0;
-				subunitsBelow = 0;
-				subunitNames = [];
-				
-				var val, values = [];
-				for (var k = 0; k < refYears.length; k++) {
-					values.push(dataValue(headers, data, ds.id, refYears[k], boundary, null));
-				}
-				
-				//Need to check whether to include all years
-				while (values.length > 0 && (values[0] === null || values[0]*2 < values[1])) {
-					var droppedValue = values.shift();
-					var droppedYear = refYears.shift();
-					errors.push({'type': "warning", 'item': ds.name, 'msg': "Missing data: Ignoring " + droppedYear + " from consistency of completeness report for dataset " + ds.name + " due to low reporting"});
-				}
-				
-				//Can we get consistency at all?
-				if (refYears.length === 0) {
-					noConsistency = true;
-				}
-				else {
-					for (var k = 0; k < refYears.length; k++) {
-						val = dataValue(headers, data, ds.id, refYears[k], boundary, null);
-						values.push(val);
-					}
-					ds.boundaryTrend = timeConsistency(values, ds.boundary, ds.trend, 100);
-					
-					
-					//Get subunit values
-					for (var j = 0; j < subunits.length; j++) {
-						
-						var values = [], trend;
-						for (var k = 0; k < refYears.length; k++) {
-							values.push(dataValue(headers, data, ds.id, refYears[k], boundary, null));
-						}
-						trend = timeConsistency(values, dataValue(headers, data, ds.id, year, subunits[j], null), ds.trend, 100);
-						
-						if (trend > (100 + ds.consistencyThreshold) || trend < (100-ds.consistencyThreshold)) {
-							subunitsBelow++;
-							subunitNames.push(names[subunits[j]]);						
-						}
-						else {
-							subunitsAbove++;
-						}
-					}			
-				}
-				//Summarise			
-				ds.countTrend = subunitsBelow;
-				ds.percentTrend = mathService.round(100*subunitsBelow/(subunitsBelow + subunitsAbove),1);
-				ds.namesTrend = subunitNames.sort();
-				
-				//chart data
-				chartSerie = {
-					"key": ds.name,
-					"values": []
-				};
-				
-				for (var k = 0; k < refYears.length; k++) {
-					val = dataValue(headers, data, ds.id, refYears[k], boundary, null);
-					chartSerie.values.push({"x": refYears[k], "y": val});
-				}				
-				chartSerie.values.push({"x": year, "y": ds.boundary});
-				
-				chartSeries.push(chartSerie);
-				
-				
-			}
-			self.dsc.datasets.completenessChart = chartSeries;
-			self.dsc.callback(self.dsc.datasets, errors);
-	
-			self.inProgress = false;
-			nextAnalysis();
-		}
-		
-		
-		
-		/**NEW DATASET COMPLETENESS ANALYSIS*/
+		/** DATASET COMPLETENESS ANALYSIS*/
 		/*
 		Completeness analysis used by Annual Review
 		
@@ -692,7 +459,7 @@
 									subunit percent < threshold
 									subunit names < threshold
 		*/
-		self.datasetCompletenessNew = function(callback, datasetID, threshold, period, ouBondary, ouLevel) {
+		self.datasetCompleteness = function(callback, threshold, datasetID, period, ouBoundary, ouLevel) {
 						
 			var queueItem = {
 				'type': 'datasetCompleteness',
@@ -701,8 +468,8 @@
 					'dsID': datasetID,
 					'threshold': threshold,
 					'pe': period,
-					'ouBoundary': boundaryOrgunit, 
-					'ouLevel': level
+					'ouBoundary': ouBoundary, 
+					'ouLevel': ouLevel
 				}
 			}
 			
@@ -711,7 +478,7 @@
 		}
 		
 		
-		function datasetCompletenessAnalysisNew(parameters) {
+		function datasetCompletenessAnalysis(parameters) {
 			//Start
 			self.dsco = parameters;
 			
@@ -727,7 +494,7 @@
 					//success
 					function(response) {
 					    self.dsco.boundaryData = response.data;	
-					    startDatasetCompletenessAnalysisNew();				
+					    startDatasetCompletenessAnalysis();				
 					}, 
 					//error
 					function(response) {
@@ -745,8 +512,8 @@
 			requestService.getSingle(requestURL).then(
 					//success
 					function(response) {
-					    self.dsci.subunitData = response.data;	
-					    startDatasetCompletenessAnalysisNew();
+					    self.dsco.subunitData = response.data;	
+					    startDatasetCompletenessAnalysis();
 					}, 
 					//error
 					function(response) {
@@ -756,60 +523,60 @@
 		}
 				
 		
-		function startDatasetCompletenessAnalysisNew() {
+		function startDatasetCompletenessAnalysis() {
 		
-			var subunitReady = (self.dsco.subunitCompleteness !== null);
-			var boundaryReady = (self.dsco.boundaryCompleteness !== null);
-			if (!subUnitReady || !boundaryReady) return;
+			var subunitReady = (self.dsco.subunitData !== null);
+			var boundaryReady = (self.dsco.boundaryData !== null);
+			if (!subunitReady || !boundaryReady) return;
 			
 			var dsID = self.dsco.dsID;
 			var threshold = self.dsco.threshold;
 			var pe = self.dsco.pe;
-			var ouBoundary = self.dsco.ouBondary;
-			var ouSubunitIDs = self.subunitCompleteness.metaData.ou;
+			var ouBoundary = self.dsco.ouBoundary;
+			var ouSubunitIDs = self.dsco.subunitData.metaData.ou;
 			
 			//reshuffle and concat the data from DHIS a bit to make is easier to use
-			var headers = self.boundaryCompleteness.headers;			
-			var names = self.subunitCompleteness.metaData.names;
-			var data = self.dsco.subunitCompleteness.rows;
-			if (self.dsco.boundaryCompleteness) {
-				data = data.concat(self.dsco.boundaryCompleteness);
-				for (key in self.boundaryCompleteness.metaData.names) {
-					names[key] = self.boundaryCompleteness.metaData.names[key];
-				}
+			var headers = self.dsco.boundaryData.headers;			
+			var names = self.dsco.subunitData.metaData.names;
+			var data = self.dsco.subunitData.rows;
+			
+			data = data.concat(self.dsco.boundaryData.rows);
+			for (key in self.dsco.boundaryData.metaData.names) {
+				names[key] = self.dsco.boundaryData.metaData.names[key];
 			}
+
 			var errors = [];		
 			var result = {};
-			var subunitsAboveThreshold = 0;
-			var subunitsBelowThreshold = 0;
+			var subunitsWithinThreshold = 0;
+			var subunitsOutsideThreshold = 0;
 			var subunitViolationNames = [];
 			
 			//Get boundary value
-			result.boundary = dataValue(headers, data, dsID, pe, ouBoundary, null);
+			result.boundaryValue = dataValue(headers, data, dsID, pe, ouBoundary, null);
 			
 			//Get subunit values
 			var value;
 			for (var j = 0; j < ouSubunitIDs.length; j++) {
 				value = dataValue(headers, data, dsID, pe, ouSubunitIDs[j], null);
 				if (isNumber(value)) {
-					if (value > threshold) subunitsAboveThreshold++;
+					if (value > threshold) subunitsWithinThreshold++;
 					else {
-						subunitsBelowThreshold++;
+						subunitsOutsideThreshold++;
 						subunitViolationNames.push(names[ouSubunitIDs[j]]);						
 					}
 				}
 			}
 			//Summarise result
-			var percent = 100*subunitsBelowThreshold/(subunitsBelowThreshold + subunitsAboveThreshold);
-			result.subunitsAboveThreshold = subunitsAboveThreshold;
-			result.subunitsBelowThreshold = subunitsBelowThreshold;
+			var percent = 100*subunitsOutsideThreshold/(subunitsOutsideThreshold + subunitsWithinThreshold);
+			result.subunitsWithinThreshold = subunitsWithinThreshold;
+			result.subunitsOutsideThreshold = subunitsOutsideThreshold;
 			result.subunitViolationPercentage = mathService.round(percent, 1);
 			result.subunitViolationNames = subunitViolationNames;
 			
 			//Add key metadata to result
 			result.pe = pe;
-			result.datasetID = dsID;
-			result.datasetName = names[dsID];
+			result.dxID = dsID;
+			result.dxName = names[dsID];
 			result.threshold = threshold;
 			
 			self.dsco.callback(result, errors);
@@ -820,7 +587,7 @@
 		
 		
 		
-		/**NEW TIME CONSISTENCY ANALYSIS*/
+		/**TIME CONSISTENCY ANALYSIS*/
 		/*
 		Consistency over time (completeness, indicator, data element)
 		
@@ -840,21 +607,21 @@
 									subunit percent < threshold
 									subunit names < threshold
 		*/
-		self.timeConsistency = function(callback, type, threshold, maxForecast, dataID, coID, period, refPeriods, ouBondary, ouLevel) {
+		self.timeConsistency = function(callback, type, threshold, maxForecast, dataID, coID, period, refPeriods, ouBoundary, ouLevel) {
 						
 			var queueItem = {
 				'type': 'timeConsistency',
 				'parameters': {
 					'callback': callback,
-					'dxID': datasetID,
+					'dxID': dataID,
 					'coID': coID,
 					'threshold': threshold,
 					'type': type,
 					'maxForecast': maxForecast,
 					'pe': period,
 					'refPe': refPeriods,
-					'ouBoundary': boundaryOrgunit, 
-					'ouLevel': level
+					'ouBoundary': ouBoundary, 
+					'ouLevel': ouLevel
 				}
 			}
 			
@@ -872,10 +639,10 @@
 			self.dsci.subunitData = null;				
 			
 			var periods = [].concat(self.dsci.refPe);
-			periods.push(pe);
+			periods.push(self.dsci.pe);
 								
 			//1 request boundary consistency data for the four years
-			var requestURL = '/api/analytics.json?dimension=dx:' + self.dsci.dxID + '&dimension=ou:' + self.dsci.ouBoundary + '&dimension=pe:' + periods + '&displayProperty=NAME';
+			var requestURL = '/api/analytics.json?dimension=dx:' + self.dsci.dxID + '&dimension=ou:' + self.dsci.ouBoundary + '&dimension=pe:' + periods.join(';') + '&displayProperty=NAME';
 			
 			requestService.getSingle(requestURL).then(
 					//success
@@ -890,11 +657,8 @@
 				);
 
 			//2 request subunit completeness data for the four years			
-			var ou;
-			if (self.dsci.ouBoundary) ou = self.dsci.ouBoundary + ';LEVEL-' + self.dsci.ouLevel;
-			else ou = LEVEL-self.dsci.ouLevel;
-			
-			var requestURL = '/api/analytics.json?dimension=dx:' + self.dsci.dxID + '&dimension=ou:' + ou + '&dimension=pe:' + self.dsci.pe + '&displayProperty=NAME';
+			var ou = self.dsci.ouBoundary + ';LEVEL-' + self.dsci.ouLevel;			
+			var requestURL = '/api/analytics.json?dimension=dx:' + self.dsci.dxID + '&dimension=ou:' + ou + '&dimension=pe:' + periods.join(';') + '&displayProperty=NAME';
 			
 			requestService.getSingle(requestURL).then(
 					//success
@@ -911,10 +675,9 @@
 				
 		
 		function startTimeConsistencyAnalysis() {
-		
-			var subunitReady = (self.dsci.subunitCompleteness !== null);
-			var boundaryReady = (self.dsci.boundaryCompleteness !== null);
-			if (!subUnitReady || !boundaryReady) return;
+			var subunitReady = (self.dsci.subunitData !== null);
+			var boundaryReady = (self.dsci.boundaryData !== null);
+			if (!subunitReady || !boundaryReady) return;
 			
 			var dxID = self.dsci.dxID;
 			var threshold = self.dsci.threshold;
@@ -922,23 +685,24 @@
 			var maxForecast = self.dsci.maxForecast;
 			var pe = self.dsci.pe;
 			var refPe = self.dsci.refPe;
-			var ouBoundary = self.dsci.ouBondary;
-			var ouSubunitIDs = self.subunitCompleteness.metaData.ou;
+			var ouBoundary = self.dsci.ouBoundary;
+			var ouSubunitIDs = self.dsci.subunitData.metaData.ou;
 			
 			//reshuffle and concat the data from DHIS a bit to make is easier to use
-			var headers = self.boundaryCompleteness.headers;			
-			var names = self.subunitCompleteness.metaData.names;
-			var data = self.dsci.subunitCompleteness.rows;
-			if (self.dsci.boundaryCompleteness) {
-				data = data.concat(self.dsci.boundaryCompleteness);
-				for (key in self.boundaryCompleteness.metaData.names) {
-					names[key] = self.boundaryCompleteness.metaData.names[key];
-				}
+			var headers = self.dsci.boundaryData.headers;			
+			var names = self.dsci.subunitData.metaData.names;
+			var data = self.dsci.subunitData.rows;
+			
+			data = data.concat(self.dsci.boundaryData.rows);
+			for (key in self.dsci.boundaryData.metaData.names) {
+				names[key] = self.dsci.boundaryData.metaData.names[key];
 			}
+			
+			
 			var errors = [];		
 			var result = {};
-			var subunitsAboveThreshold = 0;
-			var subunitsBelowThreshold = 0;
+			var subunitsWithinThreshold = 0;
+			var subunitsOutsideThreshold = 0;
 			var subunitViolationNames = [];
 			var subunitDatapoints = [];
 			
@@ -957,7 +721,7 @@
 			}
 			
 			//Can we get consistency at all?
-			if (refYears.length === 0) {
+			if (refPe.length === 0) {
 				errors.push({'type': "warning", 'item': names[dxID], 'msg': "Not enough reference data to calculate consistency over time."});
 
 				self.dsci.callback(null, errors);
@@ -969,15 +733,13 @@
 			}
 			
 			
-			//TODO: the actual consistency analysis
-			
 			var value, refValue, ratio;
 			value = dataValue(headers, data, dxID, pe, ouBoundary, null);
 			refValue = referenceValue(values, type, maxForecast);
 			
 			result.boundaryValue = value;
-			result.boundaryRefValue = math.round(refValue, 1);
-			result.boundaryRatio = math.round(value/refValue, 1);
+			result.boundaryRefValue = mathService.round(refValue, 1);
+			result.boundaryRatio = mathService.round(value/refValue, 1);
 			
 			var subunit;	
 			for (var i = 0; i < ouSubunitIDs.length; i++) {
@@ -994,11 +756,11 @@
 				ratio = value/refValue;
 				
 				if (ratio > (1+0.01*threshold) || ratio > (1-0.01*threshold)) {
-					subunitsAboveThreshold++;
+					subunitsOutsideThreshold++;
 					subunitViolationNames.push(names[subunit]);
 				} 
 				else {
-					subunitsBelowThreshold++;
+					subunitsWithinThreshold++;
 				}
 								
 				subunitDatapoints.push({
@@ -1013,17 +775,18 @@
 							
 			
 			//Summarise result
-			var percent = 100*subunitsBelowThreshold/(subunitsBelowThreshold + subunitsAboveThreshold);
-			result.subunitsAboveThreshold = subunitsAboveThreshold;
-			result.subunitsBelowThreshold = subunitsBelowThreshold;
+			var percent = 100*subunitsOutsideThreshold/(subunitsOutsideThreshold + subunitsWithinThreshold);
+			result.subunitsWithinThreshold = subunitsWithinThreshold;
+			result.subunitsOutsideThreshold = subunitsOutsideThreshold;
 			result.subunitViolationPercentage = mathService.round(percent, 1);
 			result.subunitViolationNames = subunitViolationNames;
 			result.subunitDatapoints = subunitDatapoints;
 			
 			//Add key metadata to result
 			result.pe = pe;
-			result.dataID = dxID;
-			result.dataName = names[dxID];
+			result.dxID = dxID;
+			result.dxName = names[dxID];
+			result.type = type;
 			result.threshold = threshold;
 			
 			self.dsci.callback(result, errors);
@@ -1606,11 +1369,11 @@
 			valueB = dataValue(headers, data, dataB, year, boundary, null);
 			
 			if (relation.type === 'do') {
-				relation.boundaryValue = Math.round(dropOutRate(valueA, valueB), 1);
+				relation.boundaryValue = mathService.round(dropOutRate(valueA, valueB), 1);
 				boundaryRatio = relation.boundaryValue;	
 			}
 			else {
-				relation.boundaryValue = Math.round(100*valueA/valueB, 1);
+				relation.boundaryValue = mathService.round(100*valueA/valueB, 1);
 				boundaryRatio = relation.boundaryValue;
 			}
 			
@@ -1623,7 +1386,7 @@
 				
 				//Drop out
 				if (relation.type === 'do') {
-					result = Math.round(dropOutRate(valueA, valueB), 1);
+					result = mathService.round(dropOutRate(valueA, valueB), 1);
 					if (result < 0) {
 						subunitOutliers++;
 						subunitNames.push(names[subunits[j]]);
@@ -1631,7 +1394,7 @@
 				}
 				//A > B
 				else if (relation.type === 'aGTb') {
-					result = Math.round(100*valueA/valueB, 1);
+					result = mathService.round(100*valueA/valueB, 1);
 					if (result < (100-relation.criteria)) {
 						subunitOutliers++;
 						subunitNames.push(names[subunits[j]]);
@@ -1639,7 +1402,7 @@
 				}
 				//A = B
 				else {
-					result = Math.round(100*valueA/valueB, 1);
+					result = mathService.round(100*valueA/valueB, 1);
 					if (result > (1.0+relation.criteria/100) || result < (1.0-relation.criteria/100)) {
 						subunitOutliers++;
 						subunitNames.push(names[subunits[j]]);

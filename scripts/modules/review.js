@@ -59,43 +59,78 @@
 	    }
 	    
 	  	
+	  	/** START ANALYSIS*/
 	  	self.doAnalysis = function() {
 	  		
+	  		//Structure for storing data
 	  		self.completeness = {};
+	  		self.completeness.datasets = [];
+	  		self.completeness.consistency = [];
 	  		self.completeness.indicators = [];
+	  		
+	  		self.outliers = [];
+	  		
 	  		self.consistency = {};
-	  		self.consistency.outliers = [];
-	  		self.consistency.consistency = [];
+	  		self.consistency.data = [];
 	  		self.consistency.relations = [];
-	  		self.consistency.consistencyChart = [];
 	  		
-	  		var datasets = dataSetsForCompleteness();
-	  		var indicatorIDs = indicatorIDsForAnalysis();
 	  		
-	  		var refYears = precedingYears(self.yearSelected.id, 3);
+	  		//Metadata for queries
+	  		var datasets = datasetForAnalysis();
+	  		var indicators = indicatorsForAnalysis();
 	  		
-	  		//1 Get dataset completeness
-	  		var dscCallback = function (result) { self.completeness.datasets = result;}
-	  		dataAnalysisService.datasetCompleteness(dscCallback, dataSetsForCompleteness(), self.yearSelected.id, refYears, self.userOrgunit.id, self.orgunitLevelSelected.level);
+	  		var period = self.yearSelected.id;
+	  		var refPeriods = precedingYears(self.yearSelected.id, 3);
+	  		
+	  		var ouBoundary = self.userOrgunit.id;
+	  		var ouLevel = self.orgunitLevelSelected.level;
+	  		
+	  		
+	  		
+	  		//1 Get dataset completeness and consistency
+	  		var dsCoCallback = function (result, errors) { 
+	  			self.completeness.datasets.push(result);
+	  			if (errors) self.alerts = self.alerts.concat(errors);
+	  			
+	  			console.log(result);
+	  		}
+  			var dsCiCallback = function (result, errors) { 
+  				self.completeness.consistency.push(result);
+  				if (errors) self.alerts = self.alerts.concat(errors);
+  				
+  				console.log(result);
+  			}
+	  		for (var i = 0; i < datasets.length; i++) {
+	  			//completeness
+	  			dataAnalysisService.datasetCompleteness(dsCoCallback, datasets[i].threshold, datasets[i].id, period, ouBoundary, ouLevel);
+	  			
+	  			//consistency
+	  			dataAnalysisService.timeConsistency(dsCiCallback, datasets[i].trend, datasets[i].consistencyThreshold, 100, datasets[i].id, null, period, refPeriods, ouBoundary, ouLevel);
+	  			
+	  		}
+	  		
 			
-			//2 Get indicator completeness
-	  		var icCallback = function (result, errors) { 
+			//2 Get indicator completeness and consistency
+	  		var dataCoCallback = function (result, errors) { 
 	  			self.completeness.indicators.push(result);
 	  			
  				if (errors) self.alerts = self.alerts.concat(errors);
 	  		}
-	  		for (var i = 0; i < indicatorIDs.length; i++) {
 	  		
-	  			var indicator = indicatorFromCode(indicatorIDs[i])
-	  			var dataset = datasetFromID(indicator.dataSetID);
+	  		for (var i = 0; i < indicators.length; i++) {
+	  		
+	  			var indicator = indicators[i];
+	  			var periodType = periodTypeFromIndicator(indicator.code);
 	  			
 	  			var startDate = self.yearSelected.id.toString() + "-01-01";
 	  			var endDate = self.yearSelected.id.toString() + "-12-31";
-	  			var periods = periodService.getISOPeriods(startDate, endDate, dataset.periodType);	  			
+	  			var periods = periodService.getISOPeriods(startDate, endDate, periodType);	  			
 	  			
-				dataAnalysisService.indicatorCompleteness(icCallback, indicator, periods, self.userOrgunit.id, self.orgunitLevelSelected.level);
+				dataAnalysisService.indicatorCompleteness(dataCoCallback, indicator, periods, self.userOrgunit.id, self.orgunitLevelSelected.level);
 	  		}
-	  		 		
+	  		
+	  		
+	  		return;	
 	  		//3 Completeness chart
 	  		var datasetIDs = [];
 	  		for (var i = 0; i < datasets.length; i++) {
@@ -111,7 +146,7 @@
   			for (var i = 0; i < indicatorIDs.length; i++) {
   			
   				var indicator = indicatorFromCode(indicatorIDs[i])
-  				var dataset = datasetFromID(indicator.dataSetID);
+  				var dataset = self.datasetFromID(indicator.dataSetID);
   				
   				var startDate = self.yearSelected.id.toString() + "-01-01";
   				var endDate = self.yearSelected.id.toString() + "-12-31";
@@ -138,6 +173,9 @@
 					
 				dataAnalysisService.indicatorConsistency(ccCallback, indicator, self.yearSelected.id, refYears, self.userOrgunit.id, self.orgunitLevelSelected.level);
 			}
+			
+			
+			
 			
 			//6 Indicator consistency chart
 			var indicatorUIDs = [];
@@ -170,6 +208,7 @@
 	  	}
 	  	
 	  	
+	  	/** PERIODS */	  	
 	  	function precedingYears(year, numberOfYears) {
 	  		
 	  		var start = parseInt(year);
@@ -182,8 +221,20 @@
 	  	
 	  	}
 		
+		function periodTypeFromDataSet(dataSetID) {
+			for (var i = 0; i < self.map.dataSets.length; i++) {
+				if (dataSetID === self.map.dataSets[i].id) return self.map.dataSets[i].periodType;
+			}
+		}
 		
-		function dataSetsForCompleteness() {
+		function periodTypeFromIndicator(code) {
+		
+			return periodTypeFromDataSet(indicatorFromCode(code).dataSetID);
+
+		}
+
+	  	/** DATASETS */		
+		function datasetForAnalysis() {
 			
 			var datasetIDs = {};
 			var indicatorIDs = indicatorIDsForAnalysis();
@@ -195,14 +246,49 @@
 			
 			var dataset = [];
 			for (key in datasetIDs) {
-				dataset.push(datasetFromID(key));			
+				dataset.push(self.datasetFromID(key));			
 			}
 			
 			return dataset;
 		}
 		
+		self.datasetFromID = function(id) {
+			for (var i = 0; i < self.map.dataSets.length; i++) {
+				if (self.map.dataSets[i].id === id) {
+					console.log(self.map.dataSets[i]);
+					return self.map.dataSets[i];
+				}
+			}
+		}
 		
-		function indicatorIDsForAnalysis() {
+	  	/** INDICATORS */
+	  	function indicatorIDsForAnalysis() {
+	  		
+	  		//First find all that might be relevant
+	  		var IDs;
+	  		if (self.groupSelected.code === 'C') {
+	  			IDs = self.map.coreIndicators;
+	  		}
+	  		else {
+	  			for (var i = 0; i < self.map.groups.length; i++) {
+	  				if (self.map.groups[i].code === self.groupSelected.code) {
+	  					IDs = self.map.groups[i].members;
+	  				}
+	  			}
+	  		}
+	  		
+	  		//Then filter out the ones matched to local data
+	  		var matchedIDs = [];
+	  		for (var i = 0; i < IDs.length; i++) {
+	  			if (indicatorFromCode(IDs[i]).matched) matchedIDs.push(IDs[i]);
+	  		}
+	  		
+	  		return matchedIDs;
+	  		
+	  		
+	  	}
+	  	
+		function indicatorsForAnalysis() {
 			
 			//First find all that might be relevant
 			var IDs;
@@ -218,12 +304,13 @@
 			}
 			
 			//Then filter out the ones matched to local data
-			var matchedIDs = [];
+			var indicator, matchedIndicators = [];
 			for (var i = 0; i < IDs.length; i++) {
-				if (indicatorFromCode(IDs[i]).matched) matchedIDs.push(IDs[i]);
+				indicator = indicatorFromCode(IDs[i]);
+				if (indicator.matched) matchedIndicators.push(indicator);
 			}
 			
-			return matchedIDs;
+			return matchedIndicators;
 			
 			
 		}
@@ -232,21 +319,6 @@
 		function indicatorFromCode(code) {
 			for (var i = 0; i < self.map.data.length; i++) {
 				if (self.map.data[i].code === code) return self.map.data[i];
-			}
-		}
-		
-		
-		function datasetFromID(id) {
-			
-			for (var i = 0; i < self.map.dataSets.length; i++) {
-				if (self.map.dataSets[i].id === id) return self.map.dataSets[i];
-			}
-		}
-		
-		
-		function periodTypeFromDataSet(dataSetID) {
-			for (var i = 0; i < self.map.dataSets.length; i++) {
-				if (dataSetID === self.map.dataSets[i].id) return self.map.dataSets[i].periodType;
 			}
 		}
 		
@@ -299,20 +371,10 @@
 			return false;
 		}
 		
-		//Returns relations relevant for the selected group (i.e. both indicators are in the group)
-		function applicableRelations() {
-			
-			var dataIDs = indicatorIDsForAnalysis(), relation, relations = [];
-			for (var i = 0; i < self.map.relations.length; i++) {
-				relation = self.map.relations[i];
-				
-				if (indicatorIsRelevant(relation.A) && indicatorIsRelevant(relation.B)) {
-					relations.push(relation);
-				}
-			}
-			return relations;	
-		}
+		
 	    
+	    
+   	  	/** RELATIONS */
 	    self.relationName = function(typeCode) {
 	    
 	    	if (typeCode === 'eq') return "Equal";
@@ -320,7 +382,24 @@
 	    	if (typeCode === 'do') return "Dropout";
 	    	
 	    }
-	    	    
+	    
+	    //Returns relations relevant for the selected group (i.e. both indicators are in the group)
+	    function applicableRelations() {
+	    	
+	    	var dataIDs = indicatorIDsForAnalysis(), relation, relations = [];
+	    	for (var i = 0; i < self.map.relations.length; i++) {
+	    		relation = self.map.relations[i];
+	    		
+	    		if (indicatorIsRelevant(relation.A) && indicatorIsRelevant(relation.B)) {
+	    			relations.push(relation);
+	    		}
+	    	}
+	    	return relations;	
+	    }
+	    
+	    
+	    
+  	  	/** CHARTS */	    
 	    function makeDataPoints(datapoints, nationalRatio, consistency, chartOptions) {	    		    	
 	    	var chartSeries = [];
 	    	var chartSerie = {
