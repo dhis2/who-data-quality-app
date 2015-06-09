@@ -63,20 +63,22 @@
 	  	self.doAnalysis = function() {
 	  		
 	  		//Structure for storing data
-	  		self.completeness = {};
-	  		self.completeness.datasets = [];
-	  		self.completeness.consistency = [];
-	  		self.completeness.indicators = [];
+	  		self.completeness = {
+	  			datasets = [],
+	  			consistency = [],
+	  			indicators = []
+	  		};
 	  		
 	  		self.outliers = [];
 	  		
-	  		self.consistency = {};
-	  		self.consistency.data = [];
-	  		self.consistency.relations = [];
-	  		
+	  		self.consistency = {
+	  			data = [],
+	  			relations = []
+	  		};
+	  			  		
 	  		
 	  		//Metadata for queries
-	  		var datasets = datasetForAnalysis();
+	  		var datasets = datasetsForAnalysis();
 	  		var indicators = indicatorsForAnalysis();
 	  		
 	  		var period = self.yearSelected.id;
@@ -86,42 +88,17 @@
 	  		var ouLevel = self.orgunitLevelSelected.level;
 	  		
 	  		
-	  		
 	  		//1 Get dataset completeness and consistency
-	  		var dsCoCallback = function (result, errors) { 
-	  			self.completeness.datasets.push(result);
-	  			if (errors) self.alerts = self.alerts.concat(errors);
-	  		}
-  			var dsCiCallback = function (result, errors) { 
-  				self.completeness.consistency.push(result);
-  				if (errors) self.alerts = self.alerts.concat(errors);
-  			}
 	  		for (var i = 0; i < datasets.length; i++) {
 	  			//completeness
-	  			dataAnalysisService.datasetCompleteness(dsCoCallback, datasets[i].threshold, datasets[i].id, period, ouBoundary, ouLevel);
+	  			dataAnalysisService.datasetCompleteness(receiveDatasetCompleteness, datasets[i].threshold, datasets[i].id, period, ouBoundary, ouLevel);
 	  			
 	  			//consistency
-	  			dataAnalysisService.timeConsistency(dsCiCallback, datasets[i].trend, datasets[i].consistencyThreshold, 100, datasets[i].id, null, period, refPeriods, ouBoundary, ouLevel);
+	  			dataAnalysisService.timeConsistency(receiveDatasetTimeConsistency, datasets[i].trend, datasets[i].consistencyThreshold, 100, datasets[i].id, null, period, refPeriods, ouBoundary, ouLevel);
 	  		}
 	  		
-			
-			//2 Get indicator completeness, consistency, outliers
-	  		var dataCoCallback = function (result, errors) { 
-	  			self.completeness.indicators.push(result);
-	  			
- 				if (errors) self.alerts = self.alerts.concat(errors);
-	  		}
-	  		
-	  		var dataCiCallback = function (result, errors) {
-	  			if (result) {
-	  				self.consistency.data.push(result);
-	  			}  				
-	  			if (errors) {
-	  				self.alerts = self.alerts.concat(errors);
-	  			}
-	  		}
-	  		
-	  	
+			  		
+  		  	//2 Get indicator completeness, consistency, outliers
 	  		var indicatorIDsForConsistencyChart = [];
 	  		for (var i = 0; i < indicators.length; i++) {
 	  		
@@ -133,9 +110,10 @@
 	  			var endDate = self.yearSelected.id.toString() + "-12-31";
 	  			var periods = periodService.getISOPeriods(startDate, endDate, periodType);	  			
 	  			
-				dataAnalysisService.dataCompleteness(dataCoCallback, indicator.missing, indicator.localData.id, null, periods, ouBoundary, ouLevel);
+	  			
+				dataAnalysisService.dataCompleteness(receiveDataCompleteness, indicator.missing, indicator.localData.id, null, periods, ouBoundary, ouLevel);
 				
-				dataAnalysisService.timeConsistency(dataCiCallback, indicator.trend, indicator.consistency, null, indicator.localData.id, null, period, refPeriods, ouBoundary, ouLevel);
+				dataAnalysisService.timeConsistency(receiveDataTimeConsistency, indicator.trend, indicator.consistency, null, indicator.localData.id, null, period, refPeriods, ouBoundary, ouLevel);
 				
 				dataAnalysisService.indicatorOutlier(receiveDataOutliers, indicator, periods, ouBoundary, ouLevel);
 				
@@ -144,7 +122,7 @@
 	  		
 	  		
 	  		//3 Indicator relations
-	  		var relations = applicableRelations();
+	  		var relations = relationsForAnalysis();
 	  		for (var i = 0; i < relations.length; i++) {
 	  			var relation = relations[i];
 	  			var indicatorA = indicatorFromCode(relation.A);
@@ -159,8 +137,38 @@
 			chartOptions.showLegend = true;
 			visualisationService.autoLineChart('consistencyMain', [period], indicatorIDsForConsistencyChart, ouBoundary, chartOptions);
 			
-			
 	  	}
+	  	
+	  	/**CALLBACKS FOR RESULTS*/
+	  	
+	  	
+	  	function receiveDatasetCompleteness(result, errors) { 
+	  			self.completeness.datasets.push(result);
+	  			if (errors) self.alerts = self.alerts.concat(errors);
+	  	}
+	  	
+	  	
+	  	function receiveDatasetTimeConsistency(result, errors) { 
+	  			self.completeness.consistency.push(result);
+	  			if (errors) self.alerts = self.alerts.concat(errors);
+	  	}
+	  	
+	  	
+	  	function receiveDataCompleteness(result, errors) { 
+	  			self.completeness.indicators.push(result);
+	  			
+	  			if (errors) self.alerts = self.alerts.concat(errors);
+	  	}
+	  	
+	  		
+	  	function receiveDataTimeConsistency(result, errors) {
+	  			if (result) {
+	  				self.consistency.data.push(result);
+	  			}  				
+	  			if (errors) {
+	  				self.alerts = self.alerts.concat(errors);
+	  			}
+	  		}
 	  	
 	  	
 	  	function receiveDataOutliers(result) {
@@ -173,10 +181,10 @@
 	  			
   			//Check type and format data accordingly for charts
   			if (result.type === 'do') {
-  				makeDropoutDataPoints(result);
+  				makeDropoutRateChart(result);
   			}
   			else {
-	  			makeConsistencyDataPoints(result);
+	  			makeDataConsistencyChart(result);
   			}
   			self.consistency.relations.push(result);
 	  	}
@@ -208,59 +216,30 @@
 		}
 
 	  	/** DATASETS */		
-		function datasetForAnalysis() {
+		function datasetsForAnalysis() {
 			
 			var datasetIDs = {};
-			var indicatorIDs = indicatorIDsForAnalysis();
-			for (var i = 0; i < indicatorIDs.length; i++) {
+			var indicators = indicatorsForAnalysis();
+			for (var i = 0; i < indicators.length; i++) {
 			
-				var indicator = indicatorFromCode(indicatorIDs[i]);				
+				var indicator = indicators[i];
 				if (indicator.matched) datasetIDs[indicator.dataSetID] = true;
 			}
 			
-			var dataset = [];
+			var datasets = [];
 			for (key in datasetIDs) {
-				dataset.push(self.datasetFromID(key));			
-			}
-			
-			return dataset;
-		}
-		
-		self.datasetFromID = function(id) {
-			for (var i = 0; i < self.map.dataSets.length; i++) {
-				if (self.map.dataSets[i].id === id) {
-					return self.map.dataSets[i];
+				for (var i = 0; i < self.map.dataSets.length; i++) {
+					if (self.map.dataSets[i].id === key) {
+						datasets.push self.map.dataSets[i];
+					}
 				}
 			}
+			
+			return datasets;
 		}
 		
-	  	/** INDICATORS */
-	  	function indicatorIDsForAnalysis() {
-	  		
-	  		//First find all that might be relevant
-	  		var IDs;
-	  		if (self.groupSelected.code === 'C') {
-	  			IDs = self.map.coreIndicators;
-	  		}
-	  		else {
-	  			for (var i = 0; i < self.map.groups.length; i++) {
-	  				if (self.map.groups[i].code === self.groupSelected.code) {
-	  					IDs = self.map.groups[i].members;
-	  				}
-	  			}
-	  		}
-	  		
-	  		//Then filter out the ones matched to local data
-	  		var matchedIDs = [];
-	  		for (var i = 0; i < IDs.length; i++) {
-	  			if (indicatorFromCode(IDs[i]).matched) matchedIDs.push(IDs[i]);
-	  		}
-	  		
-	  		return matchedIDs;
-	  		
-	  		
-	  	}
-	  	
+		
+	  	/** INDICATORS */	  	
 		function indicatorsForAnalysis() {
 			
 			//First find all that might be relevant
@@ -296,49 +275,13 @@
 		}
 		
 		
-		function dataForOutliers() {
-			
-			var data, dataIDs = [];
-			for (var i = 0; i < self.map.data.length; i++) {
-				data = self.map.data[i];
-				if (data.matched && ((self.core && indicatorIsCore(data.code)) || indicatorInGroup(data.code))) {
-					
-					dataIDs.push({
-						'id': data.localData.id,
-						'modStdDev': data.moderateOutlier,
-						'extStdDev': data.extremeOutlier,
-						'consistency': data.consistency,
-						'periodType': periodTypeFromDataSet(data.dataSetID)
-					});
-					
-					
-				}
-			}
-
-			return dataIDs;
-			
-		}
-	
-		
-		function localDataIDfromCode(code) {
-			var data;
-			for (var i = 0; i < self.map.data.length; i++) {
-				data = self.map.data[i];
-				if (data.matched && ((self.core && indicatorIsCore(data.code)) || indicatorInGroup(data.code)) && data.code === code) {
-					return self.map.data[i].localData.id;
-				}
-			}
-			
-			return null;
-		}
-		
 		//Returns true/false depending on whether indicator is in selected group
 		function indicatorIsRelevant(code) {
 		
-			var indicators = indicatorIDsForAnalysis();
+			var indicators = indicatorsForAnalysis();
 		
 			for (var i = 0; i < indicators.length; i++) {				
-				if (indicators[i] === code) return true
+				if (indicators[i].code === code) return true
 			}
 
 			return false;
@@ -348,27 +291,28 @@
 	    
 	    
    	  	/** RELATIONS */
-	    self.relationTypeName = function(typeCode) {
+	    self.relationTypeName = function(code) {
 	    
-	    	if (typeCode === 'eq') return "Equal";
-	    	if (typeCode === 'aGTb') return "A > B";
-	    	if (typeCode === 'do') return "Dropout";
+	    	if (code === 'eq') return "Equal";
+	    	if (code === 'aGTb') return "A > B";
+	    	if (code === 'do') return "Dropout";
 	    	
 	    }
 	    
-	    self.relationName = function(relationCode) {
 	    
-	    	var relations = applicableRelations();
+	    self.relationName = function(code) {
+	    
+	    	var relations = relationsForAnalysis();
 	    	for (var i = 0; i < relations.length; i++) {
-	    		if (relations[i].code === relationCode) return relations[i].name;
+	    		if (relations[i].code === code) return relations[i].name;
 	    	}
 	    	
 	    }
 	    
 	    //Returns relations relevant for the selected group (i.e. both indicators are in the group)
-	    function applicableRelations() {
+	    function relationsForAnalysis() {
 	    	
-	    	var dataIDs = indicatorIDsForAnalysis(), relation, relations = [];
+	    	var relation, relations = [];
 	    	for (var i = 0; i < self.map.relations.length; i++) {
 	    		relation = self.map.relations[i];
 	    		
@@ -382,7 +326,7 @@
 	    
 	    
   	  	/** CHARTS */	    
-	    function makeConsistencyDataPoints(result) {	    		    	
+	    function makeDataConsistencyChart(result) {	    		    	
 	    
 	    	var datapoints = result.subunitDatapoints;
 	    	var nationalRatio = result.boundaryRatio;
@@ -484,7 +428,8 @@
 	    	result.chartData = chartSeries;
 	    }
 	    
-	    function makeDropoutDataPoints(result) {	    		    	
+	    
+	    function makeDropoutRateChart(result) {	    		    	
 	    	var chartSeries = [];
 	    	var chartSerie = {
 	    		'key': self.orgunitLevelSelected.name + "s",
@@ -540,6 +485,7 @@
 	    	    }
 	    	}
 	    }
+	    
 	    	    
 	    self.chartConfigurations = {
 	    	'completeness': {
