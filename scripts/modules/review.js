@@ -34,7 +34,7 @@
 	    			var validLevels = [];
 	    			
 	    			for (var i = 0; i < data.length; i++) {
-	    				if (data[i].level > self.userOrgunit.level && data[i].level <= self.userOrgunit.level+2) {
+	    				if (data[i].level > self.userOrgunit.level && data[i].level <= self.userOrgunit.level+3) {
 	    					validLevels.push(data[i]);
 	    				}
 	    			}
@@ -102,7 +102,6 @@
 	  			
 	  			//consistency
 	  			dataAnalysisService.timeConsistency(dsCiCallback, datasets[i].trend, datasets[i].consistencyThreshold, 100, datasets[i].id, null, period, refPeriods, ouBoundary, ouLevel);
-	  			
 	  		}
 	  		
 			
@@ -122,11 +121,8 @@
 	  			}
 	  		}
 	  		
-	  		var dataOutCallback = function (result) { 
-	  			console.log(result);
-	  			self.outliers.push(result);
-	  		}
-	  		
+	  	
+	  		var indicatorIDsForConsistencyChart = [];
 	  		for (var i = 0; i < indicators.length; i++) {
 	  		
 	  			var indicator = indicators[i];
@@ -141,43 +137,48 @@
 				
 				dataAnalysisService.timeConsistency(dataCiCallback, indicator.trend, indicator.consistency, null, indicator.localData.id, null, period, refPeriods, ouBoundary, ouLevel);
 				
-				dataAnalysisService.indicatorOutlier(dataOutCallback, indicator, periods, ouBoundary, ouLevel);
+				dataAnalysisService.indicatorOutlier(receiveDataOutliers, indicator, periods, ouBoundary, ouLevel);
+				
+				indicatorIDsForConsistencyChart.push(indicator.localData.id);
 	  		}
 	  		
 	  		
-	  		
-	  		return;	
-	  		
-	  			  		
-			
-			//6 Indicator consistency chart
-			var indicatorUIDs = [];
-			for (var i = 0; i < indicatorIDs.length; i++) {
-				indicatorUIDs.push(indicatorFromCode(indicatorIDs[i]).localData.id);
-			}
-			
+	  		//3 Indicator relations
+	  		var relations = applicableRelations();
+	  		for (var i = 0; i < relations.length; i++) {
+	  			var relation = relations[i];
+	  			var indicatorA = indicatorFromCode(relation.A);
+	  			var indicatorB = indicatorFromCode(relation.B);
+	  			
+	  			dataAnalysisService.dataConsistency(receiveDataConsistency, relation.type, relation.criteria, relation.code, indicatorA.localData.id, indicatorB.localData.id, period, ouBoundary, ouLevel);
+	  		}
+		
+			//Indicator consistency chart			
 			chartOptions = {};
 			chartOptions.title = 'Consistency trend';
 			chartOptions.showLegend = true;
-			visualisationService.autoLineChart('consistencyMain', pe, indicatorUIDs, self.userOrgunit.id, chartOptions);
+			visualisationService.autoLineChart('consistencyMain', [period], indicatorIDsForConsistencyChart, ouBoundary, chartOptions);
 			
-			//7 Indicator relations
-			var relations = applicableRelations();
-			var irCallback = function (result) {
-				result.chartOptions = JSON.parse(JSON.stringify(self.chartConfigurations.consistencySmall));
-				result.chartData = makeDataPoints(result.datapoints, result.boundaryValue, result.criteria, chartOptions);
-				
-				result.chartOptions.chart.xAxis.axisLabel = indicatorFromCode(result.A).name;
-				result.chartOptions.chart.yAxis.axisLabel = indicatorFromCode(result.B).name;
-				
-				self.consistency.relations.push(result);
-			}
-			for (var i = 0; i < relations.length; i++) {
-				var relation = relations[i];
-				var indicatorA = indicatorFromCode(relation.A);
-				var indicatorB = indicatorFromCode(relation.B);
-				dataAnalysisService.indicatorRelation(irCallback, relation, indicatorA, indicatorB, self.yearSelected.id, self.userOrgunit.id, self.orgunitLevelSelected.level);
-			}
+			
+	  	}
+	  	
+	  	
+	  	function receiveDataOutliers(result) {
+	  		self.outliers.push(result);
+	  	}
+	  	
+	  	
+	  	function receiveDataConsistency(result, errors) {
+	  		if (errors) self.alerts = self.alerts.concat(errors);
+	  			
+  			//Check type and format data accordingly for charts
+  			if (result.type === 'do') {
+  				makeDropoutDataPoints(result);
+  			}
+  			else {
+	  			makeConsistencyDataPoints(result);
+  			}
+  			self.consistency.relations.push(result);
 	  	}
 	  	
 	  	
@@ -347,11 +348,20 @@
 	    
 	    
    	  	/** RELATIONS */
-	    self.relationName = function(typeCode) {
+	    self.relationTypeName = function(typeCode) {
 	    
 	    	if (typeCode === 'eq') return "Equal";
 	    	if (typeCode === 'aGTb') return "A > B";
 	    	if (typeCode === 'do') return "Dropout";
+	    	
+	    }
+	    
+	    self.relationName = function(relationCode) {
+	    
+	    	var relations = applicableRelations();
+	    	for (var i = 0; i < relations.length; i++) {
+	    		if (relations[i].code === relationCode) return relations[i].name;
+	    	}
 	    	
 	    }
 	    
@@ -372,10 +382,23 @@
 	    
 	    
   	  	/** CHARTS */	    
-	    function makeDataPoints(datapoints, nationalRatio, consistency, chartOptions) {	    		    	
+	    function makeConsistencyDataPoints(result) {	    		    	
+	    
+	    	var datapoints = result.subunitDatapoints;
+	    	var nationalRatio = result.boundaryRatio;
+	    	var consistency = result.criteria; 
+	    		    	
+	    	var toolTip = function(key, x, y, e, graph) {
+	    		var data = result.subunitDatapoints;
+	    	    return '<h3>' + data[graph.pointIndex].name + '</h3>' +
+	    	        '<p style="margin-bottom: 0px">' + result.dxNameA + ': ' + y + '</p>' + 
+	    	        '<p>' + result.dxNameB + ': ' + x + '</p>'; 
+	    	};
+	    	
+	    	
 	    	var chartSeries = [];
 	    	var chartSerie = {
-	    		'key': "Districts",
+	    		'key': self.orgunitLevelSelected.name + "s",
 	    		'values': []
 	    	}
 	    	
@@ -397,7 +420,7 @@
 	    			'size': 0
 	    			}
 	    			],
-	    			'slope': nationalRatio/100,
+	    			'slope': nationalRatio,
 	    			'intercept': 0.001
 	    		},
 	    		{
@@ -409,7 +432,7 @@
 	    			'size': 0
 	    			}
 	    			],
-	    			'slope': (nationalRatio+consistency)/100,
+	    			'slope': nationalRatio+consistency/100,
 	    			'intercept': 0.001
 	    		},
 	    		{
@@ -421,16 +444,103 @@
 	    			'size': 0
 	    			}
 	    			],
-	    			'slope': (nationalRatio-consistency)/100,
+	    			'slope': nationalRatio-consistency/100,
 	    			'intercept': 0.001
 	    		}
 	    	);
+	    	result.chartOptions = {
+	    	   	"chart": {
+	    	        "type": "scatterChart",
+	    	        "height": 400,
+	    	        "margin": {
+	    	          "top": 40,
+	    	          "right": 20,
+	    	          "bottom": 100,
+	    	          "left": 100
+	    	        },
+	    	        "scatter": {
+	    	        	"onlyCircles": false
+	    	        },
+	    	        "clipEdge": false,
+	    	        "staggerLabels": true,
+	    	        "transitionDuration": 1,
+	    	        "showDistX": true,
+	    	        "showDistY": true,
+	    	        "xAxis": {
+	    	              "axisLabel": result.dxNameA,
+	    	              "axisLabelDistance": 30,
+	    	              "tickFormat": d3.format('g')
+	    	        },
+	    	        "yAxis": {
+	    	        	"axisLabel": result.dxNameB,
+	    	            "axisLabelDistance": 30,
+	    	            "tickFormat": d3.format('g')
+	    	        },
+	    	        'tooltips': true,
+	    	        'tooltipContent': toolTip
+	    	    }
+	    	};
 	    	
-	    	//Todo: update axis etc
-	    	
-	    	return chartSeries;
+	    	result.chartData = chartSeries;
 	    }
 	    
+	    function makeDropoutDataPoints(result) {	    		    	
+	    	var chartSeries = [];
+	    	var chartSerie = {
+	    		'key': self.orgunitLevelSelected.name + "s",
+	    		'values': []
+	    	}
+
+	    	var toolTip = function(key, x, y, e, graph) {
+	    		var data = result.subunitDatapoints;
+	    	    return '<h3>' + data[x].name + '</h3>' +
+	    	        '<p>' +  mathService.round(100*(data[x].value-data[x].refValue)/data[x].value,1)  + '% dropout</p>'
+	    	};
+	    	
+	    	var minVal = 0.9;
+	    	var maxVal = 2;
+	    	var point, value;
+	    	for (var i = 0; i < result.subunitDatapoints.length; i++) {
+	    		point = result.subunitDatapoints[i];
+	    		value = point.value/point.refValue;
+	    		
+	    		if (value > maxVal) maxVal = value;
+	    		else if (value < minVal) minVal = value;
+	    		
+	    		chartSerie.values.push({
+	    			'x': i,
+	    			'y': mathService.round(value, 2)
+	    		});
+	    	}
+
+	    	chartSeries.push(chartSerie);	    	
+	    	result.chartData = chartSeries;    	
+	    	
+	    	result.chartOptions = {
+	    	   	"chart": {
+	    	        "type": "lineChart",
+	    	        "height": 400,
+	    	        "margin": {
+	    	          "top": 140,
+	    	          "right": 20,
+	    	          "bottom": 100,
+	    	          "left": 100
+	    	        },
+	    	        "xAxis": {
+	    	          "showMaxMin": false,
+	    	          'axisLabel': axisLabel = self.orgunitLevelSelected.name + "s"
+	    	        },
+	    	        "yAxis": {
+	    	          "axisLabel": "Ratio"
+	    	        },
+	    	        'tooltips': true,
+	    	        'tooltipContent': toolTip,
+	    	        'showLegend': true,
+	    	      	'forceY': [Math.floor(minVal*10)/10, Math.ceil(maxVal*10)/10], 
+	    	    }
+	    	}
+	    }
+	    	    
 	    self.chartConfigurations = {
 	    	'completeness': {
 			   	"chart": {
@@ -480,94 +590,9 @@
 	    	        },
 	    	        "showControls": false
 	    	    }
-	    	},
-	    	'consistencySmall': {
-	    	   	"chart": {
-	    	        "type": "scatterChart",
-	    	        "height": 350,
-	    	        "margin": {
-	    	          "top": 40,
-	    	          "right": 15,
-	    	          "bottom": 100,
-	    	          "left": 100
-	    	        },
-	    	        "scatter": {
-	    	        	"onlyCircles": false
-	    	        },
-	    	        "clipEdge": false,
-	    	        "staggerLabels": true,
-	    	        "transitionDuration": 1,
-	    	        "showDistX": true,
-    	            "showDistY": true,
-    	            "xAxis": {
-    	                  "axisLabel": "Previous periods",
-    	                  "axisLabelDistance": 30,
-    	                  "tickFormat": d3.format('g'),
-    	                  "showMaxMin": false
-    	            },
-    	            "yAxis": {
-    	            	"axisLabel": "Current period",
-    	                "axisLabelDistance": 30,
-    	                "tickFormat": d3.format('g')
-    	            }
-	    	    }
 	    	}
 	    };
-	    
-	    self.testData = [
-	    	{
-		    	'key': "Districts",
-		    	'values': [
-		    		{
-		    		'x': 1,
-		    		'y': 3
-		    		},
-		    		{
-		    		'x': 2,
-		    		'y': 6
-		    		},
-		    		{
-		    		'x': 3,
-		    		'y': 7
-		    		}
-		    	]
-	    	},
-	    	{
-	    		'key': "National",
-	    		'values': [{
-	    		'x': 0,
-	    		'y': 0,
-	    		'size': 0
-	    		}
-	    		],
-	    		'slope': 1,
-	    		'intercept': 0.001
-	    	},
-	    	{
-	    		'key': "+30%",
-	    		'values': [{
-	    		'x': 0,
-	    		'y': 0,
-	    		'size': 0
-	    		}
-	    		],
-	    		'slope': 1.3,
-	    		'intercept': 0.001
-	    	},
-	    	{
-	    		'key': "-30%",
-	    		'values': [{
-	    		'x': 0,
-	    		'y': 0,
-	    		'size': 0
-	    		}
-	    		],
-	    		'slope': 0.7,
-	    		'intercept': 0.001
-	    	}
-	    	
-	    ];
-	    
+	    	    
 		return self;
 		
 	});

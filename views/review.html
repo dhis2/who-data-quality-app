@@ -185,10 +185,10 @@
 	 	<th width="175">% {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
     </tr>	    
    	<tr ng-repeat="relation in revCtrl.consistency.relations | orderBy:'name'">
-		<td>{{relation.name}}</td>
-		<td class="valueCell">{{relation.boundaryValue}}%</td>
-		<td class="valueCell">{{relation.count}}</td>
-		<td class="valueCell">{{relation.percent}}%</td>
+		<td>{{revCtrl.relationName(relation.relationCode)}}</td>
+		<td class="valueCell">{{relation.boundaryPercentage}}%</td>
+		<td class="valueCell">{{relation.subunitsOutsideThreshold}}</td>
+		<td class="valueCell">{{relation.subunitViolationPercentage}}%</td>
 	</tr>
 	</tbody>
 </table>
@@ -333,7 +333,7 @@
 	    </tr>	    
 	   	<tr ng-repeat="indicator in revCtrl.outliers | orderBy : 'name'">
     		<td>{{indicator.name}}</td>
-    		<td class="valueCell">{{indicator.extremeOutlier}} SD</td>
+    		<td class="valueCell">{{indicator.moderateOutlier}} SD</td>
     		<td class="valueCell">{{indicator.boundaryModerate}}%</td>
     		<td class="valueCell">{{indicator.countModerate}}</td>
     		<td class="valueCell">{{indicator.percentModerate}}%</td>
@@ -415,14 +415,14 @@
 	<div style="display: inline-block; width: 100%; margin-bottom: 10px;" ng-repeat="relation in revCtrl.consistency.relations | orderBy:'name'">
 	<div style="width: 49%; display: inline-block;">
 	<table style="font-size: 90%; margin-bottom: 10px;" class="table table-bordered table-condensed">
-		<tr bgcolor="#f9f9f9"><th colspan="2">{{relation.name}}</th></tr>
+		<tr bgcolor="#f9f9f9"><th colspan="2">{{revCtrl.relationName(relation.relationCode)}}</th></tr>
 		<tr>
 			<td>Year</td>
 			<td>{{revCtrl.yearSelected.name}}</td>
 		</tr>
 		<tr>
 		<td>Expected relationship</td>
-		<td>{{revCtrl.relationName(relation.type)}}</td>
+		<td>{{revCtrl.relationTypeName(relation.type)}}</td>
 		</tr>
 		<tr>
 		<td>Quality threshold</td>
@@ -431,21 +431,21 @@
 		</tr>
 		<tr>
 		<td>National score</td>
-		<td>{{relation.boundaryValue}}%</td>
+		<td>{{relation.boundaryPercentage}}%</td>
 		</tr>
 		<tr>
 		<td># {{revCtrl.orgunitLevelSelected.name}}s with poor score</td>
-		<td>{{relation.count}}</td>
+		<td>{{relation.subunitsOutsideThreshold}}</td>
 		</tr>
 		<tr>
 		<td>% {{revCtrl.orgunitLevelSelected.name}}s with poor score</td>
-		<td>{{relation.percent}}%</td>
+		<td>{{relation.subunitViolationPercentage}}%</td>
 		</tr>
-		<tr ng-if="relation.names.length > 0">
+		<tr ng-if="relation.subunitViolationNames.length > 0">
 			<td colspan="2">Names:</td>
 		</tr>
-		<tr ng-if="relation.names.length > 0">
-			<td colspan="2">{{relation.names.join(', ')}}</td>
+		<tr ng-if="relation.subunitViolationNames.length > 0">
+			<td colspan="2">{{relation.subunitViolationNames.join(', ')}}</td>
 		</tr>
 	</table>
 	</div>
