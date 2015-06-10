@@ -64,16 +64,16 @@
 	  		
 	  		//Structure for storing data
 	  		self.completeness = {
-	  			datasets = [],
-	  			consistency = [],
-	  			indicators = []
+	  			'datasets':	 [],
+	  			'consistency': [],
+	  			'indicators':	 []
 	  		};
 	  		
 	  		self.outliers = [];
 	  		
 	  		self.consistency = {
-	  			data = [],
-	  			relations = []
+	  			'data':		 [],
+	  			'relations':	 []
 	  		};
 	  			  		
 	  		
@@ -230,7 +230,7 @@
 			for (key in datasetIDs) {
 				for (var i = 0; i < self.map.dataSets.length; i++) {
 					if (self.map.dataSets[i].id === key) {
-						datasets.push self.map.dataSets[i];
+						datasets.push(self.map.dataSets[i]);
 					}
 				}
 			}
