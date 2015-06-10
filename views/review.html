@@ -1,4 +1,4 @@
-	<h3>Annual Data Quality Review</h3>
+<h3>Annual Data Quality Review</h3>
 
 <div class="no-print" ng-if="!revCtrl.notPossible">
 <span style="white-space:nowrap;"><label>Year:</label>
@@ -37,8 +37,12 @@
 <p>Annual review not possible for the facility level.</p>
 </div>
 <hr />
+<div ng-if="revCtrl.outstandingRequests != 0">
+<h5>Loading data...</h5>
+<progressbar animate="false" value="100-100*revCtrl.outstandingRequests/revCtrl.totalRequests" type="default"><b>{{100-100*revCtrl.outstandingRequests/revCtrl.totalRequests}}%</b></progressbar>
+</div>
 
-<tabset ng-if="revCtrl.completeness">
+<tabset ng-if="revCtrl.outstandingRequests === 0 && revCtrl.totalRequests != 0">
 <!--SUMMARY-->
 <tab heading="Summary"> 
 <div>
@@ -404,12 +408,10 @@
 	<div style="border: 1px dashed gray;">
 	<nvd3 options='revCtrl.dataConsistencyChart.options' data='revCtrl.dataConsistencyChart.data'></nvd3>
 	</div>
-	<div style="width: 100%; display: inline-block; margin-top: 30px; margin-bottom: 30px;">
-		<div style="width: 49%; display: inline-block; margin: 5px; margin-left: 0px; text-align: left; border: 1px dashed gray;" ng-repeat="indicator in revCtrl.consistency.data | orderBy:'dxName'">
-			<nvd3 style="vertical-align: top; margin-top: 0px;" options='indicator.chartOptions' data='indicator.chartData'></nvd3>
-		</div>
+	<div style="width: 100%; margin-top: 30px; margin-bottom: 30px;">
+			<nvd3 style="width: 49%; display: inline-block; margin: 5px; margin-left: 0px; text-align: left; border: 1px dashed gray;" ng-repeat="indicator in revCtrl.consistency.data | orderBy:'dxName'" options='indicator.chartOptions' data='indicator.chartData'></nvd3>		
 	</div>	
-	
+
 	<br style="margin-top: 30px;" />
 	
 	<em>2e  Consistency between related indicators</em>
@@ -451,17 +453,17 @@
 	</table>
 	</div>
 	<div style="vertical-align: top; border: 1px dashed gray; width: 49%; display: inline-block; margin-bottom: 10px;">
-	<nvd3 style="vertical-align: top;" options='relation.chartOptions' data='relation.chartData'></nvd3>
+	<nvd3 options='relation.chartOptions' data='relation.chartData'></nvd3>
 	</div>
 	<h5 style="margin-top: 5px;">Interpretations</h5>
 	<textarea style="width: 100%; height: 150px; list-style: outside; margin-bottom: 30px;"></textarea>
 	</div>
 
 </tab>
-<tab heading="Remarks" ng-if="revCtrl.alerts.length > 0">
+<tab heading="Remarks" ng-if="revCtrl.remarks.length > 0">
 <table class="table table-bordered" style="font-size: 90%; margin-top: 20px;">
 <tr><th>Analysis type</th><th>Item</th><th>Remarks</th></tr>
-<tr ng-repeat="alert in revCtrl.alerts track by $index"><td>{{alert.type}}</td><td>{{alert.item}}</td><td>{{alert.msg}}</td></tr>
+<tr ng-repeat="alert in revCtrl.remarks track by $index"><td>{{alert.type}}</td><td>{{alert.item}}</td><td>{{alert.msg}}</td></tr>
 </table>
 </tab>
 
