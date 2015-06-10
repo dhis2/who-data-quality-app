@@ -3,7 +3,7 @@
 	
 	var app = angular.module('reportCard', []);
 	
-	app.controller("ReviewController", function(metaDataService, periodService, mathService, requestService, dataAnalysisService, visualisationService) {
+	app.controller("ReviewController", function(metaDataService, periodService, mathService, requestService, dataAnalysisService, visualisationService, $timeout) {
 		var self = this;    
 		
 	    init();
@@ -62,20 +62,7 @@
 	  	/** START ANALYSIS*/
 	  	self.doAnalysis = function() {
 	  		
-	  		//Structure for storing data
-	  		self.completeness = {
-	  			'datasets':	 [],
-	  			'consistency': [],
-	  			'indicators':	 []
-	  		};
-	  		
-	  		self.outliers = [];
-	  		
-	  		self.consistency = {
-	  			'data':		 [],
-	  			'relations':	 []
-	  		};
-	  			  		
+	  		clearResults();	  			  		
 	  		
 	  		//Metadata for queries
 	  		var datasets = datasetsForAnalysis();
@@ -89,12 +76,15 @@
 	  		
 	  		
 	  		//1 Get dataset completeness and consistency
+	  		var datasetIDsForConsistencyChart = [];
 	  		for (var i = 0; i < datasets.length; i++) {
 	  			//completeness
 	  			dataAnalysisService.datasetCompleteness(receiveDatasetCompleteness, datasets[i].threshold, datasets[i].id, period, ouBoundary, ouLevel);
 	  			
 	  			//consistency
 	  			dataAnalysisService.timeConsistency(receiveDatasetTimeConsistency, datasets[i].trend, datasets[i].consistencyThreshold, 100, datasets[i].id, null, period, refPeriods, ouBoundary, ouLevel);
+	  			
+	  			datasetIDsForConsistencyChart.push(datasets[i].id);
 	  		}
 	  		
 			  		
@@ -130,17 +120,66 @@
 	  			
 	  			dataAnalysisService.dataConsistency(receiveDataConsistency, relation.type, relation.criteria, relation.code, indicatorA.localData.id, indicatorB.localData.id, period, ouBoundary, ouLevel);
 	  		}
-		
-			//Indicator consistency chart			
-			chartOptions = {};
-			chartOptions.title = 'Consistency trend';
-			chartOptions.showLegend = true;
-			visualisationService.autoLineChart('consistencyMain', [period], indicatorIDsForConsistencyChart, ouBoundary, chartOptions);
+			
+			//Completeness consistency chart
+			visualisationService.lineChart(receiveDatasetTimeConsistencyChart, datasetIDsForConsistencyChart, refPeriods.concat(period), [ouBoundary], 'dataOverTime');
+			
+			//Indicator consistency chart
+			visualisationService.lineChart(receiveDataTimeConsistencyChart, indicatorIDsForConsistencyChart, refPeriods.concat(period), [ouBoundary], 'dataOverTime');
+			
 			
 	  	}
 	  	
-	  	/**CALLBACKS FOR RESULTS*/
+	  	function clearResults() {
+	  		//Structure for storing data
+  			self.completeness = {
+  				'datasets':	 [],
+  				'consistency': [],
+  				'indicators':	 []
+  			};
+  			
+  			self.outliers = [];
+  			
+  			self.consistency = {
+  				'data':		 [],
+  				'relations':	 []
+  			};
+  			
+  			self.dataConsistencyChart = {};
+  			self.datasetConsistencyChart = {};
+	  	}
 	  	
+	  	
+	  	function receiveDatasetTimeConsistencyChart(chartData, chartOptions) {
+	  			self.datasetConsistencyChart.options = chartOptions;
+	  			self.datasetConsistencyChart.data = chartData; 	
+	  			
+	  			self.datasetConsistencyChart.options.title = {
+	  				'enable': true,
+	  				'text': 'Reporting completeness over time'
+	  			};
+	  			
+	  		}
+	  	
+	  	function receiveDataTimeConsistencyChart(chartData, chartOptions) {
+	  		self.dataConsistencyChart.options = chartOptions;
+	  		self.dataConsistencyChart.data = chartData; 	
+	  		
+	  		self.dataConsistencyChart.options.title = {
+	  			'enable': true,
+	  			'text': 'Reporting over time'
+	  		};
+	  		
+	  	}
+	  	
+	  	/**CALLBACKS FOR RESULTS*/
+	  	function recieveDatasetTimeConsistencyChart(chartData, chartOptions) {
+	  		
+	  		console.log(chartData);
+	  		console.log(chartOptions);
+	  	
+	  	
+	  	}
 	  	
 	  	function receiveDatasetCompleteness(result, errors) { 
 	  			self.completeness.datasets.push(result);
@@ -163,6 +202,7 @@
 	  		
 	  	function receiveDataTimeConsistency(result, errors) {
 	  			if (result) {
+		  			makeTimeConsistencyChart(result);
 	  				self.consistency.data.push(result);
 	  			}  				
 	  			if (errors) {
@@ -325,7 +365,131 @@
 	    
 	    
 	    
-  	  	/** CHARTS */	    
+  	  	/** CHARTS */
+  	  	function makeTimeConsistencyChart(result) {	    		    	
+  	  		    
+	    	var datapoints = result.subunitDatapoints;
+	    	var nationalRatio = result.boundaryRatio;
+	    	var consistency = result.threshold; 
+	    		    	
+	    	var toolTip = function(key, x, y, e, graph) {
+	    		var data = result.subunitDatapoints;
+	    		
+	    		var toolTipHTML = '<h3>' + data[graph.pointIndex].name + '</h3>';
+    			toolTipHTML += '<p style="margin-bottom: 0px">' + result.pe + ': ' + y + '</p>';
+	    		if (result.type === 'constant') {
+	    			toolTipHTML += '<p>Average: ' + x + '</p>'; 	    			
+	    		}
+	    		else {
+	    			toolTipHTML += '<p>Forecasted: ' + x + '</p>'; 	    			
+	    		}
+	    	    return toolTipHTML;
+	    	};
+	    	
+	    	
+	    	var chartSeries = [];
+	    	var chartSerie = {
+	    		'key': self.orgunitLevelSelected.name + "s",
+	    		'values': []
+	    	}
+	    	
+	    	for (var i = 0; i < datapoints.length; i++) {
+	    		chartSerie.values.push({
+	    			'x': datapoints[i].refValue,
+	    			'y': datapoints[i].value
+	    		});
+	    	}
+
+	    	chartSeries.push(chartSerie);
+	    	chartSeries.push(
+	    		{
+	    			'key': "National",
+	    			'color': '#ffff',
+	    			'values': [{
+	    			'x': 0,
+	    			'y': 0,
+	    			'size': 0
+	    			}
+	    			],
+	    			'slope': nationalRatio,
+	    			'intercept': 0.001
+	    		},
+	    		{
+	    			'key': "High",
+	    			'color': '#F00',
+	    			'values': [{
+	    			'x': 0,
+	    			'y': 0,
+	    			'size': 0
+	    			}
+	    			],
+	    			'slope': nationalRatio+consistency/100,
+	    			'intercept': 0.001
+	    		},
+	    		{
+	    			'key': "Low",
+	    			'color': '#00F',
+	    			'values': [{
+	    			'x': 0,
+	    			'y': 0,
+	    			'size': 0
+	    			}
+	    			],
+	    			'slope': nationalRatio-consistency/100,
+	    			'intercept': 0.001
+	    		}
+	    	);
+	    	
+	    	
+			var xAxisLabel;
+			if (result.type === "constant") xAxisLabel = "Average of previous periods";
+			else xAxisLabel = "Forecasted value";
+			
+	    	result.chartOptions = {
+	    	   	"chart": {
+	    	        "type": "scatterChart",
+	    	        "height": 400,
+	    	        "margin": {
+	    	          "top": 10,
+	    	          "right": 40,
+	    	          "bottom": 110,
+	    	          "left": 100
+	    	        },
+	    	        "scatter": {
+	    	        	"onlyCircles": false
+	    	        },
+	    	        "clipEdge": false,
+	    	        "staggerLabels": true,
+	    	        "transitionDuration": 1,
+	    	        "showDistX": true,
+	    	        "showDistY": true,
+	    	        "xAxis": {
+	    	              "axisLabel": xAxisLabel,
+	    	              "axisLabelDistance": 30,
+	    	              "tickFormat": d3.format('g')
+	    	        },
+	    	        "yAxis": {
+	    	        	"axisLabel": result.pe,
+	    	            "axisLabelDistance": 30,
+	    	            "tickFormat": d3.format('g')
+	    	        },
+	    	        'tooltips': true,
+	    	        'tooltipContent': toolTip
+	    	        
+	    	    },
+	    	    "title": {
+	    	    	'enable': true,
+	    	    	'text': result.dxName
+	    	    },
+	    	    "subtitle": {
+	    	    	'enable': false
+	    	    }
+	    	};
+	    	
+	    	result.chartData = chartSeries;
+	    }
+  	  	
+  	  		    
 	    function makeDataConsistencyChart(result) {	    		    	
 	    
 	    	var datapoints = result.subunitDatapoints;
@@ -484,6 +648,14 @@
 	    	      	'forceY': [Math.floor(minVal*10)/10, Math.ceil(maxVal*10)/10], 
 	    	    }
 	    	}
+	    }
+	    
+	    self.updateCharts = function() {
+	    	$timeout(function() {		
+	    		for (var i = 0; i < nv.graphs.length; i++) {
+	    			nv.graphs[i].update();
+	    		}
+	    	});
 	    }
 	    
 	    	    

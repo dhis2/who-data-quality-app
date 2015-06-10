@@ -1,10 +1,86 @@
 (function(){  
 	/**Service: Completeness*/
-	angular.module('dataQualityApp').service('visualisationService', ['periodService', 'requestService', function (periodService, requestService) {
+	angular.module('dataQualityApp').service('visualisationService', ['periodService', 'requestService', 'mathService', function (periodService, requestService, mathService) {
 	
 	  	
 	  	var self = this;
 		
+		
+		
+		self.lineChart = function (callback, dataIDs, periodIDs, orgunitIDs, type) {
+		
+			var requestURL = '/api/analytics.json?'
+			requestURL += "dimension=dx:" + dataIDs.join(';');
+			requestURL += "&dimension=pe:" + periodIDs.join(";");
+			requestURL += "&dimension=ou:" + orgunitIDs.join(";");
+						
+			requestService.getSingle(requestURL).then(function (response) {
+				
+				var data = response.data.rows;
+				var header = response.data.headers;
+				var names = response.data.metaData.names;
+				
+				var chartData = [];
+				var chartOptions;
+				if (type === 'dataOverTime') {
+					
+					if (orgunitIDs.length > 1) console.log("Warning: more than one orgunit for dataOverTime chart");
+					
+					for (var i = 0; i < dataIDs.length; i++) {
+						var chartSerie = {
+							'key': names[dataIDs[i]],
+							'values': []
+						}
+						
+						for (var j = 0; j < periodIDs.length; j++) {
+							var value = dataValue(header, data, dataIDs[i], periodIDs[j], orgunitIDs[0], null);
+							
+							chartSerie.values.push({
+								'x': j,
+								'y': mathService.round(value, 2)
+							});
+							
+						}
+						
+						chartData.push(chartSerie);
+					}
+			
+					
+					//Get XAxis labels = periods from series[0]
+					var periodNames = [];
+					for (var i = 0; i < periodIDs.length; i++) {
+						periodNames.push(periodService.shortPeriodName(periodIDs[i].toString()));
+					}
+
+					//Chart options		
+					chartOptions = {
+					   	"chart": {
+					        "type": "lineChart",
+					        "height": 400,
+					        "margin": {
+					          "top": 140,
+					          "right": 20,
+					          "bottom": 100,
+					          "left": 100
+					        },
+					        "xAxis": {
+					          'rotateLabels': -30,
+					          'tickFormat': function(d) {
+					          	return periodNames[d];
+					          }
+					        },
+					        'tooltips': true,
+					        'showLegend': true
+					    }
+					}
+				
+				}
+				
+				
+				callback(chartData, chartOptions);
+			});
+		}
+				
 		
 		/**
 		Line chart - parameter-based
@@ -519,6 +595,38 @@
 	  	  	  return chart;
 	  	  	});
 	  	}
+		
+		/*
+		Requires DHIS analytics data in json format. 
+		@param header			response header from analytics
+		@param dataValues		response rows from analytics
+		@param de, pe, ou, co	IDs
+		
+		@returns float of datavalue, or null if not found
+		*/
+		function dataValue(header, dataValues, de, pe, ou, co) {
+			var dxi, pei, oui, coi, vali;
+			for (var i = 0; i < header.length; i++) {
+				if (header[i].name === 'dx' && !header[i].hidden) dxi = i;
+				if (header[i].name === 'ou' && !header[i].hidden) oui = i;
+				if (header[i].name === 'pe' && !header[i].hidden) pei = i;
+				if (header[i].name === 'co' && !header[i].hidden) coi = i;
+				if (header[i].name === 'value' && !header[i].hidden) vali = i;
+			}
+			
+			var data;
+			for (var i = 0; i < dataValues.length; i++) {
+				data = dataValues[i];
+				if (
+					(dxi === undefined || data[dxi] === de) &&
+					(pei === undefined || data[pei] === pe.toString()) &&
+					(oui === undefined || data[oui] === ou) &&
+					(coi === undefined || data[coi] === co)
+				) return parseFloat(data[vali]);
+			}
+			
+			return null;		
+		}
 	  	
 	  	
 	  	return self;
