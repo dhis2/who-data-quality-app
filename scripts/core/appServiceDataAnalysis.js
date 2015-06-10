@@ -1001,7 +1001,7 @@
 			while (values.length > 0 && (values[0] === null || values[0]*5 < values[1])) {
 				var droppedValue = values.shift();
 				var droppedPeriod = refPe.shift();
-				errors.push({'type': "warning", 'type': "Consistency over time", 'item': names[dxID], 'msg': "Missing data: Ignoring " + droppedPeriod + " from consistency of completeness data due to low completeness (" + droppedValue + ")."});
+				errors.push({'type': "warning", 'type': "Consistency over time", 'item': names[dxID], 'msg': "Missing data: Ignoring " + droppedPeriod + " from consistency analysis due to low completeness (" + droppedValue + ")."});
 			}
 			
 			//Can we get consistency at all?
