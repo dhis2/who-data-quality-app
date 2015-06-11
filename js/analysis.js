@@ -25,6 +25,14 @@
 			self.alerts = [];		
 			self.dataDisaggregation = 0;
 	    	
+	    	
+	    	self.datasets = [];
+	    	self.datasetDataelements = undefined;
+	    	self.datasetSelected = undefined;
+	    	metaDataService.getDataSets().then(function(data) { 
+	    		self.datasets = data;
+	    	});
+	    	
 	    	self.dataElementGroups = [];
 	    	self.dataElementGroupsSelected = undefined;
 	    	metaDataService.getDataElementGroups().then(function(data) { 
@@ -356,7 +364,19 @@
 				}
 				
 			}
+			
+			
+			if (self.datasetSelected) {
+				dataIDs = [];
+				
+				for (var i = 0; i < self.datasetDataelements.length; i++) {
+					coFilter[self.datasetDataelements[i].id] = true;
+					dataIDs.push(self.datasetDataelements[i].dataElement.id);	
+				}
 					
+			}
+					
+			console.log(dataIDs);
 			
 			return {
 				'dataIDs': uniqueArray(dataIDs),
@@ -377,10 +397,27 @@
 		}
 		
 		
+		function getDatasetDataelements() {
+			
+			var requestURL = '/api/dataSets/' + self.datasetSelected.id + '.json?fields=compulsoryDataElementOperands[id,dataElement[id],categoryOptionCombo[id]]';
+			requestService.getSingle(requestURL).then(function (response) {
+				self.datasetDataelements = response.data.compulsoryDataElementOperands;
+				self.doAnalysis();
+			});
+		
+		}
+		
+		
+		
 		self.doAnalysis = function() {
 			
 			//Collapse open panels
 			$('.panel-collapse').removeClass('in');
+			
+			if (self.datasetSelected && !self.datasetDataelements) {
+				getDatasetDataelements();
+				return;
+			}
 			
 			var data = getDataForAnalysis();
 			var variables = data.dataIDs;
@@ -409,6 +446,9 @@
 			
 			console.log("Requesting data");
 			self.result = null;
+			
+			
+			
 			dataAnalysisService.outlier(receiveResultNew, variables, periods, orgunits, parameters);
 		};
 		

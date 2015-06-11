@@ -4,12 +4,32 @@
 <!-- PARAMETERS -->
 <accordion close-others="aCtrl.oneAtATime">
 
-    <accordion-group heading="Data" is-open="aCtrl.status.isFirstOpen">			
+
+	<!-- DATA -->
+    <accordion-group heading="Data" is-open="aCtrl.status.isFirstOpen">
+    
+    				
+		<!-- DATA SETS -->
 		<div>
+		<label>Data set</label><br />
+		<ui-select ng-model="aCtrl.datasetSelected"  style="margin-bottom: 10px; max-width: 470px;">
+		  <ui-select-match placeholder="Select data set...">
+		  	{{aCtrl.datasetSelected.name}}
+		  </ui-select-match>
+		  <ui-select-choices 
+		  	repeat="obj in aCtrl.datasets | filter: $select.search">
+		   		<div ng-bind-html="obj.name | highlight: $select.search"></div>
+		</ui-select-choices>
+		</ui-select>
+		</div>
+		
+		
+		<!-- DATA ELEMENTS -->
+		<div ng-if="!aCtrl.datasetSelected">
 		<div style="display: inline-block;">
     	<label>Data elements</label><br />
 		<ui-select ng-model="aCtrl.dataElementGroupsSelected"  style="margin-bottom: 10px; width: 330px;">
-		  <ui-select-match placeholder="Select data element group...">
+		  <ui-select-match allow-clear="true" placeholder="Select data element group...">
 		  	{{aCtrl.dataElementGroupsSelected.name}}
 		  </ui-select-match>
 		  <ui-select-choices 
@@ -33,7 +53,10 @@
 		  </ui-select-choices>
 		  </ui-select>
 		</div>
-		<div ng-show="aCtrl.analysisType != 'gap' && aCtrl.dataDisaggregation === 0">
+		
+		
+		<!-- INDICATORS -->
+		<div ng-if="!aCtrl.datasetSelected && aCtrl.dataDisaggregation === 0">
     	<label>Indicators</label><br />
     	<ui-select ng-model="aCtrl.indicatorGroupsSelected"  style="margin-bottom: 10px; max-width: 470px;">
     	  <ui-select-match placeholder="Select indicator group...">
@@ -57,6 +80,8 @@
 		</div>
     </accordion-group>
            
+           
+    <!-- PERIOD -->
     <accordion-group heading="Period">
 		<div class="btn-group btn-group-justified" style="margin-bottom: 10px; width: 306px;">
 			  <label class="btn btn-default" ng-model="aCtrl.periodOption" btn-radio="'last'">Recent</label>
@@ -64,7 +89,8 @@
 			  <label class="btn btn-default" ng-model="aCtrl.periodOption" btn-radio="'custom'">Custom</label>
 			</div>
 			
-			
+		
+		<!-- RECENT -->
 		<div style="margin-bottom: 15px;" ng-show="aCtrl.periodOption === 'last'">
 			<div style="display: inline-block;">
 				<ui-select ng-model="aCtrl.periodCountSelected"  style="margin-bottom: 10px; width: 106px;">
@@ -91,7 +117,7 @@
 		</div>
 		
 		
-		
+		<!-- BY YEAR -->
 		<div style="margin-bottom: 15px;" ng-show="aCtrl.periodOption === 'year'">
 			<div style="display: inline-block;">
 			<ui-select ng-model="aCtrl.periodTypeSelected"  style="margin-bottom: 10px; width: 196px;">
@@ -118,7 +144,7 @@
 			</div>
 		</div>		
 		
-		
+		<!-- CUSTOM -->
 		<div ng-show="aCtrl.periodOption === 'custom'">
 		<div style="margin-bottom: 10px;">
 		<ui-select ng-model="aCtrl.periodTypeSelected"  style="margin-bottom: 10px; width: 306px;">
@@ -144,6 +170,7 @@
 		</div>				
     </accordion-group>
     
+    <!-- ORGUNIT -->
     <accordion-group heading="Orgunit" is-open="status.open">
     	<label>Boundary</label><br />
     	<div class="btn-group" style="margin-bottom: 10px; max-width: 400px;">
@@ -170,6 +197,7 @@
 	    	
 		</div>  		    	
 		
+	<!-- DISAGGREGATION -->
        <label for="orgunitSelect">Disaggregation</label>
 		<div id="orgunitSelect">
 			<ui-select ng-disabled="aCtrl.orgunitGroupSelected" ng-model="aCtrl.orgunitLevelSelected"  style="margin-bottom: 10px; max-width: 470px;">
@@ -192,7 +220,9 @@
 				  </ui-select-choices>
 			</ui-select>
 		</div>
-
+		
+		
+		<!-- CURRENT SELECTION -->
 		<label for="orgunitSelected">Selected </label>
 		<div id="orgunitSelected">
 			<p><span style="font-size: 100%;" class="label label-primary">{{aCtrl.boundaryOrgunitSelected.name}}{{aCtrl.boundaryOrgunitSelected.text}}</span><span class="glyphicon glyphicon-chevron-right"></span><span style="font-size: 100%;" class="label label-primary">{{aCtrl.orgunitLevelSelected.name}}</span></p>
@@ -203,7 +233,6 @@
 			<br />
 		</div>
     </accordion-group>
-    
   </accordion>  	
   
 <button type="button" class="btn btn-primary pull-right" ng-click="aCtrl.doAnalysis();" style="margin-bottom:20px">Analyze</button>
