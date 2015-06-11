@@ -28,28 +28,28 @@
 	        function($routeProvider) {
 	            $routeProvider.
 	                when('/dashboard', {
-	                    templateUrl: 'app/dashboard/dashboard.html',
+	                    templateUrl: 'views/dashboard.html',
 	                    controller: 'DashboardController',
 	                    controllerAs: 'dashCtrl'
 	                }).
 	                when('/analysis', {
-	                    templateUrl: 'app/analysis/analysis.html',
+	                    templateUrl: 'views/analysis.html',
 	                    controller: 'AnalysisController',
 	                    controllerAs: 'aCtrl'
 	                }).
 	                when('/review', {
-	                    templateUrl: 'app/review/review.html',
+	                    templateUrl: 'views/review.html',
 	                    controller: 'ReviewController',
 	                    controllerAs: 'revCtrl'
 	                    
 	                }).
 	                when('/export', {
-	                    templateUrl: 'app/export/export.html',
+	                    templateUrl: 'views/export.html',
 	                    controller: 'ExportController',
 	                    controllerAs: 'exportCtrl'
 	                }).
 	                when('/admin', {
-	                    templateUrl: 'app/admin/admin.html',
+	                    templateUrl: 'views/admin.html',
 	                    controller: 'AdminController',
 	                    controllerAs: 'admCtrl'
 	                }).
