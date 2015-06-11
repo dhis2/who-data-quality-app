@@ -375,8 +375,6 @@
 				}
 					
 			}
-					
-			console.log(dataIDs);
 			
 			return {
 				'dataIDs': uniqueArray(dataIDs),
