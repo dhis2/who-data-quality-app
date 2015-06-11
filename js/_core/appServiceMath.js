@@ -55,6 +55,20 @@
 		}
 		
 		
+		self.MeanAD = function(valueSet, median) {
+		
+			if (!median) median = self.median(valueSet);
+			
+			var absoluteDeviations = [];
+			for (var i = 0; i < valueSet.length; i++) {
+				absoluteDeviations.push(Math.abs(valueSet[i]-median));	
+			}
+			
+			return self.getMean(absoluteDeviations);
+		
+		}
+		
+		
 		
 		
 		self.getStats = function (valueSet) {
@@ -73,13 +87,17 @@
 			
 			//Median Absolute Derivative
 			var MAD = self.MAD(valueSet, median);
+			
+			//Mean Absolute Deviation
+			var MeanAD = self.MAD(valueSet, median);
 		
 			return {
 				"mean": mean, 
 				"variance": variance, 
 				"sd": sd, 
 				"median": median,
-				"MAD": MAD
+				"MAD": MAD,
+				"MeanAD": MeanAD
 			};
 		
 		

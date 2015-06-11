@@ -4,29 +4,28 @@
 	
 	  	
 		var self = this;
+		
+		//"Fixed" variables
 		self.maxPendingRequests = 3;
-		
-		self.analysisQueue = [];
 		self.z = 0.6745;
+		self.zM = 0.7978846482;
 		
+		reset();
+		
+		//If something fails, reset
 		function reset() {
-			self.debugCount = 0;
-			self.analysisType = null;
-			self.result = null;
-			self.callback = null;	
+			self.analysisQueue = [];
 			
-			self.requestQueue = [];		//Queue with requests
-			self.pendingRequests = 0; //Pending requests
-
-			self.processQueue = [];		//Responses awainting processing
-			self.pendingProcessing = 0; //Responses pending processing
+			self.requests = {
+				'queue': [],
+				'pending': 0,
+				'max': self.maxPendingRequests
+			};
 			
-			self.variables = null;
-			self.periods = null;
-			self.orgunits = null;
-			self.parameters = null;
-			
-			self.inProgress = false;
+			self.process = {
+				'queue': [],
+				'pending': 0
+			}
 		}
 		
 		/**ANALYSIS JOB QUEUE*/
@@ -64,26 +63,15 @@
 			else if (queueItem.type === 'dataConsistency') {
 				dataConsistencyAnalysis(queueItem.parameters);
 			}
-			else {	
-				reset();
-				self.callback = queueItem.callback;
-				self.variables = queueItem.variables; 
-				self.periods = queueItem.periods; 
-				self.orgunits = queueItem.orgunits; 
-				self.parameters = queueItem.param;
-				self.analysisType = queueItem.type;					
-
-				if (self.analysisType === 'outlier') {
-					resetOutlierResult();
-					createOutlierRequests();
-				}
+			else if (queueItem.type === 'outlierGap') {	
+				outlierGapAnalysis(queueItem.parameters);
 			}
 		}
 		
 		
 		/** OUTLIER AND GAP ANALYSIS
 		@param callback			function to send result to
-		@param variables		array of data element, dataset or indicator IDs
+		@param variables		array of data element or indicator IDs
 		@param periods			array of periods in ISO format
 		@param orgunits			array of orgunit IDs
 		@param parameters		object with the following properties
@@ -94,14 +82,21 @@
 			.co				bool	whether or not include categoryoptions
 			.coFilter		array of strings of data element operands to include in result
 		*/
-		self.outlier = function (callback, variables, periods, orgunits, parameters) {
+		self.outlierGap = function (callback, dataIDs, coIDs, periods, ouBoundary, ouLevel, ouGroup, sScoreCriteria, zScoreCriteria, gapCriteria) {
 			var queueItem = {
-				'callback': callback,
-				'variables': variables,
-				'periods': periods, 
-				'orgunits': orgunits,
-				'param': parameters,
-				'type': 'outlier'
+				'parameters': {
+					'callback': callback,
+					'dataIDs': dataIDs,
+					'coIDs': coIDs, 
+					'periods': periods,
+					'ouBoundary': ouBoundary,
+					'ouGroup': ouGroup, 
+					'ouLevel': ouLevel,
+					'sScoreCriteria': sScoreCriteria,
+					'zScoreCriteria': zScoreCriteria,
+					'gapCriteria': gapCriteria
+				},
+				'type': 'outlierGap'
 			};
 			self.analysisQueue.push(queueItem);
 			
@@ -109,74 +104,66 @@
 		}
 		
 		
-		function createOutlierRequests() {
-			var baseRequest;
-			baseRequest = '/api/analytics.json?';
-			baseRequest += '&hideEmptyRows=true';
-			baseRequest += '&tableLayout=true';
-			baseRequest += '&dimension=pe:' + self.periods.join(';');
+		function outlierGapAnalysis(parameters) {
+			self.og = {};
+			//parameters
+			self.og.callback = parameters.callback;
+			self.og.dataIDs = parameters.dataIDs;
+			self.og.coIDs = parameters.coIDs;
+			self.og.periods = parameters.periods;
+			self.og.ouBoundary = parameters.ouBoundary;
+			self.og.ouGroup = parameters.ouGroup;
+			self.og.ouLevel = parameters.ouLevel;
+			self.og.sScoreCriteria = parameters.sScoreCriteria;
+			self.og.zScoreCriteria = parameters.zScoreCriteria;
+			self.og.gapCriteria = parameters.gapCriteria;
 			
-			//if many variables or categoryoptions => need to fetch one variable at the time to be safe
-			var splitData;
-			if (self.parameters.co) {
-				baseRequest += '&dimension=co';
-				baseRequest += '&columns=pe&rows=ou;dx;co';
-				splitData = true;
-			}
-			else if (self.variables.length > 10) {
-				baseRequest += '&columns=pe&rows=ou;dx';
-				splitData = true;
-			}
-			else {
-				baseRequest += '&columns=pe&rows=ou;dx';					
-				splitData = false;
-			}
-			
-			var request, requests = [];
-			for (var i = 0; i < self.orgunits.length; i++) {
-				request = baseRequest;
-				request += '&dimension=ou:' + self.orgunits[i];
-				if (self.parameters.OUgroup) {
-					request += ';OU_GROUP-' + self.parameters.OUgroup;
-				}
-				else if (self.parameters.OUlevel) {
-					request += ';LEVEL-' + self.parameters.OUlevel;					
-				}
-				
-				
-				if (splitData) {
-					for (var j = 0; j < self.variables.length; j++) {
-						requests.push(request + '&dimension=dx:' + self.variables[j]);
-					}
-				}
-				else {
-					requests.push(request + '&dimension=dx:' + self.variables.join(';'));
-				}
-			}
-			
-			for (var i = 0; i < requests.length; i++) {
-				self.requestQueue.push({
-					"url": requests[i],
-					"pending": false,
-					"done": false
-				});
-			}
-			
-			console.log(self.requestQueue.length + " requests in queue for this job");
-			
-			if (self.requestQueue.length === 0) self.inProgress = false;
-			
-			requestData();
-		}
-	
-	
-		function resetOutlierResult() {
-		
-			self.result = {
+			//result
+			self.og.result = {
 				"rows": [],
 				"aggregates": {},
 				"metaData": {}
 			};
+			
+			//make requests
+			var baseRequest;
+			baseRequest = '/api/analytics.json?';
+			baseRequest += '&hideEmptyRows=true';
+			baseRequest += '&tableLayout=true';
+			baseRequest += '&dimension=pe:' + self.og.periods.join(';');
+			baseRequest += '&dimension=ou:' + self.og.ouBoundary;
+			if (self.og.ouLevel) baseRequest += ';LEVEL-' + self.og.ouLevel;
+			else if (self.og.ouGroup) baseRequest += ';OU_GROUP-' + self.og.ouGroup;
+			
+			
+			//check whether to get categoryoptions or not
+			if (self.og.coIDs && self.og.coIDs.length > 0) {
+				baseRequest += '&dimension=co';
+				baseRequest += '&columns=pe&rows=ou;dx;co';
+			}
+			else {
+				baseRequest += '&columns=pe&rows=ou;dx';
+			}
+			
+			//add data ids
+			var dxID, request, requests = [];
+			for (var i = 0; i < self.og.dataIDs.length; i++) {
+
+				dxID = self.og.dataIDs[i];
+				
+				self.requests.queue.push({
+					"type": 'outlierGap',
+					"url": baseRequest + '&dimension=dx:' + dxID,
+					"pending": false,
+					"done": false
+				});
+			}
+						
+			console.log(self.requests.queue.length + " requests in queue for outlier and gap analysis");
+			
+			if (self.requests.queue.length === 0) self.inProgress = false;
+			
+			requestData();
 		}
 	
 		
@@ -187,9 +174,13 @@
 			var rows = data.data.rows;
 			var periods = data.data.metaData.pe;
 			
-			var SD = self.parameters.outlierLimit;
-			var maxGap = self.parameters.gapLimit;
+			var coIDs = self.og.coIDs;
 			
+			var sScoreCriteria = self.og.sScoreCriteria;
+			var zScoreCriteria = self.og.zScoreCriteria;
+			var gapCriteria = self.og.gapCriteria;
+			
+			var result = self.og.result;			
 			
 			//Get the index of the important columns
 			var ou, dx, co, valStart; 
@@ -216,223 +207,111 @@
 			
 						
 			//process the actual data
-			var row, value, valueSet, newRow, stats, lookForGap, gapCount, zScore;
+			var row, newRow;
 			for (var i = 0; i < rows.length; i++) {
 				row = rows[i];
 				
-				var dxID, filteredOut = false;
-				if (self.parameters.co) {
+				var dxID;
+				if (coIDs && coIDs.length > 0) {
 					 dxID = row[dx] + '.' + row[co];
-					 if (!self.parameters.coFilter[dxID]) filteredOut = true;
+					 if (!coIDs[dxID]) continue;
 				}
 				
 				
-				if (!filteredOut) {
-					newRow = {
-						"data": [],
-						"metaData": {
-							"ouName": names[row[ou]],
-							"ouID": row[ou],
-							"dxName": co != undefined ? names[row[dx]] + ' ' + names[row[co]] : names[row[dx]],
-							"dxID": co != undefined ? row[dx] + '.' + row[co] : row[dx],
-							"mean": undefined,
-							"var": undefined,
-							"maxZ": undefined,
-							"sd": undefined,
-							"gaps": 0,
-							"outliers": 0,
-							"peGap": [],
-							"peOut": [],
-							"gapWeight": 0,
-							"outWeight": 0
+				
+				newRow = {
+					"data": [],
+					"metaData": {
+						'ou': {
+							'name': names[row[ou]],
+							"id": row[ou]
+						},
+						'dx': {
+							"name": co != undefined ? names[row[dx]] + ' ' + names[row[co]] : names[row[dx]],
+							"id": co != undefined ? row[dx] + '.' + row[co] : row[dx]
 						}
-					};
-					
-					//Iterate to get all values, and look for gaps at the same time
-					valueSet = [];
-					for (var j = row.length-1; j >= valStart; j--) {
-					
-						value = row[j];
-						newRow.data.unshift(value);
-						
-						if (isNumber(value)) {
-							valueSet.push(parseFloat(value));
-						}
-						else {
-							newRow.metaData.peGap.push(periods[periods.length - (row.length - j)]);			
-							newRow.metaData.gaps++;
-						}
-						
+					},
+					'stats': {
+						"mean": undefined,
+						"median": undefined,
+						"MAD": undefined,
+						"sd": undefined,
+						"variance": undefined
+					},
+					'result': {
+						"maxSscore": 0,
+						"maxZscore": 0,
+						"gapWeight": 0,
+						"outWeight": 0,
+						"totalWeight": 0
 					}
+				};
+				
+				//Iterate to get all values, and look for gaps at the same time
+				var valueSet = [], gaps = 0;
+				for (var j = row.length-1; j >= valStart; j--) {
+					value = row[j];
+					newRow.data.unshift(value);
 					
-					//Calculate and store the statistical properties of the set
-					stats = mathService.getStats(valueSet);
-					newRow.metaData.mean = stats.mean;
-					newRow.metaData.var = stats.variance;
-					newRow.metaData.sd = stats.sd;
-					
-					newRow.metaData.maxZ = 0;
-					//Look for outliers
-					for (var j = row.length-1; j >= valStart; j--) {
-					
-						value = row[j];
-						if (isNumber(value)) {
-							value = parseFloat(value);
-							
-							//Calculate zScore
-							zScore = mathService.round(100*Math.abs((value-stats.mean)/stats.sd))/100;
-							if (zScore > newRow.metaData.maxZ) newRow.metaData.maxZ = zScore;
-							
-							//Check if outlier according to parameters
-							if (zScore >= SD) {
-								newRow.metaData.peOut.push(periods[periods.length - (row.length - j)]);					
-								newRow.metaData.outliers++;	
-							}
-						}
+					if (isNumber(value)) {
+						valueSet.push(parseFloat(value));
 					}
+					else {
+						gaps++;
+					}
+				}
+				
+				//Calculate and store the statistical properties of the set
+				newRow.stats = mathService.getStats(valueSet);
+				
+				//Look for outliers
+				var standardScore, zScore, maxSscore = 0, maxZscore = 0, outliers = 0;
+				for (var j = 0; j < valueSet.length; j++) {
+				
+					value = parseFloat(valueSet[j]);
 					
-					//check if row should be saved or discarded
-					//if (newRow.metaData.outliers > 0 || newRow.metaData.gaps >= maxGap) {
-						newRow.metaData.gapWeight = Math.floor(mathService.median(valueSet)*newRow.metaData.gaps);
-						newRow.metaData.outWeight = getOutlierWeight(valueSet, stats.mean, stats.sd);
-						self.result.rows.push(newRow);
-					//}
+					standardScore = Math.abs(calculateStandardScore(value, newRow.stats));
+					zScore = Math.abs(calculateZScore(value, newRow.stats));
+					
+					
+					if (standardScore > maxSscore) maxSscore = standardScore;
+					if (zScore > maxZscore) maxZscore = zScore;
+					
+					if (zScore >= zScoreCriteria || standardScore >= sScoreCriteria) {
+						outliers++;
+					}
+				}
+				
+				//check if row should be saved or discarded
+				if (outliers > 0 || gaps >= gapCriteria) {
+					newRow.result.gapWeight = mathService.round(gaps*newRow.stats.median, 0);
+					newRow.metaData.outWeight = getOutlierWeight(valueSet, newRow.stats);
+					
+					//Add to result set
+					result.rows.push(newRow);
 				}
 			}
 								
-			//Store result and mark as done, then request more data
+			//Mark batch of data as done, then request more for procesing
 			data.pending = false;
 			data.done = true;
-			self.pendingProcessing--;	
+			self.process.pending--;	
 			
-			if (processingDone()) {
-				outlierAggregatesAndMetaData();
+			if (processingDone('outlierGap')) {
+				result.metaData.names = names;
+				result.metaData.periods = periods;
+				
+				self.og.callback(self.og.result);
+				
+				self.inProgress = false;
+				nextAnalysis();
 			}
 			else {
 				processData();	
 			}
 		}
 		
-		
-		function getOutlierWeight(dataValueSet, mean, sd) {
-			
-			if (dataValueSet.length <= 1 || isNaN(sd) || (mean === 0 && sd === 0)) {
-				return 0;
-			}
-			
-			var normCount = 0, normSum = 0, total = 0;
-			for (var i = 0; i < dataValueSet.length; i++) {
-				var value = dataValueSet[i];
-				if (((value-mean)/sd) < 1.5) {
-					normSum += value;
-					normCount++;
-				}
-				total += value;
-			}
-			var normMean = normSum/normCount;
-			var expectedTotal = normMean * dataValueSet.length;
-			return mathService.round(total-expectedTotal);
-		}
-		
-		
-		function outlierAggregatesAndMetaData() {
-			
-			var ouGaps = {};
-			var ouOut = {};
-			var dxGaps = {};
-			var dxOut = {};
-			var peGaps = {};
-			var peOut = {};
-			
-			var dxPeOut = {};
 
-			//When iterating through all rows, make a name dictionary as well 
-			var names = {};
-			
-			for (var i = 0; i < self.periods.length; i++) {
-				peGaps[self.periods[i]] = 0;
-				peOut[self.periods[i]] = 0;			
-			}
-			
-			var meta;
-			for (var i = 0; i < self.result.rows.length; i++) {
-				meta = self.result.rows[i].metaData;
-								
-				//Get number of gaps per ou
-				if (ouGaps[meta.ouID]) ouGaps[meta.ouID] += meta.gaps;
-				else ouGaps[meta.ouID] = meta.gaps;
-
-				//Get number of outliers per ou
-				if (ouOut[meta.ouID]) ouOut[meta.ouID] += meta.outliers;
-				else ouOut[meta.ouID] = meta.outliers;
-								
-				//Get number of gaps per dx
-				if (dxGaps[meta.dxID]) dxGaps[meta.dxID] += meta.gaps;
-				else dxGaps[meta.dxID] = meta.gaps;
-				
-				//Get number of outliers per dx
-				if (dxOut[meta.dxID]) dxOut[meta.dxID] += meta.outliers;
-				else dxOut[meta.dxID] = meta.outliers;
-				
-				//Get number of gaps per pe
-				for (var j = 0; j < meta.peGap.length; j++) {
-					//Get number of gaps per pe
-					if (peGaps[meta.peGap[j]]) peGaps[meta.peGap[j]]++;
-					else peGaps[meta.peGap[j]] = 1;
-				}
-				
-				//Get number of outliers per pe
-				for (var j = 0; j < meta.peOut.length; j++) {
-					//Get number of outliers per pe
-					if (peOut[meta.peOut[j]]) peOut[meta.peOut[j]]++;
-					else peOut[meta.peOut[j]] = 1;
-					
-					//Get the number of outliers per dx AND pe
-					
-					if (dxPeOut[meta.dxID]) {
-						
-						dxPeOut[meta.dxID][meta.peOut[j]]++;
-						
-					}
-					else {
-						dxPeOut[meta.dxID] = {};
-						
-						for (var k = 0; k < self.periods.length; k++) {
-							dxPeOut[meta.dxID][self.periods[k]] = 0;
-						}
-						
-						dxPeOut[meta.dxID][meta.peOut[j]]++;
-					}
-					 	
-				}
-				
-				names[meta.ouID] = meta.ouName;
-				names[meta.dxID] = meta.dxName
-			}
-			
-			self.result.aggregates = {};
-			self.result.aggregates.ouGaps = ouGaps;
-			self.result.aggregates.ouOut = ouOut;
-			self.result.aggregates.dxGaps = dxGaps;
-			self.result.aggregates.dxOut = dxOut;
-			self.result.aggregates.peGaps = peGaps;
-			self.result.aggregates.peOut = peOut;
-			self.result.aggregates.dxPeOut = dxPeOut;
-			
-			self.result.metaData.names = names;
-			self.result.metaData.variables = self.variables;
-			self.result.metaData.periods = self.periods;
-			self.result.metaData.orgunits = self.orgunits;
-			self.result.metaData.parameters = self.parameters
-			
-			
-			self.callback(self.result);
-			
-			self.inProgress = false;
-			nextAnalysis();
-		}				
-		
-		
 		
 		/** DATASET COMPLETENESS ANALYSIS*/
 		/*
@@ -1393,23 +1272,62 @@
 		
 		}
 		
+		//standard (z) score
+		function calculateStandardScore(value, stats) {
+			
+			return mathService.round((value-stats.mean)/stats.sd, 2);	
+		
+		}
+		
+		//Modified Z score
+		function calculateZScore(value, stats) {
+		
+			if (stats.MAD === 0) {
+				return mathService.round((self.zM*(value-stats.median))/stats.MeanAD, 2);
+			}
+			else {
+				return mathService.round((self.z*(value-stats.median)/stats.MAD), 2);
+			}	
+		}
+		
+		
+		//Returns difference between current sum and what would be expected from mean of those values withing 1 SD 
+		function getOutlierWeight(valueSet, stats) {
+			
+			if (valueSet.length <= 1 || isNaN(stats.sd) || (stats.mean === 0 && stats.sd === 0)) {
+				return 0;
+			}
+			
+			var normCount = 0, normSum = 0, total = 0;
+			for (var i = 0; i < valueSet.length; i++) {
+				var value = valueSet[i];
+				if (((value-stats.mean)/stats.sd) < 1) {
+					normSum += value;
+					normCount++;
+				}
+				total += value;
+			}
+			var normMean = normSum/normCount;
+			var expectedTotal = normMean * valueSet.length;
+			return mathService.round(total-expectedTotal, 0);
+		}
 		
 		/** DATA REQUESTS QUEUING */
 		function requestData() {
 			var request = getNextRequest();
-			while (request && self.pendingRequests < self.maxPendingRequests) {
+			while (request && self.requests.pending < self.requests.max) {
 				
-				self.pendingRequests++;
+				self.requests.pending++;
 				request.pending = true;
 				requestService.getSingle(request.url).then(
 					//success
 					function(response) {
-					    self.pendingRequests--;
+					    self.requests.pending--;
 					    storeResponse(response);
 					}, 
 					//error
 					function(response) {
-					    self.pendingRequests--;
+					    self.requests.pending--;
 					    storeResponse(response);
 					}
 				);
@@ -1420,9 +1338,9 @@
 		
 	
 		function getNextRequest() {
-			for (var i = 0; i < self.requestQueue.length; i++) {
-				if (!self.requestQueue[i].pending && !self.requestQueue[i].done) {
-					return self.requestQueue[i];
+			for (var i = 0; i < self.requests.queue.length; i++) {
+				if (!self.requests.queue[i].pending && !self.requests.queue[i].done) {
+					return self.requests.queue[i];
 				}
 			}
 			return null;
@@ -1430,14 +1348,14 @@
 		
 		
 		function markRequestAsComplete(url) {
-			for (var i = 0; i < self.requestQueue.length; i++) {
-				if (url.indexOf(self.requestQueue[i].url) > -1) {
-					self.requestQueue[i].done = true;
-					self.requestQueue[i].pending = false;
-					return true;
+			for (var i = 0; i < self.requests.queue.length; i++) {
+				if (url.indexOf(self.requests.queue[i].url) > -1) {
+					self.requests.queue[i].done = true;
+					self.requests.queue[i].pending = false;
+					return self.requests.queue[i];
 				}
 			}
-			return false;
+			return null;
 		}
 			
 		
@@ -1450,16 +1368,18 @@
 			if (status != 200) {
 				//TODO: if too many values, split.. Make sure we don't get same data twice, if selections on multiple levels => self.orgunits = self.orgunit.children...
 				if (status === 409 && (data.indexOf("Table exceeds") > -1)) {
-					self.callback(null);
+					console.log("Query result too big");
+					reset();
 				}
 				else {
 					console.log("Error fetching data: " + response.statusText);
-					self.callback(null);
+					reset();
 				}
 			}
 			else {
 				//Mark item in queue as downloaded - discard if not there (which means it stems from different request
-				if (!markRequestAsComplete(response.config.url)) {
+				var request = markRequestAsComplete(response.config.url)
+				if (request === null) {
 					requestData();
 					return;
 				}
@@ -1468,7 +1388,8 @@
 				requestData();				
 				
 				//Queue data for processing
-				self.processQueue.push({
+				self.process.queue.push({
+					'type': request.type,
 					'data': response.data,
 					'pending': false,
 					'done': false
@@ -1482,14 +1403,12 @@
 		function processData() {
 			
 			var data = getNextData();
-			while (data && self.pendingProcessing < 1) {
+			while (data && self.process.pending < 1) {
 				
 				data.pending = true;
-				self.pendingProcessing++;
+				self.process.pending++;
 								
-				//TODO: check analysis type and forward to right method
-				if (self.type = "outlier") outlierAnalysis(data);
-								
+				if (data.type = "outlierGap") outlierAnalysis(data);
 
 				data = getNextData();
 			}
@@ -1498,24 +1417,25 @@
 		
 	
 		function getNextData() {
-			for (var i = 0; i < self.processQueue.length; i++) {
-				if (!self.processQueue[i].pending && !self.processQueue[i].done) {
-					return self.processQueue[i];
+			for (var i = 0; i < self.process.queue.length; i++) {
+				if (!self.process.queue[i].pending && !self.process.queue[i].done) {
+					return self.process.queue[i];
 				}
 			}
 			return null;
 		}
 		
 		
-		function processingDone() {
+		function processingDone(type) {
 						
-			//Check if all requests are done
-			for (var i = 0; i < self.requestQueue.length; i++) {
-				if (!self.requestQueue[i].done) return false;
+			//Check if all requests haver returned
+			for (var i = 0; i < self.requests.queue.length; i++) {
+				if (!self.requests.queue[i].done && self.requests.queue[i].type === type) return false;
 			}
 			
-			for (var i = 0; i < self.processQueue.length; i++) {
-				if (!self.processQueue[i].done) return false;
+			//Check if all processing is done
+			for (var i = 0; i < self.process.queue.length; i++) {
+				if (!self.requests.queue[i].done && self.requests.queue[i].type === type) return false;
 			}
 			
 			return true;
