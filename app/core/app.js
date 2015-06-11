@@ -17,38 +17,39 @@
 	      	);
 	    }
 	);
-	
+	 
 	/**Config*/
 	app.config(function(uiSelectConfig) {
-		uiSelectConfig.theme = 'bootstrap';
+		uiSelectConfig.theme = 'bootstrap'
+		uiSelectConfig.resetSearchInput = true;
 	});
 	
 	app.config(['$routeProvider',
 	        function($routeProvider) {
 	            $routeProvider.
 	                when('/dashboard', {
-	                    templateUrl: 'views/dashboard.html',
+	                    templateUrl: 'app/dashboard/dashboard.html',
 	                    controller: 'DashboardController',
 	                    controllerAs: 'dashCtrl'
 	                }).
 	                when('/analysis', {
-	                    templateUrl: 'views/analysis.html',
+	                    templateUrl: 'app/analysis/analysis.html',
 	                    controller: 'AnalysisController',
 	                    controllerAs: 'aCtrl'
 	                }).
 	                when('/review', {
-	                    templateUrl: 'views/review.html',
+	                    templateUrl: 'app/review/review.html',
 	                    controller: 'ReviewController',
 	                    controllerAs: 'revCtrl'
 	                    
 	                }).
 	                when('/export', {
-	                    templateUrl: 'views/export.html',
+	                    templateUrl: 'app/export/export.html',
 	                    controller: 'ExportController',
 	                    controllerAs: 'exportCtrl'
 	                }).
 	                when('/admin', {
-	                    templateUrl: 'views/admin.html',
+	                    templateUrl: 'app/admin/admin.html',
 	                    controller: 'AdminController',
 	                    controllerAs: 'admCtrl'
 	                }).

@@ -1,5 +1,6 @@
 <h3>Outlier and Gap Analysis</h3>
 
+
 <!-- PARAMETERS -->
 <accordion close-others="aCtrl.oneAtATime">
 
@@ -21,6 +22,7 @@
 				<label class="btn btn-default" ng-model="aCtrl.dataDisaggregation" btn-radio="0">Totals</label>
 		  		<label class="btn btn-default" ng-model="aCtrl.dataDisaggregation" btn-radio="1">Details</label>
 		</div>
+		
 		<ui-select multiple ng-if="aCtrl.dataElementGroupsSelected" ng-disabled="!aCtrl.dataElements" ng-model="aCtrl.dataElementsSelected" theme="bootstrap" style="margin-bottom: 10px; max-width: 470px;">
 		  <ui-select-match placeholder="{{aCtrl.dataElementPlaceholder}}">
 			  {{$item.name}}
@@ -146,11 +148,26 @@
     	<label>Boundary</label><br />
     	<div class="btn-group" style="margin-bottom: 10px; max-width: 400px;">
     	  	<label ng-repeat="orgunit in aCtrl.userOrgunits track by $index" class="btn btn-default" ng-model="aCtrl.boundarySelectionType" btn-radio="$index">{{orgunit.name}}</label>
-    	  	<label class="btn btn-default" ng-model="aCtrl.boundarySelectionType" btn-radio="aCtrl.userOrgunits.length">Manual</label>
+    	  	<label class="btn btn-default" ng-model="aCtrl.boundarySelectionType" btn-radio="aCtrl.userOrgunits.length">Search</label>
     	</div>
 		<br />	  
-		<div ng-show="aCtrl.userOrgunits.length === aCtrl.boundarySelectionType" style="margin-bottom: 10px; width: 330px; height: 330px; overflow: auto;">
-    	<div id="orgunitTree"></div>
+		<div ng-show="aCtrl.userOrgunits.length === aCtrl.boundarySelectionType" style="margin-bottom: 10px;">
+		
+	    	<ui-select 
+	    		style="margin-bottom: 10px; width: 470px;" 
+	    		ng-model="aCtrl.boundaryOrgunitSelected" 
+	    		on-select="aCtrl.filterLevels()">
+	    	<ui-select-match placeholder="Search for organisation unit...">
+	    		{{aCtrl.boundaryOrgunitSelected.name}}
+	    	</ui-select-match>
+	    	<ui-select-choices 
+	    		refresh="aCtrl.orgunitSearch($select.search)" 
+	    		refresh-delay="500" 
+	    		repeat="ou in aCtrl.ouSearchResult | filter: $select.search">
+	    		<div ng-bind-html="ou.name | highlight: $select.search"></div>
+	    	</ui-select-choices>
+	    	</ui-select>
+	    	
 		</div>  		    	
 		
        <label for="orgunitSelect">Disaggregation</label>
@@ -217,7 +234,7 @@
 </div>
 
 			<alert style="margin-top: 10px; margin-bottom: 10px;"ng-repeat="alert in aCtrl.alerts track by $index" type="{{alert.type}}" close="aCtrl.alerts.splice($index, 1)">{{alert.msg}}</alert>
-			<div style="margin-top: 10px; font-size: 90%;" class="table-responsive">
+			<div style="margin-top: 10px; font-size: 85%;" class="table-responsive">
 <table class="table table-bordered table-striped table-condensed table-hover">
 					
 			        

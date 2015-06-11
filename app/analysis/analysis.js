@@ -51,16 +51,14 @@
 	    	self.userOrgunits = [];
 	    	self.boundaryOrgunitSelected = undefined;
 	    	
-	    	metaDataService.getAnalysisOrgunits().then(function(data) { 
-	    		self.analysisOrgunits = data;
-	    		initOrgunitTree();
-	    	});
-	    	
+	    	self.ouSelected = null;
+	    	self.ouSearchResult = [];
+	    		    	
 	    	metaDataService.getUserOrgunits().then(function(data) { 
 	    		self.userOrgunits = data;
 	    		self.boundarySelectionType = 0;
 	    		self.boundaryOrgunitSelected = self.userOrgunits[0];
-	    		filterLevels();
+	    		self.filterLevels();
 	    	});
 	    	
 	    	
@@ -75,7 +73,8 @@
 	    			var level = self.orgunitLevels[i].level;
 	    			if (level > self.lowestLevel) self.lowestLevel = level;
 	    		}
-	    		filterLevels();
+	    		
+	    		self.filterLevels();
 	    	});
 	    	
 	    	
@@ -106,8 +105,6 @@
 	    	};
 	    	
 	    	self.periodOption = "last";
-	    	
-	    	
 	    	
 	    	self.baseStdDev = 1.5; //everything less will be ignored when making the request
 	    	self.baseGapLimit = 1; //everything less will be ignored when making the request
@@ -171,11 +168,8 @@
 						self.boundaryOrgunitSelected = self.userOrgunits[self.boundarySelectionType];
 					}
 					else {
-						self.boundaryOrgunitSelected = $('#orgunitTree').jstree('get_selected', true)[0].original;
-						if (self.orgunitLevelSelected && self.orgunitLevelSelected.level >= self.boundaryOrgunitSelected.level) {
-							self.orgunitLevelSelected = undefined;
-						}
-						
+						self.boundaryOrgunitSelected = undefined;
+						self.orgunitLevelSelected = undefined						
 					}
 				}
 			);
@@ -188,15 +182,14 @@
 							self.orgunitLevelSelected = undefined;
 						}
 						
-						filterLevels();
+						self.filterLevels();
 					}
 				}
 			);
 			
 			
 		}
-		
-		
+				
 		self.getLevelPlaceholder = function() {
 			if (!self.filteredOrgunitLevels || self.filteredOrgunitLevels.length === 0) {
 				if (self.boundaryOrgunitSelected && self.boundaryOrgunitSelected.level === self.lowestLevel) return "N/A";
@@ -207,99 +200,16 @@
 		}
 		
 		
-	    function initOrgunitTree() {
-			$('#orgunitTree').jstree({
-				"plugins" : [ "wholerow", "ui"],
-			    'core': {
-			    	'multiple' : false,
-		            'data': function (node, callback) {
-		            	
-		            	//Tree is empty - get first two levels right away
-		            	if (node.parent === null) {
-		      
-	            			var orgunitNodes = [];
-			
-							//Iterate over all the orgunit the user is assigned to (root(s))
-							for (var i = 0; i < self.analysisOrgunits.length; i++) {
-								var node = {
-									'id': self.analysisOrgunits[i].id, 
-									'text': self.analysisOrgunits[i].name,
-									'level': self.analysisOrgunits[i].level,
-									'children': [], 
-									'state': {
-										'opened': true
-									}
-								};
-								
-								//Add the children of the root(s) as well
-								for (var j = 0; j < self.analysisOrgunits[i].children.length; j++) {
-									node.children.push({
-										'id': self.analysisOrgunits[i].children[j].id,
-										'text': self.analysisOrgunits[i].children[j].name,
-										'level': self.analysisOrgunits[i].children[j].level,
-										'children': true
-									});
-									
-									node.children.sort(sortNodeByName);
-								}
-								
-								orgunitNodes.push(node);	
-							}
-
-							orgunitNodes.sort(sortNodeByName);
-							callback(orgunitNodes);
-		            	}
-			                	
-	                	//A leaf was clicked, need to get the next level
-	                	else {
-	                			                		
-	                		var requestURL = '/api/organisationUnits/' + node.id + '.json?';
-	                		requestURL += 'fields=children[name,id,level]';
-	                		
-	                		requestService.getSingle(requestURL).then(function(response) { 
-	                			var orgunits = response.data.children;
-	                			var children = [];
-	                			
-	                			var maxLevel = parseFloat(self.orgunitLevels[self.orgunitLevels.length-1].level);
-	                			var lowestLevel = false;
-	                			if (orgunits.length > 0) {
-	                				lowestLevel = (orgunits[0].level === maxLevel);
-	                			}
-	                			
-	                			for (var i = 0; i < orgunits.length; i++) {
-	                				children.push({
-	                					'id': orgunits[i].id,
-	                					'text': orgunits[i].name,
-	                					'level': orgunits[i].level,
-	                					'children': !lowestLevel
-	                				});
-	                			}
-	                			
-	                			children.sort(sortNodeByName);
-	                			callback(children);
-	                		});
-	                		
-	                		                		
-	                	} //end else
-	                }//end data
-		        }//end core
-		   	}).bind("select_node.jstree", function (NODE, REF_NODE) {
-		   		self.boundaryOrgunitSelected = REF_NODE.node.original;
-		   		$scope.$apply();
-		   	}).on("loaded.jstree", function() {
-		   		$('#orgunitTree').jstree('select_node', self.analysisOrgunits[0].id);
-		   	});
-		}
+	    self.orgunitSearch = function(searchString){
+	        if (searchString.length >= 3) {
+	    		var requestURL = "/api/organisationUnits.json?filter=name:like:" + searchString + "&paging=false&fields=name,id,level";
+	    		requestService.getSingle(requestURL).then(function (response) {
+	    			self.ouSearchResult = response.data.organisationUnits;
+	    		});
+	    	}
+	    }
 		
-		
-		function sortNodeByName(a, b) {
-			var aName = a.text.toLowerCase();
-			var bName = b.text.toLowerCase(); 
-			return ((aName < bName) ? -1 : ((aName > bName) ? 1 : 0));
-		
-		}
-	    
-	    
+	
 	    function updateDataElementList() {
 	   		self.dataElements = [];
 	   		self.dataElementsSelected = [];
@@ -339,7 +249,7 @@
   	    }
 			
 		
-		function filterLevels() {
+		self.filterLevels = function() {
 			self.filteredOrgunitLevels = [];
 			
 			if (!self.orgunitLevels || !self.boundaryOrgunitSelected) return;
@@ -562,7 +472,7 @@
         self.sendMessage = function(metaData) {
         	        	
         	var modalInstance = $modal.open({
-	            templateUrl: "scripts/modals/modalMessage.html",
+	            templateUrl: "app/analysis/modals/modalMessage.html",
 	            controller: "ModalMessageController",
 	            controllerAs: 'mmCtrl',
 	            resolve: {
@@ -678,13 +588,15 @@
 			//Calculate total number of columns in table
 			self.totalColumns = self.periods.length + 6;
 	    };
-	     
+	    
+	    
 	    self.isOutlier = function (value, mean, sd, lim) {
 	   		var z = (value-mean)/sd;
 	   		if (z >= self.stdDev) return true;
 	   		else if (z <= -self.stdDev) return true;
 	   		else return false;
 	   	}
+	   	
 	   		   	
 	   	function includeRow(row) {
 	   		
@@ -692,6 +604,7 @@
 	   		
 	   		return false;
 	   	}
+	   	
 	   	
 	   	self.updateFilter = function() {
 	   		self.filteredRows = [];
