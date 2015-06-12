@@ -11,7 +11,7 @@
 	    }
 	});
 	
-	app.controller("AnalysisController", function(metaDataService, periodService, requestService, dataAnalysisService, $scope, $modal) {
+	app.controller("AnalysisController", function(metaDataService, periodService, requestService, dataAnalysisService, mathService, $scope, $modal) {
 		var self = this;
 			    
 	    self.result = undefined;
@@ -20,11 +20,10 @@
 	        
 	    init();
 	    initWatchers();	    
-	    
+	    	    
 		function init() {		
 			self.alerts = [];		
 			self.dataDisaggregation = 0;
-	    	
 	    	
 	    	self.datasets = [];
 	    	self.datasetDataelements = undefined;
@@ -370,17 +369,16 @@
 				dataIDs = [];
 				
 				for (var i = 0; i < self.datasetDataelements.length; i++) {
-					coFilter[self.datasetDataelements[i].id] = true;
-					dataIDs.push(self.datasetDataelements[i].dataElement.id);	
+					dataIDs.push(self.datasetDataelements[i].id);	
 				}
-					
+								
 			}
 			
 			return {
 				'dataIDs': uniqueArray(dataIDs),
 				'details': details,  
-				'coFilter': coFilter
-				};
+				'coFilter': details ? coFilter : null
+			};
 		
 		
 		
@@ -397,9 +395,9 @@
 		
 		function getDatasetDataelements() {
 			
-			var requestURL = '/api/dataSets/' + self.datasetSelected.id + '.json?fields=compulsoryDataElementOperands[id,dataElement[id],categoryOptionCombo[id]]';
+			var requestURL = '/api/dataSets/' + self.datasetSelected.id + '.json?fields=dataElements[id]';
 			requestService.getSingle(requestURL).then(function (response) {
-				self.datasetDataelements = response.data.compulsoryDataElementOperands;
+				self.datasetDataelements = response.data.dataElements;
 				self.doAnalysis();
 			});
 		
@@ -412,42 +410,34 @@
 			//Collapse open panels
 			$('.panel-collapse').removeClass('in');
 			
+			
 			if (self.datasetSelected && !self.datasetDataelements) {
 				getDatasetDataelements();
 				return;
 			}
 			
 			var data = getDataForAnalysis();
-			var variables = data.dataIDs;
-
-			var parameters = {};
-			parameters.co = data.details;
-			parameters.coFilter = data.coFilter;
-			
-			
+			var variables = data.dataIDs;			
 			var periods = getPeriods();
 			
+			//If dataset, include all optioncombos
+			var coAll = false;
+			if (self.datasetSelected) coAll = true;
 			
-			var orgunits = [self.boundaryOrgunitSelected.id];
+			var ouGroup = null;
+			if (self.orgunitGroupSelected) ouGroup = self.orgunitGroupSelected.id;
+			
+			var ouLevel = null;
 			if (self.orgunitLevelSelected) {
-				parameters.OUlevel = self.orgunitLevelSelected.level;
-			}
-			else if (self.orgunitGroupSelected) {
-				parameters.OUgroup = self.orgunitGroupSelected.id;
+				ouLevel = self.orgunitLevelSelected.level;
+				console.log(self.boundaryOrgunitSelected);
 			}
 			
-			
-			parameters.outlierLimit = self.stdDev;
-			parameters.gapLimit = self.gapLimit;
-			parameters.lowLimit = self.thresholdLow;
-			parameters.highLimit = self.thresholdHigh;
-			
-			console.log("Requesting data");
 			self.result = null;
+						
+			dataAnalysisService.outlierGap(receiveResultNew, variables, coAll, data.coFilter, periods, self.boundaryOrgunitSelected.id, ouLevel, ouGroup, 2, 3.5, 1);
 			
-			
-			
-			dataAnalysisService.outlier(receiveResultNew, variables, periods, orgunits, parameters);
+			self.datasetDataelements = null;
 		};
 		
 		
@@ -455,7 +445,90 @@
 		/**
 		RESULTS
 		*/
-        //showDetails
+		
+		self.sortByColumn = function (columnKey) {
+			self.currentPage = 1;
+			if (self.sortCol === columnKey) {
+				self.reverse = !self.reverse;
+			}
+			else {
+				self.sortCol = columnKey;
+				self.reverse = true;
+			}
+		}
+		
+		
+		var receiveResultNew = function(result) {		    
+			    
+			if (!result || !result.rows || result.rows.length === 0) { 
+				console.log("Empty result");
+				self.alerts.push({type: 'warning', msg: 'No data!'});
+			}
+			else {
+				self.alerts = [];
+				console.log("Received " + result.rows.length + " rows");
+			}
+			
+			self.result = result;
+			
+			//Reset filter
+			self.stdDev = 2;
+			self.zScore = 3.5;
+			
+			self.updateFilter();
+			
+			//Default sort column
+			self.sortCol = 'result.totalWeight';
+			self.reverse = true;
+			
+			//Get nice period names
+			self.periods = [];
+			for (var i = 0; i < result.metaData.periods.length; i++) {
+				var period = result.metaData.periods[i];
+				self.periods.push(periodService.shortPeriodName(period));
+			}
+			
+			//Calculate total number of columns in table
+			self.totalColumns = self.periods.length + 8;
+		};
+		
+       	    
+	    self.isOutlier = function (value, stats) {
+	    	if (value === null || value === '') return false;
+	   		var standardScore = Math.abs(mathService.calculateStandardScore(value, stats));
+	   		var zScore = Math.abs(mathService.calculateZScore(value, stats));
+	   		
+	   		if (standardScore > self.stdDev || zScore > self.zScore) return true;
+	   		else return false;
+	   	}
+	   	
+	   		   	
+	   	function includeRow(row) {
+	   		
+	   		if (row.result.maxSscore >= self.stdDev) return true;
+	   		
+	   		return false;
+	   	}
+	   	
+	   	
+	   	self.updateFilter = function() {
+	   		self.filteredRows = [];
+	   		for (var i = 0; i < self.result.rows.length; i++) {
+	   			if (includeRow(self.result.rows[i])) {
+	   				self.filteredRows.push(self.result.rows[i]);
+	   			}
+	   		}
+	   		
+	   		//Store paging variables
+	   		self.currentPage = 1;
+	   		self.pageSize = 15;   	
+	   		self.totalRows = self.filteredRows.length;
+	   	}
+	   	
+	   	
+	   	/**INTERACTIVE FUNCTIONS*/
+	   	
+	   	//showDetails
         self.showDetails = function(row) {
 
 			$('#detailedResult').html('<div id="detailChart"><svg class="bigChart"></svg></div>');
@@ -589,74 +662,7 @@
         	
         	
         }
-                
-
-	    var receiveResultNew = function(result) {		    
-	    	    
-			if (!result) { 
-				console.log("Empty result");
-				self.alerts.push({type: 'warning', msg: 'No data!'});
-			}
-			else {
-				self.alerts = [];
-				console.log("Received " + result.rows.length + " rows");
-			}
-			
-			self.result = result;
-			
-			
-			//Reset filter
-			self.stdDev = 2;
-			self.gapLimit = 0;
-			
-			
-			self.updateFilter();
-			
-			//Default sort column
-			self.sortCol = 'metaData.outWeight';
-			self.reverse = true;
-			
-			//Get nice period names
-			self.periods = [];
-			for (var i = 0; i < result.metaData.periods.length; i++) {
-				var period = result.metaData.periods[i];
-				self.periods.push(periodService.shortPeriodName(period));
-			}
-			
-			//Calculate total number of columns in table
-			self.totalColumns = self.periods.length + 6;
-	    };
-	    
-	    
-	    self.isOutlier = function (value, mean, sd, lim) {
-	   		var z = (value-mean)/sd;
-	   		if (z >= self.stdDev) return true;
-	   		else if (z <= -self.stdDev) return true;
-	   		else return false;
-	   	}
-	   	
-	   		   	
-	   	function includeRow(row) {
-	   		
-	   		if (row.metaData.gaps >= self.gapLimit && row.metaData.maxZ >= self.stdDev) return true;
-	   		
-	   		return false;
-	   	}
-	   	
-	   	
-	   	self.updateFilter = function() {
-	   		self.filteredRows = [];
-	   		for (var i = 0; i < self.result.rows.length; i++) {
-	   			if (includeRow(self.result.rows[i])) {
-	   				self.filteredRows.push(self.result.rows[i]);
-	   			}
-	   		}
-	   		
-	   		//Store paging variables
-	   		self.currentPage = 1;
-	   		self.pageSize = 15;   	
-	   		self.totalRows = self.filteredRows.length;
-	   	}
+	   	        
 	   	 
     	    
 		return self;

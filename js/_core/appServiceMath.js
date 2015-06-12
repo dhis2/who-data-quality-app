@@ -4,6 +4,10 @@
 	  	
 		var self = this;
 		
+		self.z = 0.6745;
+		self.zM = 0.7978846482;
+		
+		
 		self.getMean = function(valueSet) {
 			var total = 0;
 			
@@ -131,6 +135,29 @@
 			}
 			var forecast = regression('linear', points);
 			return forecast.equation[0]*i + forecast.equation[1];
+		}
+		
+		
+		//standard (z) score
+		self.calculateStandardScore = function(value, stats) {
+			
+			return self.round((value-stats.mean)/stats.sd, 2);	
+		
+		}
+		
+		//Modified Z score
+		self.calculateZScore = function(value, stats) {
+			
+			if (stats.MAD === 0 && stats.MeanAD === 0) {
+				return 0;
+			}
+			else if (stats.MAD === 0) {
+				console.log(self.round((self.zM*(value-stats.median))/stats.MeanAD, 2));
+				return self.round((self.zM*(value-stats.median))/stats.MeanAD, 2);
+			}
+			else {
+				return self.round((self.z*(value-stats.median))/stats.MAD, 2);
+			}	
 		}
 		
 		

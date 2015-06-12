@@ -76,8 +76,6 @@
 	    		var encodedUri = encodeURI(csvContent);
 	    		window.open(encodedUri);
 	    		
-	    		
-	    		
 	    	});	
 	    	
 	    };

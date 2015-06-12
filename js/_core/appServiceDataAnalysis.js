@@ -6,11 +6,12 @@
 		var self = this;
 		
 		//"Fixed" variables
-		self.maxPendingRequests = 3;
-		self.z = 0.6745;
-		self.zM = 0.7978846482;
-		
+		self.maxPendingRequests = 3; //TODO: should be 1 on release to avoid killing server..
+
+				
 		reset();
+		
+		
 		
 		//If something fails, reset
 		function reset() {
@@ -25,12 +26,11 @@
 			self.process = {
 				'queue': [],
 				'pending': 0
-			}
+			}			
 		}
 		
 		/**ANALYSIS JOB QUEUE*/
 		function nextAnalysis() {
-			
 			if (self.inProgress) {	
 				return;
 			}			
@@ -40,8 +40,10 @@
 			
 			if (!queueItem) {
 				console.log("No more jobs in queue");
+				console.timeEnd("ANALYSIS");
 				return;
 			}
+			console.time("ANALYSIS");
 			
 			self.inProgress = true;
 			
@@ -82,11 +84,12 @@
 			.co				bool	whether or not include categoryoptions
 			.coFilter		array of strings of data element operands to include in result
 		*/
-		self.outlierGap = function (callback, dataIDs, coIDs, periods, ouBoundary, ouLevel, ouGroup, sScoreCriteria, zScoreCriteria, gapCriteria) {
+		self.outlierGap = function (callback, dataIDs, coAll, coIDs, periods, ouBoundary, ouLevel, ouGroup, sScoreCriteria, zScoreCriteria, gapCriteria) {
 			var queueItem = {
 				'parameters': {
 					'callback': callback,
 					'dataIDs': dataIDs,
+					'coAll': coAll,
 					'coIDs': coIDs, 
 					'periods': periods,
 					'ouBoundary': ouBoundary,
@@ -109,6 +112,7 @@
 			//parameters
 			self.og.callback = parameters.callback;
 			self.og.dataIDs = parameters.dataIDs;
+			self.og.coAll = parameters.coAll;
 			self.og.coIDs = parameters.coIDs;
 			self.og.periods = parameters.periods;
 			self.og.ouBoundary = parameters.ouBoundary;
@@ -137,7 +141,7 @@
 			
 			
 			//check whether to get categoryoptions or not
-			if (self.og.coIDs && self.og.coIDs.length > 0) {
+			if (self.og.coAll || self.og.coIDs) {
 				baseRequest += '&dimension=co';
 				baseRequest += '&columns=pe&rows=ou;dx;co';
 			}
@@ -159,7 +163,7 @@
 				});
 			}
 						
-			console.log(self.requests.queue.length + " requests in queue for outlier and gap analysis");
+			console.log(self.og.dataIDs.length + " requests in queue for outlier and gap analysis");
 			
 			if (self.requests.queue.length === 0) self.inProgress = false;
 			
@@ -174,6 +178,7 @@
 			var rows = data.data.rows;
 			var periods = data.data.metaData.pe;
 			
+			var coAll = self.og.coAll;
 			var coIDs = self.og.coIDs;
 			
 			var sScoreCriteria = self.og.sScoreCriteria;
@@ -212,7 +217,7 @@
 				row = rows[i];
 				
 				var dxID;
-				if (coIDs && coIDs.length > 0) {
+				if (!coAll && coIDs) {
 					 dxID = row[dx] + '.' + row[co];
 					 if (!coIDs[dxID]) continue;
 				}
@@ -270,9 +275,8 @@
 				
 					value = parseFloat(valueSet[j]);
 					
-					standardScore = Math.abs(calculateStandardScore(value, newRow.stats));
-					zScore = Math.abs(calculateZScore(value, newRow.stats));
-					
+					standardScore = Math.abs(mathService.calculateStandardScore(value, newRow.stats));
+					zScore = Math.abs(mathService.calculateZScore(value, newRow.stats));
 					
 					if (standardScore > maxSscore) maxSscore = standardScore;
 					if (zScore > maxZscore) maxZscore = zScore;
@@ -282,10 +286,19 @@
 					}
 				}
 				
+				newRow.result.maxSscore = maxSscore;
+				newRow.result.maxZscore = maxZscore;
+				
 				//check if row should be saved or discarded
 				if (outliers > 0 || gaps >= gapCriteria) {
-					newRow.result.gapWeight = mathService.round(gaps*newRow.stats.median, 0);
-					newRow.metaData.outWeight = getOutlierWeight(valueSet, newRow.stats);
+					if (outliers > 0) {
+						newRow.result.outWeight = getOutlierWeight(valueSet, newRow.stats);
+					}
+					if (gaps >= gapCriteria) {
+						newRow.result.gapWeight = mathService.round(gaps*newRow.stats.median, 0);
+					}
+
+					newRow.result.totalWeight = newRow.result.outWeight + newRow.result.gapWeight;
 					
 					//Add to result set
 					result.rows.push(newRow);
@@ -298,15 +311,42 @@
 			self.process.pending--;	
 			
 			if (processingDone('outlierGap')) {
-				result.metaData.names = names;
 				result.metaData.periods = periods;
 				
 				self.og.callback(self.og.result);
 				
+				var weights = {
+					'c0-100': 0,
+					'c100-500': 0,
+					'c500-1000': 0,
+					'c1000+': 0
+				};
+				var w;
+				for (var i = 0; i < result.rows.length; i++) {
+					w = result.rows[i].result.totalWeight;
+					if (w <= 100) {
+						weights['c0-100']++;
+					}
+					else if (w > 100 && w <= 500) {
+						weights['c100-500']++;
+					}
+					else if (w > 500 && w <= 1000) {
+						weights['c500-1000']++;
+					}
+					else {
+						weights['c1000+']++;
+					}
+				}
+				
+				console.log("Weight histogram:");
+				for (key in weights) {
+				    console.log(key + ": " + weights[key]);
+				}
+				
 				self.inProgress = false;
 				nextAnalysis();
 			}
-			else {
+			else {			 
 				processData();	
 			}
 		}
@@ -704,7 +744,7 @@
 					}
 					
 					//Modified Z-score
-					if ((self.z*(valueSet[j]-stats.median)/stats.MAD) > 3.5) {
+					if (mathService.calculateZScore(valueSet[i], stats) > 3.5) {
 						zCount++;
 						totalZscoreOutliers++;
 					}
@@ -1271,26 +1311,7 @@
 		
 		
 		}
-		
-		//standard (z) score
-		function calculateStandardScore(value, stats) {
-			
-			return mathService.round((value-stats.mean)/stats.sd, 2);	
-		
-		}
-		
-		//Modified Z score
-		function calculateZScore(value, stats) {
-		
-			if (stats.MAD === 0) {
-				return mathService.round((self.zM*(value-stats.median))/stats.MeanAD, 2);
-			}
-			else {
-				return mathService.round((self.z*(value-stats.median)/stats.MAD), 2);
-			}	
-		}
-		
-		
+				
 		//Returns difference between current sum and what would be expected from mean of those values withing 1 SD 
 		function getOutlierWeight(valueSet, stats) {
 			
@@ -1301,7 +1322,7 @@
 			var normCount = 0, normSum = 0, total = 0;
 			for (var i = 0; i < valueSet.length; i++) {
 				var value = valueSet[i];
-				if (((value-stats.mean)/stats.sd) < 1) {
+				if (Math.abs((value-stats.mean)/stats.sd) < 1) {
 					normSum += value;
 					normCount++;
 				}
@@ -1309,7 +1330,7 @@
 			}
 			var normMean = normSum/normCount;
 			var expectedTotal = normMean * valueSet.length;
-			return mathService.round(total-expectedTotal, 0);
+			return Math.abs(mathService.round(total-expectedTotal, 0));
 		}
 		
 		/** DATA REQUESTS QUEUING */
@@ -1338,6 +1359,7 @@
 		
 	
 		function getNextRequest() {
+
 			for (var i = 0; i < self.requests.queue.length; i++) {
 				if (!self.requests.queue[i].pending && !self.requests.queue[i].done) {
 					return self.requests.queue[i];
@@ -1350,8 +1372,11 @@
 		function markRequestAsComplete(url) {
 			for (var i = 0; i < self.requests.queue.length; i++) {
 				if (url.indexOf(self.requests.queue[i].url) > -1) {
+					
+					self.requests.queue[i].url = null; //make sure we delete this, to avoid duplicate matches
 					self.requests.queue[i].done = true;
 					self.requests.queue[i].pending = false;
+					
 					return self.requests.queue[i];
 				}
 			}
@@ -1417,6 +1442,7 @@
 		
 	
 		function getNextData() {
+
 			for (var i = 0; i < self.process.queue.length; i++) {
 				if (!self.process.queue[i].pending && !self.process.queue[i].done) {
 					return self.process.queue[i];
@@ -1430,12 +1456,16 @@
 						
 			//Check if all requests haver returned
 			for (var i = 0; i < self.requests.queue.length; i++) {
-				if (!self.requests.queue[i].done && self.requests.queue[i].type === type) return false;
+				if (!self.requests.queue[i].done && self.requests.queue[i].type === type) {
+					return false;
+				}
 			}
 			
 			//Check if all processing is done
 			for (var i = 0; i < self.process.queue.length; i++) {
-				if (!self.requests.queue[i].done && self.requests.queue[i].type === type) return false;
+				if (!self.requests.queue[i].done && self.requests.queue[i].type === type) {
+					return false;
+				}
 			}
 			
 			return true;
