@@ -1,7 +1,7 @@
 
 (function(){
 	
-	var app = angular.module('completenessAnalysis', []);
+	var app = angular.module('outlierGapAnalysis', []);
 	
 	app.filter('startFrom', function() {
 	    return function(input, start) {
@@ -11,7 +11,7 @@
 	    }
 	});
 	
-	app.controller("AnalysisController", function(metaDataService, periodService, requestService, dataAnalysisService, mathService, $scope, $modal) {
+	app.controller("OutlierGapAnalysisController", function(metaDataService, periodService, requestService, dataAnalysisService, mathService, $scope, $modal) {
 		var self = this;
 			    
 	    self.result = undefined;
@@ -111,14 +111,7 @@
 	    		"endDate": moment()
 	    	};
 	    	
-	    	self.periodOption = "last";
-	    	
-	    	self.baseStdDev = 1.5; //everything less will be ignored when making the request
-	    	self.baseGapLimit = 1; //everything less will be ignored when making the request
-	    	
-	    	self.stdDev = 2;
-	    	self.gapLimit = 0;
-	    	
+	    	self.periodOption = "last";	    	
 	    	
 	    	self.onlyNumbers = /^\d+$/;	    	
 	    	self.userOrgunitLabel = "";
@@ -430,7 +423,7 @@
 			var ouLevel = null;
 			if (self.orgunitLevelSelected) {
 				ouLevel = self.orgunitLevelSelected.level;
-				console.log(self.boundaryOrgunitSelected);
+				console.log("Depth: " + (ouLevel-self.boundaryOrgunitSelected.level));
 			}
 			
 			self.result = null;
@@ -472,8 +465,8 @@
 			self.result = result;
 			
 			//Reset filter
-			self.stdDev = 2;
-			self.zScore = 3.5;
+			self.stdFilterType = 0;
+			self.stdFilterDegree = 1;
 			
 			self.updateFilter();
 			
@@ -495,17 +488,28 @@
        	    
 	    self.isOutlier = function (value, stats) {
 	    	if (value === null || value === '') return false;
+	    	
 	   		var standardScore = Math.abs(mathService.calculateStandardScore(value, stats));
 	   		var zScore = Math.abs(mathService.calculateZScore(value, stats));
 	   		
-	   		if (standardScore > self.stdDev || zScore > self.zScore) return true;
+	   		if (standardScore > 2 || zScore > 3.5) return true;
 	   		else return false;
 	   	}
 	   	
 	   		   	
 	   	function includeRow(row) {
 	   		
-	   		if (row.result.maxSscore >= self.stdDev) return true;
+	   		if (self.stdFilterType === 0) return true;
+	   		
+	   		if (self.stdFilterType === 1) {
+	   			if (self.stdFilterDegree === 2) return row.result.maxSscore > 3;
+	   			else return row.result.maxSscore > 2;
+	   		}
+	   		
+   			if (self.stdFilterType === 2) {
+   				if (self.stdFilterDegree === 2) return row.result.maxZscore > 5;
+   				else return row.result.maxZscore > 3.5;
+   			} 
 	   		
 	   		return false;
 	   	}
@@ -523,6 +527,30 @@
 	   		self.currentPage = 1;
 	   		self.pageSize = 15;   	
 	   		self.totalRows = self.filteredRows.length;
+	   	}
+	   	
+	   	
+	   	self.exportCSV = function() {
+			  
+			  var csvContent = "data:text/csv;charset=utf-8,";
+			  var string;
+			  var i = 0;
+			  self.result.rows.forEach(function(row, index){
+			  	 string = row.metaData.ou.name + ";";
+			  	 string += row.metaData.dx.name + ";";
+			     string += row.data.join(";") + ";";
+			     string += row.result.maxSscore + ";";
+			     string += row.result.maxZscore + ";";
+			     string += row.result.gapWeight + ";";
+			     string += row.result.outWeight + ";";
+			     string += row.result.totalWeight + ";";
+			     csvContent += index < self.result.rows.length ? string+ "\n" : string;
+			     if (i % 10 === 0) console.log(i++);
+			  });
+			  
+			  var encodedUri = encodeURI(csvContent);
+			  window.open(encodedUri);
+	   	
 	   	}
 	   	
 	   	

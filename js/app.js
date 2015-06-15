@@ -1,6 +1,6 @@
 
 (function(){
-  var app = angular.module('dataQualityApp', ['ngRoute', 'dashboard', 'reportCard', 'completenessAnalysis', 'dataExport', 'admin', 'ui.select', 'ngSanitize', 'ui.bootstrap', 'nvd3']);
+  var app = angular.module('dataQualityApp', ['ngRoute', 'dashboard', 'reportCard', 'consistencyAnalysis', 'outlierGapAnalysis', 'dataExport', 'admin', 'ui.select', 'ngSanitize', 'ui.bootstrap', 'nvd3']);
     
 	/**Bootstrap*/
 	angular.element(document).ready( 
@@ -32,9 +32,14 @@
 	                    controller: 'DashboardController',
 	                    controllerAs: 'dashCtrl'
 	                }).
-	                when('/analysis', {
-	                    templateUrl: 'views/analysis.html',
-	                    controller: 'AnalysisController',
+	                when('/consistency', {
+	                    templateUrl: 'views/consistencyAnalysis.html',
+	                    controller: 'ConsistencyAnalysisController',
+	                    controllerAs: 'aCtrl'
+	                }).
+	                when('/outlier_gap', {
+	                    templateUrl: 'views/outlierGapAnalysis.html',
+	                    controller: 'OutlierGapAnalysisController',
 	                    controllerAs: 'aCtrl'
 	                }).
 	                when('/review', {

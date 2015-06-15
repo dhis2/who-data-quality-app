@@ -1,0 +1,433 @@
+<h3>Consistency Analysis</h3>
+
+
+<!-- PARAMETERS -->
+<accordion close-others="aCtrl.oneAtATime">
+
+	
+	<!-- DATA -->
+	<accordion-group heading="Analysis Type" is-open="aCtrl.status.isFirstOpen">
+		<label>Consistency Analysis Type</label><br />
+		<div class="btn-group btn-group-justified" style="width: 300px; display: inline-block; margin-bottom: 10px;">
+				<label class="btn btn-default" ng-model="aCtrl.consistencyType" btn-radio="'relation'">Between Indicators</label>
+		  		<label class="btn btn-default" ng-model="aCtrl.consistencyType" btn-radio="'time'">Over Time</label>
+		</div>
+		
+		<div ng-if="aCtrl.consistencyType === 'relation'">		
+		<label>Expected relationship</label><br />
+		<div class="btn-group btn-group-justified" style="width: 300px; display: inline-block; margin-bottom: 10px;">
+				<label class="btn btn-default" ng-model="aCtrl.relationshipType" btn-radio="'eq'">A ≈ B</label>
+		  		<label class="btn btn-default" ng-model="aCtrl.relationshipType" btn-radio="'aGTb'">A > B</label>
+		  		<label class="btn btn-default" ng-model="aCtrl.relationshipType" btn-radio="'do'">Dropout rate</label>
+		</div>
+		</div>
+		
+		<div ng-if="aCtrl.consistencyType === 'time'">		
+		<label>Expected trend</label><br />
+		<div class="btn-group btn-group-justified" style="width: 300px; display: inline-block; margin-bottom: 10px;">
+				<label class="btn btn-default" ng-model="aCtrl.trendType" btn-radio="'constant'">Constant</label>
+		  		<label class="btn btn-default" ng-model="aCtrl.trendType" btn-radio="'increase'">Increasing/decreasing</label>
+		</div>
+		</div>
+		
+		<div style="margin-bottom: 10px;" ng-if="aCtrl.relationshipType != 'do' || aCtrl.consistencyType === 'time'">		
+		<label>Criteria</label><br />
+			+/- <input type="number" style="text-align: right;" ng-model="aCtrl.consistencyCriteria" min="0" max="50"/> %
+		</div>
+	
+	</accordion-group>	
+	
+	<!-- DATA -->
+    <accordion-group heading="Data">
+    
+    	<h4 ng-if="aCtrl.consistencyType === 'relation'">Indicator/Data element A</h4>		
+		
+		
+		<!-- DATA A -->
+		<div class="btn-group btn-group-justified" style="width: 470px; margin-bottom: 10px;">
+			<label class="btn btn-default" ng-model="aCtrl.dataSelection.a.type" btn-radio="'de'">Data element</label>
+		  	<label class="btn btn-default" ng-model="aCtrl.dataSelection.a.type" btn-radio="'ind'">Indicator</label>
+		</div>
+		
+		<!-- DATA ELEMENTS A-->
+		<div ng-if="aCtrl.dataSelection.a.type === 'de'">
+		<div style="display: inline-block;">
+	    	<label>Data element</label><br />
+			<ui-select 
+				on-select="aCtrl.updateDataElementList('a')" 
+				ng-model="aCtrl.dataSelection.a.deGroupSelected"
+				style="margin-bottom: 10px; width: 330px;">
+				<ui-select-match placeholder="Select data element group...">
+			  		{{aCtrl.dataSelection.a.deGroupSelected.name}}
+			  	</ui-select-match>
+			 	<ui-select-choices 
+			  		repeat="obj in aCtrl.dataSelection.deGroups | filter: $select.search">
+					<div ng-bind-html="obj.name | highlight: $select.search"></div>
+				</ui-select-choices>
+			</ui-select>
+		</div>
+		<div class="btn-group btn-group-justified"   style="width: 120px; display: inline-block;">
+				<label class="btn btn-default" ng-change="aCtrl.updateDataElementList('a')" ng-model="aCtrl.dataDisaggregation" btn-radio="0">Totals</label>
+		  		<label class="btn btn-default" ng-change="aCtrl.updateDataElementList('a')" ng-model="aCtrl.dataDisaggregation" btn-radio="1">Details</label>
+		</div>
+		
+		<ui-select 
+			ng-if="aCtrl.dataSelection.a.deGroupSelected" 
+			ng-disabled="!aCtrl.dataSelection.a.de" 
+			ng-model="aCtrl.dataSelection.a.deSelected" 
+			style="margin-bottom: 10px; max-width: 470px;">
+			<ui-select-match placeholder="{{aCtrl.dataSelection.a.deText}}">
+				{{aCtrl.dataSelection.a.deSelected.name}}
+		  	</ui-select-match>
+			<ui-select-choices 
+		  		repeat="obj in aCtrl.dataSelection.a.de | filter: $select.search">
+		   		<div ng-bind-html="obj.name | highlight: $select.search"></div>
+			</ui-select-choices>
+		</ui-select>
+		</div>
+		
+		<!-- INDICATORS A -->
+		<div ng-if="aCtrl.dataSelection.a.type === 'ind'">
+	    	<label>Indicator</label><br />
+	    	<ui-select 
+	    		on-select="aCtrl.updateIndicatorList('a')" 
+	    		ng-model="aCtrl.dataSelection.a.indGroupSelected"  
+	    		style="margin-bottom: 10px; max-width: 470px;">
+	    		<ui-select-match placeholder="Select indicator group...">
+	    	  		{{aCtrl.dataSelection.a.indGroupSelected.name}}
+				</ui-select-match>
+	    		<ui-select-choices
+	    	  		repeat="obj in aCtrl.dataSelection.indGroups | filter: $select.search">
+	    	   		<div ng-bind-html="obj.name | highlight: $select.search"></div>
+	    		</ui-select-choices>
+	   		</ui-select>
+	    	
+			<ui-select 
+				ng-if="aCtrl.dataSelection.a.indGroupSelected" 
+				ng-disabled="!aCtrl.dataSelection.a.ind || aCtrl.dataSelection.a.ind.length === 0" 
+				ng-model="aCtrl.dataSelection.a.indSelected"  
+				style="margin-bottom: 10px; max-width: 470px;">
+				<ui-select-match placeholder="{{aCtrl.dataSelection.a.indText}}">
+			  		{{aCtrl.dataSelection.a.indSelected.name}}
+				</ui-select-match>
+				<ui-select-choices 
+			  		repeat="obj in aCtrl.dataSelection.a.ind | filter: $select.search">
+			   		<div ng-bind-html="obj.name | highlight: $select.search"></div>
+				</ui-select-choices>
+			</ui-select>
+		</div>
+		
+		
+		
+		<!-- DATA B -->
+		<div style="margin-top: 20px;" ng-if="aCtrl.consistencyType === 'relation'">
+	   	<h4 >Indicator/Data element A</h4>	
+		<div class="btn-group btn-group-justified" style="width: 470px; margin-bottom: 10px;">
+			<label class="btn btn-default" ng-model="aCtrl.dataSelection.b.type" btn-radio="'de'">Data element</label>
+		  	<label class="btn btn-default" ng-model="aCtrl.dataSelection.b.type" btn-radio="'ind'">Indicator</label>
+		</div>
+		
+		<!-- DATA ELEMENTS B-->
+		<div ng-if="aCtrl.dataSelection.b.type === 'de'">
+		<div style="display: inline-block;">
+			<label>Data element</label><br />
+			<ui-select 
+				on-select="aCtrl.updateDataElementList('b')" 
+				ng-model="aCtrl.dataSelection.b.deGroupSelected"
+				style="margin-bottom: 10px; width: 330px;">
+				<ui-select-match placeholder="Select data element group...">
+			  		{{aCtrl.dataSelection.b.deGroupSelected.name}}
+			  	</ui-select-match>
+			 	<ui-select-choices 
+			  		repeat="obj in aCtrl.dataSelection.deGroups | filter: $select.search">
+					<div ng-bind-html="obj.name | highlight: $select.search"></div>
+				</ui-select-choices>
+			</ui-select>
+		</div>
+		<div class="btn-group btn-group-justified"   style="width: 120px; display: inline-block;">
+				<label class="btn btn-default" ng-change="aCtrl.updateDataElementList('b')" ng-model="aCtrl.dataDisaggregation" btn-radio="0">Totals</label>
+		  		<label class="btn btn-default" ng-change="aCtrl.updateDataElementList('b')" ng-model="aCtrl.dataDisaggregation" btn-radio="1">Details</label>
+		</div>
+		
+		<ui-select 
+			ng-if="aCtrl.dataSelection.b.deGroupSelected" 
+			ng-disabled="!aCtrl.dataSelection.b.de" 
+			ng-model="aCtrl.dataSelection.b.deSelected" 
+			style="margin-bottom: 10px; max-width: 470px;">
+			<ui-select-match placeholder="{{aCtrl.dataSelection.b.deText}}">
+				{{aCtrl.dataSelection.b.deSelected.name}}
+		  	</ui-select-match>
+			<ui-select-choices 
+		  		repeat="obj in aCtrl.dataSelection.b.de | filter: $select.search">
+		   		<div ng-bind-html="obj.name | highlight: $select.search"></div>
+			</ui-select-choices>
+		</ui-select>
+		</div>
+		
+		<!-- INDICATORS B -->
+		<div ng-if="aCtrl.dataSelection.b.type === 'ind'">
+			<label>Indicator</label><br />
+			<ui-select 
+				on-select="aCtrl.updateIndicatorList('b')" 
+				ng-model="aCtrl.dataSelection.b.indGroupSelected"  
+				style="margin-bottom: 10px; max-width: 470px;">
+				<ui-select-match placeholder="Select indicator group...">
+			  		{{aCtrl.dataSelection.b.indGroupSelected.name}}
+				</ui-select-match>
+				<ui-select-choices
+			  		repeat="obj in aCtrl.dataSelection.indGroups | filter: $select.search">
+			   		<div ng-bind-html="obj.name | highlight: $select.search"></div>
+				</ui-select-choices>
+				</ui-select>
+			
+			<ui-select 
+				ng-if="aCtrl.dataSelection.b.indGroupSelected" 
+				ng-disabled="!aCtrl.dataSelection.b.ind || aCtrl.dataSelection.b.ind.length === 0" 
+				ng-model="aCtrl.dataSelection.b.indSelected"  
+				style="margin-bottom: 10px; max-width: 470px;">
+				<ui-select-match placeholder="{{aCtrl.dataSelection.b.indText}}">
+			  		{{aCtrl.dataSelection.b.indSelected.name}}
+				</ui-select-match>
+				<ui-select-choices 
+			  		repeat="obj in aCtrl.dataSelection.b.ind | filter: $select.search">
+			   		<div ng-bind-html="obj.name | highlight: $select.search"></div>
+				</ui-select-choices>
+			</ui-select>
+		</div>
+		</div>
+    </accordion-group>
+    
+    
+    <!-- PERIOD -->
+    <accordion-group heading="Period">
+    	
+    	<h4 ng-if="aCtrl.consistencyType === 'time'">Period</h4>
+    	<div style="display: inline-block;">
+    		<label>Period type</label><br />
+    		<div style="display: inline-block;">
+    		<ui-select on-select="aCtrl.getPeriodsInYear();" ng-model="aCtrl.periodTypeSelected"  style="margin-bottom: 10px; width: 200px;">
+    		  <ui-select-match placeholder="Select period type...">
+    		  	{{aCtrl.periodTypeSelected.name}}
+    		  </ui-select-match>
+    		  <ui-select-choices 
+    		  	repeat="obj in aCtrl.periodTypes | filter: $select.search">
+    		   		<div ng-bind-html="obj.name | highlight: $select.search"></div>
+    		  </ui-select-choices>
+    		</ui-select>
+    		</div>
+    	</div>
+    	
+    	<div style="display: inline-block;">
+    		<label>Year</label><br />
+    		<div style="display: inline-block;">
+    		<ui-select on-select="aCtrl.getPeriodsInYear();" ng-model="aCtrl.yearSelected"  style="margin-bottom: 10px; width: 200px;">
+    		  <ui-select-match placeholder="Select year...">
+    		  	{{aCtrl.yearSelected.name}}
+    		  </ui-select-match>
+    		  <ui-select-choices 
+    		  	repeat="obj in aCtrl.years | filter: $select.search">
+    		   		<div ng-bind-html="obj.name | highlight: $select.search"></div>
+    		  </ui-select-choices>
+    		</ui-select>
+    		</div>
+    	
+    	</div>
+    	
+    	<div ng-if="aCtrl.periodTypeSelected.id != 'Yearly'" style="display: inline-block;">
+    		<label>Period</label><br />
+    		<div style="display: inline-block;">
+    		<ui-select ng-model="aCtrl.periodSelected"  style="margin-bottom: 10px; width: 200px;">
+    		  <ui-select-match placeholder="Select period...">
+    		  	{{aCtrl.yearSelected.name}}
+    		  </ui-select-match>
+    		  <ui-select-choices 
+    		  	repeat="obj in aCtrl.periodsInYear | filter: $select.search">
+    		   		<div ng-bind-html="obj.name | highlight: $select.search"></div>
+    		  </ui-select-choices>
+    		</ui-select>
+    		</div>
+    	
+    	</div>
+    	
+    	<div ng-if="aCtrl.consistencyType === 'time'">
+    		
+    			<h4>Reference periods</h4>
+    		<label>No. of Preceding periods</label><br />
+    		<div style="display: inline-block;">
+    			<ui-select ng-model="aCtrl.periodCountSelected"  style="margin-bottom: 10px; width: 200px;">
+    			  <ui-select-match placeholder="Select number of periods...">
+    			  	{{aCtrl.periodCountSelected.name}}
+    			  </ui-select-match>
+    			  <ui-select-choices 
+    			  	repeat="obj in aCtrl.periodCounts | filter: $select.search">
+    			   		<div ng-bind-html="obj.name | highlight: $select.search"></div>
+    			  </ui-select-choices>
+    			</ui-select>
+    		</div>    	
+    	</div>
+    	
+    </accordion-group>
+    
+    <!-- ORGUNIT -->
+    <accordion-group heading="Orgunit" is-open="status.open">
+    	<label>Boundary</label><br />
+    	<div class="btn-group" style="margin-bottom: 10px; max-width: 400px;">
+    	  	<label ng-repeat="orgunit in aCtrl.userOrgunits track by $index" class="btn btn-default" ng-model="aCtrl.boundarySelectionType" ng-change="aCtrl.orgunitUserModeSelected();" btn-radio="$index">{{orgunit.name}}</label>
+    	  	<label class="btn btn-default" ng-change="aCtrl.orgunitSearchModeSelected();" ng-model="aCtrl.boundarySelectionType" btn-radio="aCtrl.userOrgunits.length">Search</label>
+    	</div>
+		<br />	  
+		<div ng-show="aCtrl.userOrgunits.length === aCtrl.boundarySelectionType" style="margin-bottom: 10px;">
+		
+	    	<ui-select 
+	    		style="margin-bottom: 10px; width: 470px;" 
+	    		ng-model="aCtrl.boundaryOrgunitSelected" 
+	    		on-select="aCtrl.filterLevels(); aCtrl.orgunitUserDefaultLevel();">
+	    	<ui-select-match placeholder="Search for organisation unit...">
+	    		{{aCtrl.boundaryOrgunitSelected.name}}
+	    	</ui-select-match>
+	    	<ui-select-choices 
+	    		refresh="aCtrl.orgunitSearch($select.search)" 
+	    		refresh-delay="500" 
+	    		repeat="ou in aCtrl.ouSearchResult | filter: $select.search">
+	    		<div ng-bind-html="ou.name | highlight: $select.search"></div>
+	    	</ui-select-choices>
+	    	</ui-select>
+	    	
+		</div>  		    	
+		
+	<!-- DISAGGREGATION -->
+       <label for="orgunitSelect">Disaggregation</label>
+		<div id="orgunitSelect">
+			<ui-select ng-disabled="aCtrl.orgunitGroupSelected || aCtrl.filteredOrgunitLevels.length === 0" ng-model="aCtrl.orgunitLevelSelected"  style="margin-bottom: 10px; max-width: 470px;">
+			  <ui-select-match placeholder="{{aCtrl.getLevelPlaceholder();}}">
+			  	{{aCtrl.orgunitLevelSelected.name}}
+			  </ui-select-match>
+			  <ui-select-choices 
+			  	repeat="obj in aCtrl.filteredOrgunitLevels | filter: $select.search">
+			   		<div ng-bind-html="obj.name | highlight: $select.search"></div>
+			  </ui-select-choices>
+			</ui-select>
+			
+			<ui-select ng-disabled="aCtrl.orgunitLevelSelected || aCtrl.filteredOrgunitLevels.length === 0" ng-model="aCtrl.orgunitGroupSelected"  style="margin-bottom: 10px; max-width: 470px;">
+				  <ui-select-match placeholder="Select organisation unit group">
+				  	{{aCtrl.orgunitGroupSelected.name}}
+				  </ui-select-match>
+				  <ui-select-choices 
+				  	repeat="obj in aCtrl.orgunitGroups | filter: $select.search">
+				   		<div ng-bind-html="obj.name | highlight: $select.search"></div>
+				  </ui-select-choices>
+			</ui-select>
+		</div>
+		
+		
+		<!-- CURRENT SELECTION -->
+		<label for="orgunitSelected">Selected </label>
+		<div id="orgunitSelected">
+			<p><span style="font-size: 100%;" class="label label-primary">{{aCtrl.boundaryOrgunitSelected.name}}{{aCtrl.boundaryOrgunitSelected.text}}</span><span class="glyphicon glyphicon-chevron-right"></span><span style="font-size: 100%;" class="label label-primary">{{aCtrl.orgunitLevelSelected.name}}</span></p>
+			
+			<p ng-show="aCtrl.orgunitGroupSelected"><span style="font-size: 100%;" class="label label-primary">{{aCtrl.userOrgunitLabel}}</span><span class="glyphicon glyphicon-chevron-right"></span><span style="font-size: 100%;" class="label label-primary">{{aCtrl.orgunitGroupSelected.name}}</span></p>
+			
+			<p ng-show="!aCtrl.orgunitGroupSelected && !aCtrl.orgunitLevelSelected"><span style="font-size: 100%;" class="label label-primary">{{aCtrl.userOrgunitLabel}}</span></p>
+			<br />
+		</div>
+		<label for="orgunitSelected">Selected </label>
+		<p>NOTE! Consistency analysis is always done for multiple organisation units. It is therefore not possible to search for and select individual facilities. To analyse facilities, chose a district or other organisation unit above the facilities, and instead use the disaggregation by level/group (for example the <em>{{aCtrl.filteredOrgunitLevels[aCtrl.filteredOrgunitLevels.length-1].name}}</em>-level).</p>
+    </accordion-group>
+  </accordion>  	
+  
+<button type="button" class="btn btn-primary pull-right" ng-click="aCtrl.doAnalysis();" style="margin-bottom:20px">Analyze</button>
+
+<hr / style="clear: both;">
+
+{{aCtrl.processStatus}}
+
+<!-- RESULT -->
+<div ng-show="aCtrl.result === undefined" style="height: 400px;"></div>
+
+<div>
+<nvd3 options='aCtrl.chart.options' data='aCtrl.chart.data'></nvd3>
+</div>
+
+
+<div ng-show="aCtrl.result">
+
+<div style="display: inline-block; margin-right: 15px;">
+	<label for="threshold">Outlier filter</label>
+	<div class="btn-group btn-group-justified" ng-click="aCtrl.updateFilter();" style="margin-bottom: 5px; max-width: 400px;">
+			<label class="btn btn-default" ng-model="aCtrl.stdFilterType" btn-radio="0">Off</label>
+			<label class="btn btn-default" ng-model="aCtrl.stdFilterType" btn-radio="1">Standard Score</label>
+	  		<label class="btn btn-default" ng-model="aCtrl.stdFilterType" btn-radio="2">Modified Z-Score</label>
+	</div>
+</div>
+<div style="display: inline-block; margin-right: 15px; vertical-align: bottom;">
+	<div  class="btn-group btn-group-justified" ng-click="aCtrl.updateFilter();" style="margin-bottom: 5px; max-width: 250px;">
+			<label ng-disabled="aCtrl.stdFilterType === 0" class="btn btn-warning" ng-model="aCtrl.stdFilterDegree" btn-radio="1">Moderate</label>
+	  		<label ng-disabled="aCtrl.stdFilterType === 0" class="btn btn-danger" ng-model="aCtrl.stdFilterDegree" btn-radio="2">Extreme</label>
+	</div>
+</div>
+<div class="pull-right" style="display: inline-block; margin-bottom: 5px; vertical-align: bottom;">
+<button ng-click="aCtrl.exportCSV();" class="btn btn-success">Export CSV</button>
+</div>
+
+			<alert style="margin-top: 10px; margin-bottom: 10px;"ng-repeat="alert in aCtrl.alerts track by $index" type="{{alert.type}}" close="aCtrl.alerts.splice($index, 1)">{{alert.msg}}</alert>
+			<div style="margin-top: 10px; font-size: 85%;" class="table-responsive">
+<table class="table table-bordered table-striped table-condensed table-hover">
+					
+			        
+			        <thead>
+			            <tr>	
+			            	<th nowrap rowspan="2" ng-click="aCtrl.sortByColumn('metaData.ou.name')">Unit</th>
+			            	<th nowrap rowspan="2" style="max-width: 200px;" ng-click="aCtrl.sortByColumn('metaData.dx.name')">Data</th>
+			            	<th rowspan="2" ng-repeat="period in aCtrl.periods" nowrap>{{period}}</th>
+			            	<th colspan="2" ng-click="aCtrl.sortByColumn('result.maxSscore')">Outlier Score</th>
+			            	<th colspan="3" ng-click="aCtrl.sortByColumn('result.gapWeight')">Weight</th>
+			            	<th rowspan="2"></th>
+			            </tr>
+						<tr>	
+							<th ng-click="aCtrl.sortByColumn('result.maxSscore')">SD</th>
+							<th ng-click="aCtrl.sortByColumn('result.maxZscore')">Mod Z</th>
+							<th ng-click="aCtrl.sortByColumn('result.gapWeight')">Gap</th>
+							<th ng-click="aCtrl.sortByColumn('result.outWeight')">Outlier</th>
+							<th ng-click="aCtrl.sortByColumn('result.totalWeight')">Total</th>
+						</tr>
+			        </thead>
+
+			        <tfoot>
+			            <td colspan="{{aCtrl.totalColumns}}">
+				            <pagination total-items="aCtrl.totalRows" items-per-page="aCtrl.pageSize" max-size="5" ng-model="aCtrl.currentPage" class="pagination-sm pull-right" boundary-links="true" rotate="true"></pagination>
+			            </td>
+			        </tfoot>
+			        
+			        <tbody>
+			        	<tr valign="middle" ng-repeat="row in aCtrl.filteredRows | orderBy:aCtrl.sortCol:aCtrl.reverse | startFrom:(aCtrl.currentPage-1)*aCtrl.pageSize | limitTo:aCtrl.pageSize">
+			                <td>{{row.metaData.ou.name}}</td>
+			                <td>{{row.metaData.dx.name}}</td>
+			                <td ng-repeat="value in row.data track by $index" 
+			                	class="valueCell"
+			                	ng-class="{warning: value==='', danger: aCtrl.isOutlier(value, row.stats)}"
+			                	>{{value}}</td>
+			                <td class="valueCell">{{row.result.maxSscore}}</td>
+			                <td class="valueCell"><span ng-if="row.result.maxZscore != 0">{{row.result.maxZscore}}</span></td>
+			                <td class="valueCell">{{row.result.gapWeight}}</td>
+			                <td class="valueCell">{{row.result.outWeight}}</td>
+			                <td class="valueCell">{{row.result.totalWeight}}</td>
+			                
+			                <td>
+			                	<span class="dropdown" dropdown>
+			                      <a href class="dropdown-toggle" dropdown-toggle>
+			                              <span class="glyphicon glyphicon-th-list" style="color: black" aria-hidden="true"></span>
+			                            </a>
+			                      <ul class="dropdown-menu dropdown-menu-right">
+			                        <li><a href ng-click="aCtrl.showDetails(row);">Visualise</a></li>
+			                        <li><a href ng-click="aCtrl.floatUp(row.metaData);">Float up</a></li>
+			                        <li><a href ng-click="aCtrl.drillDown(row.metaData);">Drill down</a></li>
+			                        <li><a href ng-click="aCtrl.sendMessage(row.metaData);">Contact</a></li>
+			                      </ul>
+			                      </span>
+			                </td>    
+			            </tr>
+			    	</tbody>
+				</table>
+			</div>
+	<div style="min-height: 400px; margin-top: 20px; margin-bottom: 20px;" id="detailedResult"></div>
+</div>

@@ -1,0 +1,701 @@
+
+(function(){
+	
+	var app = angular.module('consistencyAnalysis', []);
+	
+	app.filter('startFrom', function() {
+	    return function(input, start) {
+	        start = +start; //parse to int
+	        if (input) return input.slice(start);
+	        else return input;
+	    }
+	});
+	
+	app.controller("ConsistencyAnalysisController", function(metaDataService, periodService, requestService, dataAnalysisService, mathService, $modal) {
+		var self = this;
+			    
+	    self.result = undefined;
+	    self.itemsPerPage = 25;
+	    self.hasVisual = false;
+	         	    
+		function init() {		
+			self.alerts = [];
+			self.chart = {};
+			
+			self.consistencyType = 'relation'; //0 = indicator, 2 = time
+			self.relationShipType = 'equal'; //0 = equal, 1 = >, 2 = dropout
+			self.relationShipType = 'constant'; //0  = constant, 
+			self.consistencyCriteria = 20;
+			
+			self.dataDisaggregation = 0;
+	    	self.dataSelection = {
+	    		'deGroups': [],
+	    		'indGroups': [],
+	    		'a': {
+	    			deGroupSelected : undefined,
+	    			de : [],
+	    			deSelected : undefined,
+	    			deText: "",
+	    			indGroupSelected : undefined,
+	    			ind : [],
+	    			indSelected : undefined,
+	    			indText: "",
+	    			type: 'de'
+	    		},
+	    		'b': {
+	    			deGroupSelected : undefined,
+	    			de: [],
+	    			deSelected : undefined,
+	    			deText: "",
+	    			indGroupSelected : undefined,
+	    			ind : [],
+	    			indSelected : undefined,
+	    			indText: "",
+	    			type: 'de'
+	    		}
+			};
+	    	
+	    	metaDataService.getDataElementGroups().then(function(data) { 
+	    		self.dataSelection.deGroups = data;
+	    	});
+			metaDataService.getIndicatorGroups().then(function(data) { 
+				self.dataSelection.indGroups = data;
+			});
+			
+	    	
+	    	//ORGUNITS
+	    	self.analysisOrgunits = [];
+	    	self.userOrgunits = [];
+	    	self.boundaryOrgunitSelected = undefined;
+	    	
+	    	self.ouSelected = null;
+	    	self.ouSearchResult = [];
+	    		    	
+	    	metaDataService.getUserOrgunits().then(function(data) { 
+	    		self.userOrgunits = data;
+	    		self.boundarySelectionType = 0;
+	    		self.boundaryOrgunitSelected = self.userOrgunits[0];
+	    		self.filterLevels();
+	    		self.orgunitUserDefaultLevel();
+	    	});
+	    	
+	    	self.orgunitLevels = [];
+	    	self.filteredOrgunitLevels = [];
+	    	self.orgunitLevelSelected = undefined;
+	    	metaDataService.getOrgunitLevels().then(function(data) { 
+	    		self.orgunitLevels = data;
+	    		
+	    		self.lowestLevel = 0; 
+	    		for (var i = 0; i < self.orgunitLevels.length; i++) {
+	    			var level = self.orgunitLevels[i].level;
+	    			if (level > self.lowestLevel) self.lowestLevel = level;
+	    		}
+	    		
+	    		self.filterLevels();
+	    		self.orgunitUserDefaultLevel();
+	    	});
+	    	
+	    	
+	    	self.orgunitGroups = [];
+	    	self.orgunitGroupSelected = undefined;
+	    	metaDataService.getOrgunitGroups().then(function(data) { 
+	    		self.orgunitGroups = data;
+	    	});
+	    	
+	    	
+	    	//PERIODS
+	    	self.periodTypes = [];
+	    	self.periodTypes = periodService.getPeriodTypes();
+	    	self.periodTypeSelected = self.periodTypes[1];
+	    	
+	    	self.periodCount = [];	    	
+	    	self.periodCounts = periodService.getPeriodCount();
+	    	self.periodCountSelected = self.periodCounts[3];
+	    	
+			
+	    	self.years = periodService.getYears();
+	    	self.yearSelected = self.years[0];
+	    	
+	    	self.isoPeriods = [];
+	    	
+	    	self.currentDate = new Date();			
+	    	self.date = {
+	    		"startDate": moment().subtract(12, 'months'), 
+	    		"endDate": moment()
+	    	};
+	    	
+	    	self.getPeriodsInYear();	    		
+	    	
+	    	self.onlyNumbers = /^\d+$/;	    	
+	    	self.userOrgunitLabel = "";
+	    	    	
+	    	//Accordion settings
+	    	self.oneAtATime = true;
+	    	self.status = {
+	    	    isFirstOpen: true
+	    	};
+	    }
+
+	
+		/** PARAMETER SELECTION */	    	
+	   	self.getPeriodsInYear = function() {
+	   		self.periodsInYear = [];
+	   		var isoPeriods = periodService.getISOPeriods(self.yearSelected.name.toString() + '-01-01', self.yearSelected.name.toString() + '-12-31', self.periodTypeSelected.id);
+	   		for (var i = 0; i < isoPeriods.length; i++) {
+	   			self.periodsInYear.push({
+	   				'id': isoPeriods[i],
+	   				'name': periodService.shortPeriodName(isoPeriods[i])
+	   			});
+	   		}   	
+	   	}
+	   	    
+	    
+		
+		self.orgunitSearchModeSelected = function() {
+			self.boundaryOrgunitSelected = undefined;
+			self.orgunitLevelSelected = undefined;
+		}
+		
+		
+		self.orgunitUserModeSelected = function() {
+			self.boundaryOrgunitSelected = self.userOrgunits[0];
+			self.orgunitUserDefaultLevel();
+		}
+		
+		
+		self.orgunitUserDefaultLevel = function() {
+			
+			if (!self.boundaryOrgunitSelected || !self.filteredOrgunitLevels) return;
+		
+			var level = self.boundaryOrgunitSelected.level;
+			for (var i = 0; i < self.filteredOrgunitLevels.length; i++) {
+				if (self.filteredOrgunitLevels[i].level === (level+1)) {
+					self.orgunitLevelSelected = self.filteredOrgunitLevels[i];
+				}
+			}
+			
+			if (self.filteredOrgunitLevels.length === 0) self.orgunitLevelSelected = undefined;
+		
+		}
+		
+		function lowestLevel() {
+		
+			var lowest = 1;
+			for (var i = 0; i < self.orgunitLevels.length; i++) {
+				if (self.orgunitLevels[i].level > lowest) {
+					lowest = self.orgunitLevels[i].level;
+				}
+			}
+			
+			return lowest;
+		}
+				
+		
+		self.filterLevels = function() {
+			self.filteredOrgunitLevels = [];
+			
+			if (!self.orgunitLevels || !self.boundaryOrgunitSelected) return;
+			for (var i = 0; i < self.orgunitLevels.length; i++) {
+				if (self.orgunitLevels[i].level > self.boundaryOrgunitSelected.level) {
+					self.filteredOrgunitLevels.push(self.orgunitLevels[i]);
+				}
+			}			
+		}
+		
+				
+		self.getLevelPlaceholder = function() {
+			if (!self.filteredOrgunitLevels || self.filteredOrgunitLevels.length === 0) {
+				if (self.boundaryOrgunitSelected && self.boundaryOrgunitSelected.level === self.lowestLevel) return "N/A";
+				else return "Loading...";
+			
+			}
+			else return "Select level";
+		}
+		
+		
+	    self.orgunitSearch = function(searchString){
+	        if (searchString.length >= 3) {
+	    		var requestURL = "/api/organisationUnits.json?filter=name:like:" + searchString + "&paging=false&fields=name,id,level";
+	    		requestService.getSingle(requestURL).then(function (response) {
+
+					//will do with API filter once API-filter is stable
+	    			var orgunits = response.data.organisationUnits;
+	    			var lowest = lowestLevel();
+	    			self.ouSearchResult = [];
+	    			for (var i = 0; i < orgunits.length; i++) {
+	    				if (orgunits[i].level < lowest) {
+		    				self.ouSearchResult.push(orgunits[i]);
+		    			}
+	    			}
+	    			
+	    		});
+	    	}
+	    }
+		
+	
+	    self.updateDataElementList = function(dataItem) {
+	    	self.dataSelection[dataItem].de = [];
+	    	self.dataSelection[dataItem].deSelected = undefined;
+	    	
+	    	if (self.dataDisaggregation === 0) {	    	
+	    		self.dataSelection[dataItem].deText = "Loading...";
+		    	metaDataService.getDataElementGroupMembers(self.dataSelection[dataItem].deGroupSelected.id)
+		    	 	.then(function(data) { 
+
+		    	       	self.dataSelection[dataItem].deText = "Select data element...";
+		    	       	self.dataSelection[dataItem].de = data;
+		    	     });
+	    	}
+	    	else {
+	    		self.dataSelection[dataItem].deText = "Loading...";
+	    		metaDataService.getDataElementGroupMemberOperands(self.dataSelection[dataItem].deGroupSelected.id)
+	    		 	.then(function(data) { 
+		    	       	self.dataSelection[dataItem].deText = "Select data element...";    		 		
+	    		       	self.dataSelection[dataItem].de = data;
+	    		     });
+	    	}
+	    
+	    }
+	    
+	    
+  	    self.updateIndicatorList = function(dataItem) {
+  	    	self.dataSelection[dataItem].ind = [];
+	   		self.dataSelection[dataItem].indSelected = undefined;
+  	    	self.dataSelection[dataItem].indText = "Loading...";
+  	    	metaDataService.getIndicatorGroupMembers(self.dataSelection[dataItem].indGroupSelected.id)
+  	    		.then(function(data) { 
+  	    			self.dataSelection[dataItem].indText = "Select indicator";  	    			
+  	    		   	self.dataSelection[dataItem].ind = data;
+  	    		});
+  	    }
+			
+		
+		
+		/** REQUEST DATA */		
+		self.doAnalysis = function() {
+			
+			//Collapse open panels
+			$('.panel-collapse').removeClass('in');
+			
+			
+			if (self.datasetSelected && !self.datasetDataelements) {
+				getDatasetDataelements();
+				return;
+			}
+			
+			var data = getDataForAnalysis();
+			var variables = data.dataIDs;			
+			var periods = getPeriodsForAnalysis();
+			
+			//If dataset, include all optioncombos
+			var coAll = false;
+			if (self.datasetSelected) coAll = true;
+			
+			var ouGroup = null;
+			if (self.orgunitGroupSelected) ouGroup = self.orgunitGroupSelected.id;
+			
+			var ouLevel = null;
+			if (self.orgunitLevelSelected) {
+				ouLevel = self.orgunitLevelSelected.level;
+				console.log("Depth: " + (ouLevel-self.boundaryOrgunitSelected.level));
+			}
+			
+			self.result = null;
+						
+			dataAnalysisService.outlierGap(receiveResultNew, variables, coAll, data.coFilter, periods, self.boundaryOrgunitSelected.id, ouLevel, ouGroup, 2, 3.5, 1);
+			
+			self.datasetDataelements = null;
+		};
+		
+		
+		
+		function getDataForAnalysis() {
+		
+			var details = (self.dataDisaggregation != 0);
+			
+			var dataIDs = [];
+			if (!details && self.indicatorGroupsSelected) {
+				if (self.indicatorsSelected.length > 0) {
+					for (var i = 0; i < self.indicatorsSelected.length; i++) {
+						dataIDs.push(self.indicatorsSelected[i].id);
+					}
+				}
+				else { //Selected group but did not specify = all
+					for (var i = 0; i < self.indicators.length; i++) {
+						dataIDs.push(self.indicators[i].id);
+					}
+				}
+			}
+			
+			var coFilter = {};
+			if (self.dataElementGroupsSelected) {
+				if (details) {
+					if (self.dataElementsSelected.length > 0) {
+						for (var i = 0; i < self.dataElementsSelected.length; i++) {
+							coFilter[self.dataElementsSelected[i].id] = true;
+							dataIDs.push(self.dataElementsSelected[i].dataElementId);	
+						}
+					}
+					else { //Selected group but did not specify = all
+						for (var i = 0; i < self.dataElements.length; i++) {
+							coFilter[self.dataElements[i].id] = true;
+							dataIDs.push(self.dataElements[i].dataElementId);
+						}
+					}
+				}
+				else {
+					if (self.dataElementsSelected.length > 0) {
+						for (var i = 0; i < self.dataElementsSelected.length; i++) {
+							dataIDs.push(self.dataElementsSelected[i].id);
+						}
+					}
+					else { //Selected group but did not specify = all
+						for (var i = 0; i < self.dataElements.length; i++) {
+							dataIDs.push(self.dataElements[i].id);
+						}
+					}
+				}
+				
+			}
+			
+			
+			if (self.datasetSelected) {
+				dataIDs = [];
+				
+				for (var i = 0; i < self.datasetDataelements.length; i++) {
+					dataIDs.push(self.datasetDataelements[i].id);	
+				}
+								
+			}
+			
+			return {
+				'dataIDs': uniqueArray(dataIDs),
+				'details': details,  
+				'coFilter': details ? coFilter : null
+			};
+		
+		
+		
+		}
+		
+		function getPeriodsForAnalysis() {
+			
+			var startDate, endDate;
+			if (self.periodOption === "last") {
+				endDate = moment().format("YYYY-MM-DD");
+				if (self.periodTypeSelected.id === 'Weekly') {
+					startDate = moment().subtract(self.periodCountSelected.value, 'weeks').format("YYYY-MM-DD");
+				}
+				else if (self.periodTypeSelected.id === 'Monthly') {
+					startDate = moment().subtract(self.periodCountSelected.value, 'months').format("YYYY-MM-DD");
+				}
+				else if (self.periodTypeSelected.id === 'BiMonthly') {
+					startDate = moment().subtract(self.periodCountSelected.value*2, 'months').format("YYYY-MM-DD");
+				}
+				else if (self.periodTypeSelected.id === 'Quarterly') {
+					startDate = moment().subtract(self.periodCountSelected.value, 'quarters').format("YYYY-MM-DD");
+				}
+				else if (self.periodTypeSelected.id === 'SixMonthly') {
+					startDate = moment().subtract(self.periodCountSelected.value*2, 'quarters').format("YYYY-MM-DD");
+				}
+				else if (self.periodTypeSelected.id === 'Yearly') {
+					startDate = moment().subtract(self.periodCountSelected.value, 'years').format("YYYY-MM-DD");
+				}
+			}
+			else if (self.periodOption === "year") {
+				
+				if (self.yearSelected.name === moment().format('YYYY')) {
+					endDate = moment().format('YYYY-MM-DD');
+				}
+				else {
+					endDate = self.yearSelected.id + "-12-31";
+				}
+			
+				startDate = self.yearSelected.id + "-01-01";
+				
+				
+			}
+			else {
+				startDate = self.date.startDate;
+				endDate = self.date.endDate;
+			}
+			
+			return periodService.getISOPeriods(startDate, endDate, self.periodTypeSelected.id);
+		
+		}
+		
+		
+		
+		/**
+		RESULTS
+		*/
+		
+		self.sortByColumn = function (columnKey) {
+			self.currentPage = 1;
+			if (self.sortCol === columnKey) {
+				self.reverse = !self.reverse;
+			}
+			else {
+				self.sortCol = columnKey;
+				self.reverse = true;
+			}
+		}
+		
+		
+		var receiveResultNew = function(result) {		    
+			    
+			if (!result || !result.rows || result.rows.length === 0) { 
+				console.log("Empty result");
+				self.alerts.push({type: 'warning', msg: 'No data!'});
+			}
+			else {
+				self.alerts = [];
+				console.log("Received " + result.rows.length + " rows");
+			}
+			
+			self.result = result;
+			
+			//Reset filter
+			self.stdFilterType = 0;
+			self.stdFilterDegree = 1;
+			
+			self.updateFilter();
+			
+			//Default sort column
+			self.sortCol = 'result.totalWeight';
+			self.reverse = true;
+			
+			//Get nice period names
+			self.periods = [];
+			for (var i = 0; i < result.metaData.periods.length; i++) {
+				var period = result.metaData.periods[i];
+				self.periods.push(periodService.shortPeriodName(period));
+			}
+			
+			//Calculate total number of columns in table
+			self.totalColumns = self.periods.length + 8;
+		};
+		
+       	    
+	    self.isOutlier = function (value, stats) {
+	    	if (value === null || value === '') return false;
+	    	
+	   		var standardScore = Math.abs(mathService.calculateStandardScore(value, stats));
+	   		var zScore = Math.abs(mathService.calculateZScore(value, stats));
+	   		
+	   		if (standardScore > 2 || zScore > 3.5) return true;
+	   		else return false;
+	   	}
+	   	
+	   		   	
+	   	function includeRow(row) {
+	   		
+	   		if (self.stdFilterType === 0) return true;
+	   		
+	   		if (self.stdFilterType === 1) {
+	   			if (self.stdFilterDegree === 2) return row.result.maxSscore > 3;
+	   			else return row.result.maxSscore > 2;
+	   		}
+	   		
+   			if (self.stdFilterType === 2) {
+   				if (self.stdFilterDegree === 2) return row.result.maxZscore > 5;
+   				else return row.result.maxZscore > 3.5;
+   			} 
+	   		
+	   		return false;
+	   	}
+	   	
+	   	
+	   	self.updateFilter = function() {
+	   		self.filteredRows = [];
+	   		for (var i = 0; i < self.result.rows.length; i++) {
+	   			if (includeRow(self.result.rows[i])) {
+	   				self.filteredRows.push(self.result.rows[i]);
+	   			}
+	   		}
+	   		
+	   		//Store paging variables
+	   		self.currentPage = 1;
+	   		self.pageSize = 15;   	
+	   		self.totalRows = self.filteredRows.length;
+	   	}
+	   	
+	   	
+	   	self.exportCSV = function() {
+			  
+			  var csvContent = "data:text/csv;charset=utf-8,";
+			  var string;
+			  var i = 0;
+			  self.result.rows.forEach(function(row, index){
+			  	 string = row.metaData.ou.name + ";";
+			  	 string += row.metaData.dx.name + ";";
+			     string += row.data.join(";") + ";";
+			     string += row.result.maxSscore + ";";
+			     string += row.result.maxZscore + ";";
+			     string += row.result.gapWeight + ";";
+			     string += row.result.outWeight + ";";
+			     string += row.result.totalWeight + ";";
+			     csvContent += index < self.result.rows.length ? string+ "\n" : string;
+			     if (i % 10 === 0) console.log(i++);
+			  });
+			  
+			  var encodedUri = encodeURI(csvContent);
+			  window.open(encodedUri);
+	   	
+	   	}
+	   	
+	   	
+	   	/**INTERACTIVE FUNCTIONS*/
+	   	
+	   	//showDetails
+        self.showDetails = function(row) {
+
+			$('#detailedResult').html('<div id="detailChart"><svg class="bigChart"></svg></div>');
+        	
+        	var chart = nv.models.multiBarChart()
+        			      .reduceXTicks(true)   //If 'false', every single x-axis tick label will be rendered.
+        			      .rotateLabels(0)      //Angle to rotate x-axis labels.
+        			      .groupSpacing(0.1)    //Distance between each group of bars.
+        			      .showControls(false)
+        			    ;
+        			
+        	var result = self.result;
+        	var index = 0;
+        	var series = [{
+        		'key': row.metaData.dxName + " - " + row.metaData.ouName,
+        		'color': "green",
+        		'values': []
+        	}];
+        	for (var i = 0; i < row.data.length; i++) {
+    			var value = row.data[i];
+    			if (value === '') value = null;
+    			else value = parseFloat(value);
+    			series[0].values.push({
+    				'x': index++,   		
+    				'y': value,
+    				'label': self.periods[i]
+    			});
+        	}
+        	        	        				
+		    chart.xAxis
+		        .tickFormat(function(d) {
+		        	return series[0].values[d].label;
+		        });
+		
+		    chart.yAxis
+		        .tickFormat(d3.format('g'));
+		
+			d3.select('#detailChart svg')
+		        .datum(series)
+		        .call(chart);
+				
+		    nv.utils.windowResize(chart.update);
+		    
+		    $('html, body').animate({
+		    	scrollTop: $("#detailChart").offset().top,
+		    	scrollLeft: 0
+		    }, 500);    
+    		
+        };
+
+        
+        self.sendMessage = function(metaData) {
+        	        	
+        	var modalInstance = $modal.open({
+	            templateUrl: "views/_modals/modalMessage.html",
+	            controller: "ModalMessageController",
+	            controllerAs: 'mmCtrl',
+	            resolve: {
+	    	        orgunitID: function () {
+	    	            return metaData.ouID;
+	    	        },
+	    	        orgunitName: function () {
+	    	            return metaData.ouName;
+	    	        }
+	            }
+	        });
+	
+	        modalInstance.result.then(function (result) {
+	        });
+        }
+        
+        
+        self.drillDown = function (rowMetaData) {
+        	
+        	var requestURL = "/api/organisationUnits/" + rowMetaData.ouID + ".json?fields=children[id]";
+        	requestService.getSingle(requestURL).then(function (response) {
+        		
+        		
+        		var children = response.data.children;
+        		if (children.length > 0) {
+        		
+					var orgunits = [];
+					for (var i = 0; i < children.length; i++) {
+						orgunits.push(children[i].id);
+					}
+					self.result.metaData.parameters.OUlevel = undefined;
+					self.result.metaData.parameters.OUgroup = undefined;
+					
+
+					
+					dataAnalysisService.outlier(receiveResultNew, self.result.metaData.variables, self.result.metaData.periods, orgunits, self.result.metaData.parameters);
+					
+					self.result = null;
+					
+        		}
+        		        		
+        		else {
+        			self.alerts.push({type: 'warning', msg: rowMetaData.ouName + ' does not have any children'});
+        		}
+        	});
+        	
+        	
+        }
+
+        
+        self.floatUp = function (rowMetaData) {
+        	
+        	var requestURL = "/api/organisationUnits/" + rowMetaData.ouID + ".json?fields=parent[id,children[id],parent[id,children[id]]";
+        	requestService.getSingle(requestURL).then(function (response) {
+
+        		var metaData = response.data;
+        		if (metaData.parent) {
+        			
+        			var orgunits = [metaData.parent.id];
+        			self.result.metaData.parameters.OUlevel = undefined;
+        			self.result.metaData.parameters.OUgroup = undefined;
+
+					
+
+					dataAnalysisService.outlier(receiveResultNew, self.result.metaData.variables, self.result.metaData.periods, orgunits, self.result.metaData.parameters);
+					
+					self.result = null;
+        		}
+        		else {
+					self.alerts.push({type: 'warning', msg: rowMetaData.ouName + ' does not have a parent'});
+        		}
+        		
+        		
+        		
+        	});
+        	
+        	
+        }
+	   	
+	   	
+	   	/** UTILITIES */
+	   	function uniqueArray(array) {
+	   	    var seen = {};
+	   	    return array.filter(function(item) {
+	   	        return seen.hasOwnProperty(item) ? false : (seen[item] = true);
+	   	    });
+	   	}
+	   	
+	   	        
+		init();
+    	
+		return self;
+	});
+	
+})();
+
