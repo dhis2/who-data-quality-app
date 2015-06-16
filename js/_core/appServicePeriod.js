@@ -85,6 +85,7 @@
 		};
 		
 		
+		//Should be sorted from shortest to longest
 		self.getPeriodTypes = function() {
 			//, {'name': 'Bimonthly', 'id':'BiMonthly'} <= Waiting for fix
 			
@@ -162,6 +163,66 @@
 		
 		}
 		
+		self.shortestPeriod = function (periodTypes) {
+			var w = false, m = false, q = false, s = false, y = false, pt;
+			for (var i = 0; i < periodTypes.length; i++) {
+				pt = periodTypes[i];
+				switch (pt) {
+					case 'Quarterly':
+						q = true;
+						break;
+					case 'Weekly':
+						w = true;
+						break;
+					case 'SixMonthly':
+						s = true;
+						break;
+					case 'Yearly':
+						y = true;
+						break;
+					case 'Monthly':
+						m = true;
+						break;
+				}
+			}
+			
+			if (w) return 'Weekly';
+			if (m) return 'Monthly';
+			if (q) return 'Quarterly';
+			if (s) return 'SixMonthly';
+			if (y) return 'Yearly';
+			
+		}
+		
+		
+		self.longestPeriod = function (periodTypes) {
+			var w = false, m = false, q = false, s = false, y = false, pt;
+			for (var i = 0; i < periodTypes.length; i++) {
+				pt = periodTypes[i];
+				switch (pt) {
+					case 'Quarterly':
+						q = true;
+						break;
+					case 'Weekly':
+						w = true;
+						break;
+					case 'SixMonthly':
+						s = true;
+						break;
+					case 'Yearly':
+						y = true;
+						break;
+					case 'Monthly':
+						m = true;
+						break;
+				}
+			}
+			if (y) return 'Yearly';			
+			if (s) return 'SixMonthly';
+			if (q) return 'Quarterly';
+			if (m) return 'Monthly';
+			if (w) return 'Weekly';
+		}
 		  	
 		
 		function dateToISOdate(date) {

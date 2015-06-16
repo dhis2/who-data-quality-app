@@ -8,14 +8,14 @@
 	<!-- DATA -->
 	<accordion-group heading="Analysis Type" is-open="aCtrl.status.isFirstOpen">
 		<label>Consistency Analysis Type</label><br />
-		<div class="btn-group btn-group-justified" style="width: 300px; display: inline-block; margin-bottom: 10px;">
+		<div class="btn-group btn-group-justified" style="width: 330px; margin-bottom: 10px;">
 				<label class="btn btn-default" ng-model="aCtrl.consistencyType" btn-radio="'relation'">Between Indicators</label>
 		  		<label class="btn btn-default" ng-model="aCtrl.consistencyType" btn-radio="'time'">Over Time</label>
 		</div>
 		
 		<div ng-if="aCtrl.consistencyType === 'relation'">		
 		<label>Expected relationship</label><br />
-		<div class="btn-group btn-group-justified" style="width: 300px; display: inline-block; margin-bottom: 10px;">
+		<div class="btn-group btn-group-justified" style="width: 330px; margin-bottom: 10px;">
 				<label class="btn btn-default" ng-model="aCtrl.relationshipType" btn-radio="'eq'">A ≈ B</label>
 		  		<label class="btn btn-default" ng-model="aCtrl.relationshipType" btn-radio="'aGTb'">A > B</label>
 		  		<label class="btn btn-default" ng-model="aCtrl.relationshipType" btn-radio="'do'">Dropout rate</label>
@@ -24,7 +24,7 @@
 		
 		<div ng-if="aCtrl.consistencyType === 'time'">		
 		<label>Expected trend</label><br />
-		<div class="btn-group btn-group-justified" style="width: 300px; display: inline-block; margin-bottom: 10px;">
+		<div class="btn-group btn-group-justified" style="width: 330px; margin-bottom: 10px;">
 				<label class="btn btn-default" ng-model="aCtrl.trendType" btn-radio="'constant'">Constant</label>
 		  		<label class="btn btn-default" ng-model="aCtrl.trendType" btn-radio="'increase'">Increasing/decreasing</label>
 		</div>
@@ -32,7 +32,7 @@
 		
 		<div style="margin-bottom: 10px;" ng-if="aCtrl.relationshipType != 'do' || aCtrl.consistencyType === 'time'">		
 		<label>Criteria</label><br />
-			+/- <input type="number" style="text-align: right;" ng-model="aCtrl.consistencyCriteria" min="0" max="50"/> %
+		<input class="form-control" type="number" style="text-align: right; width: 150px; display: inline-block;" ng-model="aCtrl.consistencyCriteria" min="0" max="50"> <span style="display: inline-block;">%</span>
 		</div>
 	
 	</accordion-group>	
@@ -44,19 +44,20 @@
 		
 		
 		<!-- DATA A -->
-		<div class="btn-group btn-group-justified" style="width: 470px; margin-bottom: 10px;">
-			<label class="btn btn-default" ng-model="aCtrl.dataSelection.a.type" btn-radio="'de'">Data element</label>
+		<div class="btn-group btn-group-justified" style="max-width: 470px; margin-bottom: 10px;">
+			<label class="btn btn-default" ng-model="aCtrl.dataSelection.a.type" btn-radio="'de'">Data element (totals)</label>
+			<label class="btn btn-default" disabled ng-model="aCtrl.dataSelection.a.type" btn-radio="'dc'">Data element (details)</label>
 		  	<label class="btn btn-default" ng-model="aCtrl.dataSelection.a.type" btn-radio="'ind'">Indicator</label>
 		</div>
 		
 		<!-- DATA ELEMENTS A-->
-		<div ng-if="aCtrl.dataSelection.a.type === 'de'">
-		<div style="display: inline-block;">
+		<div ng-if="aCtrl.dataSelection.a.type != 'ind'">
+		<div >
 	    	<label>Data element</label><br />
 			<ui-select 
 				on-select="aCtrl.updateDataElementList('a')" 
 				ng-model="aCtrl.dataSelection.a.deGroupSelected"
-				style="margin-bottom: 10px; width: 330px;">
+				style="margin-bottom: 10px; max-width: 470px;">
 				<ui-select-match placeholder="Select data element group...">
 			  		{{aCtrl.dataSelection.a.deGroupSelected.name}}
 			  	</ui-select-match>
@@ -66,15 +67,12 @@
 				</ui-select-choices>
 			</ui-select>
 		</div>
-		<div class="btn-group btn-group-justified"   style="width: 120px; display: inline-block;">
-				<label class="btn btn-default" ng-change="aCtrl.updateDataElementList('a')" ng-model="aCtrl.dataDisaggregation" btn-radio="0">Totals</label>
-		  		<label class="btn btn-default" ng-change="aCtrl.updateDataElementList('a')" ng-model="aCtrl.dataDisaggregation" btn-radio="1">Details</label>
-		</div>
-		
+
 		<ui-select 
 			ng-if="aCtrl.dataSelection.a.deGroupSelected" 
 			ng-disabled="!aCtrl.dataSelection.a.de" 
 			ng-model="aCtrl.dataSelection.a.deSelected" 
+			on-select="aCtrl.dataSelected('de', 'a')"
 			style="margin-bottom: 10px; max-width: 470px;">
 			<ui-select-match placeholder="{{aCtrl.dataSelection.a.deText}}">
 				{{aCtrl.dataSelection.a.deSelected.name}}
@@ -103,9 +101,10 @@
 	   		</ui-select>
 	    	
 			<ui-select 
+				on-select="aCtrl.dataSelected('ind', 'a')"
 				ng-if="aCtrl.dataSelection.a.indGroupSelected" 
 				ng-disabled="!aCtrl.dataSelection.a.ind || aCtrl.dataSelection.a.ind.length === 0" 
-				ng-model="aCtrl.dataSelection.a.indSelected"  
+				ng-model="aCtrl.dataSelection.a.indSelected"
 				style="margin-bottom: 10px; max-width: 470px;">
 				<ui-select-match placeholder="{{aCtrl.dataSelection.a.indText}}">
 			  		{{aCtrl.dataSelection.a.indSelected.name}}
@@ -121,20 +120,21 @@
 		
 		<!-- DATA B -->
 		<div style="margin-top: 20px;" ng-if="aCtrl.consistencyType === 'relation'">
-	   	<h4 >Indicator/Data element A</h4>	
-		<div class="btn-group btn-group-justified" style="width: 470px; margin-bottom: 10px;">
-			<label class="btn btn-default" ng-model="aCtrl.dataSelection.b.type" btn-radio="'de'">Data element</label>
+	   	<h4 >Indicator/Data element B</h4>	
+		<div class="btn-group btn-group-justified" style="max-width: 470px; margin-bottom: 10px;">
+			<label class="btn btn-default" ng-model="aCtrl.dataSelection.a.type" btn-radio="'de'">Data element (totals)</label>
+			<label class="btn btn-default" disabled ng-model="aCtrl.dataSelection.a.type" btn-radio="'dc'">Data element (details)</label>
 		  	<label class="btn btn-default" ng-model="aCtrl.dataSelection.b.type" btn-radio="'ind'">Indicator</label>
 		</div>
 		
 		<!-- DATA ELEMENTS B-->
-		<div ng-if="aCtrl.dataSelection.b.type === 'de'">
-		<div style="display: inline-block;">
+		<div ng-if="aCtrl.dataSelection.b.type != 'ind'">
+		<div >
 			<label>Data element</label><br />
 			<ui-select 
 				on-select="aCtrl.updateDataElementList('b')" 
 				ng-model="aCtrl.dataSelection.b.deGroupSelected"
-				style="margin-bottom: 10px; width: 330px;">
+				style="margin-bottom: 10px; max-width: 470px;">
 				<ui-select-match placeholder="Select data element group...">
 			  		{{aCtrl.dataSelection.b.deGroupSelected.name}}
 			  	</ui-select-match>
@@ -144,15 +144,12 @@
 				</ui-select-choices>
 			</ui-select>
 		</div>
-		<div class="btn-group btn-group-justified"   style="width: 120px; display: inline-block;">
-				<label class="btn btn-default" ng-change="aCtrl.updateDataElementList('b')" ng-model="aCtrl.dataDisaggregation" btn-radio="0">Totals</label>
-		  		<label class="btn btn-default" ng-change="aCtrl.updateDataElementList('b')" ng-model="aCtrl.dataDisaggregation" btn-radio="1">Details</label>
-		</div>
 		
 		<ui-select 
 			ng-if="aCtrl.dataSelection.b.deGroupSelected" 
 			ng-disabled="!aCtrl.dataSelection.b.de" 
-			ng-model="aCtrl.dataSelection.b.deSelected" 
+			ng-model="aCtrl.dataSelection.b.deSelected"
+			on-select="aCtrl.dataSelected('de', 'b')"
 			style="margin-bottom: 10px; max-width: 470px;">
 			<ui-select-match placeholder="{{aCtrl.dataSelection.b.deText}}">
 				{{aCtrl.dataSelection.b.deSelected.name}}
@@ -184,6 +181,7 @@
 				ng-if="aCtrl.dataSelection.b.indGroupSelected" 
 				ng-disabled="!aCtrl.dataSelection.b.ind || aCtrl.dataSelection.b.ind.length === 0" 
 				ng-model="aCtrl.dataSelection.b.indSelected"  
+				on-select="aCtrl.dataSelected('ind', 'b')"
 				style="margin-bottom: 10px; max-width: 470px;">
 				<ui-select-match placeholder="{{aCtrl.dataSelection.b.indText}}">
 			  		{{aCtrl.dataSelection.b.indSelected.name}}
@@ -210,7 +208,7 @@
     		  	{{aCtrl.periodTypeSelected.name}}
     		  </ui-select-match>
     		  <ui-select-choices 
-    		  	repeat="obj in aCtrl.periodTypes | filter: $select.search">
+    		  	repeat="obj in aCtrl.filteredPeriodTypes | filter: $select.search">
     		   		<div ng-bind-html="obj.name | highlight: $select.search"></div>
     		  </ui-select-choices>
     		</ui-select>
@@ -238,7 +236,7 @@
     		<div style="display: inline-block;">
     		<ui-select ng-model="aCtrl.periodSelected"  style="margin-bottom: 10px; width: 200px;">
     		  <ui-select-match placeholder="Select period...">
-    		  	{{aCtrl.yearSelected.name}}
+    		  	{{aCtrl.periodSelected.name}}
     		  </ui-select-match>
     		  <ui-select-choices 
     		  	repeat="obj in aCtrl.periodsInYear | filter: $select.search">
@@ -330,104 +328,91 @@
 			<p ng-show="!aCtrl.orgunitGroupSelected && !aCtrl.orgunitLevelSelected"><span style="font-size: 100%;" class="label label-primary">{{aCtrl.userOrgunitLabel}}</span></p>
 			<br />
 		</div>
-		<label for="orgunitSelected">Selected </label>
-		<p>NOTE! Consistency analysis is always done for multiple organisation units. It is therefore not possible to search for and select individual facilities. To analyse facilities, chose a district or other organisation unit above the facilities, and instead use the disaggregation by level/group (for example the <em>{{aCtrl.filteredOrgunitLevels[aCtrl.filteredOrgunitLevels.length-1].name}}</em>-level).</p>
+		<label>NOTE</label>
+		<p>Consistency analysis is always done for multiple organisation units. It is therefore not possible to search for and select individual facilities. To analyse facilities, chose a district or other organisation unit above the facilities, and instead use the disaggregation by level/group (for example the <em>{{aCtrl.filteredOrgunitLevels[aCtrl.filteredOrgunitLevels.length-1].name}}</em>-level).</p>
     </accordion-group>
   </accordion>  	
   
-<button type="button" class="btn btn-primary pull-right" ng-click="aCtrl.doAnalysis();" style="margin-bottom:20px">Analyze</button>
+<button type="button" class="btn btn-primary pull-right" ng-click="aCtrl.doAnalysis(); aCtrl.updateCharts();" style="margin-bottom:20px">Analyze</button>
 
 <hr / style="clear: both;">
 
-{{aCtrl.processStatus}}
-
 <!-- RESULT -->
-<div ng-show="aCtrl.result === undefined" style="height: 400px;"></div>
+<div ng-if="aCtrl.mainResult === undefined" style="height: 400px;"></div>
 
-<div>
+
+
+<div ng-if="aCtrl.mainResult">
+<h3>{{aCtrl.title()}}</h3>
+<p>Click on a point in the chart to see details and possible actions.</p>
 <nvd3 options='aCtrl.chart.options' data='aCtrl.chart.data'></nvd3>
-</div>
 
-
-<div ng-show="aCtrl.result">
-
-<div style="display: inline-block; margin-right: 15px;">
-	<label for="threshold">Outlier filter</label>
-	<div class="btn-group btn-group-justified" ng-click="aCtrl.updateFilter();" style="margin-bottom: 5px; max-width: 400px;">
-			<label class="btn btn-default" ng-model="aCtrl.stdFilterType" btn-radio="0">Off</label>
-			<label class="btn btn-default" ng-model="aCtrl.stdFilterType" btn-radio="1">Standard Score</label>
-	  		<label class="btn btn-default" ng-model="aCtrl.stdFilterType" btn-radio="2">Modified Z-Score</label>
-	</div>
-</div>
-<div style="display: inline-block; margin-right: 15px; vertical-align: bottom;">
-	<div  class="btn-group btn-group-justified" ng-click="aCtrl.updateFilter();" style="margin-bottom: 5px; max-width: 250px;">
-			<label ng-disabled="aCtrl.stdFilterType === 0" class="btn btn-warning" ng-model="aCtrl.stdFilterDegree" btn-radio="1">Moderate</label>
-	  		<label ng-disabled="aCtrl.stdFilterType === 0" class="btn btn-danger" ng-model="aCtrl.stdFilterDegree" btn-radio="2">Extreme</label>
-	</div>
-</div>
-<div class="pull-right" style="display: inline-block; margin-bottom: 5px; vertical-align: bottom;">
-<button ng-click="aCtrl.exportCSV();" class="btn btn-success">Export CSV</button>
-</div>
-
-			<alert style="margin-top: 10px; margin-bottom: 10px;"ng-repeat="alert in aCtrl.alerts track by $index" type="{{alert.type}}" close="aCtrl.alerts.splice($index, 1)">{{alert.msg}}</alert>
-			<div style="margin-top: 10px; font-size: 85%;" class="table-responsive">
+<div style="margin-bottom: 20px;">
+<h4>Selected</h4>
 <table class="table table-bordered table-striped table-condensed table-hover">
-					
-			        
-			        <thead>
-			            <tr>	
-			            	<th nowrap rowspan="2" ng-click="aCtrl.sortByColumn('metaData.ou.name')">Unit</th>
-			            	<th nowrap rowspan="2" style="max-width: 200px;" ng-click="aCtrl.sortByColumn('metaData.dx.name')">Data</th>
-			            	<th rowspan="2" ng-repeat="period in aCtrl.periods" nowrap>{{period}}</th>
-			            	<th colspan="2" ng-click="aCtrl.sortByColumn('result.maxSscore')">Outlier Score</th>
-			            	<th colspan="3" ng-click="aCtrl.sortByColumn('result.gapWeight')">Weight</th>
-			            	<th rowspan="2"></th>
-			            </tr>
-						<tr>	
-							<th ng-click="aCtrl.sortByColumn('result.maxSscore')">SD</th>
-							<th ng-click="aCtrl.sortByColumn('result.maxZscore')">Mod Z</th>
-							<th ng-click="aCtrl.sortByColumn('result.gapWeight')">Gap</th>
-							<th ng-click="aCtrl.sortByColumn('result.outWeight')">Outlier</th>
-							<th ng-click="aCtrl.sortByColumn('result.totalWeight')">Total</th>
-						</tr>
-			        </thead>
+	<thead>
+	    <tr>	
+	    	<th nowrap>Unit</th>
+	    	<th>{{aCtrl.selectedData('a').name}}</th>
+	    	<th>{{aCtrl.selectedData('b').name}}</th>
+	    	<th><span ng-if="aCtrl.consistencyType === 'relation' && aCtrl.relationshipType === 'do'">Dropout rate (%)</span><span ng-if="aCtrl.relationshipType != 'do'">Ratio</span></th>
+	    	<th></th>
+	    </tr>
+	</thead>
+	
+	<tbody>
+    	<tr ng-if="aCtrl.selectedObject.hasOwnProperty('name')">
+            <td>{{aCtrl.selectedObject.name}}</td>
+            <td class="valueCell">{{aCtrl.selectedObject.value}}</td>
+            <td class="valueCell">{{aCtrl.selectedObject.refValue}}</td>
+            <td class="valueCell"><span ng-if="aCtrl.consistencyType === 'relation' && aCtrl.relationshipType === 'do'">{{aCtrl.dropoutRate(aCtrl.selectedObject.value, aCtrl.selectedObject.refValue)}}%</span><span ng-if="aCtrl.relationshipType != 'do'">{{aCtrl.selectedObject.ratio}}</span></td>
+            <td>
+            	<span class="dropdown" dropdown>
+                  <a href class="dropdown-toggle" dropdown-toggle>
+                          <span class="glyphicon glyphicon-th-list" style="color: black" aria-hidden="true"></span>
+                        </a>
+                  <ul class="dropdown-menu dropdown-menu-right">
+                    <li><a href ng-click="aCtrl.sendMessage(aCtrl.selectedObject);">Contact</a></li>
+                    <li><a href ng-click="aCtrl.drillDown(aCtrl.selectedObject);">Drill down</a></li>
+                    <li><a href ng-click="aCtrl.showData(aCtrl.selectedObject);">Show {{aCtrl.selectedPeriod().name}} data</a></li>
+                  </ul>
+                  </span>
+            </td>    
+        </tr>
+        <tr ng-if="!aCtrl.selectedObject.hasOwnProperty('name')">
+        	<td colspan="5">Click on the graph or in the table see details.</td>
+        </tr>
+	</tbody>
+</table>
+</div>
 
-			        <tfoot>
-			            <td colspan="{{aCtrl.totalColumns}}">
-				            <pagination total-items="aCtrl.totalRows" items-per-page="aCtrl.pageSize" max-size="5" ng-model="aCtrl.currentPage" class="pagination-sm pull-right" boundary-links="true" rotate="true"></pagination>
-			            </td>
-			        </tfoot>
-			        
-			        <tbody>
-			        	<tr valign="middle" ng-repeat="row in aCtrl.filteredRows | orderBy:aCtrl.sortCol:aCtrl.reverse | startFrom:(aCtrl.currentPage-1)*aCtrl.pageSize | limitTo:aCtrl.pageSize">
-			                <td>{{row.metaData.ou.name}}</td>
-			                <td>{{row.metaData.dx.name}}</td>
-			                <td ng-repeat="value in row.data track by $index" 
-			                	class="valueCell"
-			                	ng-class="{warning: value==='', danger: aCtrl.isOutlier(value, row.stats)}"
-			                	>{{value}}</td>
-			                <td class="valueCell">{{row.result.maxSscore}}</td>
-			                <td class="valueCell"><span ng-if="row.result.maxZscore != 0">{{row.result.maxZscore}}</span></td>
-			                <td class="valueCell">{{row.result.gapWeight}}</td>
-			                <td class="valueCell">{{row.result.outWeight}}</td>
-			                <td class="valueCell">{{row.result.totalWeight}}</td>
-			                
-			                <td>
-			                	<span class="dropdown" dropdown>
-			                      <a href class="dropdown-toggle" dropdown-toggle>
-			                              <span class="glyphicon glyphicon-th-list" style="color: black" aria-hidden="true"></span>
-			                            </a>
-			                      <ul class="dropdown-menu dropdown-menu-right">
-			                        <li><a href ng-click="aCtrl.showDetails(row);">Visualise</a></li>
-			                        <li><a href ng-click="aCtrl.floatUp(row.metaData);">Float up</a></li>
-			                        <li><a href ng-click="aCtrl.drillDown(row.metaData);">Drill down</a></li>
-			                        <li><a href ng-click="aCtrl.sendMessage(row.metaData);">Contact</a></li>
-			                      </ul>
-			                      </span>
-			                </td>    
-			            </tr>
-			    	</tbody>
-				</table>
-			</div>
-	<div style="min-height: 400px; margin-top: 20px; margin-bottom: 20px;" id="detailedResult"></div>
+<div style="margin-top: 20px; font-size: 85%;" class="table-responsive">
+<h4>Overview</h4>
+<label>Period: {{aCtrl.selectedPeriod().name}}</label>
+<table class="table table-bordered table-striped table-condensed table-hover">
+	<thead>
+	    <tr>	
+	    	<th nowrap ng-click="aCtrl.sortByColumn('name')">Unit</th>
+	    	<th ng-click="aCtrl.sortByColumn('value')">{{aCtrl.selectedData('a').name}}</th>
+	    	<th ng-click="aCtrl.sortByColumn('refValue')">{{aCtrl.selectedData('b').name}}</th>
+	    	<th ng-click="aCtrl.sortByColumn('ratio')"><span ng-if="aCtrl.consistencyType === 'relation' && aCtrl.relationshipType === 'do'">Dropout rate (%)</span><span ng-if="aCtrl.relationshipType != 'do'">Ratio</span></th>
+	    </tr>
+	</thead>
+	
+	<tfoot>
+	    <td colspan="4">
+	        <pagination total-items="aCtrl.totalRows" items-per-page="aCtrl.pageSize" max-size="5" ng-model="aCtrl.currentPage" class="pagination-sm pull-right" boundary-links="true" rotate="true"></pagination>
+	    </td>
+	</tfoot>
+	
+	<tbody>
+    	<tr ng-click="aCtrl.selectOrgunit(row);" ng-class="{warning: row.id === aCtrl.selectedObject.id}" valign="middle" ng-repeat="row in aCtrl.mainResult.subunitDatapoints | orderBy:aCtrl.sortCol:aCtrl.reverse | startFrom:(aCtrl.currentPage-1)*aCtrl.pageSize | limitTo:aCtrl.pageSize">
+            <td >{{row.name}}</td>
+            <td class="valueCell">{{row.value}}</td>
+            <td class="valueCell">{{row.refValue}}</td>
+            <td class="valueCell"><span ng-if="aCtrl.consistencyType === 'relation' && aCtrl.relationshipType === 'do'">{{aCtrl.dropoutRate(row.value, row.refValue)}}%</span><span ng-if="aCtrl.relationshipType != 'do'">{{row.ratio}}</span></td>
+        </tr>
+	</tbody>
+</table>
+</div>
 </div>

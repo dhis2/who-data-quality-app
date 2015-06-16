@@ -1,5 +1,5 @@
 (function(){  
-	angular.module('dataQualityApp').service('metaDataService', ['$q', 'requestService', function ($q, requestService) {
+	angular.module('dataQualityApp').service('metaDataService', ['$q', 'requestService', 'periodService', function ($q, requestService, periodService) {
 	  	
 	  	var self = this;
 	  	
@@ -294,7 +294,7 @@
 				
 				self.getDataElementsFromIDs(dataElementIDs).then(function (data) {
 				
-					deferred.resolve(data);
+					deferred.resolve(data.dataElements);
 					
 				});
 						
@@ -303,6 +303,63 @@
 			
 			return deferred.promise;
 		
+		}
+		
+		self.getIndicatorPeriodTypes = function (indicatorID) {
+			var deferred = $q.defer();
+			if (!self.indicatorPeriodTypes) {
+				self.indicatorPeriodTypes = {};
+				self.indicatorPeriodTypes[indicatorID] = {
+					'all': [],
+					'remaining': 0,
+					'shortest': null,
+					'longest': null
+				};				
+			}
+			else if (!self.indicatorPeriodTypes[indicatorID]) {
+				self.indicatorPeriodTypes[indicatorID] = {
+					'all': [],
+					'remaining': 0,
+					'shortest': null,
+					'longest': null
+				};
+			}
+			else {
+				deferred.resolve(self.indicatorPeriodTypes[indicatorID]);
+				return deferred.promise;
+			}
+			
+			self.getIndicatorDataElements([indicatorID]).then(function (dataElements) {
+				for (var i = 0; i < dataElements.length; i++) {
+					self.indicatorPeriodTypes[indicatorID].remaining++;
+					
+					self.getDataElementPeriodType(dataElements[i].id).then(function (periodType) {
+						self.indicatorPeriodTypes[indicatorID].all.push(periodType);
+						self.indicatorPeriodTypes[indicatorID].remaining--;	
+						
+						//Do we have all?
+						if (self.indicatorPeriodTypes[indicatorID].remaining === 0) {
+						
+							var pType = self.indicatorPeriodTypes[indicatorID];
+							
+							//TODO: get shortest
+							pType.all = self.removeDuplicateIDs(pType.all);
+							if (pType.all.length === 1) {
+								pType.shortest = pType.all[0];
+								pType.longest = pType.all[0];
+							}
+							else {
+								pType.shortest = periodService.shortestPeriod(pType.all);
+								pType.longest = periodService.longestPeriod(pType.all);
+							}
+							deferred.resolve(pType);
+						}
+					});
+				}
+			});
+			
+			return deferred.promise;
+			
 		}
 		
 		
@@ -445,17 +502,17 @@
 		/**Data elements*/
 		self.getDataElements = function() { 
 			
-				var deferred = $q.defer();
-				
-				//available locally
-				if (dataElements.available) {
-					deferred.resolve(dataElements.data);
-				}
-				//waiting for server
-				else if (!dataElements.available && dataElements.promise) {
-					return dataElements.promise;
-				}
-				//need to be fetched
+			var deferred = $q.defer();
+			
+			//available locally
+			if (dataElements.available) {
+				deferred.resolve(dataElements.data);
+			}
+			//waiting for server
+			else if (!dataElements.available && dataElements.promise) {
+				return dataElements.promise;
+			}
+			//need to be fetched
 			else {
 				var requestURL = '/api/dataElements.json?'; 
 				requestURL += 'fields=id,name&paging=false';
@@ -474,9 +531,26 @@
 				    }
 				);
 			}
-				dataElements.promise = deferred.promise;
-				return deferred.promise; 
+			dataElements.promise = deferred.promise;
+			return deferred.promise; 
 		};
+		
+		self.getDataElementPeriodType = function (deID) {
+			var deferred = $q.defer();
+			var requestURL = '/api/dataElements/' + deID + '.json?fields=id,dataSets[periodType]';		
+			 
+			requestService.getSingle(requestURL).then(
+				function(response) { //success
+			    	var data = response.data.dataSets[0].periodType;
+			    	deferred.resolve(data);
+				}, 
+				function(response) { //error
+			    	deferred.reject("Error fetching data elements");
+			    	console.log(msg, code);
+			    }
+			);
+			return deferred.promise; 
+		}
 		
 		
 		self.getDataElementsFromIndicator = function(indicator) {

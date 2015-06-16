@@ -11,10 +11,11 @@
 	    }
 	});
 	
-	app.controller("ConsistencyAnalysisController", function(metaDataService, periodService, requestService, dataAnalysisService, mathService, $modal) {
+	app.controller("ConsistencyAnalysisController", function(metaDataService, periodService, requestService, dataAnalysisService, mathService, $modal, $timeout, $scope) {
 		var self = this;
 			    
 	    self.result = undefined;
+	    self.mainResult = undefined;
 	    self.itemsPerPage = 25;
 	    self.hasVisual = false;
 	         	    
@@ -22,12 +23,13 @@
 			self.alerts = [];
 			self.chart = {};
 			
-			self.consistencyType = 'relation'; //0 = indicator, 2 = time
-			self.relationShipType = 'equal'; //0 = equal, 1 = >, 2 = dropout
-			self.relationShipType = 'constant'; //0  = constant, 
+			self.selectedObject = {};
+			
+			self.consistencyType = 'relation'; 
+			self.relationshipType = 'equal';
+			self.trendType = 'constant';
 			self.consistencyCriteria = 20;
 			
-			self.dataDisaggregation = 0;
 	    	self.dataSelection = {
 	    		'deGroups': [],
 	    		'indGroups': [],
@@ -106,7 +108,9 @@
 	    	//PERIODS
 	    	self.periodTypes = [];
 	    	self.periodTypes = periodService.getPeriodTypes();
-	    	self.periodTypeSelected = self.periodTypes[1];
+	    	self.periodTypeSelected = self.periodTypes[4];
+			self.filteredPeriodTypes = [];
+			filterPeriodTypes();
 	    	
 	    	self.periodCount = [];	    	
 	    	self.periodCounts = periodService.getPeriodCount();
@@ -237,13 +241,17 @@
 	    	self.dataSelection[dataItem].de = [];
 	    	self.dataSelection[dataItem].deSelected = undefined;
 	    	
-	    	if (self.dataDisaggregation === 0) {	    	
+	    	if (self.dataSelection[dataItem].type === 'de') {	    	
 	    		self.dataSelection[dataItem].deText = "Loading...";
 		    	metaDataService.getDataElementGroupMembers(self.dataSelection[dataItem].deGroupSelected.id)
 		    	 	.then(function(data) { 
 
 		    	       	self.dataSelection[dataItem].deText = "Select data element...";
 		    	       	self.dataSelection[dataItem].de = data;
+		    	       	if (dataItem == 'a' && !self.dataSelection['b'].de) {
+							self.dataSelection['b'].deText = "Select data element...";
+							self.dataSelection['b'].de = data;		    	       		
+		    	       	}
 		    	     });
 	    	}
 	    	else {
@@ -252,9 +260,60 @@
 	    		 	.then(function(data) { 
 		    	       	self.dataSelection[dataItem].deText = "Select data element...";    		 		
 	    		       	self.dataSelection[dataItem].de = data;
+	    		       	
+	    		       	if (dataItem == 'a' && !self.dataSelection['b'].deGroupSelected) {
+	    		       		self.dataSelection['b'].deGroupSelected = angular.copy(self.dataSelection['a'].deGroupSelected);
+	    		       		self.dataSelection['b'].deText = "Select data element...";
+	    		       		self.dataSelection['b'].de = data;		    	       		
+	    		       	}
 	    		     });
 	    	}
 	    
+	    }
+	    
+	    self.dataSelected = function (itemType, itemCode) {
+	    	if (itemType === 'de') {
+		    	metaDataService.getDataElementPeriodType(self.selectedData(itemCode).id).then(function (periodType) {
+		    		self.dataSelection[itemCode].periodType = periodType;
+		    		filterPeriodTypes();
+		    	});
+		    }
+		    else {
+		    	metaDataService.getIndicatorPeriodTypes(self.selectedData(itemCode).id).then(function (periodTypeObject) {
+		    		console.log(periodTypeObject);
+		    		self.dataSelection[itemCode].periodType = periodTypeObject.longest;
+		    		filterPeriodTypes();
+		    	});
+		    }
+		    
+	    }
+	    
+	    
+	    function filterPeriodTypes() {
+	    	
+	    	if (!self.dataSelection['a'].periodType && !self.dataSelection['b'].periodType) {
+	    		self.filteredPeriodTypes = self.periodTypes;
+	    		return;
+	    	}
+	    	var periods = [];
+	    	if (self.dataSelection['a'].periodType) periods.push(self.dataSelection['a'].periodType);
+	    	if (self.consistencyType === 'relation' && self.dataSelection['b'].periodType) periods.push(self.dataSelection['b'].periodType);
+
+	    	var longestPeriod = periodService.longestPeriod(periods);
+	    	
+	    	self.filteredPeriodTypes = [];
+	    	for (var i = self.periodTypes.length-1; i >= 0; i--) {
+	    		
+	    		if (self.periodTypes[i].id === longestPeriod) {
+	    			self.filteredPeriodTypes.push(self.periodTypes[i]);
+	    			break;	
+	    		}
+	    		else {
+	    			self.filteredPeriodTypes.push(self.periodTypes[i]);
+	    		}
+	    	}
+	    	self.periodTypeSelected = self.filteredPeriodTypes[self.filteredPeriodTypes.length-1];
+	    	self.getPeriodsInYear();
 	    }
 	    
 	    
@@ -268,6 +327,24 @@
   	    		   	self.dataSelection[dataItem].ind = data;
   	    		});
   	    }
+  	    
+  	    self.selectedPeriod = function() {
+  	    	if (self.periodTypeSelected.id != 'Yearly') return self.periodSelected;
+  	    	else return self.yearSelected;
+  	    }
+  	    
+  	    //item a or b
+  	    self.selectedData = function(item) {
+	  	    
+	  	    //var get data id(s)
+	  	    var dx;
+	  	    if (self.dataSelection[item].type === 'de') {
+	  	    	return self.dataSelection[item].deSelected;
+	  	    }
+	  	    else {
+	  	    	return self.dataSelection[item].indSelected;
+	  	    }
+  	    }
 			
 		
 		
@@ -276,330 +353,183 @@
 			
 			//Collapse open panels
 			$('.panel-collapse').removeClass('in');
+
+			self.mainResult = undefined;
+			self.result;
 			
+			var analysisType = self.consistencyType;
+			var relationType = self.relationshipType;
+			var trendType = self.trendType;
+			var criteria = self.consistencyCriteria;
+
+
+			var period = self.selectedPeriod().id;
+			var dxA = self.selectedData('a').id;
+			var dxB = self.selectedData('b').id;
+			var ouBoundary = self.boundaryOrgunitSelected.id;
+			var ouLevel = self.orgunitLevelSelected.level;
+			var ouGroup = null;//TODO			
 			
-			if (self.datasetSelected && !self.datasetDataelements) {
-				getDatasetDataelements();
-				return;
-			}
-			
-			var data = getDataForAnalysis();
-			var variables = data.dataIDs;			
-			var periods = getPeriodsForAnalysis();
-			
-			//If dataset, include all optioncombos
-			var coAll = false;
-			if (self.datasetSelected) coAll = true;
-			
-			var ouGroup = null;
-			if (self.orgunitGroupSelected) ouGroup = self.orgunitGroupSelected.id;
-			
-			var ouLevel = null;
 			if (self.orgunitLevelSelected) {
 				ouLevel = self.orgunitLevelSelected.level;
 				console.log("Depth: " + (ouLevel-self.boundaryOrgunitSelected.level));
 			}
 			
-			self.result = null;
-						
-			dataAnalysisService.outlierGap(receiveResultNew, variables, coAll, data.coFilter, periods, self.boundaryOrgunitSelected.id, ouLevel, ouGroup, 2, 3.5, 1);
+			//1 Relation
+			if (analysisType = 'relation') {	
+				dataAnalysisService.dataConsistency(receiveRelationResult, relationType, criteria, null, dxA, dxB, period, ouBoundary, ouLevel)
+			}
 			
-			self.datasetDataelements = null;
 		};
 		
 		
+		function dataForSelectedUnit(ouID) {
 		
-		function getDataForAnalysis() {
-		
-			var details = (self.dataDisaggregation != 0);
-			
-			var dataIDs = [];
-			if (!details && self.indicatorGroupsSelected) {
-				if (self.indicatorsSelected.length > 0) {
-					for (var i = 0; i < self.indicatorsSelected.length; i++) {
-						dataIDs.push(self.indicatorsSelected[i].id);
-					}
-				}
-				else { //Selected group but did not specify = all
-					for (var i = 0; i < self.indicators.length; i++) {
-						dataIDs.push(self.indicators[i].id);
-					}
-				}
-			}
-			
-			var coFilter = {};
-			if (self.dataElementGroupsSelected) {
-				if (details) {
-					if (self.dataElementsSelected.length > 0) {
-						for (var i = 0; i < self.dataElementsSelected.length; i++) {
-							coFilter[self.dataElementsSelected[i].id] = true;
-							dataIDs.push(self.dataElementsSelected[i].dataElementId);	
-						}
-					}
-					else { //Selected group but did not specify = all
-						for (var i = 0; i < self.dataElements.length; i++) {
-							coFilter[self.dataElements[i].id] = true;
-							dataIDs.push(self.dataElements[i].dataElementId);
-						}
-					}
-				}
-				else {
-					if (self.dataElementsSelected.length > 0) {
-						for (var i = 0; i < self.dataElementsSelected.length; i++) {
-							dataIDs.push(self.dataElementsSelected[i].id);
-						}
-					}
-					else { //Selected group but did not specify = all
-						for (var i = 0; i < self.dataElements.length; i++) {
-							dataIDs.push(self.dataElements[i].id);
-						}
-					}
-				}
-				
-			}
-			
-			
-			if (self.datasetSelected) {
-				dataIDs = [];
-				
-				for (var i = 0; i < self.datasetDataelements.length; i++) {
-					dataIDs.push(self.datasetDataelements[i].id);	
-				}
-								
-			}
-			
-			return {
-				'dataIDs': uniqueArray(dataIDs),
-				'details': details,  
-				'coFilter': details ? coFilter : null
-			};
-		
-		
-		
+			console.log(self.dataSelection);
+						
 		}
 		
-		function getPeriodsForAnalysis() {
-			
-			var startDate, endDate;
-			if (self.periodOption === "last") {
-				endDate = moment().format("YYYY-MM-DD");
-				if (self.periodTypeSelected.id === 'Weekly') {
-					startDate = moment().subtract(self.periodCountSelected.value, 'weeks').format("YYYY-MM-DD");
-				}
-				else if (self.periodTypeSelected.id === 'Monthly') {
-					startDate = moment().subtract(self.periodCountSelected.value, 'months').format("YYYY-MM-DD");
-				}
-				else if (self.periodTypeSelected.id === 'BiMonthly') {
-					startDate = moment().subtract(self.periodCountSelected.value*2, 'months').format("YYYY-MM-DD");
-				}
-				else if (self.periodTypeSelected.id === 'Quarterly') {
-					startDate = moment().subtract(self.periodCountSelected.value, 'quarters').format("YYYY-MM-DD");
-				}
-				else if (self.periodTypeSelected.id === 'SixMonthly') {
-					startDate = moment().subtract(self.periodCountSelected.value*2, 'quarters').format("YYYY-MM-DD");
-				}
-				else if (self.periodTypeSelected.id === 'Yearly') {
-					startDate = moment().subtract(self.periodCountSelected.value, 'years').format("YYYY-MM-DD");
-				}
-			}
-			else if (self.periodOption === "year") {
-				
-				if (self.yearSelected.name === moment().format('YYYY')) {
-					endDate = moment().format('YYYY-MM-DD');
-				}
-				else {
-					endDate = self.yearSelected.id + "-12-31";
-				}
-			
-				startDate = self.yearSelected.id + "-01-01";
-				
-				
-			}
-			else {
-				startDate = self.date.startDate;
-				endDate = self.date.endDate;
-			}
-			
-			return periodService.getISOPeriods(startDate, endDate, self.periodTypeSelected.id);
-		
-		}
-		
-		
+	
 		
 		/**
 		RESULTS
 		*/
 		
-		self.sortByColumn = function (columnKey) {
-			self.currentPage = 1;
-			if (self.sortCol === columnKey) {
-				self.reverse = !self.reverse;
+		var receiveRelationResult = function(result, errors) {
+		
+			if (result.type === 'do') {
+				makeDropoutRateChart(result);
 			}
 			else {
-				self.sortCol = columnKey;
-				self.reverse = true;
+				makeDataConsistencyChart(result);
 			}
+			
+			self.chart.data = result.chartData;
+			self.chart.options = result.chartOptions;		
+			
+			self.updateCharts();
+			
+			self.mainResult = result;
+			
+			self.currentPage = 1;
+			self.pageSize = 15;   	
+			self.totalRows = self.mainResult.subunitDatapoints.length;
+			
+			self.sortByColumn('ratio');
+			if (result.type === 'do') self.sortByColumn('ratio'); //Want descending if dropout
+			
+			//Look for click events in chart
+			$(document).on("click", "svg", function(e) {
+			     
+			     var item = e.target.__data__;
+			     if( Object.prototype.toString.call(item) === '[object Object]' ) {
+			         if (item.hasOwnProperty('series') && item.hasOwnProperty('point')) {
+			         	itemClicked(item.series, item.point);
+			         }
+			     }
+			     
+			});
 		}
 		
-		
-		var receiveResultNew = function(result) {		    
-			    
-			if (!result || !result.rows || result.rows.length === 0) { 
-				console.log("Empty result");
-				self.alerts.push({type: 'warning', msg: 'No data!'});
-			}
-			else {
-				self.alerts = [];
-				console.log("Received " + result.rows.length + " rows");
+	
+		self.title = function () {
+			var title = "";
+			if (self.consistencyType === 'relation') {			
+				title += self.selectedData('a').name + " to " + self.selectedData('b').name + " for " + self.selectedPeriod().name;
 			}
 			
-			self.result = result;
-			
-			//Reset filter
-			self.stdFilterType = 0;
-			self.stdFilterDegree = 1;
-			
-			self.updateFilter();
-			
-			//Default sort column
-			self.sortCol = 'result.totalWeight';
-			self.reverse = true;
-			
-			//Get nice period names
-			self.periods = [];
-			for (var i = 0; i < result.metaData.periods.length; i++) {
-				var period = result.metaData.periods[i];
-				self.periods.push(periodService.shortPeriodName(period));
-			}
-			
-			//Calculate total number of columns in table
-			self.totalColumns = self.periods.length + 8;
-		};
-		
-       	    
-	    self.isOutlier = function (value, stats) {
-	    	if (value === null || value === '') return false;
-	    	
-	   		var standardScore = Math.abs(mathService.calculateStandardScore(value, stats));
-	   		var zScore = Math.abs(mathService.calculateZScore(value, stats));
-	   		
-	   		if (standardScore > 2 || zScore > 3.5) return true;
-	   		else return false;
-	   	}
-	   	
-	   		   	
-	   	function includeRow(row) {
-	   		
-	   		if (self.stdFilterType === 0) return true;
-	   		
-	   		if (self.stdFilterType === 1) {
-	   			if (self.stdFilterDegree === 2) return row.result.maxSscore > 3;
-	   			else return row.result.maxSscore > 2;
-	   		}
-	   		
-   			if (self.stdFilterType === 2) {
-   				if (self.stdFilterDegree === 2) return row.result.maxZscore > 5;
-   				else return row.result.maxZscore > 3.5;
-   			} 
-	   		
-	   		return false;
-	   	}
+			return title;
+		}
+				
+       	
+       	/** DATA FUNCTION */
+       	self.dropoutRate = function(valueA, valueB) {
+       	
+       		return mathService.round(100*(valueA-valueB)/valueA, 2);
+       	
+       	}
+       	
+	    
 	   	
 	   	
-	   	self.updateFilter = function() {
-	   		self.filteredRows = [];
-	   		for (var i = 0; i < self.result.rows.length; i++) {
-	   			if (includeRow(self.result.rows[i])) {
-	   				self.filteredRows.push(self.result.rows[i]);
-	   			}
-	   		}
-	   		
-	   		//Store paging variables
+	   	/** TABLE LAYOUT */
+	   	self.sortByColumn = function (columnKey) {
 	   		self.currentPage = 1;
-	   		self.pageSize = 15;   	
-	   		self.totalRows = self.filteredRows.length;
+	   		if (self.sortCol === columnKey) {
+	   			self.reverse = !self.reverse;
+	   		}
+	   		else {
+	   			self.sortCol = columnKey;
+	   			self.reverse = true;
+	   		}
 	   	}
 	   	
+	   	self.isOutlier = function (value, stats) {
+	   		if (value === null || value === '') return false;
+	   		
+   			var standardScore = Math.abs(mathService.calculateStandardScore(value, stats));
+   			var zScore = Math.abs(mathService.calculateZScore(value, stats));
+   			
+   			if (standardScore > 2 || zScore > 3.5) return true;
+   			else return false;
+   		}
+   		
 	   	
-	   	self.exportCSV = function() {
-			  
-			  var csvContent = "data:text/csv;charset=utf-8,";
-			  var string;
-			  var i = 0;
-			  self.result.rows.forEach(function(row, index){
-			  	 string = row.metaData.ou.name + ";";
-			  	 string += row.metaData.dx.name + ";";
-			     string += row.data.join(";") + ";";
-			     string += row.result.maxSscore + ";";
-			     string += row.result.maxZscore + ";";
-			     string += row.result.gapWeight + ";";
-			     string += row.result.outWeight + ";";
-			     string += row.result.totalWeight + ";";
-			     csvContent += index < self.result.rows.length ? string+ "\n" : string;
-			     if (i % 10 === 0) console.log(i++);
-			  });
-			  
-			  var encodedUri = encodeURI(csvContent);
-			  window.open(encodedUri);
-	   	
-	   	}
-	   	
+   		self.updateFilter = function() {
+   			self.filteredRows = [];
+   			for (var i = 0; i < self.result.rows.length; i++) {
+   				if (includeRow(self.result.rows[i])) {
+   					self.filteredRows.push(self.result.rows[i]);
+   				}
+   			}
+   			
+   			//Store paging variables
+   			self.currentPage = 1;
+   			self.pageSize = 15;   	
+   			self.totalRows = self.filteredRows.length;
+   		}
+   		
+   		
+   		function includeRow(row) {
+   				
+   				if (self.stdFilterType === 0) return true;
+   				
+   				if (self.stdFilterType === 1) {
+   					if (self.stdFilterDegree === 2) return row.result.maxSscore > 3;
+   					else return row.result.maxSscore > 2;
+   				}
+   				
+   				if (self.stdFilterType === 2) {
+   					if (self.stdFilterDegree === 2) return row.result.maxZscore > 5;
+   					else return row.result.maxZscore > 3.5;
+   				} 
+   				
+   				return false;
+   			}
+   		
+   		
 	   	
 	   	/**INTERACTIVE FUNCTIONS*/
 	   	
-	   	//showDetails
-        self.showDetails = function(row) {
-
-			$('#detailedResult').html('<div id="detailChart"><svg class="bigChart"></svg></div>');
-        	
-        	var chart = nv.models.multiBarChart()
-        			      .reduceXTicks(true)   //If 'false', every single x-axis tick label will be rendered.
-        			      .rotateLabels(0)      //Angle to rotate x-axis labels.
-        			      .groupSpacing(0.1)    //Distance between each group of bars.
-        			      .showControls(false)
-        			    ;
-        			
-        	var result = self.result;
-        	var index = 0;
-        	var series = [{
-        		'key': row.metaData.dxName + " - " + row.metaData.ouName,
-        		'color': "green",
-        		'values': []
-        	}];
-        	for (var i = 0; i < row.data.length; i++) {
-    			var value = row.data[i];
-    			if (value === '') value = null;
-    			else value = parseFloat(value);
-    			series[0].values.push({
-    				'x': index++,   		
-    				'y': value,
-    				'label': self.periods[i]
-    			});
-        	}
-        	        	        				
-		    chart.xAxis
-		        .tickFormat(function(d) {
-		        	return series[0].values[d].label;
-		        });
-		
-		    chart.yAxis
-		        .tickFormat(d3.format('g'));
-		
-			d3.select('#detailChart svg')
-		        .datum(series)
-		        .call(chart);
-				
-		    nv.utils.windowResize(chart.update);
-		    
-		    $('html, body').animate({
-		    	scrollTop: $("#detailChart").offset().top,
-		    	scrollLeft: 0
-		    }, 500);    
-    		
-        };
-
+	   	
+	   	function itemClicked(seriesIndex, pointIndex) {	   		
+	   		self.selectOrgunit(self.mainResult.subunitDatapoints[pointIndex]);
+	   		$scope.$apply();
+	   	}
+	   	
+	   	
+	   	self.selectOrgunit = function(item) {
+	   		self.selectedObject.name = item.name;
+	   		self.selectedObject.id = item.id;
+	   		self.selectedObject.value = item.value;
+	   		self.selectedObject.refValue = item.refValue;
+	   		self.selectedObject.ratio = item.ratio;
+	   		
+	   		dataForSelectedUnit(item.id);
+	   	}
+	   	
         
-        self.sendMessage = function(metaData) {
+        self.sendMessage = function(row) {
         	        	
         	var modalInstance = $modal.open({
 	            templateUrl: "views/_modals/modalMessage.html",
@@ -607,10 +537,10 @@
 	            controllerAs: 'mmCtrl',
 	            resolve: {
 	    	        orgunitID: function () {
-	    	            return metaData.ouID;
+	    	            return row.id;
 	    	        },
 	    	        orgunitName: function () {
-	    	            return metaData.ouName;
+	    	            return row.name;
 	    	        }
 	            }
 	        });
@@ -681,6 +611,290 @@
         	
         	
         }
+        
+        /** CHARTS */
+  	  	function makeTimeConsistencyChart(result) {	    		    	
+  	  		    
+	    	var datapoints = result.subunitDatapoints;
+	    	var boundaryRatio = result.boundaryRatio;
+	    	var consistency = result.threshold; 
+	    		    	
+	    	var toolTip = function(key, x, y, e, graph) {
+	    		var data = result.subunitDatapoints;
+	    		
+	    		var toolTipHTML = '<h3>' + data[graph.pointIndex].name + '</h3>';
+    			toolTipHTML += '<p style="margin-bottom: 0px">' + result.pe + ': ' + y + '</p>';
+	    		if (result.type === 'constant') {
+	    			toolTipHTML += '<p>Average: ' + x + '</p>'; 	    			
+	    		}
+	    		else {
+	    			toolTipHTML += '<p>Forecasted: ' + x + '</p>'; 	    			
+	    		}
+	    	    return toolTipHTML;
+	    	};
+	    	
+	    	
+	    	var chartSeries = [];
+	    	var chartSerie = {
+	    		'key': self.orgunitLevelSelected.name + "s",
+	    		'values': []
+	    	}
+	    	
+	    	for (var i = 0; i < datapoints.length; i++) {
+	    		chartSerie.values.push({
+	    			'x': datapoints[i].refValue,
+	    			'y': datapoints[i].value
+	    		});
+	    	}
+
+	    	chartSeries.push(chartSerie);
+	    	chartSeries.push(
+	    		{
+	    			'key': self.boundaryOrgunitSelected.name,
+	    			'color': '#ffff',
+	    			'values': [{
+	    			'x': 0,
+	    			'y': 0,
+	    			'size': 0
+	    			}
+	    			],
+	    			'slope': boundaryRatio,
+	    			'intercept': 0.001
+	    		},
+	    		{
+	    			'key': "+ " + consistency + "%",
+	    			'color': '#F00',
+	    			'values': [{
+	    			'x': 0,
+	    			'y': 0,
+	    			'size': 0
+	    			}
+	    			],
+	    			'slope': boundaryRatio+consistency/100,
+	    			'intercept': 0.001
+	    		},
+	    		{
+	    			'key': "- " + consistency + "%",
+	    			'color': '#00F',
+	    			'values': [{
+	    			'x': 0,
+	    			'y': 0,
+	    			'size': 0
+	    			}
+	    			],
+	    			'slope': boundaryRatio-consistency/100,
+	    			'intercept': 0.001
+	    		}
+	    	);
+	    		    	
+			var xAxisLabel;
+			if (result.type === "constant") xAxisLabel = "Average of previous periods";
+			else xAxisLabel = "Forecasted value";
+			
+	    	result.chartOptions = {
+	    	   	"chart": {
+	    	        "type": "scatterChart",
+	    	        "height": 600,
+	    	        "margin": {
+	    	          "top": 10,
+	    	          "right": 30,
+	    	          "bottom": 100,
+	    	          "left": 50
+	    	        },
+	    	        "scatter": {
+	    	        	"onlyCircles": false
+	    	        },
+	    	        "clipEdge": false,
+	    	        "staggerLabels": true,
+	    	        "transitionDuration": 1,
+	    	        "showDistX": true,
+	    	        "showDistY": true,
+	    	        "xAxis": {
+	    	              "axisLabel": xAxisLabel,
+	    	              "axisLabelDistance": 30,
+	    	              "tickFormat": d3.format('g')
+	    	        },
+	    	        "yAxis": {
+	    	        	"axisLabel": result.pe,
+	    	            "axisLabelDistance": 30,
+	    	            "tickFormat": d3.format('g')
+	    	        },
+	    	        'tooltips': true,
+	    	        'tooltipContent': toolTip
+	    	        
+	    	    },
+	    	    "title": {
+	    	    	'enable': true,
+	    	    	'text': result.dxName
+	    	    },
+	    	    "subtitle": {
+	    	    	'enable': false
+	    	    }
+	    	};
+	    	
+	    	result.chartData = chartSeries;
+	    }
+  	  	
+  	  		    
+	    function makeDataConsistencyChart(result) {	    		    	
+	    
+	    	var datapoints = result.subunitDatapoints;
+	    	var boundaryRatio = result.boundaryRatio;
+	    	var consistency = result.criteria; 
+	    		    	
+	    	var toolTip = function(key, x, y, e, graph) {
+	    		var data = result.subunitDatapoints;
+	    	    return '<h3>' + data[graph.pointIndex].name + '</h3>' +
+	    	        '<p style="margin-bottom: 0px">' + result.dxNameA + ': ' + y + '</p>' + 
+	    	        '<p>' + result.dxNameB + ': ' + x + '</p>'; 
+	    	};
+	    	
+	    	
+	    	var chartSeries = [];
+	    	var chartSerie = {
+	    		'key': self.orgunitLevelSelected.name + "s",
+	    		'values': []
+	    	}
+	    	
+	    	for (var i = 0; i < datapoints.length; i++) {
+	    		chartSerie.values.push({
+	    			'x': datapoints[i].refValue,
+	    			'y': datapoints[i].value
+	    		});
+	    	}
+
+	    	chartSeries.push(chartSerie);
+	    	chartSeries.push(
+	    		{
+	    			'key': self.boundaryOrgunitSelected.name,
+	    			'color': '#ffff',
+	    			'values': [{
+	    			'x': 0,
+	    			'y': 0,
+	    			'size': 0
+	    			}
+	    			],
+	    			'slope': boundaryRatio,
+	    			'intercept': 0.001
+	    		},
+	    		{
+	    			'key': "+ " + consistency + "%",
+	    			'color': '#F00',
+	    			'values': [{
+	    			'x': 0,
+	    			'y': 0,
+	    			'size': 0
+	    			}
+	    			],
+	    			'slope': boundaryRatio+consistency/100,
+	    			'intercept': 0.001
+	    		},
+	    		{
+	    			'key': "- " + consistency + "%",
+	    			'color': '#00F',
+	    			'values': [{
+	    			'x': 0,
+	    			'y': 0,
+	    			'size': 0
+	    			}
+	    			],
+	    			'slope': boundaryRatio-consistency/100,
+	    			'intercept': 0.001
+	    		}
+	    	);
+	    	result.chartOptions = {
+	    	   	"chart": {
+	    	        "type": "scatterChart",
+	    	        "height": 600,
+	    	        "margin": {
+	    	          "top": 10,
+	    	          "right": 30,
+	    	          "bottom": 120,
+	    	          "left": 120
+	    	        },
+	    	        "scatter": {
+	    	        	"onlyCircles": false
+	    	        },
+	    	        "clipEdge": false,
+	    	        "staggerLabels": true,
+	    	        "transitionDuration": 1,
+	    	        "showDistX": true,
+	    	        "showDistY": true,
+	    	        "xAxis": {
+	    	              "axisLabel": result.dxNameA,
+	    	              "axisLabelDistance": 30,
+	    	              "tickFormat": d3.format('g')
+	    	        },
+	    	        "yAxis": {
+	    	        	"axisLabel": result.dxNameB,
+	    	            "axisLabelDistance": 30,
+	    	            "tickFormat": d3.format('g')
+	    	        },
+	    	        'tooltips': true,
+	    	        'tooltipContent': toolTip
+	    	    }
+	    	};
+	    	
+	    	result.chartData = chartSeries;
+	    }
+	    
+	    
+	    function makeDropoutRateChart(result) {	    		    	
+	    	var chartSeries = [];
+	    	var chartSerie = {
+	    		'key': self.orgunitLevelSelected.name + "s",
+	    		'values': []
+	    	}
+
+	    	var toolTip = function(key, x, y, e, graph) {
+	    		var data = result.subunitDatapoints;
+	    	    return '<h3>' + data[x].name + '</h3>' +
+	    	        '<p>' +  mathService.round(100*(data[x].value-data[x].refValue)/data[x].value,1)  + '% dropout</p>'
+	    	};
+	    	
+	    	var minVal = 0.9;
+	    	var maxVal = 2;
+	    	var point, value;
+	    	for (var i = 0; i < result.subunitDatapoints.length; i++) {
+	    		point = result.subunitDatapoints[i];
+	    		value = point.value/point.refValue;
+	    		
+	    		if (value > maxVal) maxVal = value;
+	    		else if (value < minVal) minVal = value;
+	    		
+	    		chartSerie.values.push({
+	    			'x': i,
+	    			'y': mathService.round(value, 2)
+	    		});
+	    	}
+
+	    	chartSeries.push(chartSerie);	    	
+	    	result.chartData = chartSeries;    	
+	    	
+	    	result.chartOptions = {
+	    	   	"chart": {
+	    	        "type": "lineChart",
+	    	        "height": 600,
+	    	        "margin": {
+	    	          "top": 10,
+	    	          "right": 30,
+	    	          "bottom": 120,
+	    	          "left": 120
+	    	        },
+	    	        "xAxis": {
+	    	          "showMaxMin": false,
+	    	          'axisLabel': axisLabel = self.orgunitLevelSelected.name + "s"
+	    	        },
+	    	        "yAxis": {
+	    	          "axisLabel": "Ratio"
+	    	        },
+	    	        'tooltips': true,
+	    	        'tooltipContent': toolTip,
+	    	        'showLegend': true,
+	    	      	'forceY': [Math.floor(minVal*10)/10, Math.ceil(maxVal*10)/10]
+	    	    }
+	    	}
+	    }
 	   	
 	   	
 	   	/** UTILITIES */
@@ -689,6 +903,15 @@
 	   	    return array.filter(function(item) {
 	   	        return seen.hasOwnProperty(item) ? false : (seen[item] = true);
 	   	    });
+	   	}
+	   	
+	   	self.updateCharts = function() {
+	   		$timeout(function() {
+	   			for (var i = 0; i < nv.graphs.length; i++) {
+	   				nv.graphs[i].update();
+	   			}
+	   			window.dispatchEvent(new Event('resize'));
+	   		});
 	   	}
 	   	
 	   	        

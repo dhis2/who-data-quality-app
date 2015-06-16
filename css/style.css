@@ -79,6 +79,11 @@
 	.table tbody>tr>td.vert-align {
 	    vertical-align: middle;
 	}
+	
+	.table-hover tbody tr:hover > td {
+	  cursor: pointer
+	}
+	
 	.rotate {
 		display: block;
 		  -webkit-transform: rotate(-45deg);
