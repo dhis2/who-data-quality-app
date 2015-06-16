@@ -225,6 +225,30 @@
 		}
 		  	
 		
+		self.getSubPeriods = function(period, periodType) {
+			
+			var pt = self.periodTypeFromPeriod(period);
+			if (pt === periodType) return [period];
+			
+			
+			//Need start and end date of the given period
+			var year = parseInt(period.substring(0, 4));
+			var thisYear = parseInt(moment().format("YYYY"));
+			var sourcePeriods = self.periodTool.get(pt).generatePeriods({'offset': year-thisYear, 'filterFuturePeriods': true, 'reversePeriods': false});
+			
+			var startDate, endDate;
+			for (var i = 0; i < sourcePeriods.length; i++) {
+				if (sourcePeriods[i].iso === period) {
+					startDate = sourcePeriods[i].startDate;
+					endDate = sourcePeriods[i].endDate;
+					break;
+				}
+			}
+			
+			return self.getISOPeriods(startDate, endDate, periodType);
+		}
+		
+		
 		function dateToISOdate(date) {
 			return moment(new Date(date)).format('YYYY-MM-DD');
 		}

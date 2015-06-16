@@ -11,7 +11,7 @@
 	    }
 	});
 	
-	app.controller("ConsistencyAnalysisController", function(metaDataService, periodService, requestService, dataAnalysisService, mathService, $modal, $timeout, $scope) {
+	app.controller("ConsistencyAnalysisController", function(metaDataService, periodService, requestService, dataAnalysisService, visualisationService, mathService, $modal, $timeout, $scope) {
 		var self = this;
 			    
 	    self.result = undefined;
@@ -22,6 +22,7 @@
 		function init() {		
 			self.alerts = [];
 			self.chart = {};
+			self.chartSelected = {};
 			
 			self.selectedObject = {};
 			
@@ -295,11 +296,8 @@
 	    		self.filteredPeriodTypes = self.periodTypes;
 	    		return;
 	    	}
-	    	var periods = [];
-	    	if (self.dataSelection['a'].periodType) periods.push(self.dataSelection['a'].periodType);
-	    	if (self.consistencyType === 'relation' && self.dataSelection['b'].periodType) periods.push(self.dataSelection['b'].periodType);
 
-	    	var longestPeriod = periodService.longestPeriod(periods);
+	    	var longestPeriod = longestPeriodInSelection();
 	    	
 	    	self.filteredPeriodTypes = [];
 	    	for (var i = self.periodTypes.length-1; i >= 0; i--) {
@@ -314,6 +312,14 @@
 	    	}
 	    	self.periodTypeSelected = self.filteredPeriodTypes[self.filteredPeriodTypes.length-1];
 	    	self.getPeriodsInYear();
+	    }
+	    
+	    function longestPeriodInSelection() {
+	    	var periods = [];
+	    	if (self.dataSelection['a'].periodType) periods.push(self.dataSelection['a'].periodType);
+	    	if (self.consistencyType === 'relation' && self.dataSelection['b'].periodType) periods.push(self.dataSelection['b'].periodType);
+
+	    	return periodService.longestPeriod(periods);
 	    }
 	    
 	    
@@ -355,7 +361,9 @@
 			$('.panel-collapse').removeClass('in');
 
 			self.mainResult = undefined;
-			self.result;
+			self.result = undefined;
+			self.chartSelected = {};
+			self.chart = {};
 			
 			var analysisType = self.consistencyType;
 			var relationType = self.relationshipType;
@@ -384,11 +392,36 @@
 		
 		
 		function dataForSelectedUnit(ouID) {
-		
-			console.log(self.dataSelection);
-						
+					
+			var periodType = longestPeriodInSelection();
+
+			if (self.consistencyType === 'relation') {
+				var periods = periodService.getSubPeriods(self.selectedPeriod().id.toString(), periodType);
+				var dxA = self.selectedData('a').id;
+				var dxB = self.selectedData('b').id;	
+				
+				visualisationService.lineChart(receiveDetailChart, [dxA, dxB], periods, [ouID], 'dataOverTime');
+				
+			}
+			else {
+				//TODO
+			}
+			
 		}
 		
+		var receiveDetailChart = function(chartData, chartOptions) {		
+			chartOptions.chart.title = {
+				'enable': true,
+				'text': 'Reporting over time'
+			};
+			chartOptions.chart.margin.left = 60;
+			chartOptions.chart.margin.bottom = 40;
+				
+			self.chartSelected.options = chartOptions;
+			self.chartSelected.data = chartData; 
+				
+		}
+				
 	
 		
 		/**
@@ -419,7 +452,7 @@
 			if (result.type === 'do') self.sortByColumn('ratio'); //Want descending if dropout
 			
 			//Look for click events in chart
-			$(document).on("click", "svg", function(e) {
+			$(document).on("click", "#mainChart", function(e) {
 			     
 			     var item = e.target.__data__;
 			     if( Object.prototype.toString.call(item) === '[object Object]' ) {

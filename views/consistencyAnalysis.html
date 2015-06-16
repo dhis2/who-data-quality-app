@@ -345,7 +345,7 @@
 <div ng-if="aCtrl.mainResult">
 <h3>{{aCtrl.title()}}</h3>
 <p>Click on a point in the chart to see details and possible actions.</p>
-<nvd3 options='aCtrl.chart.options' data='aCtrl.chart.data'></nvd3>
+<nvd3 id="mainChart" options='aCtrl.chart.options' data='aCtrl.chart.data'></nvd3>
 
 <div style="margin-bottom: 20px;">
 <h4>Selected</h4>
@@ -374,7 +374,6 @@
                   <ul class="dropdown-menu dropdown-menu-right">
                     <li><a href ng-click="aCtrl.sendMessage(aCtrl.selectedObject);">Contact</a></li>
                     <li><a href ng-click="aCtrl.drillDown(aCtrl.selectedObject);">Drill down</a></li>
-                    <li><a href ng-click="aCtrl.showData(aCtrl.selectedObject);">Show {{aCtrl.selectedPeriod().name}} data</a></li>
                   </ul>
                   </span>
             </td>    
@@ -385,6 +384,8 @@
 	</tbody>
 </table>
 </div>
+
+<nvd3 options='aCtrl.chartSelected.options' data='aCtrl.chartSelected.data'></nvd3>
 
 <div style="margin-top: 20px; font-size: 85%;" class="table-responsive">
 <h4>Overview</h4>
