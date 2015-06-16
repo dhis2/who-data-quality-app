@@ -936,7 +936,7 @@
 			}
 			
 			
-			var value, refValue, ratio;
+			var value, refValue, ratio, violation;
 			value = dataValue(headers, data, dxID, pe, ouBoundary, null);
 			refValue = referenceValue(values, type, maxForecast);
 			
@@ -948,6 +948,7 @@
 			var subunit, ignoreList = [];
 			for (var i = 0; i < ouSubunitIDs.length; i++) {
 				subunit = ouSubunitIDs[i];
+				violation = false;
 				
 				value = dataValue(headers, data, dxID, pe, subunit, null);
 				
@@ -964,6 +965,7 @@
 				else if (ratio > (1+0.01*threshold) || ratio < (1-0.01*threshold)) {
 					subunitsOutsideThreshold++;
 					subunitViolationNames.push(names[subunit]);
+					violation = true;
 				} 
 				else {
 					subunitsWithinThreshold++;
@@ -974,7 +976,8 @@
 					'id': subunit,
 					'value': value,
 					'refValue': mathService.round(refValue, 1),
-					'ratio': mathService.round(ratio, 3)
+					'ratio': mathService.round(ratio, 3),
+					'violation': violation
 				});
 			}
 			if (ignoreList.length > 0)  errors.push({'type': "warning", 'type': "Consistency over time", 'item': names[dxID], 'msg': "Skipped for the following units due to missing data: " + ignoreList.join(', ')});
@@ -1136,9 +1139,12 @@
 			}
 			
 			//Get subunit values
-			var ratio, subunit, ignoreList = [];
+			var ratio, subunit, ignoreList = [], violation, weight;
 			for (var j = 0; j < ouSubunitIDs.length; j++) {
 				subunit = ouSubunitIDs[j];
+				violation = false;
+				weight = 0;
+				
 				ratio = null;
 				valueA = dataValue(headers, data, dxIDa, pe, subunit, null);
 				valueB = dataValue(headers, data, dxIDb, pe, subunit, null);
@@ -1152,6 +1158,8 @@
 					if (ratio < 0) {
 						subunitOutliers++;
 						subunitViolationNames.push(names[subunit]);
+						violation = true;
+						weight = valueB - valueA;
 					}
 					else {
 						subunitsWithinThreshold++;
@@ -1163,6 +1171,8 @@
 					if (ratio < (1.0-criteria*0.01)) {
 						subunitOutliers++;
 						subunitViolationNames.push(names[subunit]);
+						violation = true;
+						weight = valueB - valueA;
 					}
 					else {
 						subunitsWithinThreshold++;
@@ -1170,15 +1180,16 @@
 				}
 				//A = B
 				else {
-					ratio = mathService.round(100*valueA/valueB, 1);
+					ratio = mathService.round(valueA/valueB, 3);
 					if (ratio > (1.0+criteria*0.01) || ratio < (1.0-criteria*0.01)) {
 						subunitOutliers++;
 						subunitViolationNames.push(names[subunit]);
+						violation = true;
+						weight = Math.abs(valueA - valueB);
 					}
 					else {
 						subunitsWithinThreshold++;
-					}
-					
+					}					
 				}
 				
 				if (isNumber(ratio)) {
@@ -1187,7 +1198,9 @@
 						'refValue': valueB,
 						'ratio': ratio,
 						'id': subunit,
-						'name': names[subunit]
+						'name': names[subunit],
+						'violation': violation,
+						'weight': weight
 					});
 				}
 			}

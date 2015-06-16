@@ -27,7 +27,7 @@
 			self.selectedObject = {};
 			
 			self.consistencyType = 'relation'; 
-			self.relationshipType = 'equal';
+			self.relationshipType = 'eq';
 			self.trendType = 'constant';
 			self.consistencyCriteria = 20;
 			
@@ -355,7 +355,7 @@
 		
 		
 		/** REQUEST DATA */		
-		self.doAnalysis = function() {
+		self.doAnalysis = function(ouBoundary, level) {
 			
 			//Collapse open panels
 			$('.panel-collapse').removeClass('in');
@@ -374,11 +374,11 @@
 			var period = self.selectedPeriod().id;
 			var dxA = self.selectedData('a').id;
 			var dxB = self.selectedData('b').id;
-			var ouBoundary = self.boundaryOrgunitSelected.id;
-			var ouLevel = self.orgunitLevelSelected.level;
+			var ouBoundary = ouBoundary ? ouBoundary : self.boundaryOrgunitSelected.id;
+			var ouLevel = level ? level : self.orgunitLevelSelected.level;
 			var ouGroup = null;//TODO			
 			
-			if (self.orgunitLevelSelected) {
+			if (!level && self.orgunitLevelSelected) {
 				ouLevel = self.orgunitLevelSelected.level;
 				console.log("Depth: " + (ouLevel-self.boundaryOrgunitSelected.level));
 			}
@@ -400,7 +400,7 @@
 				var dxA = self.selectedData('a').id;
 				var dxB = self.selectedData('b').id;	
 				
-				visualisationService.lineChart(receiveDetailChart, [dxA, dxB], periods, [ouID], 'dataOverTime');
+				visualisationService.multiBarChart(receiveDetailChart, [dxA, dxB], periods, [ouID], 'dataOverTime');
 				
 			}
 			else {
@@ -440,16 +440,14 @@
 			self.chart.data = result.chartData;
 			self.chart.options = result.chartOptions;		
 			
-			self.updateCharts();
-			
 			self.mainResult = result;
 			
 			self.currentPage = 1;
-			self.pageSize = 15;   	
+			self.pageSize = 10;   	
 			self.totalRows = self.mainResult.subunitDatapoints.length;
 			
-			self.sortByColumn('ratio');
-			if (result.type === 'do') self.sortByColumn('ratio'); //Want descending if dropout
+			self.sortByColumn('weight');
+			self.reverse = true;
 			
 			//Look for click events in chart
 			$(document).on("click", "#mainChart", function(e) {
@@ -462,13 +460,23 @@
 			     }
 			     
 			});
+			
+			self.updateCharts();
 		}
 		
 	
 		self.title = function () {
 			var title = "";
 			if (self.consistencyType === 'relation') {			
-				title += self.selectedData('a').name + " to " + self.selectedData('b').name + " for " + self.selectedPeriod().name;
+				if (self.relationshipType === 'eq') {
+					title += self.selectedData('a').name + " ≈ " + self.selectedData('b').name + ". " + self.selectedPeriod().name;
+				}
+				if (self.relationshipType === 'aGTb') {
+					title += self.selectedData('a').name + " > " + self.selectedData('b').name + ". " + self.selectedPeriod().name;
+				}
+				if (self.relationshipType === 'do') {
+					title += self.selectedData('a').name + " - " + self.selectedData('b').name + " dropout. " + self.selectedPeriod().name;
+				}
 			}
 			
 			return title;
@@ -518,10 +526,10 @@
    			
    			//Store paging variables
    			self.currentPage = 1;
-   			self.pageSize = 15;   	
+   			self.pageSize = 10;   	
    			self.totalRows = self.filteredRows.length;
    		}
-   		
+
    		
    		function includeRow(row) {
    				
@@ -552,14 +560,39 @@
 	   	
 	   	
 	   	self.selectOrgunit = function(item) {
+	   	
+	   		//Remove previous chart highlight
+	   		if (self.relationshipType != 'do') {
+   				var data = self.mainResult.subunitDatapoints;
+   				for (var i = 0; i < data.length; i++) {
+   					if (data[i].id === self.selectedObject.id) {
+   						self.chart.data[0].values[i].size = 1;
+   					}
+   				}
+   			}
+	   	
 	   		self.selectedObject.name = item.name;
 	   		self.selectedObject.id = item.id;
 	   		self.selectedObject.value = item.value;
 	   		self.selectedObject.refValue = item.refValue;
 	   		self.selectedObject.ratio = item.ratio;
+	   			   		
+	   		//Add new chart highlight
+	   		if (self.relationshipType != 'do') {
+	   			var data = self.mainResult.subunitDatapoints;
+	   			for (var i = 0; i < data.length; i++) {
+	   				if (data[i].id === item.id) {
+	   					self.chart.data[0].values[i].size = 5;
+	   				}
+	   			}
+	   		}
 	   		
 	   		dataForSelectedUnit(item.id);
+	   		
+	   		self.updateCharts();
 	   	}
+	   	
+	   	function highlightPoint() {}
 	   	
         
         self.sendMessage = function(row) {
@@ -583,34 +616,23 @@
         }
         
         
-        self.drillDown = function (rowMetaData) {
+        self.drillDown = function (item) {
         	
-        	var requestURL = "/api/organisationUnits/" + rowMetaData.ouID + ".json?fields=children[id]";
+        	var requestURL = "/api/organisationUnits/" + item.id + ".json?fields=level";
         	requestService.getSingle(requestURL).then(function (response) {
         		
         		
-        		var children = response.data.children;
-        		if (children.length > 0) {
+        		var level = response.data.level;
+        		if (level === lowestLevel()) {
+        			console.log("Not possible to drill down");
+        			return;
+        		}
         		
-					var orgunits = [];
-					for (var i = 0; i < children.length; i++) {
-						orgunits.push(children[i].id);
-					}
-					self.result.metaData.parameters.OUlevel = undefined;
-					self.result.metaData.parameters.OUgroup = undefined;
-					
-
-					
-					dataAnalysisService.outlier(receiveResultNew, self.result.metaData.variables, self.result.metaData.periods, orgunits, self.result.metaData.parameters);
-					
-					self.result = null;
-					
-        		}
-        		        		
-        		else {
-        			self.alerts.push({type: 'warning', msg: rowMetaData.ouName + ' does not have any children'});
-        		}
-        	});
+        		self.doAnalysis(item.id, (1 + level));
+        		
+        		
+        		
+          	});
         	
         	
         }
@@ -727,7 +749,7 @@
 	    	result.chartOptions = {
 	    	   	"chart": {
 	    	        "type": "scatterChart",
-	    	        "height": 600,
+	    	        "height": 450,
 	    	        "margin": {
 	    	          "top": 10,
 	    	          "right": 30,
@@ -790,10 +812,15 @@
 	    	}
 	    	
 	    	for (var i = 0; i < datapoints.length; i++) {
-	    		chartSerie.values.push({
-	    			'x': datapoints[i].refValue,
-	    			'y': datapoints[i].value
-	    		});
+	    	
+    			var point = {
+    				'x': datapoints[i].refValue,
+    				'y': datapoints[i].value
+    			}
+    			if (datapoints[i].violation) {
+    				point.size = 1;
+    			}
+	    		chartSerie.values.push(point);
 	    	}
 
 	    	chartSeries.push(chartSerie);
@@ -811,7 +838,7 @@
 	    			'intercept': 0.001
 	    		},
 	    		{
-	    			'key': "+ " + consistency + "%",
+	    			'key': "Low limit",
 	    			'color': '#F00',
 	    			'values': [{
 	    			'x': 0,
@@ -819,31 +846,36 @@
 	    			'size': 0
 	    			}
 	    			],
-	    			'slope': boundaryRatio+consistency/100,
-	    			'intercept': 0.001
-	    		},
-	    		{
-	    			'key': "- " + consistency + "%",
-	    			'color': '#00F',
-	    			'values': [{
-	    			'x': 0,
-	    			'y': 0,
-	    			'size': 0
-	    			}
-	    			],
-	    			'slope': boundaryRatio-consistency/100,
+	    			'slope': 1.0-consistency/100,
 	    			'intercept': 0.001
 	    		}
 	    	);
+	    	if (result.type === 'eq') {
+	    		chartSeries.push(
+		    		{
+		    			'key': "High limit",
+		    			'color': '#F00',
+		    			'values': [{
+		    			'x': 0,
+		    			'y': 0,
+		    			'size': 0
+		    			}
+		    			],
+		    			'slope': 1.0+consistency/100,
+		    			'intercept': 0.001
+		    		}
+	    		);
+	    	}
+	    	
 	    	result.chartOptions = {
 	    	   	"chart": {
 	    	        "type": "scatterChart",
-	    	        "height": 600,
+	    	        "height": 450,
 	    	        "margin": {
 	    	          "top": 10,
 	    	          "right": 30,
-	    	          "bottom": 120,
-	    	          "left": 120
+	    	          "bottom": 100,
+	    	          "left": 100
 	    	        },
 	    	        "scatter": {
 	    	        	"onlyCircles": false
@@ -892,6 +924,8 @@
 	    		point = result.subunitDatapoints[i];
 	    		value = point.value/point.refValue;
 	    		
+	    		if (!isFinite(value)) console.log(point);
+	    		
 	    		if (value > maxVal) maxVal = value;
 	    		else if (value < minVal) minVal = value;
 	    		
@@ -907,12 +941,12 @@
 	    	result.chartOptions = {
 	    	   	"chart": {
 	    	        "type": "lineChart",
-	    	        "height": 600,
+	    	        "height": 450,
 	    	        "margin": {
 	    	          "top": 10,
 	    	          "right": 30,
-	    	          "bottom": 120,
-	    	          "left": 120
+	    	          "bottom": 100,
+	    	          "left": 100
 	    	        },
 	    	        "xAxis": {
 	    	          "showMaxMin": false,
@@ -928,7 +962,7 @@
 	    	    }
 	    	}
 	    }
-	   	
+	    	   	
 	   	
 	   	/** UTILITIES */
 	   	function uniqueArray(array) {
@@ -943,8 +977,9 @@
 	   			for (var i = 0; i < nv.graphs.length; i++) {
 	   				nv.graphs[i].update();
 	   			}
-	   			window.dispatchEvent(new Event('resize'));
-	   		});
+	   			setTimeout(function() {window.dispatchEvent(new Event('resize'));}, 100);
+	   		});	   
+//	   		setTimeout(function() {window.dispatchEvent(new Event('resize'));}, 100);	
 	   	}
 	   	
 	   	        

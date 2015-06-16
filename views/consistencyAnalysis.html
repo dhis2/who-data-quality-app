@@ -333,7 +333,7 @@
     </accordion-group>
   </accordion>  	
   
-<button type="button" class="btn btn-primary pull-right" ng-click="aCtrl.doAnalysis(); aCtrl.updateCharts();" style="margin-bottom:20px">Analyze</button>
+<button type="button" class="btn btn-primary pull-right" ng-click="aCtrl.doAnalysis(null, null); aCtrl.updateCharts();" style="margin-bottom:20px">Analyze</button>
 
 <hr / style="clear: both;">
 
@@ -345,9 +345,54 @@
 <div ng-if="aCtrl.mainResult">
 <h3>{{aCtrl.title()}}</h3>
 <p>Click on a point in the chart to see details and possible actions.</p>
-<nvd3 id="mainChart" options='aCtrl.chart.options' data='aCtrl.chart.data'></nvd3>
 
-<div style="margin-bottom: 20px;">
+<div style="display: inline-block; width: 100%;">
+
+	<nvd3 id="mainChart" style="display: inline-block; width: 60%; vertical-align: top;" options='aCtrl.chart.options' data='aCtrl.chart.data'></nvd3>
+
+	<div style="font-size: 85%; display: inline-block; width: 39%;  vertical-align: top;" class="table-responsive">
+	<table class="table table-bordered table-striped table-condensed table-hover">
+		<thead>
+		    <tr>	
+		    	<th nowrap ng-click="aCtrl.sortByColumn('name')">Unit</th>
+		    	<th ng-click="aCtrl.sortByColumn('value')">{{aCtrl.selectedData('a').name}}</th>
+		    	<th ng-click="aCtrl.sortByColumn('refValue')">{{aCtrl.selectedData('b').name}}</th>
+		    	<th ng-click="aCtrl.sortByColumn('ratio')"><span ng-if="aCtrl.consistencyType === 'relation' && aCtrl.relationshipType === 'do'">Dropout rate (%)</span><span ng-if="aCtrl.relationshipType != 'do'">Ratio</span></th>
+		    	<th ng-click="aCtrl.sortByColumn('weight')">Weight</th>
+		    </tr>
+		</thead>
+		
+		<tfoot>
+		    <td colspan="5">
+		        <pagination total-items="aCtrl.totalRows" items-per-page="aCtrl.pageSize" max-size="5" ng-model="aCtrl.currentPage" class="pagination-sm pull-right" boundary-links="true" rotate="true"></pagination>
+		    </td>
+		</tfoot>
+		
+		<tbody>
+	    	<tr 
+	    		ng-click="aCtrl.selectOrgunit(row);" 
+	    		ng-class="{warning: row.id === aCtrl.selectedObject.id}" 
+	    		valign="middle" 
+	    		ng-repeat="row in aCtrl.mainResult.subunitDatapoints | orderBy:aCtrl.sortCol:aCtrl.reverse | startFrom:(aCtrl.currentPage-1)*aCtrl.pageSize | limitTo:aCtrl.pageSize">
+	            <td >{{row.name}}</td>
+	            <td class="valueCell">{{row.value}}</td>
+	            <td class="valueCell">{{row.refValue}}</td>
+	            <td class="valueCell" ng-class="{danger: row.violation}">
+	            	<span ng-if="aCtrl.consistencyType === 'relation' && aCtrl.relationshipType === 'do'">
+	            		{{aCtrl.dropoutRate(row.value, row.refValue)}}%
+	            	</span>
+	            	<span ng-if="aCtrl.relationshipType != 'do'">
+	            		{{row.ratio}}
+	            	</span>
+	            </td>
+	            <td>{{row.weight}}</td>
+	        </tr>
+		</tbody>
+	</table>
+	</div>
+</div>
+
+<div style="margin-bottom: 10px;">
 <h4>Selected</h4>
 <table class="table table-bordered table-striped table-condensed table-hover">
 	<thead>
@@ -365,7 +410,14 @@
             <td>{{aCtrl.selectedObject.name}}</td>
             <td class="valueCell">{{aCtrl.selectedObject.value}}</td>
             <td class="valueCell">{{aCtrl.selectedObject.refValue}}</td>
-            <td class="valueCell"><span ng-if="aCtrl.consistencyType === 'relation' && aCtrl.relationshipType === 'do'">{{aCtrl.dropoutRate(aCtrl.selectedObject.value, aCtrl.selectedObject.refValue)}}%</span><span ng-if="aCtrl.relationshipType != 'do'">{{aCtrl.selectedObject.ratio}}</span></td>
+            <td class="valueCell">
+	            <span ng-if="aCtrl.consistencyType === 'relation' && aCtrl.relationshipType === 'do'">
+	            	{{aCtrl.dropoutRate(aCtrl.selectedObject.value, aCtrl.selectedObject.refValue)}}%
+	            </span>
+	            <span ng-if="aCtrl.relationshipType != 'do'">
+	            	{{aCtrl.selectedObject.ratio}}
+	            </span>
+	        </td>
             <td>
             	<span class="dropdown" dropdown>
                   <a href class="dropdown-toggle" dropdown-toggle>
@@ -387,33 +439,5 @@
 
 <nvd3 options='aCtrl.chartSelected.options' data='aCtrl.chartSelected.data'></nvd3>
 
-<div style="margin-top: 20px; font-size: 85%;" class="table-responsive">
-<h4>Overview</h4>
-<label>Period: {{aCtrl.selectedPeriod().name}}</label>
-<table class="table table-bordered table-striped table-condensed table-hover">
-	<thead>
-	    <tr>	
-	    	<th nowrap ng-click="aCtrl.sortByColumn('name')">Unit</th>
-	    	<th ng-click="aCtrl.sortByColumn('value')">{{aCtrl.selectedData('a').name}}</th>
-	    	<th ng-click="aCtrl.sortByColumn('refValue')">{{aCtrl.selectedData('b').name}}</th>
-	    	<th ng-click="aCtrl.sortByColumn('ratio')"><span ng-if="aCtrl.consistencyType === 'relation' && aCtrl.relationshipType === 'do'">Dropout rate (%)</span><span ng-if="aCtrl.relationshipType != 'do'">Ratio</span></th>
-	    </tr>
-	</thead>
-	
-	<tfoot>
-	    <td colspan="4">
-	        <pagination total-items="aCtrl.totalRows" items-per-page="aCtrl.pageSize" max-size="5" ng-model="aCtrl.currentPage" class="pagination-sm pull-right" boundary-links="true" rotate="true"></pagination>
-	    </td>
-	</tfoot>
-	
-	<tbody>
-    	<tr ng-click="aCtrl.selectOrgunit(row);" ng-class="{warning: row.id === aCtrl.selectedObject.id}" valign="middle" ng-repeat="row in aCtrl.mainResult.subunitDatapoints | orderBy:aCtrl.sortCol:aCtrl.reverse | startFrom:(aCtrl.currentPage-1)*aCtrl.pageSize | limitTo:aCtrl.pageSize">
-            <td >{{row.name}}</td>
-            <td class="valueCell">{{row.value}}</td>
-            <td class="valueCell">{{row.refValue}}</td>
-            <td class="valueCell"><span ng-if="aCtrl.consistencyType === 'relation' && aCtrl.relationshipType === 'do'">{{aCtrl.dropoutRate(row.value, row.refValue)}}%</span><span ng-if="aCtrl.relationshipType != 'do'">{{row.ratio}}</span></td>
-        </tr>
-	</tbody>
-</table>
-</div>
+
 </div>

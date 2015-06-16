@@ -80,6 +80,83 @@
 				callback(chartData, chartOptions);
 			});
 		}
+		
+		self.multiBarChart = function (callback, dataIDs, periodIDs, orgunitIDs, type) {
+				
+			var requestURL = '/api/analytics.json?'
+			requestURL += "dimension=dx:" + dataIDs.join(';');
+			requestURL += "&dimension=pe:" + periodIDs.join(";");
+			requestURL += "&dimension=ou:" + orgunitIDs.join(";");
+						
+			requestService.getSingle(requestURL).then(function (response) {
+				
+				var data = response.data.rows;
+				var header = response.data.headers;
+				var names = response.data.metaData.names;
+				
+				var chartData = [];
+				var chartOptions;
+				if (type === 'dataOverTime') {
+					
+					if (orgunitIDs.length > 1) console.log("Warning: more than one orgunit for dataOverTime chart");
+					
+					for (var i = 0; i < dataIDs.length; i++) {
+						var chartSerie = {
+							'key': names[dataIDs[i]],
+							'values': []
+						}
+						
+						for (var j = 0; j < periodIDs.length; j++) {
+							var value = dataValue(header, data, dataIDs[i], periodIDs[j], orgunitIDs[0], null);
+							
+							if (isNaN(value)) value = null;
+							else value = mathService.round(value, 2);
+							
+							chartSerie.values.push({
+								'x': j,
+								'y': value
+							});
+							
+						}
+						
+						chartData.push(chartSerie);
+					}
+			
+					
+					//Get XAxis labels = periods from series[0]
+					var periodNames = [];
+					for (var i = 0; i < periodIDs.length; i++) {
+						periodNames.push(periodService.shortPeriodName(periodIDs[i].toString()));
+					}
+
+					//Chart options		
+					chartOptions = {
+					   	"chart": {
+					        "type": "multiBarChart",
+					        "height": 400,
+					        "margin": {
+					          "top": 140,
+					          "right": 20,
+					          "bottom": 100,
+					          "left": 100
+					        },
+					        "xAxis": {
+					          'rotateLabels': -30,
+					          'tickFormat': function(d) {
+					          	return periodNames[d];
+					          }
+					        },
+					        'tooltips': true,
+					        'showLegend': true
+					    }
+					}
+				
+				}
+				
+				
+				callback(chartData, chartOptions);
+			});
+		}
 				
 		
 		/**
