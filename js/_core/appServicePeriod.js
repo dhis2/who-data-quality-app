@@ -232,7 +232,7 @@
 			
 			
 			//Need start and end date of the given period
-			var year = parseInt(period.substring(0, 4));
+			var year = yearFromISOPeriod(period);
 			var thisYear = parseInt(moment().format("YYYY"));
 			var sourcePeriods = self.periodTool.get(pt).generatePeriods({'offset': year-thisYear, 'filterFuturePeriods': true, 'reversePeriods': false});
 			
@@ -246,6 +246,72 @@
 			}
 			
 			return self.getISOPeriods(startDate, endDate, periodType);
+		}
+		
+		
+		self.precedingPeriods = function(periodISO, number) {
+			if (typeof(periodISO) != "string") periodISO = periodISO.toString();
+		
+			var period = periodObjectFromISOPeriod(periodISO);
+			var pType = self.periodTypeFromPeriod(periodISO);
+			
+			
+			var startDate = reverseDateByPeriod(period.startDate, number, pType);
+			var endDate = moment(period.startDate).subtract(1, 'd');
+			
+			return self.getISOPeriods(dateToISOdate(startDate), dateToISOdate(endDate), pType);
+			
+		}
+		
+		
+		function reverseDateByPeriod(ISOdate, noPeriods, periodType) {
+			
+			var code;
+			switch (periodType) {
+				case 'Quarterly':
+					code = 'Q';
+					break;
+				case 'Weekly':
+					code = 'w';
+					break;
+				case 'SixMonthly':
+					code = 'Q';
+					noPeriods = noPeriods * 2; //Need to cheat
+					break;
+				case 'Yearly':
+					code = 'y';
+					break;
+				case 'Monthly':
+					code = 'M';
+					break;
+			}
+			
+			return moment(ISOdate).subtract(noPeriods, code);
+			
+		
+		
+		}
+		
+		
+		function periodObjectFromISOPeriod(period) {
+			var pType = self.periodTypeFromPeriod(period);
+			var year = yearFromISOPeriod(period);
+			var thisYear = parseInt(moment().format("YYYY"));
+			
+			var periodsInYear = self.periodTool.get(pType).generatePeriods({'offset': year-thisYear, 'filterFuturePeriods': true, 'reversePeriods': false});
+			for (var i = 0; i < periodsInYear.length; i++) {
+				if (periodsInYear[i].iso === period) {
+					return periodsInYear[i];
+				}
+			}
+		}
+		
+		
+		function yearFromISOPeriod(period) {
+		
+			if (typeof(period) != "string") period = period.toString();
+			return parseInt(period.substring(0, 4));
+		
 		}
 		
 		

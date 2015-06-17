@@ -353,11 +353,25 @@
 	<div style="font-size: 85%; display: inline-block; width: 39%;  vertical-align: top;" class="table-responsive">
 	<table class="table table-bordered table-striped table-condensed table-hover">
 		<thead>
-		    <tr>	
+		    <tr>
+		    
 		    	<th nowrap ng-click="aCtrl.sortByColumn('name')">Unit</th>
-		    	<th ng-click="aCtrl.sortByColumn('value')">{{aCtrl.selectedData('a').name}}</th>
-		    	<th ng-click="aCtrl.sortByColumn('refValue')">{{aCtrl.selectedData('b').name}}</th>
-		    	<th ng-click="aCtrl.sortByColumn('ratio')"><span ng-if="aCtrl.consistencyType === 'relation' && aCtrl.relationshipType === 'do'">Dropout rate (%)</span><span ng-if="aCtrl.relationshipType != 'do'">Ratio</span></th>
+		    	<th ng-click="aCtrl.sortByColumn('value')">
+		    		<span ng-if="aCtrl.consistencyType === 'relation'">
+		    			{{aCtrl.selectedData('a').name}}
+		    		</span>
+		    		<span ng-if="aCtrl.consistencyType === 'time'">Current Period</span>
+		    	</th>
+		    	<th ng-click="aCtrl.sortByColumn('refValue')">
+			    	<span ng-if="aCtrl.consistencyType === 'relation'">{{aCtrl.selectedData('b').name}}</span>
+			    	<span ng-if="aCtrl.consistencyType === 'time' && aCtrl.trendType === 'constant'">Average</span>
+			    	<span ng-if="aCtrl.consistencyType === 'time' && aCtrl.trendType != 'constant'">Forecast</span>
+		    	</th>
+		    	<th ng-click="aCtrl.sortByColumn('ratio')">
+			    	<span ng-if="aCtrl.consistencyType === 'relation' && aCtrl.relationshipType === 'do'">Dropout rate (%)</span>
+			    	<span ng-if="aCtrl.consistencyType === 'relation' && aCtrl.relationshipType != 'do'">Ratio</span>
+			    	<span ng-if="aCtrl.consistencyType === 'time'">Ratio</span>
+		    	</th>
 		    	<th ng-click="aCtrl.sortByColumn('weight')">Weight</th>
 		    </tr>
 		</thead>
@@ -373,7 +387,7 @@
 	    		ng-click="aCtrl.selectOrgunit(row);" 
 	    		ng-class="{warning: row.id === aCtrl.selectedObject.id}" 
 	    		valign="middle" 
-	    		ng-repeat="row in aCtrl.mainResult.subunitDatapoints | orderBy:aCtrl.sortCol:aCtrl.reverse | startFrom:(aCtrl.currentPage-1)*aCtrl.pageSize | limitTo:aCtrl.pageSize">
+	    		ng-repeat="row in aCtrl.tableData | orderBy:aCtrl.sortCol:aCtrl.reverse | startFrom:(aCtrl.currentPage-1)*aCtrl.pageSize | limitTo:aCtrl.pageSize">
 	            <td >{{row.name}}</td>
 	            <td class="valueCell">{{row.value}}</td>
 	            <td class="valueCell">{{row.refValue}}</td>
@@ -381,7 +395,7 @@
 	            	<span ng-if="aCtrl.consistencyType === 'relation' && aCtrl.relationshipType === 'do'">
 	            		{{aCtrl.dropoutRate(row.value, row.refValue)}}%
 	            	</span>
-	            	<span ng-if="aCtrl.relationshipType != 'do'">
+	            	<span ng-if="aCtrl.relationshipType != 'do' && aCtrl.validRatio(row.ratio)">
 	            		{{row.ratio}}
 	            	</span>
 	            </td>
@@ -398,9 +412,19 @@
 	<thead>
 	    <tr>	
 	    	<th nowrap>Unit</th>
-	    	<th>{{aCtrl.selectedData('a').name}}</th>
-	    	<th>{{aCtrl.selectedData('b').name}}</th>
-	    	<th><span ng-if="aCtrl.consistencyType === 'relation' && aCtrl.relationshipType === 'do'">Dropout rate (%)</span><span ng-if="aCtrl.relationshipType != 'do'">Ratio</span></th>
+	    	<th>
+	    		<span ng-if="aCtrl.consistencyType === 'relation'">{{aCtrl.selectedData('a').name}}</span>
+	    		<span ng-if="aCtrl.consistencyType === 'time'">Current Period</span></th>
+	    	<th>
+	    		<span ng-if="aCtrl.consistencyType === 'relation'">{{aCtrl.selectedData('b').name}}</span>
+	    		<span ng-if="aCtrl.consistencyType === 'time' && aCtrl.trendType === 'constant'">Average</span>
+	    		<span ng-if="aCtrl.consistencyType === 'time' && aCtrl.trendType != 'constant'">Forecast</span>
+	    	</th>
+	    	<th>
+	    		<span ng-if="aCtrl.consistencyType === 'relation' && aCtrl.relationshipType === 'do'">Dropout rate (%)</span>
+	    		<span ng-if="aCtrl.consistencyType === 'relation' && aCtrl.relationshipType != 'do'">Ratio</span>
+	    		<span ng-if="aCtrl.consistencyType === 'time'">Ratio</span>
+	    	</th>
 	    	<th></th>
 	    </tr>
 	</thead>

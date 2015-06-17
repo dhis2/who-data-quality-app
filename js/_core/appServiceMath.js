@@ -169,6 +169,8 @@
 		@returns				value rounded to given decimals
 		*/
 		self.round = function(value, decimals) {
+			if (!value) return value;
+			
 			var factor = Math.pow(10,decimals);
 			return Math.round(value*factor)/factor;
 			

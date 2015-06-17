@@ -373,7 +373,6 @@
 
 			var period = self.selectedPeriod().id;
 			var dxA = self.selectedData('a').id;
-			var dxB = self.selectedData('b').id;
 			var ouBoundary = ouBoundary ? ouBoundary : self.boundaryOrgunitSelected.id;
 			var ouLevel = level ? level : self.orgunitLevelSelected.level;
 			var ouGroup = null;//TODO			
@@ -384,8 +383,16 @@
 			}
 			
 			//1 Relation
-			if (analysisType = 'relation') {	
-				dataAnalysisService.dataConsistency(receiveRelationResult, relationType, criteria, null, dxA, dxB, period, ouBoundary, ouLevel)
+			if (analysisType === 'relation') {	
+				var dxB = self.selectedData('b').id;
+				dataAnalysisService.dataConsistency(receiveRelationResult, relationType, criteria, null, dxA, dxB, period, ouBoundary, ouLevel);
+			}
+			//2 Over time
+			else {
+				var refPeriods = periodService.precedingPeriods(period, self.periodCountSelected.value);
+				
+				dataAnalysisService.timeConsistency(receiveTimeResult, self.trendType, criteria, null, dxA, null, period, refPeriods, ouBoundary, ouLevel);
+				
 			}
 			
 		};
@@ -404,7 +411,15 @@
 				
 			}
 			else {
-				//TODO
+				var periods = periodService.precedingPeriods(self.selectedPeriod().id.toString(), self.periodCountSelected.value);
+				periods.push(self.mainResult.pe);
+				
+				var dxA = self.selectedData('a').id;
+				
+				visualisationService.multiBarChart(receiveDetailChart, [dxA], periods, [ouID], 'dataOverTime');
+				
+				self.chartSelected.options = null;
+				self.chartSelected.data = null;
 			}
 			
 		}
@@ -429,22 +444,35 @@
 		*/
 		
 		var receiveRelationResult = function(result, errors) {
-		
-			if (result.type === 'do') {
+			
+			self.chart.data = null;
+			self.chart.options = null;
+						
+			
+			if (result.type === 'do') 
 				makeDropoutRateChart(result);
-			}
 			else {
-				makeDataConsistencyChart(result);
+				makeDataConsistencyChart(result);	
 			}
 			
 			self.chart.data = result.chartData;
-			self.chart.options = result.chartOptions;		
+			self.chart.options = result.chartOptions;
+			
+			
+			self.tableData = [];
+			for (var i = 0; i < result.subunitDatapoints.length; i++) {
+				if (result.subunitDatapoints[i].value && result.subunitDatapoints[i].refValue) {
+					self.tableData.push(result.subunitDatapoints[i]);
+				}
+			}
+			
+			
 			
 			self.mainResult = result;
 			
 			self.currentPage = 1;
 			self.pageSize = 10;   	
-			self.totalRows = self.mainResult.subunitDatapoints.length;
+			self.totalRows = self.tableData.length;
 			
 			self.sortByColumn('weight');
 			self.reverse = true;
@@ -463,6 +491,49 @@
 			
 			self.updateCharts();
 		}
+		
+		var receiveTimeResult = function(result, errors) {
+			
+			self.chart.data = null;
+			self.chart.options = null;
+			
+			
+			makeTimeConsistencyChart(result);
+			
+			self.chart.data = result.chartData;
+			self.chart.options = result.chartOptions;		
+			
+			self.tableData = [];
+			for (var i = 0; i < result.subunitDatapoints.length; i++) {
+				if (result.subunitDatapoints[i].value && result.subunitDatapoints[i].refValue) {
+					self.tableData.push(result.subunitDatapoints[i]);
+				}
+			}
+			
+			self.mainResult = result;
+			
+			self.currentPage = 1;
+			self.pageSize = 10;   	
+			self.totalRows = self.tableData.length;
+			
+			self.sortByColumn('weight');
+			self.reverse = true;
+			
+			//Look for click events in chart
+			$(document).on("click", "#mainChart", function(e) {
+			     
+			     var item = e.target.__data__;
+			     if( Object.prototype.toString.call(item) === '[object Object]' ) {
+			         if (item.hasOwnProperty('series') && item.hasOwnProperty('point')) {
+			         	itemClicked(item.series, item.point);
+			         }
+			     }
+			     
+			});
+			
+			self.updateCharts();
+		}
+		
 		
 	
 		self.title = function () {
@@ -554,7 +625,15 @@
 	   	
 	   	
 	   	function itemClicked(seriesIndex, pointIndex) {	   		
-	   		self.selectOrgunit(self.mainResult.subunitDatapoints[pointIndex]);
+	   		var orgunitID = self.chart.data[seriesIndex].values[pointIndex].z;
+	   		
+	   		for (var i = 0; i < self.tableData.length; i++) {
+	   			if (self.tableData[i].id === orgunitID) {
+	   				self.selectOrgunit(self.tableData[i]);
+	   				break;
+	   			}
+	   		}
+	   		
 	   		$scope.$apply();
 	   	}
 	   	
@@ -563,10 +642,10 @@
 	   	
 	   		//Remove previous chart highlight
 	   		if (self.relationshipType != 'do') {
-   				var data = self.mainResult.subunitDatapoints;
+   				var data = self.chart.data[0].values;
    				for (var i = 0; i < data.length; i++) {
-   					if (data[i].id === self.selectedObject.id) {
-   						self.chart.data[0].values[i].size = 1;
+   					if (data[i].z === self.selectedObject.id) {
+   						data[i].size = 1;
    					}
    				}
    			}
@@ -579,10 +658,10 @@
 	   			   		
 	   		//Add new chart highlight
 	   		if (self.relationshipType != 'do') {
-	   			var data = self.mainResult.subunitDatapoints;
+	   			var data = self.chart.data[0].values;
 	   			for (var i = 0; i < data.length; i++) {
-	   				if (data[i].id === item.id) {
-	   					self.chart.data[0].values[i].size = 5;
+	   				if (data[i].z === item.id) {
+	   					data[i].size = 5;
 	   				}
 	   			}
 	   		}
@@ -667,6 +746,18 @@
         	
         }
         
+        
+        function getDataItem(ouID) {
+        	
+        	for (var i = 0; i < self.mainResult.subunitDatapoints.length; i++) {
+        		if (self.mainResult.subunitDatapoints[i].id === ouID) {
+        			return self.mainResult.subunitDatapoints[i];
+        		}
+        	}
+        
+        }
+        
+        
         /** CHARTS */
   	  	function makeTimeConsistencyChart(result) {	    		    	
   	  		    
@@ -675,9 +766,9 @@
 	    	var consistency = result.threshold; 
 	    		    	
 	    	var toolTip = function(key, x, y, e, graph) {
-	    		var data = result.subunitDatapoints;
+	    		var data = getDataItem(graph.point.z);
 	    		
-	    		var toolTipHTML = '<h3>' + data[graph.pointIndex].name + '</h3>';
+	    		var toolTipHTML = '<h3>' + data.name + '</h3>';
     			toolTipHTML += '<p style="margin-bottom: 0px">' + result.pe + ': ' + y + '</p>';
 	    		if (result.type === 'constant') {
 	    			toolTipHTML += '<p>Average: ' + x + '</p>'; 	    			
@@ -691,15 +782,19 @@
 	    	
 	    	var chartSeries = [];
 	    	var chartSerie = {
-	    		'key': self.orgunitLevelSelected.name + "s",
+	    		'key': self.orgunitLevelSelected.name,
 	    		'values': []
 	    	}
 	    	
 	    	for (var i = 0; i < datapoints.length; i++) {
-	    		chartSerie.values.push({
-	    			'x': datapoints[i].refValue,
-	    			'y': datapoints[i].value
-	    		});
+	    		var point = datapoints[i];
+	    		if (point.value && point.refValue) {
+		    		chartSerie.values.push({
+		    			'x': point.refValue,
+		    			'y': point.value,
+		    			'z': point.id
+		    		});
+	    		}
 	    	}
 
 	    	chartSeries.push(chartSerie);
@@ -717,7 +812,7 @@
 	    			'intercept': 0.001
 	    		},
 	    		{
-	    			'key': "+ " + consistency + "%",
+	    			'key': "High limit",
 	    			'color': '#F00',
 	    			'values': [{
 	    			'x': 0,
@@ -725,23 +820,23 @@
 	    			'size': 0
 	    			}
 	    			],
-	    			'slope': boundaryRatio+consistency/100,
+	    			'slope': 1.0+consistency/100,
 	    			'intercept': 0.001
 	    		},
 	    		{
-	    			'key': "- " + consistency + "%",
-	    			'color': '#00F',
+	    			'key': "Low limit",
+	    			'color': '#F00',
 	    			'values': [{
 	    			'x': 0,
 	    			'y': 0,
 	    			'size': 0
 	    			}
 	    			],
-	    			'slope': boundaryRatio-consistency/100,
+	    			'slope': 1.0-consistency/100,
 	    			'intercept': 0.001
 	    		}
 	    	);
-	    		    	
+	    	
 			var xAxisLabel;
 			if (result.type === "constant") xAxisLabel = "Average of previous periods";
 			else xAxisLabel = "Forecasted value";
@@ -754,7 +849,7 @@
 	    	          "top": 10,
 	    	          "right": 30,
 	    	          "bottom": 100,
-	    	          "left": 50
+	    	          "left": 100
 	    	        },
 	    	        "scatter": {
 	    	        	"onlyCircles": false
@@ -777,13 +872,6 @@
 	    	        'tooltips': true,
 	    	        'tooltipContent': toolTip
 	    	        
-	    	    },
-	    	    "title": {
-	    	    	'enable': true,
-	    	    	'text': result.dxName
-	    	    },
-	    	    "subtitle": {
-	    	    	'enable': false
 	    	    }
 	    	};
 	    	
@@ -798,8 +886,8 @@
 	    	var consistency = result.criteria; 
 	    		    	
 	    	var toolTip = function(key, x, y, e, graph) {
-	    		var data = result.subunitDatapoints;
-	    	    return '<h3>' + data[graph.pointIndex].name + '</h3>' +
+	    		var data = getDataItem(graph.point.z);
+	    	    return '<h3>' + data.name + '</h3>' +
 	    	        '<p style="margin-bottom: 0px">' + result.dxNameA + ': ' + y + '</p>' + 
 	    	        '<p>' + result.dxNameB + ': ' + x + '</p>'; 
 	    	};
@@ -807,20 +895,19 @@
 	    	
 	    	var chartSeries = [];
 	    	var chartSerie = {
-	    		'key': self.orgunitLevelSelected.name + "s",
+	    		'key': self.orgunitLevelSelected.name,
 	    		'values': []
 	    	}
 	    	
 	    	for (var i = 0; i < datapoints.length; i++) {
-	    	
-    			var point = {
-    				'x': datapoints[i].refValue,
-    				'y': datapoints[i].value
-    			}
-    			if (datapoints[i].violation) {
-    				point.size = 1;
-    			}
-	    		chartSerie.values.push(point);
+	    		var point = datapoints[i];
+	    		if (point.value && point.refValue) {
+		    		chartSerie.values.push({
+		    			'x': point.refValue,
+		    			'y': point.value,
+		    			'z': point.id
+		    		});
+		    	}
 	    	}
 
 	    	chartSeries.push(chartSerie);
@@ -886,12 +973,12 @@
 	    	        "showDistX": true,
 	    	        "showDistY": true,
 	    	        "xAxis": {
-	    	              "axisLabel": result.dxNameA,
+	    	              "axisLabel": result.dxNameB,
 	    	              "axisLabelDistance": 30,
 	    	              "tickFormat": d3.format('g')
 	    	        },
 	    	        "yAxis": {
-	    	        	"axisLabel": result.dxNameB,
+	    	        	"axisLabel": result.dxNameA,
 	    	            "axisLabelDistance": 30,
 	    	            "tickFormat": d3.format('g')
 	    	        },
@@ -907,14 +994,14 @@
 	    function makeDropoutRateChart(result) {	    		    	
 	    	var chartSeries = [];
 	    	var chartSerie = {
-	    		'key': self.orgunitLevelSelected.name + "s",
+	    		'key': self.orgunitLevelSelected.name,
 	    		'values': []
 	    	}
 
 	    	var toolTip = function(key, x, y, e, graph) {
-	    		var data = result.subunitDatapoints;
-	    	    return '<h3>' + data[x].name + '</h3>' +
-	    	        '<p>' +  mathService.round(100*(data[x].value-data[x].refValue)/data[x].value,1)  + '% dropout</p>'
+	    		var data = getDataItem(graph.point.z);
+	    	    return '<h3>' + data.name + '</h3>' +
+	    	        '<p>' +  mathService.round(100*(data.value-data.refValue)/data.value,1)  + '% dropout</p>'
 	    	};
 	    	
 	    	var minVal = 0.9;
@@ -924,14 +1011,15 @@
 	    		point = result.subunitDatapoints[i];
 	    		value = point.value/point.refValue;
 	    		
-	    		if (!isFinite(value)) console.log(point);
+	    		if (!isFinite(value) || isNaN(value)) continue;
 	    		
 	    		if (value > maxVal) maxVal = value;
 	    		else if (value < minVal) minVal = value;
 	    		
 	    		chartSerie.values.push({
 	    			'x': i,
-	    			'y': mathService.round(value, 2)
+	    			'y': mathService.round(value, 2),
+	    			'z': point.id
 	    		});
 	    	}
 
@@ -950,7 +1038,7 @@
 	    	        },
 	    	        "xAxis": {
 	    	          "showMaxMin": false,
-	    	          'axisLabel': axisLabel = self.orgunitLevelSelected.name + "s"
+	    	          'axisLabel': axisLabel = self.orgunitLevelSelected.name
 	    	        },
 	    	        "yAxis": {
 	    	          "axisLabel": "Ratio"
@@ -972,12 +1060,18 @@
 	   	    });
 	   	}
 	   	
+	   	self.validRatio = function(ratio) {
+	   		if (!isNaN(ratio) && isFinite(ratio)) return true;
+	   		else return false;
+	   	
+	   	}
+	   	
 	   	self.updateCharts = function() {
 	   		$timeout(function() {
 	   			for (var i = 0; i < nv.graphs.length; i++) {
 	   				nv.graphs[i].update();
 	   			}
-	   			setTimeout(function() {window.dispatchEvent(new Event('resize'));}, 100);
+	   			setTimeout(function() {window.dispatchEvent(new Event('resize'));}, 50);
 	   		});	   
 //	   		setTimeout(function() {window.dispatchEvent(new Event('resize'));}, 100);	
 	   	}

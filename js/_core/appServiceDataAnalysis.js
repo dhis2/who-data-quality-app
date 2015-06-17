@@ -936,7 +936,7 @@
 			}
 			
 			
-			var value, refValue, ratio, violation;
+			var value, tmpVal, refValue, ratio, violation;
 			value = dataValue(headers, data, dxID, pe, ouBoundary, null);
 			refValue = referenceValue(values, type, maxForecast);
 			
@@ -945,19 +945,21 @@
 			result.boundaryRatio = mathService.round(value/refValue, 3);
 			result.boundaryPercentage = mathService.round(100*value/refValue, 1);
 			
-			var subunit, ignoreList = [];
+			var subunit, weight, ignoreList = [];
 			for (var i = 0; i < ouSubunitIDs.length; i++) {
 				subunit = ouSubunitIDs[i];
 				violation = false;
+				weight = 0;
 				
 				value = dataValue(headers, data, dxID, pe, subunit, null);
 				
 				values = [];
 				for (var k = 0; k < refPe.length; k++) {
-					values.push(dataValue(headers, data, dxID, refPe[k], subunit, null));
+					tmpVal = dataValue(headers, data, dxID, refPe[k], subunit, null);
+					if (tmpVal) values.push(tmpVal);
 				}				
 				refValue = referenceValue(values, type, maxForecast);
-				
+								
 				ratio = value/refValue;
 				if (!isNumber(value) || !isNumber(refValue)) {
 					ignoreList.push(names[subunit]);
@@ -966,6 +968,7 @@
 					subunitsOutsideThreshold++;
 					subunitViolationNames.push(names[subunit]);
 					violation = true;
+					weight = mathService.round(Math.abs(value-refValue), 0);
 				} 
 				else {
 					subunitsWithinThreshold++;
@@ -976,8 +979,9 @@
 					'id': subunit,
 					'value': value,
 					'refValue': mathService.round(refValue, 1),
-					'ratio': mathService.round(ratio, 3),
-					'violation': violation
+					'ratio': isNumber(ratio) ? mathService.round(ratio, 3) : null,
+					'violation': violation,
+					'weight': weight
 				});
 			}
 			if (ignoreList.length > 0)  errors.push({'type': "warning", 'type': "Consistency over time", 'item': names[dxID], 'msg': "Skipped for the following units due to missing data: " + ignoreList.join(', ')});
@@ -1304,6 +1308,9 @@
 		@returns					ratio current/reference
 		*/
 		function referenceValue(refValues, type, maxVal) {
+		
+			if (refValues.length === 0) return null;
+		
 			var value;
 			if (type === 'forecast') {
 				value = mathService.forecast(refValues);
