@@ -66,7 +66,7 @@
 	
 	
 	/**Controller: Navigation*/
-	app.controller("NavigationController", function(BASE_URL, $location) {
+	app.controller("NavigationController", function(BASE_URL, $location, $window) {
 		var self = this;
 		
 		self.isCollapsed = true;	
@@ -79,6 +79,11 @@
 			if (this.isCollapsed) this.isCollapsed = false;
 			else this.isCollapsed = true;
 		};
+		
+		self.exit = function() {
+			$window.open(BASE_URL, '_self');
+		}
+
 		
 		return self;
 	});

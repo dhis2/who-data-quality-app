@@ -91,11 +91,11 @@
 	          			<ul class="dropdown-menu" role="menu">
 			          		<li><a href="#/outlier_gap">Outlier and Gap Analysis</a></li>
 	          				<li><a href="#/consistency">Consistency Analysis</a></li>
-	          				<li><a href="#/dashboard">HB Method</a></li>
+<!-- TMP       				<li><a href="#/dashboard">HB Method</a></li>-->
 	          			</ul>
 	          		</li>
   					<li ng-class="navCtrl.navClass('review')"><a href="#/review">Annual Review</a></li>
-					<li class="dropdown" dropdown>
+<!-- TMP				<li class="dropdown" dropdown>
 						<a href="#" class="dropdown-toggle" dropdown-toggle>More<span class="caret"></span></a>
 						<ul class="dropdown-menu" role="menu">
 							<li><a href="#/dashboard">About data quality</a></li>
@@ -106,11 +106,10 @@
 							<li class="divider"></li>
 							<li><a href="#/admin">Administration</a></li>
 						</ul>
-					</li>
-			</td>    
+					</li>  -->
 	          </ul>
 	          <ul class="nav navbar-nav navbar-right">
-	            <li><a href="#">Exit</a></li>
+	            <li><a href="#" ng-click="navCtrl.exit()">Exit</a></li>
 	          </ul>
 	        </div><!-- /.nav-collapse -->
 	      </div><!-- /.container-fluid -->

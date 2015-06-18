@@ -366,7 +366,7 @@
       			
       			var options = angular.copy(chartOptions);
       			if (i === self.dataAvailable.length-1) {
-	      			options.callBack = function() {console.log("Calling gap"); makeOutlierCharts();};
+	      			options.callBack = function() {console.log("Calling gap"); /*makeOutlierCharts();*/};
       			}
       			
       			options.title = data.localData.name;
