@@ -235,7 +235,9 @@
     </accordion-group>
   </accordion>  	
   
-<button type="button" class="btn btn-primary pull-right" ng-click="aCtrl.doAnalysis();" style="margin-bottom:20px">Analyze</button>
+<button type="button" class="btn btn-primary pull-right" ng-click="aCtrl.doAnalysis();" style="margin-bottom:20px"
+	ng-disabled="!(aCtrl.datasetSelected || aCtrl.dataElementGroupsSelected || aCtrl.indicatorGroupsSelected)"
+>Analyze</button>
 
 <hr / style="clear: both;">
 

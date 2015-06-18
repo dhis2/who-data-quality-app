@@ -18,6 +18,7 @@
 	    self.mainResult = undefined;
 	    self.itemsPerPage = 25;
 	    self.hasVisual = false;
+	    self.req = false;
 	    
 	    self.processStatus = dataAnalysisService.status;
 	         	    
@@ -383,6 +384,7 @@
 				ouLevel = self.orgunitLevelSelected.level;
 				console.log("Depth: " + (ouLevel-self.boundaryOrgunitSelected.level));
 			}
+			self.req = true;
 			
 			//1 Relation
 			if (analysisType === 'relation') {	
@@ -447,6 +449,8 @@
 		
 		var receiveRelationResult = function(result, errors) {
 			
+			self.req = false;
+			
 			self.chart.data = null;
 			self.chart.options = null;
 						
@@ -495,6 +499,8 @@
 		}
 		
 		var receiveTimeResult = function(result, errors) {
+			
+			self.req = false;
 			
 			self.chart.data = null;
 			self.chart.options = null;

@@ -431,7 +431,6 @@
 					
 					//Split queries by grandchildren of selected ou
 					var requestURL = '/api/organisationUnits.json';
-					
 					if (depth === 3) {
 						requestURL += '?filter=parent.id:eq:' + self.boundaryOrgunitSelected.id;
 					}
@@ -460,6 +459,10 @@
 					dataAnalysisService.outlierGap(receiveResultNew, variables, coAll, data.coFilter, periods, [self.boundaryOrgunitSelected.id], ouLevel, ouGroup, 2, 3.5, 1);
 				}
 			}
+			else {
+				dataAnalysisService.outlierGap(receiveResultNew, variables, coAll, data.coFilter, periods, [self.boundaryOrgunitSelected.id], ouLevel, ouGroup, 2, 3.5, 1);
+			}
+			
 						
 			self.datasetDataelements = null;
 		};

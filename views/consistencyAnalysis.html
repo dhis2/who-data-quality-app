@@ -333,11 +333,15 @@
     </accordion-group>
   </accordion>  	
   
-<button type="button" class="btn btn-primary pull-right" ng-click="aCtrl.doAnalysis(null, null); aCtrl.updateCharts();" style="margin-bottom:20px">Analyze</button>
-
+<button type="button" class="btn btn-primary pull-right" ng-click="aCtrl.doAnalysis(null, null); aCtrl.updateCharts();" 
+	ng-disabled="(!aCtrl.periodSelected && aCtrl.periodTypeSelected.id != 'Yearly') || !(aCtrl.dataSelection.a.deSelected || aCtrl.dataSelection.a.indSelected) ||
+		(aCtrl.consistencyType === 'relation' && !(aCtrl.dataSelection.b.deSelected || aCtrl.dataSelection.b.indSelected))" style="margin-bottom:20px">Analyze</button>
 <hr / style="clear: both;">
 
-Status: {{aCtrl.processStatus}}
+<div ng-if="aCtrl.req">
+<h5>Loading data...</h5>
+<progressbar class="progress-striped active" value="100" type="default"><i ng-show="showWarning">Processing</i></progressbar>
+</div>
 
 <!-- RESULT -->
 <div ng-if="aCtrl.mainResult === undefined" style="height: 400px;"></div>
