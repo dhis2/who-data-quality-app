@@ -18,6 +18,8 @@
 	    self.itemsPerPage = 25;
 	    self.hasVisual = false;
 	        
+	    self.processStatus = dataAnalysisService.status;
+	        
 	    init();
 	    initWatchers();	    
 	    	    
@@ -421,15 +423,44 @@
 			if (self.orgunitGroupSelected) ouGroup = self.orgunitGroupSelected.id;
 			
 			var ouLevel = null;
+			self.result = undefined;
 			if (self.orgunitLevelSelected) {
 				ouLevel = self.orgunitLevelSelected.level;
-				console.log("Depth: " + (ouLevel-self.boundaryOrgunitSelected.level));
-			}
-			
-			self.result = null;
+				var depth = (ouLevel-self.boundaryOrgunitSelected.level);
+				if (depth > 2) {
+					
+					//Split queries by grandchildren of selected ou
+					var requestURL = '/api/organisationUnits.json';
+					
+					if (depth === 3) {
+						requestURL += '?filter=parent.id:eq:' + self.boundaryOrgunitSelected.id;
+					}
+					else if (depth === 4) {
+						requestURL += '?filter=parent.parent.id:eq:' + self.boundaryOrgunitSelected.id;
+					}
+					else if (depth === 5) {
+						requestURL += '?filter=parent.parent.parent.id:eq:' + self.boundaryOrgunitSelected.id;
+					}
+					
+					requestURL += '&filter=children:ne:0';
+					requestURL += '&fields=id&paging=false';
+					
+					requestService.getSingle(requestURL).then(function (response) {
+						console.log(response);
+						var orgunits = response.data.organisationUnits;
+						var ouIDs = [];
+						for (var i = 0; i < orgunits.length; i++) {
+							ouIDs.push(orgunits[i].id);
+						}
+						dataAnalysisService.outlierGap(receiveResultNew, variables, coAll, data.coFilter, periods, ouIDs, ouLevel, ouGroup, 2, 3.5, 1);					
 						
-			dataAnalysisService.outlierGap(receiveResultNew, variables, coAll, data.coFilter, periods, self.boundaryOrgunitSelected.id, ouLevel, ouGroup, 2, 3.5, 1);
-			
+					});
+				}
+				else {
+					dataAnalysisService.outlierGap(receiveResultNew, variables, coAll, data.coFilter, periods, [self.boundaryOrgunitSelected.id], ouLevel, ouGroup, 2, 3.5, 1);
+				}
+			}
+						
 			self.datasetDataelements = null;
 		};
 		

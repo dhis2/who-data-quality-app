@@ -18,6 +18,8 @@
 	    self.mainResult = undefined;
 	    self.itemsPerPage = 25;
 	    self.hasVisual = false;
+	    
+	    self.processStatus = dataAnalysisService.status;
 	         	    
 		function init() {		
 			self.alerts = [];

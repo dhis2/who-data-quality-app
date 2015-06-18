@@ -239,7 +239,11 @@
 
 <hr / style="clear: both;">
 
-{{aCtrl.processStatus}}
+<div ng-if="aCtrl.processStatus.total > 0 && aCtrl.result === undefined">
+<h5>Loading data...</h5>
+<progressbar animate="false" value="aCtrl.processStatus.progress" type="default"><b>{{aCtrl.processStatus.progress}}%</b></progressbar>
+</div>
+
 <!-- RESULT -->
 <div ng-show="aCtrl.result === undefined" style="height: 400px;"></div>
 <div ng-show="aCtrl.result">

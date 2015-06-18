@@ -6,10 +6,17 @@
 		var self = this;
 		
 		//"Fixed" variables
-		self.maxPendingRequests = 3; //TODO: should be 1 on release to avoid killing server..
+		self.maxPendingRequests = 1; //TODO: should be 1 on release to avoid killing server..
 
 				
 		reset();
+		
+		
+		self.status = {
+			'done': 0,
+			'total': 0,
+			'progress': 0
+		};
 		
 		
 		
@@ -46,6 +53,11 @@
 			console.time("ANALYSIS");
 			
 			self.inProgress = true;
+			
+			self.status.total = 0;
+			self.status.progress = 0;
+			self.status.done = 0;
+			
 			
 			if (queueItem.type === 'datasetCompleteness') {
 				datasetCompletenessAnalysis(queueItem.parameters);
@@ -129,41 +141,48 @@
 				"metaData": {}
 			};
 			
-			//make requests
-			var baseRequest;
-			baseRequest = '/api/analytics.json?';
-			baseRequest += '&hideEmptyRows=true';
-			baseRequest += '&tableLayout=true';
-			baseRequest += '&dimension=pe:' + self.og.periods.join(';');
-			baseRequest += '&dimension=ou:' + self.og.ouBoundary;
-			if (self.og.ouLevel) baseRequest += ';LEVEL-' + self.og.ouLevel;
-			else if (self.og.ouGroup) baseRequest += ';OU_GROUP-' + self.og.ouGroup;
+			var numDEs = Math.max(Math.ceil(125/(4*self.og.periods.length)), 2);
 			
-			
-			//check whether to get categoryoptions or not
-			if (self.og.coAll || self.og.coIDs) {
-				baseRequest += '&dimension=co';
-				baseRequest += '&columns=pe&rows=ou;dx;co';
-			}
-			else {
-				baseRequest += '&columns=pe&rows=ou;dx';
-			}
-			
-			//add data ids
-			var dxID, request, requests = [];
-			for (var i = 0; i < self.og.dataIDs.length; i++) {
-
-				dxID = self.og.dataIDs[i];
+			for (var i = 0; i < self.og.ouBoundary.length; i++) {
+				//make requests
+				var baseRequest;
+				baseRequest = '/api/analytics.json?';
+				baseRequest += '&hideEmptyRows=true&ignoreLimit=true';
+				baseRequest += '&tableLayout=true';
+				baseRequest += '&dimension=pe:' + self.og.periods.join(';');
+				baseRequest += '&dimension=ou:' + self.og.ouBoundary[i];
+				if (self.og.ouLevel) baseRequest += ';LEVEL-' + self.og.ouLevel;
+				else if (self.og.ouGroup) baseRequest += ';OU_GROUP-' + self.og.ouGroup;
 				
-				self.requests.queue.push({
-					"type": 'outlierGap',
-					"url": baseRequest + '&dimension=dx:' + dxID,
-					"pending": false,
-					"done": false
-				});
+				
+				//check whether to get categoryoptions or not
+				if (self.og.coAll || self.og.coIDs) {
+					baseRequest += '&dimension=co';
+					baseRequest += '&columns=pe&rows=ou;dx;co';
+				}
+				else {
+					baseRequest += '&columns=pe&rows=ou;dx';
+				}
+				
+				//add data ids
+				var dxIDs, request, requests = [];
+				for (var j = 0; j < self.og.dataIDs.length; j = j+numDEs) {
+					
+					var start = j;
+					var end = (j+numDEs) > self.og.dataIDs.length ? self.og.dataIDs.length : (j+numDEs);
+					
+					dxIDs = self.og.dataIDs.slice(start, end);
+					
+					self.requests.queue.push({
+						"type": 'outlierGap',
+						"url": baseRequest + '&dimension=dx:' + dxIDs.join(';'),
+						"pending": false,
+						"done": false
+					});
+				}
 			}
 						
-			console.log(self.og.dataIDs.length + " requests in queue for outlier and gap analysis");
+			console.log(self.requests.queue.length + " requests in queue for outlier and gap analysis");
 			
 			if (self.requests.queue.length === 0) self.inProgress = false;
 			
@@ -1355,6 +1374,12 @@
 		
 		/** DATA REQUESTS QUEUING */
 		function requestData() {
+			
+			if (self.status.total === 0) {
+				self.status.total = self.requests.queue.length;
+				self.status.done = 0;
+			}
+		
 			var request = getNextRequest();
 			while (request && self.requests.pending < self.requests.max) {
 				
@@ -1365,16 +1390,22 @@
 					function(response) {
 					    self.requests.pending--;
 					    storeResponse(response);
+					    self.status.done++;
+					    self.status.progress = mathService.round(100*self.status.done/self.status.total, 0);
 					}, 
 					//error
 					function(response) {
 					    self.requests.pending--;
 					    storeResponse(response);
+					    self.status.done++;
+					    self.status.progress = mathService.round(100*self.status.done/self.status.total, 0);
 					}
 				);
 				
 				request = getNextRequest();
 			}
+			
+			if (!request) self.requests.queue = [];
 		}
 		
 	
@@ -1416,6 +1447,11 @@
 					console.log("Query result too big");
 					reset();
 				}
+				if (status === 409 && (data.indexOf("Dimension ou is present") > -1)) {
+					console.log("Requested child data for a unit without children");
+					markRequestAsComplete(requestURL);
+					requestData();
+				}
 				else {
 					console.log("Error fetching data: " + response.statusText);
 					reset();
@@ -1423,7 +1459,7 @@
 			}
 			else {
 				//Mark item in queue as downloaded - discard if not there (which means it stems from different request
-				var request = markRequestAsComplete(response.config.url)
+				var request = markRequestAsComplete(requestURL)
 				if (request === null) {
 					requestData();
 					return;
@@ -1482,7 +1518,7 @@
 			}
 			
 			//Check if all processing is done
-			for (var i = 0; i < self.process.queue.length; i++) {
+			for (var i = 0; i < self.requests.queue.length; i++) {
 				if (!self.requests.queue[i].done && self.requests.queue[i].type === type) {
 					return false;
 				}
