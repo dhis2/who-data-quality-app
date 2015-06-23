@@ -724,6 +724,10 @@
 	   				  
 	   				  var content = self.result.rows;
 	   				  var string, csvContent = '';
+	   				  
+	   				  csvContent += "Unit;Data;" + self.periods.join(';');
+	   				  csvContent += ";Max SD score;Max Z score;Gap weight;Outlier weight;Total weight\n";
+	   				  
 	   				  for (var i = 0; i < content.length; i++) {
 	   				      var value = content[i];
 	   				  	
