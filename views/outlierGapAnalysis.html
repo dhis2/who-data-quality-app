@@ -264,15 +264,12 @@
 	  		<label ng-disabled="aCtrl.stdFilterType === 0" class="btn btn-danger" ng-model="aCtrl.stdFilterDegree" btn-radio="2">Extreme</label>
 	</div>
 </div>
-<!--<div class="pull-right" style="display: inline-block; margin-bottom: 5px; vertical-align: bottom;">
+<div class="pull-right" style="display: inline-block; margin-bottom: 5px; vertical-align: bottom;">
 <button ng-click="aCtrl.exportCSV();" class="btn btn-success">Export CSV</button>
-</div>-->
+</div>
 
-			<alert style="margin-top: 10px; margin-bottom: 10px;"ng-repeat="alert in aCtrl.alerts track by $index" type="{{alert.type}}" close="aCtrl.alerts.splice($index, 1)">{{alert.msg}}</alert>
-			<div style="margin-top: 10px; font-size: 85%;" class="table-responsive">
+<div style="margin-top: 10px; font-size: 85%;" class="table-responsive">
 <table class="table table-bordered table-striped table-condensed table-hover">
-					
-			        
 			        <thead>
 			            <tr>	
 			            	<th nowrap rowspan="2" ng-click="aCtrl.sortByColumn('metaData.ou.name')">Unit</th>

@@ -566,25 +566,39 @@
 	   	
 	   	self.exportCSV = function() {
 			  
-			  var csvContent = "data:text/csv;charset=utf-8,";
-			  var string;
-			  var i = 0;
-			  self.result.rows.forEach(function(row, index){
-			  	 string = row.metaData.ou.name + ";";
-			  	 string += row.metaData.dx.name + ";";
-			     string += row.data.join(";") + ";";
-			     string += row.result.maxSscore + ";";
-			     string += row.result.maxZscore + ";";
-			     string += row.result.gapWeight + ";";
-			     string += row.result.outWeight + ";";
-			     string += row.result.totalWeight + ";";
-			     csvContent += index < self.result.rows.length ? string+ "\n" : string;
-			     if (i % 10 === 0) console.log(i++);
-			  });
+			  var content = self.result.rows;
+			  var string, csvContent = '';
+			  for (var i = 0; i < content.length; i++) {
+			      var value = content[i];
+			  	
+			  	 string = checkExportValue(value.metaData.ou.name) + ";";
+			  	 string += checkExportValue(value.metaData.dx.name) + ";";
+			  	 for (var j = 0; j < value.data.length; j++) {
+			  	 	string += checkExportValue(value.data[j]) + ";";	
+			  	 }			  	 
+			     string += checkExportValue(value.result.maxSscore) + ";";
+			     string += checkExportValue(value.result.maxZscore) + ";";
+			     string += checkExportValue(value.result.gapWeight) + ";";
+			     string += checkExportValue(value.result.outWeight) + ";";
+			     string += checkExportValue(value.result.totalWeight);
 			  
-			  var encodedUri = encodeURI(csvContent);
-			  window.open(encodedUri);
+			     csvContent += string + '\n';
+			  }
+			  
+			  var blob = new Blob([csvContent], {type: "text/csv;charset=utf-8"});
+			  // see FileSaver.js
+			  saveAs(blob, "outlier_gap_data.csv");
+ 
+			  
 	   	
+	   	}
+	   	
+	   	function checkExportValue(value) {
+	   		var innerValue =  value === null ? '' : value.toString();
+	   		var result = innerValue.replace(/"/g, '""');
+	   		if (result.search(/("|,|\n)/g) >= 0)
+	   		    result = '"' + result + '"';
+			return result;
 	   	}
 	   	
 	   	
