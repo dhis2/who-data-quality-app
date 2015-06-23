@@ -1,0 +1,10 @@
+<div class="modal-header">
+<h4>{{mgCtrl.ouName}}</h4>
+<h5>{{mgCtrl.dxName}}</h5>
+</div>
+<div class="modal-body">
+<nvd3 options='mgCtrl.chartOptions' data='mgCtrl.chartData'></nvd3>
+</div>
+<div class="modal-footer" style="clear: both;">     
+    <button type="button" class="btn btn-default" data-ng-click="mgCtrl.close()">Close</button>
+</div>

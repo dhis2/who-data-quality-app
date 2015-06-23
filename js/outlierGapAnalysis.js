@@ -596,19 +596,9 @@
 	   	//showDetails
         self.showDetails = function(row) {
 
-			$('#detailedResult').html('<div id="detailChart"><svg class="bigChart"></svg></div>');
-        	
-        	var chart = nv.models.multiBarChart()
-        			      .reduceXTicks(true)   //If 'false', every single x-axis tick label will be rendered.
-        			      .rotateLabels(0)      //Angle to rotate x-axis labels.
-        			      .groupSpacing(0.1)    //Distance between each group of bars.
-        			      .showControls(false)
-        			    ;
-        			
-        	var result = self.result;
-        	var index = 0;
-        	var series = [{
-        		'key': row.metaData.dxName + " - " + row.metaData.ouName,
+			        	
+        	var chartData = [{
+        		'key': row.metaData.dx.name + " - " + row.metaData.ou.name,
         		'color': "green",
         		'values': []
         	}];
@@ -616,32 +606,61 @@
     			var value = row.data[i];
     			if (value === '') value = null;
     			else value = parseFloat(value);
-    			series[0].values.push({
-    				'x': index++,   		
+    			chartData[0].values.push({ 		
     				'y': value,
-    				'label': self.periods[i]
+    				'x': self.periods[i]
     			});
         	}
+        	var toolTip = function(key, x, y, e, graph) {        		
+        		var toolTipHTML = '<h3>' + x + '</h3>';
+        		toolTipHTML += '<p style="margin-bottom: 0px">' + y + '</p>';
+        	    return toolTipHTML;
+        	};
+        	
+        	
+        	var chartOptions = {
+        	   	"chart": {
+        	        "type": "multiBarChart",
+        	        "interactiveGuideline": false,
+        	        "height": 400,
+        	        "margin": {
+        	          "top": 40,
+        	          "right": 20,
+        	          "bottom": 40,
+        	          "left": 100
+        	        },
+        	        "xAxis": {
+        	          'rotateLabels': -30
+        	        },
+        	        'tooltips': true,
+        	        'tooltipContent': toolTip,
+        	        'showLegend': false,
+        	        'showControls': false
+        	    }
+        	}
         	        	        				
-		    chart.xAxis
-		        .tickFormat(function(d) {
-		        	return series[0].values[d].label;
-		        });
-		
-		    chart.yAxis
-		        .tickFormat(d3.format('g'));
-		
-			d3.select('#detailChart svg')
-		        .datum(series)
-		        .call(chart);
-				
-		    nv.utils.windowResize(chart.update);
-		    
-		    $('html, body').animate({
-		    	scrollTop: $("#detailChart").offset().top,
-		    	scrollLeft: 0
-		    }, 500);    
-    		
+    		var modalInstance = $modal.open({
+	            templateUrl: "views/_modals/modalGraph.html",
+	            controller: "ModalGraphController",
+	            controllerAs: 'mgCtrl',
+	            resolve: {
+	    	        ouName: function () {
+	    	            return row.metaData.ou.name;
+	    	        },
+	    	        dxName: function () {
+	    	            return row.metaData.dx.name;
+	    	        },
+	    	        chartOptions: function () {
+	    	            return chartOptions;
+	    	        },
+	    	        chartData: function () {
+	    	            return chartData;
+	    	        }
+	            }
+	        });
+	
+	        modalInstance.result.then(function (result) {
+	        });
         };
 
         
