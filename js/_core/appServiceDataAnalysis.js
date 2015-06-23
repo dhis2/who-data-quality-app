@@ -137,7 +137,6 @@
 			//result
 			self.og.result = {
 				"rows": [],
-				"aggregates": {},
 				"metaData": {}
 			};
 			
@@ -329,8 +328,17 @@
 			data.done = true;
 			self.process.pending--;	
 			
-			if (processingDone('outlierGap')) {
+			if (processingDone('outlierGap')) {				
+				result.metaData.dataIDs = self.og.dataIDs;
+				result.metaData.coAll = self.og.coAll;
+				result.metaData.coIDs = self.og.coIDs;
 				result.metaData.periods = periods;
+				result.metaData.ouBoundary = self.og.ouBoundary;
+				result.metaData.ouGroup = self.og.ouGroup;
+				result.metaData.ouLevel = self.og.ouLevel;
+				result.metaData.sScoreCriteria = self.og.sScoreCriteria;
+				result.metaData.zScoreCriteria = self.og.zScoreCriteria;
+				result.metaData.gapCriteria = self.og.gapCriteria;
 				
 				self.og.callback(self.og.result);
 				

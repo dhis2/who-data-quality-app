@@ -13,8 +13,11 @@
 	
 	app.controller("OutlierGapAnalysisController", function(metaDataService, periodService, requestService, dataAnalysisService, mathService, $scope, $modal) {
 		var self = this;
-			    
+		
+		self.results = [];
+		self.currentResult = undefined; 
 	    self.result = undefined;
+	    
 	    self.itemsPerPage = 25;
 	    self.hasVisual = false;
 	        
@@ -23,15 +26,10 @@
 	    init();
 	    initWatchers();	    
 	    	    
-		function init() {		
-			self.alerts = [];		
+		function init() {			
 			self.dataDisaggregation = 0;
 			
-			self.checkModel = { 
-				filter: false,
-				export: false,
-				history: false
-			};
+			self.showFilter = false;
 	    	
 	    	self.datasets = [];
 	    	self.datasetDataelements = undefined;
@@ -417,6 +415,10 @@
 				return;
 			}
 			
+			//Clear previous result
+			self.result = undefined;
+			if (self.results.length > 1) self.results.move(self.currentResult, 0);
+			
 			var data = getDataForAnalysis();
 			var variables = data.dataIDs;			
 			var periods = getPeriods();
@@ -429,7 +431,6 @@
 			if (self.orgunitGroupSelected) ouGroup = self.orgunitGroupSelected.id;
 			
 			var ouLevel = null;
-			self.result = undefined;
 			if (self.orgunitLevelSelected) {
 				ouLevel = self.orgunitLevelSelected.level;
 				var depth = (ouLevel-self.boundaryOrgunitSelected.level);
@@ -457,16 +458,16 @@
 						for (var i = 0; i < orgunits.length; i++) {
 							ouIDs.push(orgunits[i].id);
 						}
-						dataAnalysisService.outlierGap(receiveResultNew, variables, coAll, data.coFilter, periods, ouIDs, ouLevel, ouGroup, 2, 3.5, 1);					
+						dataAnalysisService.outlierGap(receiveResult, variables, coAll, data.coFilter, periods, ouIDs, ouLevel, ouGroup, 2, 3.5, 1);					
 						
 					});
 				}
 				else {
-					dataAnalysisService.outlierGap(receiveResultNew, variables, coAll, data.coFilter, periods, [self.boundaryOrgunitSelected.id], ouLevel, ouGroup, 2, 3.5, 1);
+					dataAnalysisService.outlierGap(receiveResult, variables, coAll, data.coFilter, periods, [self.boundaryOrgunitSelected.id], ouLevel, ouGroup, 2, 3.5, 1);
 				}
 			}
 			else {
-				dataAnalysisService.outlierGap(receiveResultNew, variables, coAll, data.coFilter, periods, [self.boundaryOrgunitSelected.id], ouLevel, ouGroup, 2, 3.5, 1);
+				dataAnalysisService.outlierGap(receiveResult, variables, coAll, data.coFilter, periods, [self.boundaryOrgunitSelected.id], ouLevel, ouGroup, 2, 3.5, 1);
 			}
 			
 						
@@ -479,30 +480,31 @@
 		RESULTS
 		*/
 		
-		self.sortByColumn = function (columnKey) {
-			self.currentPage = 1;
-			if (self.sortCol === columnKey) {
-				self.reverse = !self.reverse;
-			}
-			else {
-				self.sortCol = columnKey;
-				self.reverse = true;
-			}
-		}
-		
-		
-		var receiveResultNew = function(result) {		    
+		var receiveResult = function(result) {		    
 			    
 			if (!result || !result.rows || result.rows.length === 0) { 
 				console.log("Empty result");
-				self.alerts.push({type: 'warning', msg: 'No data!'});
 			}
 			else {
 				self.alerts = [];
 				console.log("Received " + result.rows.length + " rows");
 			}
 			
-			self.result = result;
+			self.currentResult = 0;
+			self.results.unshift(result);
+			
+			//Only keep 5
+			if (self.results.length > 5) self.results.pop();
+			
+			
+			prepareResult();
+		};
+		
+				
+		
+		function prepareResult() {
+			
+			self.result = self.results[self.currentResult];
 			
 			//Reset filter
 			self.stdFilterType = 0;
@@ -516,14 +518,22 @@
 			
 			//Get nice period names
 			self.periods = [];
-			for (var i = 0; i < result.metaData.periods.length; i++) {
-				var period = result.metaData.periods[i];
+			for (var i = 0; i < self.result.metaData.periods.length; i++) {
+				var period = self.result.metaData.periods[i];
 				self.periods.push(periodService.shortPeriodName(period));
 			}
 			
 			//Calculate total number of columns in table
 			self.totalColumns = self.periods.length + 8;
-		};
+		
+		}
+		
+		
+		self.previousResult = function() {
+			self.currentResult++;
+			prepareResult();
+		}
+		
 		
        	    
 	    self.isOutlier = function (value, stats) {
@@ -569,42 +579,15 @@
 	   		self.totalRows = self.filteredRows.length;
 	   	}
 	   	
-	   	
-	   	self.exportCSV = function() {
-			  
-			  var content = self.result.rows;
-			  var string, csvContent = '';
-			  for (var i = 0; i < content.length; i++) {
-			      var value = content[i];
-			  	
-			  	 string = checkExportValue(value.metaData.ou.name) + ";";
-			  	 string += checkExportValue(value.metaData.dx.name) + ";";
-			  	 for (var j = 0; j < value.data.length; j++) {
-			  	 	string += checkExportValue(value.data[j]) + ";";	
-			  	 }			  	 
-			     string += checkExportValue(value.result.maxSscore) + ";";
-			     string += checkExportValue(value.result.maxZscore) + ";";
-			     string += checkExportValue(value.result.gapWeight) + ";";
-			     string += checkExportValue(value.result.outWeight) + ";";
-			     string += checkExportValue(value.result.totalWeight);
-			  
-			     csvContent += string + '\n';
-			  }
-			  
-			  var blob = new Blob([csvContent], {type: "text/csv;charset=utf-8"});
-			  // see FileSaver.js
-			  saveAs(blob, "outlier_gap_data.csv");
- 
-			  
-	   	
-	   	}
-	   	
-	   	function checkExportValue(value) {
-	   		var innerValue =  value === null ? '' : value.toString();
-	   		var result = innerValue.replace(/"/g, '""');
-	   		if (result.search(/("|,|\n)/g) >= 0)
-	   		    result = '"' + result + '"';
-			return result;
+	   	self.sortByColumn = function (columnKey) {
+	   		self.currentPage = 1;
+	   		if (self.sortCol === columnKey) {
+	   			self.reverse = !self.reverse;
+	   		}
+	   		else {
+	   			self.sortCol = columnKey;
+	   			self.reverse = true;
+	   		}
 	   	}
 	   	
 	   	
@@ -670,10 +653,10 @@
 	            controllerAs: 'mmCtrl',
 	            resolve: {
 	    	        orgunitID: function () {
-	    	            return metaData.ouID;
+	    	            return metaData.ou.id;
 	    	        },
 	    	        orgunitName: function () {
-	    	            return metaData.ouName;
+	    	            return metaData.ou.name;
 	    	        }
 	            }
 	        });
@@ -685,7 +668,7 @@
         
         self.drillDown = function (rowMetaData) {
         	
-        	var requestURL = "/api/organisationUnits/" + rowMetaData.ouID + ".json?fields=children[id]";
+        	var requestURL = "/api/organisationUnits/" + rowMetaData.ou.id + ".json?fields=children[id]";
         	requestService.getSingle(requestURL).then(function (response) {
         		
         		
@@ -696,19 +679,21 @@
 					for (var i = 0; i < children.length; i++) {
 						orgunits.push(children[i].id);
 					}
-					self.result.metaData.parameters.OUlevel = undefined;
-					self.result.metaData.parameters.OUgroup = undefined;
 					
-
 					
-					dataAnalysisService.outlier(receiveResultNew, self.result.metaData.variables, self.result.metaData.periods, orgunits, self.result.metaData.parameters);
+					dataAnalysisService.outlierGap(receiveResult, self.result.metaData.dataIDs, self.result.metaData.coAll, self.result.metaData.coFilter, self.result.metaData.periods, orgunits, null, null, 2, 3.5, 1);	
 					
-					self.result = null;
+					
+					
+					//Move currently shown result to front of results
+					
+					self.result = undefined;
+					self.results.move(self.currentResult, 0);
 					
         		}
         		        		
         		else {
-        			self.alerts.push({type: 'warning', msg: rowMetaData.ouName + ' does not have any children'});
+        			console.log(rowMetaData.ouName + ' does not have any children');
         		}
         	});
         	
@@ -716,23 +701,20 @@
         }
 
         
-        self.floatUp = function (rowMetaData) {
+        /*self.floatUp = function (rowMetaData) {
         	
-        	var requestURL = "/api/organisationUnits/" + rowMetaData.ouID + ".json?fields=parent[id,children[id],parent[id,children[id]]";
+        	var requestURL = "/api/organisationUnits/" + rowMetaData.ou.id + ".json?fields=parent[id,children[id],parent[id,children[id]]";
         	requestService.getSingle(requestURL).then(function (response) {
 
         		var metaData = response.data;
         		if (metaData.parent) {
         			
         			var orgunits = [metaData.parent.id];
-        			self.result.metaData.parameters.OUlevel = undefined;
-        			self.result.metaData.parameters.OUgroup = undefined;
 
+					dataAnalysisService.outlierGap(receiveResult, self.result.metaData.dataIDs, self.result.metaData.coAll, self.result.metaData.coFilter, self.result.metaData.periods, orgunits, null, null, 2, 3.5, 1);	
 					
-
-					dataAnalysisService.outlier(receiveResultNew, self.result.metaData.variables, self.result.metaData.periods, orgunits, self.result.metaData.parameters);
 					
-					self.result = null;
+					self.result = undefined;
         		}
         		else {
 					self.alerts.push({type: 'warning', msg: rowMetaData.ouName + ' does not have a parent'});
@@ -743,8 +725,45 @@
         	});
         	
         	
-        }
-	   	        
+        }*/
+	   	
+	   	
+	   	self.exportCSV = function() {
+	   				  
+	   				  var content = self.result.rows;
+	   				  var string, csvContent = '';
+	   				  for (var i = 0; i < content.length; i++) {
+	   				      var value = content[i];
+	   				  	
+	   				  	 string = checkExportValue(value.metaData.ou.name) + ";";
+	   				  	 string += checkExportValue(value.metaData.dx.name) + ";";
+	   				  	 for (var j = 0; j < value.data.length; j++) {
+	   				  	 	string += checkExportValue(value.data[j]) + ";";	
+	   				  	 }			  	 
+	   				     string += checkExportValue(value.result.maxSscore) + ";";
+	   				     string += checkExportValue(value.result.maxZscore) + ";";
+	   				     string += checkExportValue(value.result.gapWeight) + ";";
+	   				     string += checkExportValue(value.result.outWeight) + ";";
+	   				     string += checkExportValue(value.result.totalWeight);
+	   				  
+	   				     csvContent += string + '\n';
+	   				  }
+	   				  
+	   				  var blob = new Blob([csvContent], {type: "text/csv;charset=utf-8"});
+	   				  // see FileSaver.js
+	   				  saveAs(blob, "outlier_gap_data.csv");
+	   	
+	   				  
+	   		   	
+	   		   	}
+	   		   	
+	   		   	function checkExportValue(value) {
+	   		   		var innerValue =  value === null ? '' : value.toString();
+	   		   		var result = innerValue.replace(/"/g, '""');
+	   		   		if (result.search(/("|,|\n)/g) >= 0)
+	   		   		    result = '"' + result + '"';
+	   				return result;
+	   		   	}     
 	   	 
     	    
 		return self;

@@ -1,4 +1,4 @@
-<h3>Outlier and Gap Analysis</h3>
+<h4 style="margin-top: 20px;">Outlier and Gap Analysis</h4>
 
 
 <!-- PARAMETERS -->
@@ -250,14 +250,21 @@
 <div ng-show="aCtrl.result === undefined" style="height: 400px;"></div>
 <div ng-show="aCtrl.result">
 
-<div style="display: inline-block; margin-bottom: 10px;">
-	<div class="btn-group">
-        <label class="btn btn-default" ng-model="aCtrl.checkModel.filter" btn-checkbox>Filter</label>
-        <label class="btn btn-default" ng-model="aCtrl.checkModel.export" btn-checkbox>Export</label>
-        <label class="btn btn-default" ng-model="aCtrl.checkModel.history" btn-checkbox>History</label>
+<div style="display: inline-block; width: 100%;">
+	<div class="pull-left">
+		<h4>Result</h4>
+	</div>
+	<div class="pull-right">
+		<div class="btn-group">
+	       <button type="button" ng-click="aCtrl.showFilter = !aCtrl.showFilter" class="btn btn-default" aria-label="Filter"><span class="glyphicon glyphicon-filter" aria-hidden="true"></span></button>
+	       <button type="button" ng-click="aCtrl.exportCSV();" class="btn btn-default" aria-label="Download"><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span></button>
+	       	<button type="button" class="btn btn-default" ng-disabled="aCtrl.results.length < 2 || aCtrl.currentResult >= 4" ng-click="aCtrl.previousResult();" aria-label="Backward">
+	       		<span class="glyphicon glyphicon-step-backward" aria-hidden="true"></span>
+	       	</button>
+      </div>
 	</div>
 </div>
-<div collapse="!aCtrl.checkModel.filter" class="well well-sm">
+<div collapse="!aCtrl.showFilter" class="well well-sm">
 	<div style="display: inline-block; margin-right: 15px;">
 		<label for="threshold">Outlier filter</label>
 		<div class="btn-group btn-group-justified" ng-click="aCtrl.updateFilter();" style="margin-bottom: 5px; max-width: 400px;">
@@ -272,13 +279,6 @@
 		  		<label ng-disabled="aCtrl.stdFilterType === 0" class="btn btn-danger" ng-model="aCtrl.stdFilterDegree" btn-radio="2">Extreme</label>
 		</div>
 	</div>
-</div>
-
-<div collapse="!aCtrl.checkModel.export" class="well well-sm">
-	<button ng-click="aCtrl.exportCSV();" class="btn btn-success">Export CSV</button>
-</div>
-<div collapse="!aCtrl.checkModel.history" class="well well-sm">
-	<p>To do...</p>
 </div>
 
 <div style="margin-top: 10px; font-size: 85%;" class="table-responsive">
@@ -328,7 +328,7 @@
 			                            </a>
 			                      <ul class="dropdown-menu dropdown-menu-right">
 			                        <li><a href ng-click="aCtrl.showDetails(row);">Visualise</a></li>
-			                        <li><a href ng-click="aCtrl.floatUp(row.metaData);">Float up</a></li>
+<!--			                        <li><a href ng-click="aCtrl.floatUp(row.metaData);">Float up</a></li>-->
 			                        <li><a href ng-click="aCtrl.drillDown(row.metaData);">Drill down</a></li>
 			                        <li><a href ng-click="aCtrl.sendMessage(row.metaData);">Contact</a></li>
 			                      </ul>
