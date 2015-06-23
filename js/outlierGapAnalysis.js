@@ -701,33 +701,6 @@
         }
 
         
-        /*self.floatUp = function (rowMetaData) {
-        	
-        	var requestURL = "/api/organisationUnits/" + rowMetaData.ou.id + ".json?fields=parent[id,children[id],parent[id,children[id]]";
-        	requestService.getSingle(requestURL).then(function (response) {
-
-        		var metaData = response.data;
-        		if (metaData.parent) {
-        			
-        			var orgunits = [metaData.parent.id];
-
-					dataAnalysisService.outlierGap(receiveResult, self.result.metaData.dataIDs, self.result.metaData.coAll, self.result.metaData.coFilter, self.result.metaData.periods, orgunits, null, null, 2, 3.5, 1);	
-					
-					
-					self.result = undefined;
-        		}
-        		else {
-					self.alerts.push({type: 'warning', msg: rowMetaData.ouName + ' does not have a parent'});
-        		}
-        		
-        		
-        		
-        	});
-        	
-        	
-        }*/
-	   	
-	   	
 	   	self.exportCSV = function() {
 	   				  
 	   				  var content = self.result.rows;
