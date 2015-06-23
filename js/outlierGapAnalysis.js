@@ -26,6 +26,12 @@
 		function init() {		
 			self.alerts = [];		
 			self.dataDisaggregation = 0;
+			
+			self.checkModel = { 
+				filter: false,
+				export: false,
+				history: false
+			};
 	    	
 	    	self.datasets = [];
 	    	self.datasetDataelements = undefined;
