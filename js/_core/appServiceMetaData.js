@@ -3,6 +3,8 @@
 	  	
 	  	var self = this;
 	  	
+	  	var mapping = undefined;
+	  	
 	  	var dataElements = {
 	  		'available': false,
 	  		'promise': null,
@@ -800,6 +802,174 @@
 				}			
 			}
 		};
+		
+		
+		
+		/** -- MAPPING -- 
+		
+		
+		*/
+		self.hasMapping = function() {
+			
+			if (mapping) {
+				return true;
+			}
+			else {
+				return false;
+			}
+		
+		}
+		
+		self.getMapping = function(update) {
+			var deferred = $q.defer();
+			
+			if (!update && mapping) {
+				deferred.resolve(mapping);
+			}			
+			else {
+				requestService.getSingle('/api/systemSettings/DQAmapping').then(function(response) {
+					mapping = response.data;
+					deferred.resolve(mapping);
+				});	
+			}
+			return deferred.promise;
+		}
+		
+		self.getGroups = function() {
+			if (!self.hasMapping()) return null;
+			
+			return mapping.groups
+		}
+		
+		self.getCoreData = function() {
+			if (!self.hasMapping()) return null;
+			
+			return mapping.coreIndicators;
+		}
+		
+		
+		self.getData = function() {
+			if (!self.hasMapping()) return null;
+			
+			return mapping.data;
+		
+		}
+		
+		
+		self.getDataWithCode = function(dataCode) {
+			if (!self.hasMapping()) return null;
+			
+			var data = self.getData();
+			for (var i = 0; i < data.length; i++) {
+				if (data[i].code === dataCode) return data[i];
+			}
+			
+			return null;
+		}
+		
+		
+		self.getDataID = function (dataCode) {
+			if (!self.hasMapping()) return null;
+			
+			var data = self.getData();
+			for (var i = 0; i < data.length; i++) {
+				if (data[i].code === dataCode) return data[i].localData.id;
+			}
+			
+			return null;
+		}
+		
+		self.getDataPeriodType = function(dataCode) {
+			if (!self.hasMapping()) return null;
+			
+			var data = self.getData();
+			for (var i = 0; i < data.length; i++) {
+				if (data[i].code === dataCode) {
+					return self.getDataSetPeriodType(data[i].dataSetID);
+				}
+			}
+			
+			return null;
+		}
+		
+		
+		self.getDataInGroup = function(groupCode) {
+			if (!self.hasMapping()) return null;
+			
+			var dataCodes, groups;
+			if (groupCode != 'core') {
+				groups = self.getGroups();
+				for (var i = 0; i < groups.length; i++) {
+					if (group[i].code === groupCode) {
+						dataCodes = group[i].members;
+						break;
+					}
+				}
+			}
+			else {
+				dataCodes = self.getCoreData();
+			}
+			
+			var dataInGroup = [], data = self.getData();
+			for (var i = 0; i < dataCodes.length; i++) {
+				for (var j = 0; j < data.length; j++) {
+					if (dataCodes[i] === data[j].code) dataInGroup.push(data[j]);
+				}
+			}
+			
+			return dataInGroup;
+		}
+		
+		
+		self.getDatasets = function() {
+			if (!self.hasMapping()) return null;
+			
+			return mapping.dataSets;
+		}
+		
+		self.getDatasetFromID = function(id) {
+			if (!self.hasMapping()) return null;
+			
+			var datasets = self.getDatasets();
+			for (var i = 0; i < datasets.length; i++) {
+				if (datasets[i].id === id) {
+					return datasets[i];
+				}
+			}
+		}
+		
+		self.getDataSetPeriodType = function(id) {
+			if (!self.hasMapping()) return null;
+			
+			return self.getDatasetFromID(id).periodType;		
+		}
+		
+		
+		self.getDatasetsInGroup = function(groupCode) {
+			if (!self.hasMapping()) return null;
+			
+			var data = self.getDataInGroup(groupCode);
+			var datasets = self.getDatasets();
+			var filteredDatasets = [];
+			for (var i = 0; i < datasets.length; i++) {
+				for (var j = 0; j < data.length; j++) {
+					if (datasets[i].id === data[j].dataSetID) {
+						filteredDatasets.push(datasets[i]);
+					}
+				}
+			}
+
+			return filteredDatasets;
+		}
+		
+		
+		self.getRelations = function(groupCode) {
+			if (!self.hasMapping()) return null;
+			
+			return mapping.relations;
+		
+		}
+
 		
 		
 	  	return self;

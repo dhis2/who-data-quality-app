@@ -43,7 +43,7 @@
 	.bigChart {
 		border: 1px solid gray;
 		min-width: 350px;
-		height: 450px;
+		height: 400px;
 	}
 	
 	.smallChart {
@@ -89,12 +89,6 @@
 		  -webkit-transform: rotate(-45deg);
 		  -moz-transform: rotate(-45deg);
 		  filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=2);	
-	}
-	
-	.chart-title {
-		margin-top: 6px;
-		font-weight: bold;
-		font-family: sans-serif;
 	}
 	
 	.ui-select-multiple.ui-select-bootstrap {

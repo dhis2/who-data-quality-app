@@ -1,34 +1,56 @@
 <h4 style="margin-top: 20px;">Data Quality Dashboard</h4>
 <tabset>
-<tab heading="Completeness" select="dashCtrl.updateCharts();">
-		<div >
-			<div style="display: inline-block; width: 100%;" ng-repeat="dataset in dashCtrl.dataSetsAvailable|orderBy:'name'">
-			
-				<div class="chartHolder" ng-class="{chartFull: dashCtrl.singleCol, chartHalf: !dashCtrl.singleCol}" style="display: inline-block;" id="compPE_{{dataset.id}}"><svg class="smallChart"></svg></div>
+<tab heading="Completeness" select="dashCtrl.makeCompletenessCharts();">
+	<div 
+	 	style="display: inline-block; width: 100%;" 
+	 	ng-repeat="dataset in dashCtrl.completenessCharts|orderBy:'name'">
+	
+		<nvd3 
+			ng-class="{chartFull: dashCtrl.singleCol, chartHalf: !dashCtrl.singleCol}" 
+			style="display: inline-block;" 
+			options='dataset.trendChartOptions' 
+			data='dataset.trendChartData'
+			id="{{dataset.trendChartOptions.parameters.dataIDs.join('_')}}_CT">
+		</nvd3>
+		
+		<nvd3 
+			ng-class="{chartFull: dashCtrl.singleCol, chartHalf: !dashCtrl.singleCol}" 
+			style="display: inline-block;" 
+			options='dataset.ouChartOptions' 
+			data='dataset.ouChartData'
+			id="{{dataset.ouChartOptions.parameters.dataIDs.join('_')}}_COU">
+		</nvd3>
+		
+		<hr />
+		
+	</div>
+		
+</tab>
+<tab heading="Consistency" select="dashCtrl.makeConsistencyCharts();">
+	<div
+	 	style="display: inline-block; width: 100%;" 
+	 	ng-repeat="data in dashCtrl.consistencyCharts|orderBy:'name'">
+		<nvd3 
+			ng-class="{chartFull: dashCtrl.singleCol, chartHalf: !dashCtrl.singleCol}" 
+			style="display: inline-block;" 
+			options='data.yyChartOptions' 
+			data='data.yyChartData'
+			id="{{data.yyChartOptions.parameters.dataID}}_YY">
+		</nvd3>
+		
+		<nvd3 
+			ng-class="{chartFull: dashCtrl.singleCol, chartHalf: !dashCtrl.singleCol}" 
+			style="display: inline-block;" 
+			options='data.consistencyChartOptions' 
+			data='data.consistencyChartData'
+			id="{{data.yyChartOptions.parameters.dataID}}_DT">
+		</nvd3>
 				
-				<div class="chartHolder" ng-class="{chartFull: dashCtrl.singleCol, chartHalf: !dashCtrl.singleCol}" style="display: inline-block;" id="compOU_{{dataset.id}}"><svg class="smallChart"></svg></div>
-			</div>
-		</div>
-		
-</tab>		<tab heading="3-year consistency" select="dashCtrl.updateCharts();">
-		
-		<div >
-		
-			<div
-				class="chartHolder"
-				ng-repeat="data in dashCtrl.dataAvailable track by $index" 
-				style="display: inline-block;" 
-				id="yy_{{data.localData.id}}"
-				ng-class="{chartFull: dashCtrl.singleCol, chartHalf: !dashCtrl.singleCol}"
-				>
-				
-				<svg class="smallChart"></svg>
-				
-			</div>
-			
-		</div>
-		
-</tab>		<!-- TMP <tab heading="Outliers" select="dashCtrl.updateCharts();">
+		<hr />
+	</div>
+</tab>		
+
+<!-- TMP <tab heading="Outliers" select="dashCtrl.updateCharts();">
 		
 		<div >
 					

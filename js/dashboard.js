@@ -7,8 +7,9 @@
 	app.controller("DashboardController", function(metaDataService, periodService, requestService, visualisationService, mathService, dataAnalysisService, $scope, $window, $timeout) {
 
 	    var self = this;
-
-    	init();
+		
+		
+		
     	
     	function init() {
     	
@@ -16,368 +17,294 @@
 			$( window ).resize(function() {
 				setWindowWidth();
 			});
-			
-			self.analysisType = 'comp';
-			
-			nv.graphs = [];
+
+    		self.ready = true;
+    		self.show = false;
+    		
+    		self.group = 'core';
+    		self.ouBoundary = 'USER_ORGUNIT';
+    		self.ouChildren = 'USER_ORGUNIT_CHILDREN';
     		    		
-    		self.count = 0;
-    		self.loaded = {};
-    		
-    		self.dataSetsAvailable = [];
-    		self.dataAvailable = [];
-    		self.periodTypes = [];
-    		self.periodTypeAggregates = [];
-    		self.dataSetIsSet = false;
-    		self.dataIsSet = false;
-    		
-    		//Makes it possible to switch later if necessary
-    		self.group = 'None';
-    		self.core = true;
-    		
-    		if (self.metaData) return;
-    		
-    		//Get mapped data, then do analysis
-			requestService.getSingle('/api/systemSettings/DQAmapping').then(function(response) {
-				self.metaData = response.data;
-				self.updateDashboard();
-			
-			});
-			
+    		//Completeness is the default
+    		self.makeCompletenessCharts();
     	}
+    	     
+        /** -- ANALYSIS -- */
+        
+        /** COMPLETENESS */
+        self.makeCompletenessCharts = function() {
+        	if (!self.ready) return;
+	        nv.graphs = [];
+	        
+        	self.completenessCharts = [];
+        	self.trendReceived = 0;
+        	self.ouReceived = 0;
+        	
+        	//One year of data
+        	var endDate = moment().subtract(new Date().getDate(), 'days');
+        	var startDate = moment(endDate).subtract(12, 'months').add(1, 'day'); 
+        	
+        	var datasets = metaDataService.getDatasetsInGroup(self.group);
+        	
+        	var dataset, periods, ouPeriod, datasetCompletenessChart;
+        	for (var i = 0; i < datasets.length; i++) {
+               	dataset = datasets[i];
+               	
+        		datasetCompletenessChart = {
+        			name: dataset.name,
+        			id: dataset.id,
+        			trendChartOptions: undefined,
+        			trendChartData: undefined,
+        			ouChartOptions: undefined,
+        			ouChartData: undefined
+        		}
+        		
+        		periods = periodService.getISOPeriods(startDate, endDate, dataset.periodType);
+        		if (periods.length < 4) {
+        			ouPeriod = periods[periods.length - 1];
+        		}
+        		else {
+        			ouPeriod = periods[periods.length - 2];
+        		}
+        		
+        		visualisationService.lineChart(receiveCompletenessTrend, [dataset.id], periods, [self.ouBoundary], 'dataOverTime');
+        		
+        		visualisationService.barChart(receiveCompletenessOU, [dataset.id], [ouPeriod], [self.ouChildren], 'ou');
+        		
+        		
+        		self.completenessCharts.push(datasetCompletenessChart);  		
+        	}
+        }
+        
+        
+        var receiveCompletenessTrend = function (data, options) {
+        	var datasetID = options.parameters.dataIDs[0];
+        	
+        	//Modify options
+        	options.chart.forceY = [0, 100];
+        	options.chart.margin = {
+	        	  "top": 20,
+	        	  "right": 10,
+	        	  "bottom": 60,
+	        	  "left": 30
+	        	};
+	        options.chart.height = 300;
+	        options.chart.showLegend = false;
+        
+        	var dsc;
+        	for (var i = 0; i < self.completenessCharts.length; i++) {
+        		dsc = self.completenessCharts[i];
+        		if (dsc.id === datasetID) {
+        		
+        			options.title = {	
+        				'enable': true,
+        				'text': dsc.name + ' completeness'
+        			};
+        			options.subtitle = {	
+        				'enable': true,
+        				'text': 'Trend over time'
+        			};
+        			dsc.trendChartOptions = options;
+        			dsc.trendChartData = data;
+        			break;
+        		}
+        	}
+        	
+        	self.trendReceived++;
+        	if (self.trendReceived === self.completenessCharts.length && self.ouReceived === self.completenessCharts.length) {
+        		console.log("Completeness charts ready");
+				updateCharts();
+        	}
+        }
+        
+        
+        var receiveCompletenessOU = function (data, options) {
+        	var datasetID = options.parameters.dataIDs[0];
+        	
+        	//Modify options
+        	options.chart.forceY = [0, 100];
+        	options.chart.margin = {
+        		  "top": 20,
+        		  "right": 10,
+        		  "bottom": 60,
+        		  "left": 30
+        		};
+        	options.chart.height = 300;
+        	options.chart.showLegend = false;
+    		options.chart.yAxis = {
+    			'tickFormat': d3.format('g')
+    		};
+        
+        	var dsc;
+        	for (var i = 0; i < self.completenessCharts.length; i++) {
+        		dsc = self.completenessCharts[i];
+        		if (dsc.id === datasetID) {
+        		
+        			options.title = {	
+        				'enable': true,
+        				'text': dsc.name + ' completeness'
+        			};
+        			options.subtitle = {	
+        				'enable': true,
+        				'text': 'Comparison for ' + periodService.shortPeriodName(options.parameters.periods[0])
+        			};
+        		
+        			dsc.ouChartOptions = options;
+        			dsc.ouChartData = data;
+        			break;
+        		}
+        	}
+        	
+        	self.ouReceived++;
+        	if (self.trendReceived === self.completenessCharts.length && self.ouReceived === self.completenessCharts.length) {
+        		console.log("Completeness charts ready");
+				updateCharts();
+        	}
+        }
+                  	
     	
     	
-    	function setWindowWidth() {
-    		
-    		var previous = self.singleCol;
-    		
-    		if ($window.innerWidth < 768) {
-    			self.singleCol = true;
-    		}
-    		else {
-    			self.singleCol = false;
-    		}
-    		
-    		//update if there was a change
-    		if (previous != undefined && (previous != self.singleCol)) $scope.$apply();
-    	}
-    	
-    	
-    	self.updateCharts = function() {
-    		$timeout(function() {		
-	    		for (var i = 0; i < nv.graphs.length; i++) {
-	    			nv.graphs[i].update();
-	    		}
-	    	});
-    	}
-    	
-    	
-    	self.updateDashboard = function() {
-    		
-    		if (self.done) return;
-    		
-    		if (!self.metaData) return;
-    		
-    		if (!self.dataSetIsSet) {
-    			getAvailableDataSets();
-    			self.dataSetIsSet = true;
-    		}
-    		if (!self.dataIsSet) {
-    			getAvailableData();
-    			self.dataIsSet = true;
-    			getPeriodTypes();
-    		}
-    		self.done = true;
-    		makeCompletenessTrendCharts();
-    				
-    	}
-       
-           
-       	function getAvailableDataSets() {
-   			var data, dataSetIDs = {};
-   			for (var i = 0; i < self.metaData.data.length; i++) {
-   				data = self.metaData.data[i];
-   				
-   				if (data.matched && ((self.core && indicatorIsCore(data.code)) || (data.group === self.group))) {		
-					dataSetIDs[data.dataSetID] = true;
-   				}
-   			}
-   			var dataSet;
-   			for (var i = 0; i < self.metaData.dataSets.length; i++) {
-   				dataSet = self.metaData.dataSets[i];
-   				if (dataSetIDs[dataSet.id]) self.dataSetsAvailable.push(dataSet);
-   			}       	
-       	}
-       	
-       	
-       	function getAvailableData() {
-			var data;
-			for (var i = 0; i < self.metaData.data.length; i++) {
-				data = self.metaData.data[i];
-				if (data.matched && ((self.core && indicatorIsCore(data.code)) || (data.group === self.group))) {
-					
-					for (var j = 0; j < self.dataSetsAvailable.length; j++) {
-						if (self.dataSetsAvailable[j].id === data.dataSetID) {
-							data.periodType = self.dataSetsAvailable[j].periodType;
-						} 
-					}
-									
-					self.dataAvailable.push(data);
-				}
-			}
-       	}
-       	
-       	function indicatorIsCore(code) {
-			for (var j = 0; j < self.metaData.coreIndicators.length; j++) {
-				if (code === self.metaData.coreIndicators[j]) {
-					return true;
-				}
-			}
-			
-			return false;
-       	}
-       	
-       	
-       	function getPeriodTypes() {
-       	
-       		var data, pTypes = {};
-       		for (var i = 0; i < self.dataAvailable.length; i++) {
-       			pTypes[self.dataAvailable[i].periodType] = true;
-       		}
-       		
-			for (pt in pTypes) {
-				self.periodTypes.push({'pt': pt});
-			}
-       	
-       	}
-       	
-       	
-       	function getDataWithID(id) {
-       		for (var i = 0; i < self.dataAvailable.length; i++) {
-       			if (self.dataAvailable[i].localData.id === id) return self.dataAvailable[i];
-       		}
-       	}
-       	    	
-       	
-    	  	
-    	
-    	function makeOutlierCharts() {
-			
-			var periodType;			
-			for (var k = 0; k < self.periodTypes.length; k++) {
-				periodType = self.periodTypes[k].pt;
-				
-							
-				//Rewind one period
-				var endDate = moment();
-				var startDate = moment(endDate).subtract(12, 'months').add(1, 'day');
-				startDate = moment(startDate).subtract(1, 'month');
-				endDate = moment(endDate).subtract(1, 'month');
-				var pe = periodService.getISOPeriods(startDate, endDate, periodType);
-				
-				
-				var variables = [];
-				for (var i = 0; i < self.dataAvailable.length; i++) {
-					
-					if (self.dataAvailable[i].periodType === periodType) {
-						variables.push(self.dataAvailable[i].localData.id);
-					}
-				}	
-				
-				var orgunit = ["USER_ORGUNIT_GRANDCHILDREN"];
-				var orgunit = ["USER_ORGUNIT_CHILDREN"];
-				
-				var parameters = {
-					'outlierLimit': 2.5,
-					'co': false
-				};
-				
-				dataAnalysisService.outlier(drawOutlierCharts, variables, pe, orgunit, parameters);
-			}
-			    	
-    	}
-    	
-    	
-    	function drawOutlierCharts(result) {
-
-    		var outlierSeries = result.aggregates.dxPeOut;
-    		
-    		//Outliers
-    		var stackedSeries = [];
-    		for (key in outlierSeries) {
-    			var series = {};
-    			series.key = result.metaData.names[key];
-    			series.values = [];
-    			
-    			var i = 0;
-    			for (pe in outlierSeries[key]) {
-    				series.values.push({'x': i++, 'y': outlierSeries[key][pe]});
-    			}
-    			
-    			stackedSeries.push(series);
-    		}
-    		var categoryNames = [];
-    		for (var i = 0; i < result.metaData.periods.length; i++) {
-    			categoryNames.push(periodService.shortPeriodName(result.metaData.periods[i]));
-    		}
-    		
-    		var periodType = periodService.periodTypeFromPeriod(result.metaData.periods[0]);
-    		
-    		visualisationService.makeMultiBarChart('out_' + periodType, stackedSeries, {'categoryLabels': categoryNames, 'title': "Outliers over time - " + periodType});
-    		
-    		result.aggregates.names = result.metaData.names;
-    		self.periodTypeAggregates[periodType] = result.aggregates;    		
-    		
-    		drawOutlierPieCharts();
-    	}
-    	
-    	
-    	function drawOutlierPieCharts() {
-    		
-    		var count = 0;
-    		for (k in self.periodTypeAggregates) if (self.periodTypeAggregates.hasOwnProperty(k)) count++;
-    		
-    		//Check if all data is here for the summary charts
-    		if (count < self.periodTypes.length) return;
-    		
-    		var periodType;
-    		
-    		var ouOut = {};
-    		var dxOut = {};
-    		
-    		var aggregates;
-    		var names = [];
-    		for (var i = 0; i < self.periodTypes.length; i++) {
-    			periodType = self.periodTypes[i].pt;
-    			aggregates = self.periodTypeAggregates[periodType];
-    			
-    			for (dx in aggregates.dxOut) {
-    				if (!dxOut[dx]) dxOut[dx] = aggregates.dxOut[dx];
-    				else dxOut[dx] += aggregates.dxOut[dx];
-    			}
-    			
-    			for (ou in aggregates.ouOut) {
-    				if (!ouOut[ou]) ouOut[ou] = aggregates.ouOut[ou];
-    				else ouOut[ou] += aggregates.ouOut[ou];
-    			}
-    			
-    			for (id in aggregates.names) {
-    				names[id] = aggregates.names[id];
-    			}
-    		}
-    		
-    		var series = [];
-    		for (key in ouOut) {
-    			series.push({
-    				'label': names[key],
-    				'value': ouOut[key]
-    			});
-    		}
-    		series.sort(function (a,b) {
-    			if (a.label < b.label) return -1;
-    			if (a.label > b.label) return 1;
-    			return 0;
-    		});
-    		visualisationService.makePieChart('out_ou', series, {'title': 'Outliers by orgunit'});
-
-			
-    		var series = [];
-    		for (key in dxOut) {
-    			series.push({
-    				'label': names[key],
-    				'value': dxOut[key]
-    			});
-    		}
-    		series.sort(function (a,b) {
-				if (a.label < b.label) return -1;
-				if (a.label > b.label) return 1;
-				return 0;
-			});
-    		visualisationService.makePieChart('out_dx', series, {'title': 'Outliers by variable'});
-
-    	
-    	}
-    	
-    	
-    	function makeCompletenessTrendCharts() {
-    		
-    		
-			var endDate = moment().subtract(new Date().getDate(), 'days');
-			var startDate = moment(endDate).subtract(12, 'months').add(1, 'day'); 
-			
-			var dataSet;
-			
-			var chartOptions = {};
-			chartOptions.range = {'min': 0, 'max': 110};
-			chartOptions.yLabel = 'Completeness (%)';
-			
-			
-			for (var i = 0; i < self.dataSetsAvailable.length; i++) {
-				
-				
-				dataSet = self.dataSetsAvailable[i];
-				var periods = periodService.getISOPeriods(startDate, endDate, dataSet.periodType, chartOptions);
-				
-				var options = angular.copy(chartOptions);
-				options.title = dataSet.name + ' trend';				
-				visualisationService.autoLineChart('compPE_'+dataSet.id, periods, [dataSet.id], 'USER_ORGUNIT', options);
-		
-		
-				options = angular.copy(chartOptions);
-				
-				var periodComparison; 
-				if (periods.length < 4) {
-					periodComparison = periods[periods.length - 1];
-				}
-				else {
-					periodComparison = periods[periods.length - 2];
-				}
-				
-				options.title = dataSet.name + ' comparison - ' + periodService.shortPeriodName(periodComparison);
-				if (i === self.dataSetsAvailable.length - 1) {
-					options.callBack = function() {console.log("Calling YY"); makeYYtrendCharts();};
-				}
-				
-				visualisationService.autoOUBarChart('compOU_'+dataSet.id, periodComparison, [dataSet.id], 'USER_ORGUNIT_CHILDREN', options);
-				
-			}
-			
-    	}
-      	
-      	
-      	function makeYYtrendCharts() {
-      		 
-      		     		
-      		var chartOptions = {}, periods, data, endDate, startDate; 	
-   
-			for (var i = 0; i < self.dataAvailable.length; i++) {
+    	/** CONSISTENCY */
+    	self.makeConsistencyCharts = function() { 
+    		nv.graphs = [];
+      		self.consistencyCharts = [];   
+      		self.yyReceived = 0;
+      		self.consistencyReceived = 0;
+      		  		self.show = false;
+      		
+      		
+      		var data, endDate, startDate, periodType, periods; 	
+   			var datas = metaDataService.getDataInGroup(self.group);
+   			var consistencyChart;
+			for (var i = 0; i < datas.length; i++) {
       			
-      			
-      			data = self.dataAvailable[i];
+      			data = datas[i];
+      			periodType = metaDataService.getDataPeriodType(data.code);
       			endDate = moment().subtract(new Date().getDate(), 'days');
       			startDate = moment(endDate).subtract(12, 'months').add(1, 'day'); 
+      			
       			periods = [];
-      			periods.push(periodService.getISOPeriods(startDate, endDate, data.periodType));
+      			periods.push(periodService.getISOPeriods(startDate, endDate, periodType));
       			for (var j = 0; j < 2; j++) {
       				startDate = moment(startDate).subtract(1, 'year');
       				endDate = moment(endDate).subtract(1, 'year');
-      				periods.push(periodService.getISOPeriods(startDate, endDate, data.periodType));
+      				periods.push(periodService.getISOPeriods(startDate, endDate, periodType));
       			}
-      			
-      			var options = angular.copy(chartOptions);
-      			if (i === self.dataAvailable.length-1) {
-	      			options.callBack = function() {console.log("Calling gap"); /*makeOutlierCharts();*/};
-      			}
-      			
-      			options.title = data.localData.name;
-      			
-      			visualisationService.autoYYLineChart('yy_' + data.localData.id, periods, data.localData.id, 'USER_ORGUNIT', options);
 
+      			visualisationService.yyLineChart(receiveYY, periods, data.localData.id, 'USER_ORGUNIT');
+				
+				consistencyChart = {
+					name: data.name,
+					id: data.localData.id,
+					yyChartOptions: undefined,
+					yyChartData: undefined,
+					consistencyChartOptions: undefined,
+					consistencyChartData: undefined
+				}
+				
+				self.consistencyCharts.push(consistencyChart);
+      		}
+      		      		
+      	}
+
+    	
+    	var receiveYY = function (data, options) {
+			var dataID = options.parameters.dataID;
+
+    		//Modify options
+    		options.chart.margin = {
+    			  "top": 20,
+    			  "right": 10,
+    			  "bottom": 30,
+    			  "left": 50
+    			};
+    		options.chart.height = 300;
+    		options.chart.yAxis = {
+    			'tickFormat': d3.format('g')
+    		};
+    	
+    		var dsc;
+    		for (var i = 0; i < self.consistencyCharts.length; i++) {
+    			dc = self.consistencyCharts[i];
+    			if (dc.id === dataID) {
+    			
+    				options.title = {	
+    					'enable': true,
+    					'text': dc.name
+    				};
+    				options.subtitle = {	
+    					'enable': true,
+    					'text': 'Year over year'
+    				};
+    			
+    				dc.yyChartOptions = options;
+    				dc.yyChartData = data;
+    				break;
+    			}
+    		}
+    		self.yyReceived++;
+    		if (self.yyReceived === self.consistencyCharts.length) {
+				console.log("Consistency downloaded");
+				updateCharts();
+    		}
+    	}
+    	
+    	
+    	
+    	/** OUTLIERS */
+    	
+    	
+    	
+    	
+      	
+      	
+      	
+      	
+      	/**UTILITIES*/
+      	function getPeriodTypes(datasets) {
+      		
+  			var data, pTypes = {};
+  			for (var i = 0; i < self.dataAvailable.length; i++) {
+  				pTypes[self.dataAvailable[i].periodType] = true;
+  			}
+      			
+      		for (pt in pTypes) {
+      			self.periodTypes.push({'pt': pt});
       		}
       		
       	}
-      	    
-    
+      	
+      	
+      	function setWindowWidth() {
+      		
+      		var previous = self.singleCol;
+      		
+      		if ($window.innerWidth < 768) {
+      			self.singleCol = true;
+      		}
+      		else {
+      			self.singleCol = false;
+      		}
+      		
+      		//update if there was a change
+      		if (previous != undefined && (previous != self.singleCol)) $scope.$apply();
+      	}
+      	
+      	function updateCharts() {
+      		$timeout(function () { window.dispatchEvent(new Event('resize')); }, 250);
+      	}
+      				
+		//Make sure mapping is available, then intialise
+		if (metaDataService.hasMapping()) {
+			init();
+		}
+		else {
+			metaDataService.getMapping().then(function (data) {
+				init();
+			});
+		}	
+			
+			
 		return self;
 		
 	});

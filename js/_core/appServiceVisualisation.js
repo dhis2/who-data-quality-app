@@ -5,8 +5,10 @@
 	  	
 	  	var self = this;
 		
-		
-		
+		/** ANGULAR-NVD3 LINE CHART */
+		/*
+		Takes IDs as parameters, returns chartData and chartOptions for use with angular-nvd3
+		*/
 		self.lineChart = function (callback, dataIDs, periodIDs, orgunitIDs, type) {
 		
 			var requestURL = '/api/analytics.json?'
@@ -19,6 +21,8 @@
 				var data = response.data.rows;
 				var header = response.data.headers;
 				var names = response.data.metaData.names;
+				
+				orgunitIDs = response.data.metaData.ou; //Replace for "USER ORGUNIT" etc
 				
 				var chartData = [];
 				var chartOptions;
@@ -71,16 +75,26 @@
 					        },
 					        'tooltips': true,
 					        'showLegend': true
+					    },
+					    'parameters': {
+					    	'dataIDs': dataIDs, 
+					    	'periods': periodIDs,
+					    	'orgunitIDs': orgunitIDs,
+					    	'type': type					    
 					    }
 					}
 				
 				}
 				
-				
 				callback(chartData, chartOptions);
 			});
 		}
 		
+		
+		/** ANGULAR-NVD3 MULTIBAR CHART */
+		/*
+		Takes IDs as parameters, returns chartData and chartOptions for use with angular-nvd3
+		*/
 		self.multiBarChart = function (callback, dataIDs, periodIDs, orgunitIDs, type) {
 				
 			var requestURL = '/api/analytics.json?'
@@ -93,6 +107,8 @@
 				var data = response.data.rows;
 				var header = response.data.headers;
 				var names = response.data.metaData.names;
+				
+				orgunitIDs = response.data.metaData.ou; //Replace for "USER ORGUNIT" etc
 				
 				var chartData = [];
 				var chartOptions;
@@ -148,6 +164,99 @@
 					        },
 					        'tooltips': true,
 					        'showLegend': true
+					    },
+					    'parameters': {
+					    	'dataIDs': dataIDs, 
+					    	'periods': periodIDs,
+					    	'orgunitIDs': orgunitIDs,
+					    	'type': type					    
+					    }
+					}
+				
+				}
+				
+				
+				callback(chartData, chartOptions);
+			});
+		}
+		
+		
+		/** ANGULAR-NVD3 BAR CHART */
+		/*
+		Takes IDs as parameters, returns chartData and chartOptions for use with angular-nvd3
+		*/
+		self.barChart = function (callback, dataIDs, periodIDs, orgunitIDs, type) {
+				
+			var requestURL = '/api/analytics.json?'
+			requestURL += "dimension=dx:" + dataIDs.join(';');
+			requestURL += "&dimension=pe:" + periodIDs.join(";");
+			requestURL += "&dimension=ou:" + orgunitIDs.join(";");
+						
+			requestService.getSingle(requestURL).then(function (response) {
+				
+				var data = response.data.rows;
+				var header = response.data.headers;
+				var names = response.data.metaData.names;
+				
+				orgunitIDs = response.data.metaData.ou; //Replace for "USER ORGUNIT" etc
+				
+				var chartData = [];
+				var chartOptions;
+				if (type === 'ou') {
+					
+					if (dataIDs.length > 1) console.log("Warning: more than one data item for ou bar chart");
+					if (periodIDs.length > 1) console.log("Warning: more than one period item for ou bar chart");
+					
+					var dx = dataIDs[0];
+					var pe = periodIDs[0];
+					
+					for (var i = 0; i < dataIDs.length; i++) {
+						var chartSerie = {
+							'key': names[dx],
+							'values': []
+						}
+						
+						for (var j = 0; j < orgunitIDs.length; j++) {
+							var value = dataValue(header, data, dx, pe, orgunitIDs[j], null);
+							
+							if (isNaN(value)) value = null;
+							else value = mathService.round(value, 0);
+							
+							chartSerie.values.push({
+								'label': names[orgunitIDs[j]],
+								'value': value
+							});
+							
+						}
+						
+						chartData.push(chartSerie);
+					}
+			
+					//Chart options		
+					chartOptions = {
+					   	"chart": {
+					        "type": "discreteBarChart",
+					        "height": 300,
+					        "margin": {
+					          "top": 20,
+					          "right": 20,
+					          "bottom": 60,
+					          "left": 20
+					        },
+					        'tooltips': true,
+					        'showLegend': true,
+	                        'x': function(d){return d.label;},
+	                        'y': function(d){return d.value;},
+	                        'transitionDuration': 500,
+	                        'xAxis': {
+	                            'rotateLabels': -30
+	                        }
+					    },
+					    'parameters': {
+					    	'dataIDs': dataIDs, 
+					    	'periods': periodIDs,
+					    	'orgunitIDs': orgunitIDs,
+					    	'type': type					    
 					    }
 					}
 				
@@ -219,7 +328,7 @@
 	  	@param dataIDs		data ID
 	  	@param ouID			orgunit ID
 	  	*/
-	  	self.autoYYLineChart = function (elementID, periods, dataID, ouID, options) {
+	  	self.yyLineChart = function (callback, periods, dataID, ouID) {
 	  		
 	  		var requestURL, requests = [];
 	  		for (var i = 0; i < periods.length; i++) {
@@ -231,12 +340,113 @@
 	  		}
 	  		
 	  		requestService.getMultiple(requests).then(function (response) {
-	  			var datas = [];
+	  			var data = [];
 	  			for (var i = 0; i < response.length; i++) {
-	  				datas.push(response[i].data);
+	  				data.push(response[i].data);
 	  			}
+	  			
+	  			//Get XAxis labels = periods from series[0]
+  				var periodNames = [];
+  				for (var i = 0; i < periods[0].length; i++) {
+  					periodNames.push(periodService.shortPeriodName(periods[0][i]).split(' ')[0]);
+  				}
 
-	  			makeYYLineChart(elementID, periods, dataID, ouID, options, datas);
+	  			var pe, val;
+	  			for (var i = 0; i < data[0].headers.length; i++) {	
+	  				if (data[0].headers[i].name === 'pe') pe = i;
+	  				if (data[0].headers[i].name === 'value') val = i;
+	  			}
+	  			
+	  			ouID = data[0].metaData.ou;
+	  				
+  				var minRange = 0, maxRange = 0;
+  				var chartData = [], chartSeries, values, dataSet;
+  				for (var i = data.length-1; i >= 0 ; i--) {
+  					
+  					values = [];
+  					chartSeries = {};  			  		
+  					dataSet = data[i];
+  				
+  				
+  					if (dataSet.metaData.pe[0].substring(0, 4) === dataSet.metaData.pe[dataSet.metaData.pe.length-1].substring(0, 4)) {
+  						chartSeries.key = dataSet.metaData.pe[0].substring(0, 4);
+  					}
+  					else {
+  						chartSeries.key = dataSet.metaData.pe[0].substring(0, 4) + ' - ' + dataSet.metaData.pe[dataSet.metaData.pe.length-1].substring(0, 4);
+  					}
+  					
+  					var row, value, values = [];
+  					for (var j = 0; j < periods[i].length; j++) {
+  					
+  						var period = periods[i][j];
+  						var rows = dataSet.rows;
+  						
+  					 	for (var k = 0; k < rows.length; k++) {
+  						 	
+  						 	row = rows[k];
+  							if (row[pe] === period) {
+  							
+  								value = parseFloat(row[val]);
+  								if (isNaN(value)) value = null;
+  								
+  								values.push({
+  									'x': j,
+  									'y': value
+  								});
+  								
+  								if (value < minRange) {
+  									minRange = value;
+  								}
+  								if (value > maxRange) {
+  									maxRange = value;
+  								}
+  								
+  								k = rows.length;
+  							}
+  						}
+  					}
+  					
+  					chartSeries.values = values;
+  					chartSeries.periods = periods[i];
+  					chartData.push(chartSeries);
+  				}
+  				
+  				var toolTip = function(key, x, y, e, graph) {
+  				    return '<h3>' + periodService.shortPeriodName(e.series.periods[e.point.x]) + '</h3>' +
+  				        '<p>' + y + '</p>'; 
+  				};
+  				
+  				//Chart options		
+  				var chartOptions = {
+  				   	"chart": {
+  				   		"x": function(d){ return d.x; },
+  				   		"y": function(d){ return d.y; },
+  				        "type": "lineChart",
+  				        "height": 400,
+  				        "margin": {
+  				          "top": 140,
+  				          "right": 20,
+  				          "bottom": 100,
+  				          "left": 100
+  				        },
+  				        "xAxis": {
+  				          'rotateLabels': -30,
+  				          'tickFormat': function(d) {return periodNames[d];}
+  				        },
+  				        'tooltips': true,
+  				        'tooltipContent': toolTip,
+  				        'showLegend': true,
+  				        'useInteractiveGuideline': true
+  				    },
+  				    'parameters': {
+  				    	'dataID': dataID, 
+  				    	'periods': periods,
+  				    	'orgunitIDs': ouID
+  				    }
+  				}
+  				
+  				callback(chartData, chartOptions);
+  				
 	  		});
 	  	}
 	  	
