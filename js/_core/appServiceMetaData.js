@@ -900,8 +900,8 @@
 			if (groupCode != 'core') {
 				groups = self.getGroups();
 				for (var i = 0; i < groups.length; i++) {
-					if (group[i].code === groupCode) {
-						dataCodes = group[i].members;
+					if (groups[i].code === groupCode) {
+						dataCodes = groups[i].members;
 						break;
 					}
 				}
@@ -950,16 +950,20 @@
 			
 			var data = self.getDataInGroup(groupCode);
 			var datasets = self.getDatasets();
-			var filteredDatasets = [];
+			var filteredDatasets = {};
 			for (var i = 0; i < datasets.length; i++) {
 				for (var j = 0; j < data.length; j++) {
 					if (datasets[i].id === data[j].dataSetID) {
-						filteredDatasets.push(datasets[i]);
+						filteredDatasets[datasets[i]] = datasets[i];
 					}
 				}
 			}
+			var uniqueFilteredDatasets = [];
+			for (key in filteredDatasets) {
+				uniqueFilteredDatasets.push(filteredDatasets[key]);
+			}
 
-			return filteredDatasets;
+			return uniqueFilteredDatasets;
 		}
 		
 		
