@@ -554,7 +554,7 @@
 	    			nv.graphs[i].update();
 	    		}
 	    		window.dispatchEvent(new Event('resize'));
-	    	});
+	    	}, 250);
 	    }
 	    	    
 	    	    

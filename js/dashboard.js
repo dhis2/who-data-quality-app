@@ -193,6 +193,14 @@
 
       			visualisationService.yyLineChart(receiveYY, periods, data.localData.id, 'USER_ORGUNIT');
 				
+				
+//		    	dataAnalysisService.timeConsistency(receiveDataTimeConsistency, data.trend, data.consistency, null, data.localData.id, null, period, refPeriods, ouBoundary, ouLevel);
+				
+				
+				
+				
+				
+				
 				consistencyChart = {
 					name: data.name,
 					id: data.localData.id,
@@ -252,8 +260,7 @@
     	
     	
     	/** OUTLIERS */
-    	
-    	
+  	
     	
     	
       	
@@ -302,7 +309,8 @@
 			metaDataService.getMapping().then(function (data) {
 				init();
 			});
-		}	
+		}
+			
 			
 			
 		return self;

@@ -1,4 +1,5 @@
 <h4 style="margin-top: 20px;">Data Quality Dashboard</h4>
+
 <tabset>
 <tab heading="Completeness" select="dashCtrl.makeCompletenessCharts();">
 	<div 
@@ -29,7 +30,7 @@
 <tab heading="Consistency" select="dashCtrl.makeConsistencyCharts();">
 	<div
 	 	style="display: inline-block; width: 100%;" 
-	 	ng-repeat="data in dashCtrl.consistencyCharts|orderBy:'name'">
+	 	ng-repeat="data in dashCtrl.consistencyCharts|orderBy:'name'|limitTo: 100">
 		<nvd3 
 			ng-class="{chartFull: dashCtrl.singleCol, chartHalf: !dashCtrl.singleCol}" 
 			style="display: inline-block;" 
