@@ -220,7 +220,7 @@
 	  		
 	  	function receiveDataTimeConsistency(result, errors) {
 	  			if (result) {
-		  			makeTimeConsistencyChart(result);
+		  			visualisationService.makeTimeConsistencyChart(null, result);
 	  				self.consistency.data.push(result);
 	  			}  				
 	  			if (errors) {
@@ -387,128 +387,6 @@
 	    
 	    
   	  	/** CHARTS */
-  	  	function makeTimeConsistencyChart(result) {	    		    	
-  	  		    
-	    	var datapoints = result.subunitDatapoints;
-	    	var boundaryRatio = result.boundaryRatio;
-	    	var consistency = result.threshold; 
-	    		    	
-	    	var toolTip = function(key, x, y, e, graph) {
-	    		var data = result.subunitDatapoints;
-	    		
-	    		var toolTipHTML = '<h3>' + data[graph.pointIndex].name + '</h3>';
-    			toolTipHTML += '<p style="margin-bottom: 0px">' + result.pe + ': ' + y + '</p>';
-	    		if (result.type === 'constant') {
-	    			toolTipHTML += '<p>Average: ' + x + '</p>'; 	    			
-	    		}
-	    		else {
-	    			toolTipHTML += '<p>Forecasted: ' + x + '</p>'; 	    			
-	    		}
-	    	    return toolTipHTML;
-	    	};
-	    	
-	    	
-	    	var chartSeries = [];
-	    	var chartSerie = {
-	    		'key': self.orgunitLevelSelected.name + "s",
-	    		'values': []
-	    	}
-	    	
-	    	for (var i = 0; i < datapoints.length; i++) {
-	    		chartSerie.values.push({
-	    			'x': datapoints[i].refValue,
-	    			'y': datapoints[i].value
-	    		});
-	    	}
-
-	    	chartSeries.push(chartSerie);
-	    	chartSeries.push(
-	    		{
-	    			'key': "Overall",
-	    			'color': '#ffff',
-	    			'values': [{
-	    			'x': 0,
-	    			'y': 0,
-	    			'size': 0
-	    			}
-	    			],
-	    			'slope': boundaryRatio,
-	    			'intercept': 0.001
-	    		},
-	    		{
-	    			'key': "+ " + consistency + "%",
-	    			'color': '#F00',
-	    			'values': [{
-	    			'x': 0,
-	    			'y': 0,
-	    			'size': 0
-	    			}
-	    			],
-	    			'slope': boundaryRatio+consistency/100,
-	    			'intercept': 0.001
-	    		},
-	    		{
-	    			'key': "- " + consistency + "%",
-	    			'color': '#00F',
-	    			'values': [{
-	    			'x': 0,
-	    			'y': 0,
-	    			'size': 0
-	    			}
-	    			],
-	    			'slope': boundaryRatio-consistency/100,
-	    			'intercept': 0.001
-	    		}
-	    	);
-	    		    	
-			var xAxisLabel;
-			if (result.type === "constant") xAxisLabel = "Average of previous periods";
-			else xAxisLabel = "Forecasted value";
-			
-	    	result.chartOptions = {
-	    	   	"chart": {
-	    	        "type": "scatterChart",
-	    	        "height": 300,
-	    	        "margin": {
-	    	          "top": 10,
-	    	          "right": 30,
-	    	          "bottom": 100,
-	    	          "left": 50
-	    	        },
-	    	        "scatter": {
-	    	        	"onlyCircles": false
-	    	        },
-	    	        "clipEdge": false,
-	    	        "staggerLabels": true,
-	    	        "transitionDuration": 1,
-	    	        "showDistX": true,
-	    	        "showDistY": true,
-	    	        "xAxis": {
-	    	              "axisLabel": xAxisLabel,
-	    	              "axisLabelDistance": 30,
-	    	              "tickFormat": d3.format('g')
-	    	        },
-	    	        "yAxis": {
-	    	        	"axisLabel": result.pe,
-	    	            "axisLabelDistance": 30,
-	    	            "tickFormat": d3.format('g')
-	    	        },
-	    	        'tooltips': true,
-	    	        'tooltipContent': toolTip
-	    	        
-	    	    },
-	    	    "title": {
-	    	    	'enable': true,
-	    	    	'text': result.dxName
-	    	    },
-	    	    "subtitle": {
-	    	    	'enable': false
-	    	    }
-	    	};
-	    	
-	    	result.chartData = chartSeries;
-	    }
-  	  	
   	  		    
 	    function makeDataConsistencyChart(result) {	    		    	
 	    
