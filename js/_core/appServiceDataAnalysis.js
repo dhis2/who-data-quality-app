@@ -140,7 +140,14 @@
 				"metaData": {}
 			};
 			
-			var numDEs = Math.max(Math.ceil(125/(4*self.og.periods.length)), 2);
+			//Make a guess on how many data elements we can include in each query (2 minimum) if we want to stay within roughly 50000 rows (we ignore limit in case some go slightly higher)
+			var maxValues = 50000;
+			var ouPerLevel = 15; //assume two levels
+			var peCount = self.og.periods.length;
+			var avgCatCombo = 1;
+			if (self.og.coAll || self.og.coIDs) avgCatCombo = 4;
+			var numDEs = Math.max(Math.ceil(maxValues/(peCount*ouPerLevel*ouPerLevel*avgCatCombo)), 2);
+			
 			
 			for (var i = 0; i < self.og.ouBoundary.length; i++) {
 				//make requests
