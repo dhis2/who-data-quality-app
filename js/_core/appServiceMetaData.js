@@ -954,7 +954,7 @@
 			for (var i = 0; i < datasets.length; i++) {
 				for (var j = 0; j < data.length; j++) {
 					if (datasets[i].id === data[j].dataSetID) {
-						filteredDatasets[datasets[i]] = datasets[i];
+						filteredDatasets[datasets[i].id] = datasets[i];
 					}
 				}
 			}

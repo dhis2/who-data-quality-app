@@ -7,19 +7,14 @@
 	app.controller("DashboardController", function(metaDataService, periodService, requestService, visualisationService, mathService, dataAnalysisService, $scope, $window, $timeout) {
 
 	    var self = this;
-		
-		
-		
+
     	
     	function init() {
-    	
+    		nv.graphs = [];
     		setWindowWidth();
 			$( window ).resize(function() {
 				setWindowWidth();
 			});
-
-    		self.ready = true;
-    		self.show = false;
     		
     		self.group = 'core';
     		self.ouBoundary = 'USER_ORGUNIT';
@@ -303,10 +298,13 @@
       				
 		//Make sure mapping is available, then intialise
 		if (metaDataService.hasMapping()) {
+			self.ready = true;
 			init();
 		}
 		else {
+			self.ready = false;
 			metaDataService.getMapping().then(function (data) {
+				self.ready = true;
 				init();
 			});
 		}
