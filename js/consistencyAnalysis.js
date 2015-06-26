@@ -456,11 +456,12 @@
 						
 			
 			if (result.type === 'do') 
-				makeDropoutRateChart(result);
+				visualisationService.makeDropoutRateChart(null, result);
 			else {
-				makeDataConsistencyChart(result);	
+				visualisationService.makeDataConsistencyChart(null, result);	
 			}
 			
+			result.chartOptions.chart.height = 375;
 			self.chart.data = result.chartData;
 			self.chart.options = result.chartOptions;
 			
@@ -501,15 +502,16 @@
 		var receiveTimeResult = function(result, errors) {
 			
 			self.req = false;
+
+			visualisationService.makeTimeConsistencyChart(null, result);
 			
-			self.chart.data = null;
-			self.chart.options = null;
+			//Adjust size to be same as table
+			result.chartOptions.chart.height = 375;
 			
-			
-			makeTimeConsistencyChart(result);
-			
+			//Display chart
 			self.chart.data = result.chartData;
 			self.chart.options = result.chartOptions;		
+			
 			
 			self.tableData = [];
 			for (var i = 0; i < result.subunitDatapoints.length; i++) {
@@ -548,29 +550,23 @@
 			var title = "";
 			if (self.consistencyType === 'relation') {			
 				if (self.relationshipType === 'eq') {
-					title += self.selectedData('a').name + " ≈ " + self.selectedData('b').name + ". " + self.selectedPeriod().name;
+					title += self.selectedData('a').name + " ≈ " + self.selectedData('b').name + ". " + periodService.shortPeriodName(self.selectedPeriod().id);
 				}
 				if (self.relationshipType === 'aGTb') {
-					title += self.selectedData('a').name + " > " + self.selectedData('b').name + ". " + self.selectedPeriod().name;
+					title += self.selectedData('a').name + " > " + self.selectedData('b').name + ". " + periodService.shortPeriodName(self.selectedPeriod().id);
 				}
 				if (self.relationshipType === 'do') {
-					title += self.selectedData('a').name + " - " + self.selectedData('b').name + " dropout. " + self.selectedPeriod().name;
+					title += self.selectedData('a').name + " - " + self.selectedData('b').name + " dropout. " + periodService.shortPeriodName(self.selectedPeriod().id);
 				}
+			}
+			else {
+				title += self.selectedData('a').name + ' consistency over time. ' + periodService.shortPeriodName(self.selectedPeriod().id) + ' against ' + self.periodCountSelected.name + ' preceding periods';
 			}
 			
 			return title;
 		}
 				
        	
-       	/** DATA FUNCTION */
-       	self.dropoutRate = function(valueA, valueB) {
-       	
-       		return mathService.round(100*(valueA-valueB)/valueA, 2);
-       	
-       	}
-       	
-	    
-	   	
 	   	
 	   	/** TABLE LAYOUT */
 	   	self.sortByColumn = function (columnKey) {
@@ -764,301 +760,7 @@
         	}
         
         }
-        
-        
-        /** CHARTS */
-  	  	function makeTimeConsistencyChart(result) {	    		    	
-  	  		    
-	    	var datapoints = result.subunitDatapoints;
-	    	var boundaryRatio = result.boundaryRatio;
-	    	var consistency = result.threshold; 
-	    		    	
-	    	var toolTip = function(key, x, y, e, graph) {
-	    		var data = getDataItem(graph.point.z);
-	    		
-	    		var toolTipHTML = '<h3>' + data.name + '</h3>';
-    			toolTipHTML += '<p style="margin-bottom: 0px">' + result.pe + ': ' + y + '</p>';
-	    		if (result.type === 'constant') {
-	    			toolTipHTML += '<p>Average: ' + x + '</p>'; 	    			
-	    		}
-	    		else {
-	    			toolTipHTML += '<p>Forecasted: ' + x + '</p>'; 	    			
-	    		}
-	    	    return toolTipHTML;
-	    	};
-	    	
-	    	
-	    	var chartSeries = [];
-	    	var chartSerie = {
-	    		'key': self.orgunitLevelSelected.name,
-	    		'values': []
-	    	}
-	    	
-	    	for (var i = 0; i < datapoints.length; i++) {
-	    		var point = datapoints[i];
-	    		if (point.value && point.refValue) {
-		    		chartSerie.values.push({
-		    			'x': point.refValue,
-		    			'y': point.value,
-		    			'z': point.id
-		    		});
-	    		}
-	    	}
-
-	    	chartSeries.push(chartSerie);
-	    	chartSeries.push(
-	    		{
-	    			'key': self.boundaryOrgunitSelected.name,
-	    			'color': '#ffff',
-	    			'values': [{
-	    			'x': 0,
-	    			'y': 0,
-	    			'size': 0
-	    			}
-	    			],
-	    			'slope': boundaryRatio,
-	    			'intercept': 0.001
-	    		},
-	    		{
-	    			'key': "High limit",
-	    			'color': '#F00',
-	    			'values': [{
-	    			'x': 0,
-	    			'y': 0,
-	    			'size': 0
-	    			}
-	    			],
-	    			'slope': 1.0+consistency/100,
-	    			'intercept': 0.001
-	    		},
-	    		{
-	    			'key': "Low limit",
-	    			'color': '#F00',
-	    			'values': [{
-	    			'x': 0,
-	    			'y': 0,
-	    			'size': 0
-	    			}
-	    			],
-	    			'slope': 1.0-consistency/100,
-	    			'intercept': 0.001
-	    		}
-	    	);
-	    	
-			var xAxisLabel;
-			if (result.type === "constant") xAxisLabel = "Average of previous periods";
-			else xAxisLabel = "Forecasted value";
-			
-	    	result.chartOptions = {
-	    	   	"chart": {
-	    	        "type": "scatterChart",
-	    	        "height": 450,
-	    	        "margin": {
-	    	          "top": 10,
-	    	          "right": 30,
-	    	          "bottom": 100,
-	    	          "left": 100
-	    	        },
-	    	        "scatter": {
-	    	        	"onlyCircles": false
-	    	        },
-	    	        "clipEdge": false,
-	    	        "staggerLabels": true,
-	    	        "transitionDuration": 1,
-	    	        "showDistX": true,
-	    	        "showDistY": true,
-	    	        "xAxis": {
-	    	              "axisLabel": xAxisLabel,
-	    	              "axisLabelDistance": 30,
-	    	              "tickFormat": d3.format('g')
-	    	        },
-	    	        "yAxis": {
-	    	        	"axisLabel": result.pe,
-	    	            "axisLabelDistance": 30,
-	    	            "tickFormat": d3.format('g')
-	    	        },
-	    	        'tooltips': true,
-	    	        'tooltipContent': toolTip
-	    	        
-	    	    }
-	    	};
-	    	
-	    	result.chartData = chartSeries;
-	    }
-  	  	
-  	  		    
-	    function makeDataConsistencyChart(result) {	    		    	
-	    
-	    	var datapoints = result.subunitDatapoints;
-	    	var boundaryRatio = result.boundaryRatio;
-	    	var consistency = result.criteria; 
-	    		    	
-	    	var toolTip = function(key, x, y, e, graph) {
-	    		var data = getDataItem(graph.point.z);
-	    	    return '<h3>' + data.name + '</h3>' +
-	    	        '<p style="margin-bottom: 0px">' + result.dxNameA + ': ' + y + '</p>' + 
-	    	        '<p>' + result.dxNameB + ': ' + x + '</p>'; 
-	    	};
-	    	
-	    	
-	    	var chartSeries = [];
-	    	var chartSerie = {
-	    		'key': self.orgunitLevelSelected.name,
-	    		'values': []
-	    	}
-	    	
-	    	for (var i = 0; i < datapoints.length; i++) {
-	    		var point = datapoints[i];
-	    		if (point.value && point.refValue) {
-		    		chartSerie.values.push({
-		    			'x': point.refValue,
-		    			'y': point.value,
-		    			'z': point.id
-		    		});
-		    	}
-	    	}
-
-	    	chartSeries.push(chartSerie);
-	    	chartSeries.push(
-	    		{
-	    			'key': self.boundaryOrgunitSelected.name,
-	    			'color': '#ffff',
-	    			'values': [{
-	    			'x': 0,
-	    			'y': 0,
-	    			'size': 0
-	    			}
-	    			],
-	    			'slope': boundaryRatio,
-	    			'intercept': 0.001
-	    		},
-	    		{
-	    			'key': "Low limit",
-	    			'color': '#F00',
-	    			'values': [{
-	    			'x': 0,
-	    			'y': 0,
-	    			'size': 0
-	    			}
-	    			],
-	    			'slope': 1.0-consistency/100,
-	    			'intercept': 0.001
-	    		}
-	    	);
-	    	if (result.type === 'eq') {
-	    		chartSeries.push(
-		    		{
-		    			'key': "High limit",
-		    			'color': '#F00',
-		    			'values': [{
-		    			'x': 0,
-		    			'y': 0,
-		    			'size': 0
-		    			}
-		    			],
-		    			'slope': 1.0+consistency/100,
-		    			'intercept': 0.001
-		    		}
-	    		);
-	    	}
-	    	
-	    	result.chartOptions = {
-	    	   	"chart": {
-	    	        "type": "scatterChart",
-	    	        "height": 450,
-	    	        "margin": {
-	    	          "top": 10,
-	    	          "right": 30,
-	    	          "bottom": 100,
-	    	          "left": 100
-	    	        },
-	    	        "scatter": {
-	    	        	"onlyCircles": false
-	    	        },
-	    	        "clipEdge": false,
-	    	        "staggerLabels": true,
-	    	        "transitionDuration": 1,
-	    	        "showDistX": true,
-	    	        "showDistY": true,
-	    	        "xAxis": {
-	    	              "axisLabel": result.dxNameB,
-	    	              "axisLabelDistance": 30,
-	    	              "tickFormat": d3.format('g')
-	    	        },
-	    	        "yAxis": {
-	    	        	"axisLabel": result.dxNameA,
-	    	            "axisLabelDistance": 30,
-	    	            "tickFormat": d3.format('g')
-	    	        },
-	    	        'tooltips': true,
-	    	        'tooltipContent': toolTip
-	    	    }
-	    	};
-	    	
-	    	result.chartData = chartSeries;
-	    }
-	    
-	    
-	    function makeDropoutRateChart(result) {	    		    	
-	    	var chartSeries = [];
-	    	var chartSerie = {
-	    		'key': self.orgunitLevelSelected.name,
-	    		'values': []
-	    	}
-
-	    	var toolTip = function(key, x, y, e, graph) {
-	    		var data = getDataItem(graph.point.z);
-	    	    return '<h3>' + data.name + '</h3>' +
-	    	        '<p>' +  mathService.round(100*(data.value-data.refValue)/data.value,1)  + '% dropout</p>'
-	    	};
-	    	
-	    	var minVal = 0.9;
-	    	var maxVal = 2;
-	    	var point, value;
-	    	for (var i = 0; i < result.subunitDatapoints.length; i++) {
-	    		point = result.subunitDatapoints[i];
-	    		value = point.value/point.refValue;
-	    		
-	    		if (!isFinite(value) || isNaN(value)) continue;
-	    		
-	    		if (value > maxVal) maxVal = value;
-	    		else if (value < minVal) minVal = value;
-	    		
-	    		chartSerie.values.push({
-	    			'x': i,
-	    			'y': mathService.round(value, 2),
-	    			'z': point.id
-	    		});
-	    	}
-
-	    	chartSeries.push(chartSerie);	    	
-	    	result.chartData = chartSeries;    	
-	    	
-	    	result.chartOptions = {
-	    	   	"chart": {
-	    	        "type": "lineChart",
-	    	        "height": 450,
-	    	        "margin": {
-	    	          "top": 10,
-	    	          "right": 30,
-	    	          "bottom": 100,
-	    	          "left": 100
-	    	        },
-	    	        "xAxis": {
-	    	          "showMaxMin": false,
-	    	          'axisLabel': axisLabel = self.orgunitLevelSelected.name
-	    	        },
-	    	        "yAxis": {
-	    	          "axisLabel": "Ratio"
-	    	        },
-	    	        'tooltips': true,
-	    	        'tooltipContent': toolTip,
-	    	        'showLegend': true,
-	    	      	'forceY': [Math.floor(minVal*10)/10, Math.ceil(maxVal*10)/10]
-	    	    }
-	    	}
-	    }
-	    	   	
+        	   	
 	   	
 	   	/** UTILITIES */
 	   	function uniqueArray(array) {
@@ -1075,15 +777,14 @@
 	   	}
 	   	
 	   	self.updateCharts = function() {
-	   		$timeout(function() {
-	   			for (var i = 0; i < nv.graphs.length; i++) {
-	   				nv.graphs[i].update();
-	   			}
-	   			setTimeout(function() {window.dispatchEvent(new Event('resize'));}, 50);
-	   		});	   
-//	   		setTimeout(function() {window.dispatchEvent(new Event('resize'));}, 100);	
+	   		$timeout(function () { window.dispatchEvent(new Event('resize')); }, 100);
 	   	}
 	   	
+	   	self.dropoutRate = function(valueA, valueB) {
+	   		
+	   		return mathService.round(100*(valueA-valueB)/valueA, 2);
+	   		
+	   	}
 	   	        
 		init();
     	
