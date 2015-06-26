@@ -675,7 +675,7 @@
 	    		chartSerie.values.push({
 	    			'x': i,
 	    			'y': mathService.round(value, 2),
-	    			'z': datapoints[i].id
+	    			'z': point.id
 	    		});
 	    	}
 

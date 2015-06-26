@@ -725,14 +725,14 @@
 	   				  var content = self.result.rows;
 	   				  var string, csvContent = '';
 	   				  
-	   				  csvContent += "Unit;Data;" + self.periods.join(';');
+	   				  csvContent += "Orgunit ID;Orgunit name;Data;" + self.periods.join(';');
 	   				  csvContent += ";Max SD score;Max Z score;Gap weight;Outlier weight;Total weight\n";
 	   				  
 	   				  for (var i = 0; i < content.length; i++) {
 	   				      var val, value = content[i];
 	   				      
-	   				  	
-	   				  	 string = checkExportValue(value.metaData.ou.name) + ";";
+	   				  	 string = checkExportValue(value.metaData.ou.id) + ";";	   				  	
+	   				  	 string += checkExportValue(value.metaData.ou.name) + ";";
 	   				  	 string += checkExportValue(value.metaData.dx.name) + ";";
 	   				  	 for (var j = 0; j < value.data.length; j++) {
 	   				  	 	val = fixDecimalsForExport(value.data[j]);

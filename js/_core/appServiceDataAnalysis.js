@@ -6,7 +6,7 @@
 		var self = this;
 		
 		//"Fixed" variables
-		var maxPendingRequests = 3; //TODO: should be 1 on release to avoid killing server..
+		var maxPendingRequests = 1; //TODO: should be 1 on release to avoid killing server..
 		var processIndex = 0;
 		
 		self.status = {
@@ -381,12 +381,18 @@
 				
 				self.og.callback(self.og.result);
 				
-				if (result.rows.length > 100000) {
-					console.log("Has > 100000 rows - trimming");
-
-					result.rows.length = 100000;
+				if (result.rows.length > 210000) {
+					result.rows.sort(function(a, b) {
+						return b.result.totalWeight - a.result.totalWeight;
+					});
+					
+					for (var i = 200000; i < result.rows.length; i++) {
+						result.rows[i] = null;
+					}
+					
+					result.rows.splice(200000, result.rows.length-200000);
 				}
-				
+					
 				
 				var weights = {
 					'c0-100': 0,
