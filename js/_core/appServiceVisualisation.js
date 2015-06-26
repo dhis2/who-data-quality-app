@@ -417,7 +417,7 @@
 	    		var data = result.subunitDatapoints;
 	    		
 	    		var toolTipHTML = '<h3>' + data[graph.pointIndex].name + '</h3>';
-    			toolTipHTML += '<p style="margin-bottom: 0px">' + result.pe + ': ' + y + '</p>';
+    			toolTipHTML += '<p style="margin-bottom: 0px">' + periodService.shortPeriodName(result.pe) + ': ' + y + '</p>';
 	    		if (result.type === 'constant') {
 	    			toolTipHTML += '<p>Average: ' + x + '</p>'; 	    			
 	    		}
@@ -510,7 +510,7 @@
 	    	              "tickFormat": d3.format('g')
 	    	        },
 	    	        "yAxis": {
-	    	        	"axisLabel": result.pe,
+	    	        	"axisLabel": periodService.shortPeriodName(result.pe),
 	    	            "axisLabelDistance": 30,
 	    	            "tickFormat": d3.format('g')
 	    	        },

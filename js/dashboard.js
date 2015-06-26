@@ -7,22 +7,9 @@
 	app.controller("DashboardController", function(metaDataService, periodService, requestService, visualisationService, mathService, dataAnalysisService, $scope, $window, $timeout) {
 
 	    var self = this;
-
+		
+		self.ready = false;
     	
-    	function init() {
-    		nv.graphs = [];
-    		setWindowWidth();
-			$( window ).resize(function() {
-				setWindowWidth();
-			});
-    		
-    		self.group = 'core';
-    		self.ouBoundary = 'USER_ORGUNIT';
-    		self.ouChildren = 'USER_ORGUNIT_CHILDREN';
-    		    		
-    		//Completeness is the default
-    		self.makeCompletenessCharts();
-    	}
     	     
         /** -- ANALYSIS -- */
         
@@ -40,7 +27,8 @@
         	var startDate = moment(endDate).subtract(12, 'months').add(1, 'day'); 
         	
         	var datasets = metaDataService.getDatasetsInGroup(self.group);
-        	
+        	var ouBoundaryID = self.ouBoundary.id;
+       		var ouChildrenID = ouChildrenIDs();
         	var dataset, periods, ouPeriod, datasetCompletenessChart;
         	for (var i = 0; i < datasets.length; i++) {
                	dataset = datasets[i];
@@ -62,9 +50,9 @@
         			ouPeriod = periods[periods.length - 2];
         		}
         		
-        		visualisationService.lineChart(receiveCompletenessTrend, [dataset.id], periods, [self.ouBoundary], 'dataOverTime');
+        		visualisationService.lineChart(receiveCompletenessTrend, [dataset.id], periods, [ouBoundaryID], 'dataOverTime');
         		
-        		visualisationService.barChart(receiveCompletenessOU, [dataset.id], [ouPeriod], [self.ouChildren], 'ou');
+        		visualisationService.barChart(receiveCompletenessOU, [dataset.id], [ouPeriod], ouChildrenID, 'ou');
         		
         		
         		self.completenessCharts.push(datasetCompletenessChart);  		
@@ -85,6 +73,7 @@
 	        	};
 	        options.chart.height = 300;
 	        options.chart.showLegend = false;
+	        	        
         
         	var dsc;
         	for (var i = 0; i < self.completenessCharts.length; i++) {
@@ -165,37 +154,47 @@
       		self.consistencyCharts = [];   
       		self.yyReceived = 0;
       		self.consistencyReceived = 0;
-      		  		self.show = false;
       		
       		
-      		var data, endDate, startDate, periodType, periods; 	
+      		var ouBoundaryID = self.ouBoundary.id;
+   			var ouLevel = self.ouBoundary.level + 1;
+      		
+      		var data, endDate, startDate, periodType, yyPeriods, period, refPeriods; 	
    			var datas = metaDataService.getDataInGroup(self.group);
    			var consistencyChart;
 			for (var i = 0; i < datas.length; i++) {
+      			
       			
       			data = datas[i];
       			periodType = metaDataService.getDataPeriodType(data.code);
       			endDate = moment().subtract(new Date().getDate(), 'days');
       			startDate = moment(endDate).subtract(12, 'months').add(1, 'day'); 
       			
-      			periods = [];
-      			periods.push(periodService.getISOPeriods(startDate, endDate, periodType));
+      			refPeriods = periodService.getISOPeriods(startDate, endDate, periodType);
+      				if (refPeriods.length < 4) {
+      					period = refPeriods[refPeriods.length - 1];
+      				}
+      				else {
+      					period = refPeriods[refPeriods.length - 2];
+      				}
+      			
+      			
+      			
+      			yyPeriods = [];
+      			yyPeriods.push(periodService.getISOPeriods(startDate, endDate, periodType));
       			for (var j = 0; j < 2; j++) {
       				startDate = moment(startDate).subtract(1, 'year');
       				endDate = moment(endDate).subtract(1, 'year');
-      				periods.push(periodService.getISOPeriods(startDate, endDate, periodType));
+      				yyPeriods.push(periodService.getISOPeriods(startDate, endDate, periodType));
       			}
+      			
+      			
+      			visualisationService.yyLineChart(receiveYY, yyPeriods, data.localData.id, ouBoundaryID);
+				
+				
+				dataAnalysisService.timeConsistency(receiveDataTimeConsistency, data.trend, data.consistency, null, data.localData.id, null, period, refPeriods, ouBoundaryID, ouLevel);
+								
 
-      			visualisationService.yyLineChart(receiveYY, periods, data.localData.id, 'USER_ORGUNIT');
-				
-				
-//		    	dataAnalysisService.timeConsistency(receiveDataTimeConsistency, data.trend, data.consistency, null, data.localData.id, null, period, refPeriods, ouBoundary, ouLevel);
-				
-				
-				
-				
-				
-				
 				consistencyChart = {
 					name: data.name,
 					id: data.localData.id,
@@ -209,9 +208,55 @@
       		}
       		      		
       	}
+      	
+  		function receiveDataTimeConsistency(result, errors) {
+  			var dataID = result.dxID;
+  			if (result) {
+  				visualisationService.makeTimeConsistencyChart(null, result);
+  			}
+  			
+  			var options = result.chartOptions;
+  			options.chart.margin = {
+  				  "top": 20,
+  				  "right": 10,
+  				  "bottom": 80,
+  				  "left": 120
+  			};
+  			var data = result.chartData;			
+			
+			
+			//Modify options
+			options.chart.height = 300;
+		
+			var dc;
+			for (var i = 0; i < self.consistencyCharts.length; i++) {
+				dc = self.consistencyCharts[i];
+				if (dc.id === dataID) {
+				
+					options.title = {	
+						'enable': true,
+						'text': dc.name
+					};
+					options.subtitle = {	
+						'enable': true,
+						'text': 'Consistency over time'
+					};
+				
+					dc.consistencyChartOptions = options;
+					dc.consistencyChartData = data;
+					break;
+				}
+			}
+			self.consistencyReceived++;
+			if (self.consistencyReceived === self.consistencyCharts.length && self.yyReceived === self.consistencyCharts.length) {
+				console.log("Consistency downloaded");
+				updateCharts();
+			}
+  		}
+
 
     	
-    	var receiveYY = function (data, options) {
+    	function receiveYY(data, options) {
 			var dataID = options.parameters.dataID;
 
     		//Modify options
@@ -226,7 +271,7 @@
     			'tickFormat': d3.format('g')
     		};
     	
-    		var dsc;
+    		var dc;
     		for (var i = 0; i < self.consistencyCharts.length; i++) {
     			dc = self.consistencyCharts[i];
     			if (dc.id === dataID) {
@@ -246,7 +291,7 @@
     			}
     		}
     		self.yyReceived++;
-    		if (self.yyReceived === self.consistencyCharts.length) {
+    		if (self.consistencyReceived === self.consistencyCharts.length && self.yyReceived === self.consistencyCharts.length) {
 				console.log("Consistency downloaded");
 				updateCharts();
     		}
@@ -296,15 +341,62 @@
       		$timeout(function () { window.dispatchEvent(new Event('resize')); }, 250);
       	}
       	
+      	function ouChildrenIDs() {
+      		var IDs = [];
+      		
+      		if (!self.ouChildren) return [];
+      		for (var i = 0; i < self.ouChildren.length; i++) {
+      			IDs.push(self.ouChildren[i].id)
+      		}
+      		return IDs;
+      	}
       	
-      	/* Init */		
+      	function ouGrandChildrenIDs() {
+  			var IDs = [];
+  			
+  			if (!self.ouGrandChildren) return [];
+  			for (var i = 0; i < self.ouGrandChildren.length; i++) {
+  				IDs.push(self.self.ouGrandChildren[i].id)
+  			}
+  			
+      		return IDs;
+  		}
+      	
+      	
+      	/** -- INIT -- */		
+      	
+      	function init() {
+      		nv.graphs = [];
+      		setWindowWidth();
+      		$( window ).resize(function() {
+      			setWindowWidth();
+      		});
+      		
+      		self.group = 'core';
+
+      		metaDataService.getUserOrgunitHierarchy().then(function(data) { 
+				self.ouBoundary = data;
+				
+				self.ouChildren = data.children;
+				self.ouGrandChildren = [];
+				if (self.ouChildren && self.ouChildren.length > 0) {
+					for (var i = 0; i < self.ouChildren.count; i++) {
+						self.ouGrandChildren.push(self.ouChildren[i].children);
+					}
+				}
+				if (self.ouGrandChildren.length === 0) self.ouGrandChildren = null;
+				
+				//Completeness is the default - get that once we have user orgunit
+	      		self.makeCompletenessCharts();
+			});
+      	}
+      	
 		//Make sure mapping is available, then intialise
 		if (metaDataService.hasMapping()) {
 			self.ready = true;
 			init();
 		}
 		else {
-			self.ready = false;
 			metaDataService.getMapping().then(function (data) {
 				self.ready = true;
 				init();

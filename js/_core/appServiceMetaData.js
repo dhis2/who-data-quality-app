@@ -702,41 +702,102 @@
 			};
 		
 		
-		self.getUserOrgunits = function() {
+		
+		self.getUserOrgunit = function() {
 		
 			var deferred = $q.defer();
 			
-			//available locally
-			if (userOrgunits.available) {
-				deferred.resolve(userOrgunits.data);
-			}
-			//waiting for server
-			else if (!userOrgunits.available && userOrgunits.promise) {
-				return userOrgunits.promise;
-			}
-			//need to be fetched
-			else {
-				var requestURL = '/api/organisationUnits.json?'; 
-				requestURL += 'userOnly=true&fields=id,name,level&paging=false';
-				  
-				requestService.getSingle(requestURL).then(
-					function(response) { //success
-				    	var data = response.data;
-				    	userOrgunits.data = data.organisationUnits;
-				    	deferred.resolve(userOrgunits.data);
-				    	userOrgunits.available = true;
-					}, 
-					function(response) { //error
-				    	var data = response.data;
-				    	deferred.reject("Error fetching orgunits");
-				    	console.log(msg, code);
-				    }
-				);
-			}
-			userOrgunits.promise = deferred.promise;
+			var requestURL = '/api/organisationUnits.json?'; 
+			requestURL += 'userOnly=true&fields=id,name,level&paging=false';
+			  
+			requestService.getSingle(requestURL).then(
+				function(response) { //success
+			    	var data = response.data.organisationUnits;
+			    	
+			    	var minLevel = 100;
+			    	var lowestOrgunit = null;
+			    	for (var i = 0; i < data.length; i++) {
+			    		if (data[i].level < minLevel) {
+			    			minLevel = data[i].level;
+			    			lowestOrgunit = data[i];
+			    		}
+			    	}
+			    	deferred.resolve(lowestOrgunit);
+			    	userOrgunits.available = true;
+				}, 
+				function(response) { //error
+			    	var data = response.data;
+			    	deferred.reject("Error in getUserOrgunit()");
+			    	console.log(response);
+			    }
+			);
+
+
 			return deferred.promise;
 		};
 		
+		self.getUserOrgunits = function() {
+				
+			var deferred = $q.defer();
+			
+			var requestURL = '/api/organisationUnits.json?'; 
+			requestURL += 'userOnly=true&fields=id,name,level&paging=false';
+			  
+			requestService.getSingle(requestURL).then(
+				function(response) { //success
+			    	var data = response.data.organisationUnits;
+			    	deferred.resolve(data);
+			    	userOrgunits.available = true;
+				}, 
+				function(response) { //error
+			    	var data = response.data;
+			    	deferred.reject("Error in getUserOrgunits");
+			    	console.log(response);
+			    }
+			);
+
+
+			return deferred.promise;
+		};
+		
+		self.getUserOrgunitHierarchy = function() {
+						
+			var deferred = $q.defer();
+			
+			var requestURL = '/api/organisationUnits.json?'; 
+			requestURL += 'userOnly=true&fields=id,name,level,children[name,level,id,children[name,level,id]]&paging=false';
+			  
+			requestService.getSingle(requestURL).then(
+				function(response) { //success
+			    	var data = response.data.organisationUnits;
+			    	
+			    	var minLevel = 100;
+			    	var lowestOrgunit = null;
+			    	for (var i = 0; i < data.length; i++) {
+			    		if (data[i].level < minLevel) {
+			    			minLevel = data[i].level;
+			    			lowestOrgunit = data[i];
+			    		}
+			    	}
+			    	
+			    	
+			    	deferred.resolve(lowestOrgunit);
+			    	userOrgunits.available = true;
+				}, 
+				function(response) { //error
+			    	var data = response.data;
+			    	deferred.reject("Error in getUserOrgunitHierarchy()");
+			    	console.log(response);
+			    }
+			);
+
+
+			return deferred.promise;
+		};
+		
+		
+		
+				
 		
 		self.getAnalysisOrgunits = function() {
 		

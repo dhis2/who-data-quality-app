@@ -29,8 +29,8 @@
 	    	
 	    	
 	    	
-	    	metaDataService.getUserOrgunits().then(function(data) { 
-	    		self.userOrgunit = data[0];
+	    	metaDataService.getUserOrgunit().then(function(data) { 
+	    		self.userOrgunit = data;
 	    		
 	    		metaDataService.getOrgunitLevels().then(function(data) { 
 	    			var validLevels = [];
@@ -219,15 +219,15 @@
 	  	
 	  		
 	  	function receiveDataTimeConsistency(result, errors) {
-	  			if (result) {
-		  			visualisationService.makeTimeConsistencyChart(null, result);
-	  				self.consistency.data.push(result);
-	  			}  				
-	  			if (errors) {
-	  				self.remarks = self.remarks.concat(errors);
-	  			}
-		  		self.outstandingRequests--;
-	  		}
+  			if (result) {
+	  			visualisationService.makeTimeConsistencyChart(null, result);
+  				self.consistency.data.push(result);
+  			}  				
+  			if (errors) {
+  				self.remarks = self.remarks.concat(errors);
+  			}
+	  		self.outstandingRequests--;
+  		}
 	  	
 	  	
 	  	function receiveDataOutliers(result) {

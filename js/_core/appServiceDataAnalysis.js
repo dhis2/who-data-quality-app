@@ -1393,7 +1393,7 @@
 			if (refValues.length === 0) return null;
 		
 			var value;
-			if (type === 'forecast') {
+			if (type != 'constant') {
 				value = mathService.forecast(refValues);
 				if (maxVal && value > maxVal) value = maxVal;
 			}
