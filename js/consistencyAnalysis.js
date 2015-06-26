@@ -145,20 +145,9 @@
 	    }
 
 	
-		/** PARAMETER SELECTION */	    	
-	   	self.getPeriodsInYear = function() {
-	   		self.periodsInYear = [];
-	   		var isoPeriods = periodService.getISOPeriods(self.yearSelected.name.toString() + '-01-01', self.yearSelected.name.toString() + '-12-31', self.periodTypeSelected.id);
-	   		for (var i = 0; i < isoPeriods.length; i++) {
-	   			self.periodsInYear.push({
-	   				'id': isoPeriods[i],
-	   				'name': periodService.shortPeriodName(isoPeriods[i])
-	   			});
-	   		}   	
-	   	}
-	   	    
-	    
-		
+		/** -- PARAMETER SELECTION -- */
+
+		/** Orgunits */
 		self.orgunitSearchModeSelected = function() {
 			self.boundaryOrgunitSelected = undefined;
 			self.orgunitLevelSelected = undefined;
@@ -199,12 +188,17 @@
 		}
 				
 		
+		//Lower than selected orgunit, but max two levels (until analysis can handle more)
 		self.filterLevels = function() {
 			self.filteredOrgunitLevels = [];
 			
 			if (!self.orgunitLevels || !self.boundaryOrgunitSelected) return;
 			for (var i = 0; i < self.orgunitLevels.length; i++) {
-				if (self.orgunitLevels[i].level > self.boundaryOrgunitSelected.level) {
+			
+				var belowSelectedUnit = self.orgunitLevels[i].level > self.boundaryOrgunitSelected.level;
+				var belowMaxDepth = self.orgunitLevels[i].level > (self.boundaryOrgunitSelected.level + 2);
+			
+				if (belowSelectedUnit && !belowMaxDepth) {
 					self.filteredOrgunitLevels.push(self.orgunitLevels[i]);
 				}
 			}			
@@ -240,7 +234,8 @@
 	    	}
 	    }
 		
-	
+		
+		/** Data */
 	    self.updateDataElementList = function(dataItem) {
 	    	self.dataSelection[dataItem].de = [];
 	    	self.dataSelection[dataItem].deSelected = undefined;
@@ -280,6 +275,9 @@
 		    	metaDataService.getDataElementPeriodType(self.selectedData(itemCode).id).then(function (periodType) {
 		    		self.dataSelection[itemCode].periodType = periodType;
 		    		filterPeriodTypes();
+		    		
+		    		//Select most recent period
+		    		if (self.periodsInYear.length > 0) self.periodSelected = self.periodsInYear[0];
 		    	});
 		    }
 		    else {
@@ -287,10 +285,64 @@
 		    		console.log(periodTypeObject);
 		    		self.dataSelection[itemCode].periodType = periodTypeObject.longest;
 		    		filterPeriodTypes();
+
+		    		//Select most recent period
+		    		if (self.periodsInYear.length > 0) self.periodSelected = self.periodsInYear[0];
 		    	});
 		    }
 		    
+		    
+		    
 	    }
+	    
+	    
+	      self.updateIndicatorList = function(dataItem) {
+	      	self.dataSelection[dataItem].ind = [];
+	    		self.dataSelection[dataItem].indSelected = undefined;
+	      	self.dataSelection[dataItem].indText = "Loading...";
+	      	metaDataService.getIndicatorGroupMembers(self.dataSelection[dataItem].indGroupSelected.id)
+	      		.then(function(data) { 
+	      			self.dataSelection[dataItem].indText = "Select indicator";  	    			
+	      		   	self.dataSelection[dataItem].ind = data;
+	      		});
+	      }
+	      
+	      
+        //item a or b
+        self.selectedData = function(item) {
+      	    
+      	    //var get data id(s)
+      	    var dx;
+      	    if (self.dataSelection[item].type === 'de') {
+      	    	return self.dataSelection[item].deSelected;
+      	    }
+      	    else {
+      	    	return self.dataSelection[item].indSelected;
+      	    }
+        }
+	      	
+	    
+	    /** Periods */	    	
+    	self.getPeriodsInYear = function() {
+    		self.periodsInYear = [];
+    		var isoPeriods = periodService.getISOPeriods(self.yearSelected.name.toString() + '-01-01', self.yearSelected.name.toString() + '-12-31', self.periodTypeSelected.id);
+    		for (var i = 0; i < isoPeriods.length; i++) {
+    			self.periodsInYear.push({
+    				'id': isoPeriods[i],
+    				'name': periodService.shortPeriodName(isoPeriods[i])
+    			});
+    		}  
+    		
+    		//Don't want the period we're in, which the period function gives us
+    		if (self.periodTypeSelected.id != 'Yearly' && new Date().getFullYear() ===  self.yearSelected.id) {
+    			self.periodsInYear.pop();
+    		}
+    		
+    		//Want most recent first (?)
+    		self.periodsInYear.sort(function(a, b) { return (a.id > b.id) ? -1 : 1});
+    		
+    	}
+	    	    
 	    
 	    
 	    function filterPeriodTypes() {
@@ -313,9 +365,23 @@
 	    			self.filteredPeriodTypes.push(self.periodTypes[i]);
 	    		}
 	    	}
-	    	self.periodTypeSelected = self.filteredPeriodTypes[self.filteredPeriodTypes.length-1];
+	    	
+	    	defaultPeriodType();
 	    	self.getPeriodsInYear();
 	    }
+	    
+	    function defaultPeriodType() {
+			
+			//For drop out rate we want yearly by default
+			if (self.relationshipType === 'do') {
+			    self.periodTypeSelected = self.filteredPeriodTypes[0];
+			}
+			//Otherwise we go for shortest
+			else {
+				self.periodTypeSelected = self.filteredPeriodTypes[self.filteredPeriodTypes.length-1];
+			}    	
+	    }
+	    
 	    
 	    function longestPeriodInSelection() {
 	    	var periods = [];
@@ -326,35 +392,12 @@
 	    }
 	    
 	    
-  	    self.updateIndicatorList = function(dataItem) {
-  	    	self.dataSelection[dataItem].ind = [];
-	   		self.dataSelection[dataItem].indSelected = undefined;
-  	    	self.dataSelection[dataItem].indText = "Loading...";
-  	    	metaDataService.getIndicatorGroupMembers(self.dataSelection[dataItem].indGroupSelected.id)
-  	    		.then(function(data) { 
-  	    			self.dataSelection[dataItem].indText = "Select indicator";  	    			
-  	    		   	self.dataSelection[dataItem].ind = data;
-  	    		});
-  	    }
   	    
   	    self.selectedPeriod = function() {
   	    	if (self.periodTypeSelected.id != 'Yearly') return self.periodSelected;
   	    	else return self.yearSelected;
   	    }
   	    
-  	    //item a or b
-  	    self.selectedData = function(item) {
-	  	    
-	  	    //var get data id(s)
-	  	    var dx;
-	  	    if (self.dataSelection[item].type === 'de') {
-	  	    	return self.dataSelection[item].deSelected;
-	  	    }
-	  	    else {
-	  	    	return self.dataSelection[item].indSelected;
-	  	    }
-  	    }
-			
 		
 		
 		/** REQUEST DATA */		
