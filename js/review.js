@@ -241,10 +241,10 @@
 	  			
   			//Check type and format data accordingly for charts
   			if (result.type === 'do') {
-  				makeDropoutRateChart(result);
+  				visualisationService.makeDropoutRateChart(null, result);
   			}
   			else {
-	  			makeDataConsistencyChart(result);
+	  			visualisationService.makeDataConsistencyChart(null, result);
   			}
   			self.consistency.relations.push(result);
 	  		self.outstandingRequests--;
@@ -386,167 +386,8 @@
 	    
 	    
 	    
-  	  	/** CHARTS */
-  	  		    
-	    function makeDataConsistencyChart(result) {	    		    	
-	    
-	    	var datapoints = result.subunitDatapoints;
-	    	var boundaryRatio = result.boundaryRatio;
-	    	var consistency = result.criteria; 
-	    		    	
-	    	var toolTip = function(key, x, y, e, graph) {
-	    		var data = result.subunitDatapoints;
-	    	    return '<h3>' + data[graph.pointIndex].name + '</h3>' +
-	    	        '<p style="margin-bottom: 0px">' + result.dxNameA + ': ' + y + '</p>' + 
-	    	        '<p>' + result.dxNameB + ': ' + x + '</p>'; 
-	    	};
-	    	
-	    	
-	    	var chartSeries = [];
-	    	var chartSerie = {
-	    		'key': self.orgunitLevelSelected.name + "s",
-	    		'values': []
-	    	}
-	    	
-	    	for (var i = 0; i < datapoints.length; i++) {
-	    		chartSerie.values.push({
-	    			'x': datapoints[i].refValue,
-	    			'y': datapoints[i].value
-	    		});
-	    	}
-
-	    	chartSeries.push(chartSerie);
-	    	chartSeries.push(
-	    		{
-	    			'key': "Overall",
-	    			'color': '#ffff',
-	    			'values': [{
-	    			'x': 0,
-	    			'y': 0,
-	    			'size': 0
-	    			}
-	    			],
-	    			'slope': boundaryRatio,
-	    			'intercept': 0.001
-	    		},
-	    		{
-	    			'key': "+ " + consistency + "%",
-	    			'color': '#F00',
-	    			'values': [{
-	    			'x': 0,
-	    			'y': 0,
-	    			'size': 0
-	    			}
-	    			],
-	    			'slope': boundaryRatio+consistency/100,
-	    			'intercept': 0.001
-	    		},
-	    		{
-	    			'key': "- " + consistency + "%",
-	    			'color': '#00F',
-	    			'values': [{
-	    			'x': 0,
-	    			'y': 0,
-	    			'size': 0
-	    			}
-	    			],
-	    			'slope': boundaryRatio-consistency/100,
-	    			'intercept': 0.001
-	    		}
-	    	);
-	    	result.chartOptions = {
-	    	   	"chart": {
-	    	        "type": "scatterChart",
-	    	        "height": 300,
-	    	        "margin": {
-	    	          "top": 10,
-	    	          "right": 30,
-	    	          "bottom": 80,
-	    	          "left": 50
-	    	        },
-	    	        "scatter": {
-	    	        	"onlyCircles": false
-	    	        },
-	    	        "clipEdge": false,
-	    	        "staggerLabels": true,
-	    	        "transitionDuration": 1,
-	    	        "showDistX": true,
-	    	        "showDistY": true,
-	    	        "xAxis": {
-	    	              "axisLabel": result.dxNameA,
-	    	              "axisLabelDistance": 30,
-	    	              "tickFormat": d3.format('g')
-	    	        },
-	    	        "yAxis": {
-	    	        	"axisLabel": result.dxNameB,
-	    	            "axisLabelDistance": 30,
-	    	            "tickFormat": d3.format('g')
-	    	        },
-	    	        'tooltips': true,
-	    	        'tooltipContent': toolTip
-	    	    }
-	    	};
-	    	
-	    	result.chartData = chartSeries;
-	    }
-	    
-	    
-	    function makeDropoutRateChart(result) {	    		    	
-	    	var chartSeries = [];
-	    	var chartSerie = {
-	    		'key': self.orgunitLevelSelected.name + "s",
-	    		'values': []
-	    	}
-
-	    	var toolTip = function(key, x, y, e, graph) {
-	    		var data = result.subunitDatapoints;
-	    	    return '<h3>' + data[x].name + '</h3>' +
-	    	        '<p>' +  mathService.round(100*(data[x].value-data[x].refValue)/data[x].value,1)  + '% dropout</p>'
-	    	};
-	    	
-	    	var minVal = 0.9;
-	    	var maxVal = 2;
-	    	var point, value;
-	    	for (var i = 0; i < result.subunitDatapoints.length; i++) {
-	    		point = result.subunitDatapoints[i];
-	    		value = point.value/point.refValue;
-	    		
-	    		if (value > maxVal) maxVal = value;
-	    		else if (value < minVal) minVal = value;
-	    		
-	    		chartSerie.values.push({
-	    			'x': i,
-	    			'y': mathService.round(value, 2)
-	    		});
-	    	}
-
-	    	chartSeries.push(chartSerie);	    	
-	    	result.chartData = chartSeries;    	
-	    	
-	    	result.chartOptions = {
-	    	   	"chart": {
-	    	        "type": "lineChart",
-	    	        "height": 300,
-	    	        "margin": {
-	    	          "top": 10,
-	    	          "right": 30,
-	    	          "bottom": 60,
-	    	          "left": 50
-	    	        },
-	    	        "xAxis": {
-	    	          "showMaxMin": false,
-	    	          'axisLabel': axisLabel = self.orgunitLevelSelected.name + "s"
-	    	        },
-	    	        "yAxis": {
-	    	          "axisLabel": "Ratio"
-	    	        },
-	    	        'tooltips': true,
-	    	        'tooltipContent': toolTip,
-	    	        'showLegend': true,
-	    	      	'forceY': [Math.floor(minVal*10)/10, Math.ceil(maxVal*10)/10], 
-	    	    }
-	    	}
-	    }
+  	  	/** UTILITIES */
+  	  	
 	    
 	    self.updateCharts = function() {
 	    	$timeout(function() {
