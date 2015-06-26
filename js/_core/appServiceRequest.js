@@ -8,7 +8,7 @@
 			var promises = requestURLs.map(function(request) {
 				//Cache analytics requests
 				var cache = false;
-				if (request.indexOf("api/analytics") > -1); cache = true;
+//				if (request.indexOf("api/analytics") > -1); cache = true;
 				var fullURL = BASE_URL + request;
 		    	return $http.get(fullURL, {"cache": cache});
 		    });
@@ -21,7 +21,7 @@
 		
 			//Cache analytics requests
 			var cache = false;
-			if (requestURL.indexOf("api/analytics") > -1); cache = true;
+//			if (requestURL.indexOf("api/analytics") > -1); cache = true;
 		
 			var fullURL = BASE_URL + requestURL;	  	
 		  	return $http.get(fullURL, {"cache": cache});
@@ -34,7 +34,6 @@
 		
 		self.post = function(postURL, data) {
 			var fullURL = BASE_URL + postURL;	  	
-		  	
 		  	
 		  	return $http.post(fullURL, data);
 		};
