@@ -525,9 +525,13 @@
 	    			
 	    				self.mapping.dataSets.push.apply(self.mapping.dataSets, data.dataSets);
 	    				
-	    				//Add default completeness
+	    				//Add default parameters
 	    				for (var i = 0; i < self.mapping.dataSets.length; i++) {
-	    					if (!self.mapping.dataSets[i].threshold) self.mapping.dataSets[i].threshold = 80;
+	    					if (!self.mapping.dataSets[i].threshold) {
+	    						self.mapping.dataSets[i].threshold = 80;
+	    						self.mapping.dataSets[i].consistency = 33;
+	    						self.mapping.dataSets[i].trend = 'constant';
+	    					}
 	    				}
 	    				
 	    				var requestURL = '/api/systemSettings/';
