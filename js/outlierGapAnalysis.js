@@ -729,15 +729,19 @@
 	   				  csvContent += ";Max SD score;Max Z score;Gap weight;Outlier weight;Total weight\n";
 	   				  
 	   				  for (var i = 0; i < content.length; i++) {
-	   				      var value = content[i];
+	   				      var val, value = content[i];
+	   				      
 	   				  	
 	   				  	 string = checkExportValue(value.metaData.ou.name) + ";";
 	   				  	 string += checkExportValue(value.metaData.dx.name) + ";";
 	   				  	 for (var j = 0; j < value.data.length; j++) {
-	   				  	 	string += checkExportValue(value.data[j]) + ";";	
-	   				  	 }			  	 
-	   				     string += checkExportValue(value.result.maxSscore) + ";";
-	   				     string += checkExportValue(value.result.maxZscore) + ";";
+	   				  	 	val = fixDecimalsForExport(value.data[j]);
+	   				  	 	string += checkExportValue(val) + ";";	
+	   				  	 }
+	   				  	 val = fixDecimalsForExport(value.result.maxSscore);
+	   				     string += checkExportValue(val) + ";";
+	   				     val = fixDecimalsForExport(value.result.maxZscore);
+	   				     string += checkExportValue(val) + ";";
 	   				     string += checkExportValue(value.result.gapWeight) + ";";
 	   				     string += checkExportValue(value.result.outWeight) + ";";
 	   				     string += checkExportValue(value.result.totalWeight);
@@ -748,10 +752,24 @@
 	   				  var blob = new Blob([csvContent], {type: "text/csv;charset=utf-8"});
 	   				  // see FileSaver.js
 	   				  saveAs(blob, "outlier_gap_data.csv");
-	   	
-	   				  
+  
 	   		   	
 	   		   	}
+	   		   	
+	   		   	
+	   		   	/** UTILITIES */
+	   		   	
+	   		   	function fixDecimalsForExport(value) {
+	   		   		value = value.toString();
+	   		   		if (value.indexOf('.0') === (value.length - 2)) {
+	   		   		 	value = value.slice(0, - 2);
+   		   		 	}
+   		   		 	else {
+   		   		 		value = value.replace('.', ',');
+   		   		 	}
+   		   		 	return value;
+	   		   	}
+	   		   	
 	   		   	
 	   		   	function checkExportValue(value) {
 	   		   		var innerValue =  value === null ? '' : value.toString();
