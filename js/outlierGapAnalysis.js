@@ -72,6 +72,7 @@
 	    		self.boundarySelectionType = 0;
 	    		self.boundaryOrgunitSelected = self.userOrgunits[0];
 	    		self.filterLevels();
+	    		self.orgunitUserDefaultLevel();
 	    	});
 	    	
 	    	
@@ -88,6 +89,7 @@
 	    		}
 	    		
 	    		self.filterLevels();
+	    		self.orgunitUserDefaultLevel();
 	    	});
 	    	
 	    	
@@ -189,6 +191,7 @@
 						}
 						
 						self.filterLevels();
+						self.orgunitUserDefaultLevel();
 					}
 				}
 			);
@@ -203,6 +206,21 @@
 			
 			}
 			else return "Select level";
+		}
+		
+		self.orgunitUserDefaultLevel = function() {
+			
+			if (!self.boundaryOrgunitSelected || !self.filteredOrgunitLevels) return;
+		
+			var level = self.boundaryOrgunitSelected.level;
+			for (var i = 0; i < self.filteredOrgunitLevels.length; i++) {
+				if (self.filteredOrgunitLevels[i].level === (level+1)) {
+					self.orgunitLevelSelected = self.filteredOrgunitLevels[i];
+				}
+			}
+			
+			if (self.filteredOrgunitLevels.length === 0) self.orgunitLevelSelected = undefined;
+		
 		}
 		
 		
@@ -765,7 +783,7 @@
 	   		 	value = value.slice(0, - 2);
    		 	}
    		 	else {
-   		 		value = value.replace('.', ',');
+   		 		value = value.replace(',', '.');
    		 	}
    		 	return value;
 	   	}
