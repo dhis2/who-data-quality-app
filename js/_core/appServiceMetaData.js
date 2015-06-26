@@ -884,7 +884,7 @@
 			
 			var data = self.getData();
 			for (var i = 0; i < data.length; i++) {
-				if (data[i].code === dataCode) {
+				if (data[i].matched && data[i].code === dataCode) {
 					return self.getDataSetPeriodType(data[i].dataSetID);
 				}
 			}

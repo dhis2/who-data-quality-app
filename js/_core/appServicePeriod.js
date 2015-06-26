@@ -46,6 +46,7 @@
 		
 		self.shortPeriodName = function(periodISO) {
 			var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+			periodISO = periodISO.toString();
 			
 			var periodType = self.periodTypeFromPeriod(periodISO);
 						
@@ -139,6 +140,7 @@
 		
 		
 		self.periodTypeFromPeriod = function(periodISO) {
+			periodISO = periodISO.toString();
 			var periodType = ''
 			if (periodISO.length === 4) {
 				periodType = 'Yearly';
