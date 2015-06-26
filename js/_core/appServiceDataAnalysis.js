@@ -6,34 +6,52 @@
 		var self = this;
 		
 		//"Fixed" variables
-		self.maxPendingRequests = 1; //TODO: should be 1 on release to avoid killing server..
-
-				
-		reset();
-		
+		var maxPendingRequests = 3; //TODO: should be 1 on release to avoid killing server..
+		var processIndex = 0;
 		
 		self.status = {
 			'done': 0,
 			'total': 0,
 			'progress': 0
 		};
-		
-		
+		self.currentAnalysisType = '';
+		reset(false);
 		
 		//If something fails, reset
-		function reset() {
+		function reset(failed) {
 			self.analysisQueue = [];
 			
 			self.requests = {
 				'queue': [],
 				'pending': 0,
-				'max': self.maxPendingRequests
+				'max': maxPendingRequests
 			};
 			
 			self.process = {
 				'queue': [],
 				'pending': 0
-			}			
+			}
+			
+			if (failed) {
+				if (self.currentAnalysisType === 'datasetCompleteness') {
+					self.dsco.callback(null, null);
+				}
+				else if (self.currentAnalysisType === 'timeConsistency') {
+					 self.dsci.callback(null, null);
+				}
+				else if (self.currentAnalysisType === 'dataCompleteness') {
+					self.dco.callback(null);
+				}
+				else if (self.currentAnalysisType === 'indicatorOutlier') {
+					self.io.callback(null);
+				}
+				else if (self.currentAnalysisType === 'dataConsistency') {
+					self.dc.callback(null, null);
+				}
+				else if (self.currentAnalysisType === 'outlierGap') {	
+					self.og.callback(null);
+				}
+			}	
 		}
 		
 		/**ANALYSIS JOB QUEUE*/
@@ -41,7 +59,6 @@
 			if (self.inProgress) {	
 				return;
 			}			
-			
 			
 			var queueItem = self.analysisQueue.pop();
 			
@@ -58,6 +75,7 @@
 			self.status.progress = 0;
 			self.status.done = 0;
 			
+			self.requests.queue = [];
 			
 			if (queueItem.type === 'datasetCompleteness') {
 				datasetCompletenessAnalysis(queueItem.parameters);
@@ -67,9 +85,6 @@
 			}
 			else if (queueItem.type === 'dataCompleteness') {
 				dataCompletenessAnalysis(queueItem.parameters);
-			}
-			else if (queueItem.type === 'indicatorConsistency') {
-				indicatorConsistencyAnalysis(queueItem.parameters);
 			}
 			else if (queueItem.type === 'indicatorOutlier') {
 				indicatorOutlierAnalysis(queueItem.parameters);
@@ -121,6 +136,7 @@
 		
 		function outlierGapAnalysis(parameters) {
 			self.og = {};
+
 			//parameters
 			self.og.callback = parameters.callback;
 			self.og.dataIDs = parameters.dataIDs;
@@ -142,7 +158,8 @@
 			
 			//Make a guess on how many data elements we can include in each query (2 minimum) if we want to stay within roughly 50000 rows (we ignore limit in case some go slightly higher)
 			var maxValues = 50000;
-			var ouPerLevel = 15; //assume two levels
+			var ouPerLevel = 15; //assume this number children on average, and two levels
+			if (!self.og.ouLevel & !self.og.ouGroup) ouPerLevel = 1;
 			var peCount = self.og.periods.length;
 			var avgCatCombo = 1;
 			if (self.og.coAll || self.og.coIDs) avgCatCombo = 4;
@@ -183,16 +200,21 @@
 						"type": 'outlierGap',
 						"url": baseRequest + '&dimension=dx:' + dxIDs.join(';'),
 						"pending": false,
-						"done": false
+						"done": false,
+						"attempts": 0
 					});
 				}
 			}
 						
 			console.log(self.requests.queue.length + " requests in queue for outlier and gap analysis");
 			
-			if (self.requests.queue.length === 0) self.inProgress = false;
-			
-			requestData();
+			if (self.requests.queue.length === 0) {
+				self.inProgress = false;
+				reset(true);
+			}
+			else {
+				requestData();	
+			}
 		}
 	
 		
@@ -329,11 +351,21 @@
 					result.rows.push(newRow);
 				}
 			}
+			
+			if (result.rows.length > 210000) {
+				console.log("Reached 210000 rows - prioritizing");
+				result.rows.sort(function(a, b) {
+					return b.result.totalWeight - a.result.totalWeight;
+				});
+				
+				for (var i = 200000; i < result.rows.length; i++) {
+					result.rows[i] = null;
+				}
+				result.rows.splice(200000, result.rows.length-200000);
+			}
 								
 			//Mark batch of data as done, then request more for procesing
-			data.pending = false;
-			data.done = true;
-			self.process.pending--;	
+			processingSucceeded(data.id);
 			
 			if (processingDone('outlierGap')) {				
 				result.metaData.dataIDs = self.og.dataIDs;
@@ -348,6 +380,13 @@
 				result.metaData.gapCriteria = self.og.gapCriteria;
 				
 				self.og.callback(self.og.result);
+				
+				if (result.rows.length > 100000) {
+					console.log("Has > 100000 rows - trimming");
+
+					result.rows.length = 100000;
+				}
+				
 				
 				var weights = {
 					'c0-100': 0,
@@ -579,14 +618,14 @@
 		
 		
 		function dataCompletenessAnalysis(parameters) {
-			self.dc = parameters;
+			self.dco = parameters;
 						
-			var requestURL = '/api/analytics.json?dimension=dx:' + self.dc.dxID + '&dimension=ou:' + self.dc.ouBoundary + ';LEVEL-' + self.dc.ouLevel + '&dimension=pe:' + self.dc.pe.join(';') + '&displayProperty=NAME';
+			var requestURL = '/api/analytics.json?dimension=dx:' + self.dco.dxID + '&dimension=ou:' + self.dco.ouBoundary + ';LEVEL-' + self.dco.ouLevel + '&dimension=pe:' + self.dco.pe.join(';') + '&displayProperty=NAME';
 			
 			requestService.getSingle(requestURL).then(
 					//success
 					function(response) {
-					    self.dc.data = response.data;	
+					    self.dco.data = response.data;	
 					    startDataCompletenessAnalysis();				
 					}, 
 					//error
@@ -600,15 +639,15 @@
 	
 		function startDataCompletenessAnalysis() {
 			
-			var rows = self.dc.data.rows;
-			var headers = self.dc.data.headers;
-			var names = self.dc.data.metaData.names;
+			var rows = self.dco.data.rows;
+			var headers = self.dco.data.headers;
+			var names = self.dco.data.metaData.names;
 			
-			var subunits = self.dc.data.metaData.ou;
-			var periods = self.dc.data.metaData.pe;
-			var dxID = self.dc.dxID;
+			var subunits = self.dco.data.metaData.ou;
+			var periods = self.dco.data.metaData.pe;
+			var dxID = self.dco.dxID;
 			
-			var threshold = self.dc.threshold;
+			var threshold = self.dco.threshold;
 			
 			
 			var totalExpectedValues = subunits.length * periods.length;
@@ -652,7 +691,7 @@
 			result.threshold = threshold;
 			
 			//Return			
-			self.dc.callback(result);
+			self.dco.callback(result);
 
 			self.inProgress = false;
 			nextAnalysis();
@@ -1387,7 +1426,8 @@
 			return Math.abs(mathService.round(total-expectedTotal, 0));
 		}
 		
-		/** DATA REQUESTS QUEUING */
+		
+		/** DATA REQUESTS QUEUEING */
 		function requestData() {
 			
 			if (self.status.total === 0) {
@@ -1411,8 +1451,9 @@
 					//error
 					function(response) {
 					    self.requests.pending--;
-					    storeResponse(response);
 					    self.status.done++;
+					    console.log("Error getting request");
+					    storeResponse(response); //TODO: Why?
 					    self.status.progress = mathService.round(100*self.status.done/self.status.total, 0);
 					}
 				);
@@ -1420,14 +1461,13 @@
 				request = getNextRequest();
 			}
 			
-			if (!request) self.requests.queue = [];
 		}
 		
 	
 		function getNextRequest() {
 
 			for (var i = 0; i < self.requests.queue.length; i++) {
-				if (!self.requests.queue[i].pending && !self.requests.queue[i].done) {
+				if (!self.requests.queue[i].pending) {
 					return self.requests.queue[i];
 				}
 			}
@@ -1435,18 +1475,40 @@
 		}
 		
 		
-		function markRequestAsComplete(url) {
+		function requestSucceeded(url) {
 			for (var i = 0; i < self.requests.queue.length; i++) {
+				
 				if (url.indexOf(self.requests.queue[i].url) > -1) {
 					
-					self.requests.queue[i].url = null; //make sure we delete this, to avoid duplicate matches
-					self.requests.queue[i].done = true;
-					self.requests.queue[i].pending = false;
-					
-					return self.requests.queue[i];
+					var requestType = self.requests.queue[i].type;
+					self.requests.queue[i] = null;
+					self.requests.queue.splice(i, 1);
+										
+					return requestType;
 				}
 			}
 			return null;
+		}
+		
+		
+		function requestFailed(url) {
+			for (var i = 0; i < self.requests.queue.length; i++) {
+				if (url.indexOf(self.requests.queue[i].url) > -1) {
+
+					self.requests.queue[i].pending = false;
+					self.requests.queue[i].attempts++;
+					
+					if (self.requests.queue[i].attempts > 1) {
+						console.log("Attempts: " + self.requests.queue[i].attempts);
+					}
+					
+					if (self.requests.queue[i].attempts > 3) {
+						console.log("To many attempts: " + self.requests.queue[i].attempts);
+						self.requests.queue[i] = null;
+						self.requests.queue.splice(i, 1);
+					}
+				}
+			}
 		}
 			
 		
@@ -1454,46 +1516,58 @@
 			
 			var data = response.data;
 			var requestURL = response.config.url;
+			var requestType;
 			
 			var status = response.status;
 			if (status != 200) {
-				//TODO: if too many values, split.. Make sure we don't get same data twice, if selections on multiple levels => self.orgunits = self.orgunit.children...
+					
+				//TODO: Should split it instead		
 				if (status === 409 && (data.indexOf("Table exceeds") > -1)) {
 					console.log("Query result too big");
-					reset();
+					requestSucceeded(requestURL); 
+					
 				}
-				if (status === 409 && (data.indexOf("Dimension ou is present") > -1)) {
+				
+				//No children for this boundary ou - no worries..
+				else if (status === 409 && (data.indexOf("Dimension ou is present") > -1)) {
 					console.log("Requested child data for a unit without children");
-					markRequestAsComplete(requestURL);
-					requestData();
+					requestSucceeded(requestURL);
 				}
+				
+				//Probably time out - try again
+				else if (status === 0) { 
+					console.log("Timout - retrying");
+					requestFailed(requestURL);
+				}
+				
+				//Unknown error
 				else {
-					console.log("Error fetching data: " + response.statusText);
-					reset();
+					console.log("Unknown error while fetching data: " + response.statusText);
+					requestSucceeded(requestURL);
 				}
 			}
+			
 			else {
-				//Mark item in queue as downloaded - discard if not there (which means it stems from different request
-				var request = markRequestAsComplete(requestURL)
-				if (request === null) {
-					requestData();
-					return;
-				}
-				
-				//fetch more data
-				requestData();				
-				
-				//Queue data for processing
-				self.process.queue.push({
-					'type': request.type,
-					'data': response.data,
-					'pending': false,
-					'done': false
-				});
-				
-				processData();
+			
+				//Mark item in queue as downloaded
+				var requestType = requestSucceeded(requestURL)
+				if (requestType != null) {
+					//Queue data for processing
+					self.process.queue.push({
+						'type': requestType,
+						'data': response.data,
+						'pending': false,
+						'id': ++processIndex
+					});
+					
+					processData();
+				}						
 			}
+			//fetch more data
+			requestData();	
 		}
+		
+		/** DATA PROCESS QUEUING */
 		
 		
 		function processData() {
@@ -1515,7 +1589,7 @@
 		function getNextData() {
 
 			for (var i = 0; i < self.process.queue.length; i++) {
-				if (!self.process.queue[i].pending && !self.process.queue[i].done) {
+				if (!self.process.queue[i].pending) {
 					return self.process.queue[i];
 				}
 			}
@@ -1523,18 +1597,35 @@
 		}
 		
 		
+		//OKAY - remove object
+		function processingSucceeded(id) {
+			for (var i = 0; i < self.process.queue.length; i++) {
+				if (self.process.queue[i].id === id) {
+					self.process.queue[i].data = null;
+					self.process.queue[i] = null;
+					self.process.queue.splice(i, 1);
+					break;
+				}
+			}
+			
+			self.process.pending--;
+			
+		
+		}
+		
+		
 		function processingDone(type) {
 						
 			//Check if all requests haver returned
 			for (var i = 0; i < self.requests.queue.length; i++) {
-				if (!self.requests.queue[i].done && self.requests.queue[i].type === type) {
+				if (self.requests.queue[i].type === type) {
 					return false;
 				}
 			}
 			
 			//Check if all processing is done
-			for (var i = 0; i < self.requests.queue.length; i++) {
-				if (!self.requests.queue[i].done && self.requests.queue[i].type === type) {
+			for (var i = 0; i < self.process.queue.length; i++) {
+				if (self.process.queue[i].type === type) {
 					return false;
 				}
 			}
