@@ -262,7 +262,7 @@
       	
       	
       	
-      	/**UTILITIES*/
+      	/** -- UTILITIES -- */
       	function getPeriodTypes(datasets) {
       		
   			var data, pTypes = {};
@@ -295,7 +295,9 @@
       	function updateCharts() {
       		$timeout(function () { window.dispatchEvent(new Event('resize')); }, 250);
       	}
-      				
+      	
+      	
+      	/* Init */		
 		//Make sure mapping is available, then intialise
 		if (metaDataService.hasMapping()) {
 			self.ready = true;
