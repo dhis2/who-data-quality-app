@@ -54,7 +54,8 @@
 			}	
 		}
 		
-		/**ANALYSIS JOB QUEUE*/
+		
+		/** -- ANALYSIS JOB QUEUE -- */
 		function nextAnalysis() {
 			if (self.inProgress) {	
 				return;
@@ -97,6 +98,7 @@
 			}
 		}
 		
+		/** -- ANALYSIS -- */
 		
 		/** OUTLIER AND GAP ANALYSIS
 		@param callback			function to send result to
