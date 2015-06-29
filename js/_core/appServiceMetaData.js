@@ -974,7 +974,7 @@
 			var dataInGroup = [], data = self.getData();
 			for (var i = 0; i < dataCodes.length; i++) {
 				for (var j = 0; j < data.length; j++) {
-					if (dataCodes[i] === data[j].code) dataInGroup.push(data[j]);
+					if (data[j].matched && (dataCodes[i] === data[j].code)) dataInGroup.push(data[j]);
 				}
 			}
 			

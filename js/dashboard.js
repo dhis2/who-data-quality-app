@@ -338,7 +338,7 @@
       	}
       	
       	function updateCharts() {
-      		$timeout(function () { window.dispatchEvent(new Event('resize')); }, 250);
+      		$timeout(function () { window.dispatchEvent(new Event('resize')); }, 500);
       	}
       	
       	function ouChildrenIDs() {
