@@ -14,7 +14,8 @@
     "jquery": "~2.1.4",
     "font-awesome": "~4.3.0",
     "moment": "~2.10.3",
-    "bootstrap": "~3.3.5"
+    "bootstrap": "~3.3.5",
+    "nvd3": "~1.7.1"
   },
   "private": true
 }
