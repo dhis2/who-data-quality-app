@@ -658,7 +658,7 @@
         	}
         	        	        				
     		var modalInstance = $modal.open({
-	            templateUrl: "moduleOutlierGap/modalGraph.html",
+	            templateUrl: "moduleOutlierGap/outlierGapGraph.html",
 	            controller: "ModalGraphController",
 	            controllerAs: 'mgCtrl',
 	            resolve: {
@@ -685,7 +685,7 @@
         self.sendMessage = function(metaData) {
         	        	
         	var modalInstance = $modal.open({
-	            templateUrl: "moduleOutlierGap/modalMessage.html",
+	            templateUrl: "moduleOutlierGap/outlierGapMessage.html",
 	            controller: "ModalMessageController",
 	            controllerAs: 'mmCtrl',
 	            resolve: {

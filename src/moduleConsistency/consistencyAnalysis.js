@@ -724,7 +724,7 @@
         self.sendMessage = function(row) {
         	        	
         	var modalInstance = $modal.open({
-	            templateUrl: "views/_modals/modalMessage.html",
+	            templateUrl: "views/_modals/outlierGapMessage.html",
 	            controller: "ModalMessageController",
 	            controllerAs: 'mmCtrl',
 	            resolve: {
