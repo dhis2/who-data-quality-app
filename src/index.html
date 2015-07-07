@@ -2,20 +2,21 @@
 <html >
 <head>
 
+
 	<meta charset="utf-8">
 
-	<!-- build:js js/libs.js -->
+	<!-- build:js core/libs.js -->
 	<script src="libs/prototypes.js" type="text/javascript"></script>
 	<script src="libs/periodTypeNoDep.js"></script>
 	<!-- endbuild -->
 
-	<!-- build:js js/components.js -->
+	<!-- build:js core/components.js -->
 	<script src="../bower_components/jquery/dist/jquery.js"></script>
 	<script src="../bower_components/angular/angular.js"></script>
 	<script src="../bower_components/angular-nvd3/dist/angular-nvd3.js"></script>
 	<script src="../bower_components/angular-route/angular-route.js"></script>
 	<script src="../bower_components/moment/moment.js"></script>
-	<script src="../bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
+	<script src="../bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
 	<script src="../bower_components/angular-ui-select/dist/select.js"></script>
 	<script src="../bower_components/angular-sanitize/angular-sanitize.js"></script>
 	<script src="../bower_components/d3/d3.js" charset="utf-8"></script>
@@ -25,26 +26,47 @@
 	<script src="../bower_components/file-saver/FileSaver.js"></script>
 	<!-- endbuild -->
 
-	<!-- build:js js/app.js -->
+	<!-- build:js core/app.js -->
 	<script lang="javascript" src="app.js"></script>
+	<!-- endbuild -->
+
+	<!-- build:js core/services.js -->
 	<script lang="javascript" src="moduleCore/appServiceDataAnalysis.js"></script>
 	<script lang="javascript" src="moduleCore/appServiceMath.js"></script>
 	<script lang="javascript" src="moduleCore/appServiceMetaData.js"></script>
 	<script lang="javascript" src="moduleCore/appServicePeriod.js"></script>
 	<script lang="javascript" src="moduleCore/appServiceRequest.js"></script>
 	<script lang="javascript" src="moduleCore/appServiceVisualisation.js"></script>
+	<!-- endbuild -->
+
+	<!-- build:js moduleAdmin/admin.js -->
 	<script lang="javascript" src="moduleAdmin/admin.js"></script>
 	<script lang="javascript" src="moduleAdmin/adminMappingController.js"></script>
 	<script lang="javascript" src="moduleAdmin/adminIndicatorController.js"></script>
 	<script lang="javascript" src="moduleAdmin/adminIndicatorGroupController.js"></script>
 	<script lang="javascript" src="moduleAdmin/adminIndicatorGroupDeleteController.js"></script>
 	<script lang="javascript" src="moduleAdmin/adminRelationController.js"></script>
+	<!-- endbuild -->
+
+	<!-- build:js moduleConsistency/consistency.js -->
 	<script lang="javascript" src="moduleConsistency/consistencyAnalysis.js"></script>
+	<!-- endbuild -->
+
+	<!-- build:js moduleOutlierGap/outlierGap.js -->
 	<script lang="javascript" src="moduleOutlierGap/outlierGapAnalysis.js"></script>
 	<script lang="javascript" src="moduleOutlierGap/outlierGapMessageController.js"></script>
 	<script lang="javascript" src="moduleOutlierGap/outlierGapGraphController.js"></script>
+	<!-- endbuild -->
+
+	<!-- build:js moduleDashboard/dashboard.js -->
 	<script lang="javascript" src="moduleDashboard/dashboard.js"></script>
+	<!-- endbuild -->
+
+	<!-- build:js moduleExport/export.js -->
 	<script lang="javascript" src="moduleExport/export.js"></script>
+	<!-- endbuild -->
+
+	<!-- build:js moduleReview/review.js -->
 	<script lang="javascript" src="moduleReview/review.js"></script>
 	<!-- endbuild -->
 
