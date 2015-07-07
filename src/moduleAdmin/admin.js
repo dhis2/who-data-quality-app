@@ -83,7 +83,7 @@
 	    self.mapIndicator = function(indicator) {
 	       	     	
 	    	var modalInstance = $modal.open({
-	            templateUrl: "views/_modals/modalMapping.html",
+	            templateUrl: "moduleAdmin/modalMapping.html",
 	            controller: "ModalMappingController",
 	            controllerAs: 'mapCtrl',
 	            resolve: {
@@ -262,7 +262,7 @@
 	    self.addIndicator = function () {
 
 	    	var modalInstance = $modal.open({
-	            templateUrl: "views/_modals/modalAddIndicator.html",
+	            templateUrl: "moduleAdmin/modalAddIndicator.html",
 	            controller: "ModalAddIndicatorController",
 	            controllerAs: 'addCtrl',
 	            resolve: {
@@ -303,7 +303,7 @@
 	    self.addIndicatorGroup = function () {
 
 	    	var modalInstance = $modal.open({
-	            templateUrl: "views/_modals/modalAddIndicatorGroup.html",
+	            templateUrl: "moduleAdmin/modalAddIndicatorGroup.html",
 	            controller: "ModalAddIndicatorGroupController",
 	            controllerAs: 'addCtrl'
 	        });
@@ -329,7 +329,7 @@
 	    self.deleteIndicatorGroup = function () {
 	    
 	    	var modalInstance = $modal.open({
-	            templateUrl: "views/_modals/modalDeleteIndicatorGroup.html",
+	            templateUrl: "moduleAdmin/modalDeleteIndicatorGroup.html",
 	            controller: "ModalDeleteIndicatorGroupController",
 	            controllerAs: 'addCtrl',
 	            resolve: {
@@ -587,7 +587,7 @@
 	    	}
 	    
 	    	var modalInstance = $modal.open({
-	            templateUrl: "views/_modals/modalAddEditRelation.html",
+	            templateUrl: "moduleAdmin/modalAddEditRelation.html",
 	            controller: "ModalAddEditRelationController",
 	            controllerAs: 'addCtrl',
 	            resolve: {

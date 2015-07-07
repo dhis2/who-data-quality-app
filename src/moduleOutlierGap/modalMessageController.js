@@ -1,6 +1,6 @@
 (function(){  
 	/**Controller: Parameters*/
-	angular.module('reportCard').controller("ModalMessageController", function($modalInstance, requestService, orgunitID, orgunitName) {
+	angular.module('outlierGapAnalysis').controller("ModalMessageController", function($modalInstance, requestService, orgunitID, orgunitName) {
 	    
 	    var self = this; 
 	    

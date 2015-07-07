@@ -1,6 +1,6 @@
 (function(){  
 	/**Controller: Parameters*/
-	angular.module('reportCard').controller("ModalAddIndicatorGroupController", function($modalInstance, $scope) {
+	angular.module('admin').controller("ModalAddIndicatorGroupController", function($modalInstance, $scope) {
 	    	    
 	    var self = this; 
 	    

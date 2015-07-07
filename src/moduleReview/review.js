@@ -1,7 +1,7 @@
 
 (function(){
 	
-	var app = angular.module('reportCard', []);
+	var app = angular.module('review', []);
 	
 	app.controller("ReviewController", function(metaDataService, periodService, mathService, requestService, dataAnalysisService, visualisationService, $timeout, $scope) {
 		var self = this;    

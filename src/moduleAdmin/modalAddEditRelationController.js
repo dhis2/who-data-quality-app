@@ -1,6 +1,6 @@
 (function(){  
 	/**Controller: Parameters*/
-	angular.module('reportCard').controller("ModalAddEditRelationController", function($modalInstance, $scope, indicators, relation) {
+	angular.module('admin').controller("ModalAddEditRelationController", function($modalInstance, $scope, indicators, relation) {
 	    	    
 	    var self = this; 
 	    self.indicators = indicators;

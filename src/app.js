@@ -1,6 +1,6 @@
 
 (function(){
-  var app = angular.module('dataQualityApp', ['ngRoute', 'dashboard', 'reportCard', 'consistencyAnalysis', 'outlierGapAnalysis', 'dataExport', 'admin', 'ui.select', 'ngSanitize', 'ui.bootstrap', 'nvd3']);
+  var app = angular.module('dataQualityApp', ['ngRoute', 'dashboard', 'review', 'consistencyAnalysis', 'outlierGapAnalysis', 'dataExport', 'admin', 'ui.select', 'ngSanitize', 'ui.bootstrap', 'nvd3']);
     
 	/**Bootstrap*/
 	angular.element(document).ready( 
@@ -28,33 +28,33 @@
 	        function($routeProvider) {
 	            $routeProvider.
 	                when('/dashboard', {
-	                    templateUrl: 'views/dashboard.html',
+	                    templateUrl: 'moduleDashboard/dashboard.html',
 	                    controller: 'DashboardController',
 	                    controllerAs: 'dashCtrl'
 	                }).
 	                when('/consistency', {
-	                    templateUrl: 'views/consistencyAnalysis.html',
+	                    templateUrl: 'moduleConsistency/consistencyAnalysis.html',
 	                    controller: 'ConsistencyAnalysisController',
 	                    controllerAs: 'aCtrl'
 	                }).
 	                when('/outlier_gap', {
-	                    templateUrl: 'views/outlierGapAnalysis.html',
+	                    templateUrl: 'moduleOutlierGap/outlierGapAnalysis.html',
 	                    controller: 'OutlierGapAnalysisController',
 	                    controllerAs: 'aCtrl'
 	                }).
 	                when('/review', {
-	                    templateUrl: 'views/review.html',
+	                    templateUrl: 'moduleReview/review.html',
 	                    controller: 'ReviewController',
 	                    controllerAs: 'revCtrl'
 	                    
 	                }).
 	                when('/export', {
-	                    templateUrl: 'views/export.html',
+	                    templateUrl: 'moduleExport/export.html',
 	                    controller: 'ExportController',
 	                    controllerAs: 'exportCtrl'
 	                }).
 	                when('/admin', {
-	                    templateUrl: 'views/admin.html',
+	                    templateUrl: 'moduleAdmin/admin.html',
 	                    controller: 'AdminController',
 	                    controllerAs: 'admCtrl'
 	                }).

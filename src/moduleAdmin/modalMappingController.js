@@ -1,6 +1,6 @@
 (function(){  
 	/**Controller: Parameters*/
-	angular.module('reportCard').controller("ModalMappingController", function($modalInstance, $scope, requestService, metaDataService, indicator, groups) {
+	angular.module('admin').controller("ModalMappingController", function($modalInstance, $scope, requestService, metaDataService, indicator, groups) {
 	    	    
 	    var self = this; 
 	    self.indicator = indicator;
