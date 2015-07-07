@@ -152,7 +152,7 @@
 	    	    self.alerts.push({type: 'danger', msg: 'Error sending message!'});
 	    	 });
 	    		    
-	    }
+	    };
 	    
 	    
 	   	self.enableMessage = function () {
@@ -160,7 +160,7 @@
 	   		else self.message = true;
 	   		
 	   		getPotentialRecipients();
-	   	}
+	   	};
 	    
 	    
 	    self.close = function () {

@@ -7,8 +7,8 @@ function PeriodType()
 
 		format_yyyymmdd = function(date) {
 			var y = date.getFullYear(),
-				m = new String(date.getMonth() + 1),
-				d = new String(date.getDate());
+				m = String(date.getMonth() + 1),
+				d = String(date.getDate());
 			m = m.length < 2 ? '0' + m : m;
 			d = d.length < 2 ? '0' + d : d;
 			return y + '-' + m + '-' + d;
@@ -127,7 +127,7 @@ function MonthlyPeriodType( format_yyyymmdd, monthNames, fnFilter )
 {
 	var format_iso = function(date) {
 		var y = date.getFullYear(),
-			m = new String(date.getMonth() + 1);
+			m = String(date.getMonth() + 1);
 		m = m.length < 2 ? '0' + m : m;
 		return y + m;
 	};
@@ -167,7 +167,7 @@ function BiMonthlyPeriodType( format_yyyymmdd, monthNames, fnFilter )
 {
 	var format_iso = function( date ) {
 		var y = date.getFullYear(),
-			m = new String(date.getMonth() + 1);
+			m = String(date.getMonth() + 1);
 		m = m.length < 2 ? '0' + m : m;
 		return y + m + 'B';
 	};

@@ -206,7 +206,7 @@
 			
 			}
 			else return "Select level";
-		}
+		};
 		
 		self.orgunitUserDefaultLevel = function() {
 			
@@ -221,7 +221,7 @@
 			
 			if (self.filteredOrgunitLevels.length === 0) self.orgunitLevelSelected = undefined;
 		
-		}
+		};
 		
 		
 	    self.orgunitSearch = function(searchString){
@@ -231,7 +231,7 @@
 	    			self.ouSearchResult = response.data.organisationUnits;
 	    		});
 	    	}
-	    }
+	    };
 		
 	
 	    function updateDataElementList() {
@@ -282,7 +282,7 @@
 					self.filteredOrgunitLevels.push(self.orgunitLevels[i]);
 				}
 			}			
-		}
+		};
 		
 		
 		function getPeriods() {
@@ -550,7 +550,7 @@
 		self.previousResult = function() {
 			self.currentResult++;
 			prepareResult();
-		}
+		};
 		
 		
        	    
@@ -562,7 +562,7 @@
 	   		
 	   		if (standardScore > 2 || zScore > 3.5) return true;
 	   		else return false;
-	   	}
+	   	};
 	   	
 	   		   	
 	   	function includeRow(row) {
@@ -595,7 +595,7 @@
 	   		self.currentPage = 1;
 	   		self.pageSize = 15;   	
 	   		self.totalRows = self.filteredRows.length;
-	   	}
+	   	};
 	   	
 	   	self.sortByColumn = function (columnKey) {
 	   		self.currentPage = 1;
@@ -606,7 +606,7 @@
 	   			self.sortCol = columnKey;
 	   			self.reverse = true;
 	   		}
-	   	}
+	   	};
 	   	
 	   	
 	   	/**INTERACTIVE FUNCTIONS*/
@@ -655,7 +655,7 @@
         	        'showLegend': false,
         	        'showControls': false
         	    }
-        	}
+        	};
         	        	        				
     		var modalInstance = $modal.open({
 	            templateUrl: "moduleOutlierGap/outlierGapGraph.html",
@@ -700,7 +700,7 @@
 	
 	        modalInstance.result.then(function (result) {
 	        });
-        }
+        };
         
         
         self.drillDown = function (rowMetaData) {
@@ -735,7 +735,7 @@
         	});
         	
         	
-        }
+        };
 
         
 	   	self.exportCSV = function() {
@@ -772,7 +772,7 @@
 			  saveAs(blob, "outlier_gap_data.csv");
 
 	   	
-	   	}
+	   	};
 	   	
 	   	
 	   	/** UTILITIES */

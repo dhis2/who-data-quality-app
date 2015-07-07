@@ -137,7 +137,7 @@
 			visualisationService.lineChart(receiveDataTimeConsistencyChart, indicatorIDsForConsistencyChart, refPeriods.concat(period), [ouBoundary], 'dataOverTime');
 			
 			
-	  	}
+	  	};
 	  	
 	  	function clearResults() {
 	  		//Structure for storing data
@@ -358,7 +358,7 @@
 	    	if (code === 'aGTb') return "A > B";
 	    	if (code === 'do') return "Dropout";
 	    	
-	    }
+	    };
 	    
 	    
 	    self.relationName = function(code) {
@@ -368,7 +368,7 @@
 	    		if (relations[i].code === code) return relations[i].name;
 	    	}
 	    	
-	    }
+	    };
 	    
 	    //Returns relations relevant for the selected group (i.e. both indicators are in the group)
 	    function relationsForAnalysis() {
@@ -396,7 +396,7 @@
 	    		}
 	    		window.dispatchEvent(new Event('resize'));
 	    	}, 250);
-	    }
+	    };
 	    	    
 	    	    
 		return self;

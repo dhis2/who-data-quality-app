@@ -101,7 +101,7 @@
 	        		updateDataSetListAndSave();
 	        	}
 	        });
-	    }
+	    };
 	    
 	    
 	    self.deleteMapping = function(indicator) {
@@ -109,14 +109,14 @@
         	indicator.matched = false;
         	indicator.dataSetID = undefined;
 			updateDataSetListAndSave();
-        }
+        };
         
         self.deleteIndicator = function(indicator) {
 			removeIndicator(indicator.code);
 			removeIndicatorFromAllGroups(indicator.code);
 			
 			saveMapping();
-        }
+        };
         
         function removeIndicator(dataCode) {
         	for (var i = 0; i < self.mapping.data.length; i++) {
@@ -144,7 +144,7 @@
     		}
         
         
-        }
+        };
         
         
         self.dataNameFromCode = function(dataCode) {
@@ -155,7 +155,7 @@
         		
         		if (current[i].code === dataCode) return current[i].name;
         	}
-        }
+        };
         
         self.dataGroups = function(dataCode) {
         	var groups = [];
@@ -170,7 +170,7 @@
         	}
         	
         	return groups.sort().join(', ');
-        }
+        };
         
         self.getIndicatorsInGroup = function(groupCode) {
         	var indicators = [];
@@ -189,7 +189,7 @@
 
         	return indicators;   
         
-        }
+        };
         
         function indicatorFromCode(dataCode) {
         
@@ -208,7 +208,7 @@
       		var firstGroup = groups.split(',')[0];
       		
       		return firstGroup + indicator.name;
-        }
+        };
         
         self.isCore = function(code) {
         	
@@ -218,7 +218,7 @@
         	}
         	return false;
         
-        }
+        };
         
         
         self.filterMatchedRelations = function(relation) {
@@ -241,13 +241,13 @@
     		
     		return (Afound && Bfound);
         	
-        }
+        };
         
         
 	    self.saveParameterChanges = function () {
 	    	var requestURL = '/api/systemSettings/';	    		    	
 	    	requestService.post(requestURL, {'DQAmapping': angular.toJson(self.mapping)});
-	    }
+	    };
 	    
 	    self.groupFilter = function (currentMembers) {
 	    	return function(item) {
@@ -257,7 +257,7 @@
 	    		}
 	    		return true;
 	    	}
-	    }
+	    };
 	    
 	    self.addIndicator = function () {
 
@@ -298,7 +298,7 @@
 	        		
 	        	}
 	        });
-	    }
+	    };
 	    
 	    self.addIndicatorGroup = function () {
 
@@ -324,7 +324,7 @@
 	        		
 	        	}
 	        });
-	    }
+	    };
 	    
 	    self.deleteIndicatorGroup = function () {
 	    
@@ -351,7 +351,7 @@
 	        		
 	        	}
 	        });
-	    }
+	    };
 	    
 	    function removeIndicatorGroup(groupCode) {
 	    	for (var i = 0; i < self.mapping.groups.length; i++) {
@@ -449,7 +449,7 @@
 	    	
 	    	saveMapping();
 	    
-	    }
+	    };
 	    
 	    
 	    self.ungroupIndicator = function(group, dataCode) {
@@ -457,7 +457,7 @@
 	    	
 	    	saveMapping();
 	    
-	    }
+	    };
 	    
 	    
 	    function saveMapping() {
@@ -562,7 +562,7 @@
 	    	if (typeCode === 'aGTb') return "A > B";
 	    	if (typeCode === 'do') return "Dropout";
 	    	
-	    }
+	    };
 	    
 	    self.relationDescription = function(typeCode) {
 	    
@@ -570,14 +570,14 @@
 	    	if (typeCode === 'aGTb') return "Comparison. A should be greater than B.";
 	    	if (typeCode === 'do') return "Droupout rate. A should be greater than B.";
 	    	
-	    }
+	    };
 	    
 	    self.relationThresholdDescription = function(typeCode) {
 	    
 	    	if (typeCode === 'eq' || typeCode === 'aGTb') return "% difference from national figure that is accepted for a sub-national unit.";
 	    	if (typeCode === 'do') return "Should not be negative.";
 	    	
-	    }
+	    };
 	    
 	    self.editRelation = function(relation) {
 	    
@@ -614,7 +614,7 @@
 	        	}
 	        });
 	    
-	    }
+	    };
 	    
 	    function getNewRelationCode() {
 	    
@@ -654,13 +654,13 @@
 	    	
 	    	saveMapping();
 	    
-	    }
+	    };
 	    
 	    self.addRelation = function() {
 	    
 	    	self.editRelation(null);
 	    
-	    }
+	    };
 	        
 		return self;
 		

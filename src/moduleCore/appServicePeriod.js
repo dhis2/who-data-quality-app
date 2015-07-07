@@ -136,12 +136,12 @@
 			}
 			
 			//TODO
-		}
+		};
 		
 		
 		self.periodTypeFromPeriod = function(periodISO) {
 			periodISO = periodISO.toString();
-			var periodType = ''
+			var periodType = '';
 			if (periodISO.length === 4) {
 				periodType = 'Yearly';
 			}
@@ -163,7 +163,7 @@
 			
 			return periodType;
 		
-		}
+		};
 		
 		self.shortestPeriod = function (periodTypes) {
 			var w = false, m = false, q = false, s = false, y = false, pt;
@@ -194,7 +194,7 @@
 			if (s) return 'SixMonthly';
 			if (y) return 'Yearly';
 			
-		}
+		};
 		
 		
 		self.longestPeriod = function (periodTypes) {
@@ -224,7 +224,7 @@
 			if (q) return 'Quarterly';
 			if (m) return 'Monthly';
 			if (w) return 'Weekly';
-		}
+		};
 		  	
 		
 		self.getSubPeriods = function(period, periodType) {
@@ -248,7 +248,7 @@
 			}
 			
 			return self.getISOPeriods(startDate, endDate, periodType);
-		}
+		};
 		
 		
 		self.precedingPeriods = function(periodISO, number) {
@@ -263,7 +263,7 @@
 			
 			return self.getISOPeriods(dateToISOdate(startDate), dateToISOdate(endDate), pType);
 			
-		}
+		};
 		
 		
 		function reverseDateByPeriod(ISOdate, noPeriods, periodType) {

@@ -70,7 +70,7 @@ module.exports = function(grunt) {
 			},
 			dev: {
 				options: {
-					src: "build/*",
+					src: "build/",
 					dest: "/usr/local/var/www/apps/dq",
 					delete: true
 				}

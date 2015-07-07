@@ -151,13 +151,13 @@
 		self.orgunitSearchModeSelected = function() {
 			self.boundaryOrgunitSelected = undefined;
 			self.orgunitLevelSelected = undefined;
-		}
+		};
 		
 		
 		self.orgunitUserModeSelected = function() {
 			self.boundaryOrgunitSelected = self.userOrgunits[0];
 			self.orgunitUserDefaultLevel();
-		}
+		};
 		
 		
 		self.orgunitUserDefaultLevel = function() {
@@ -173,7 +173,7 @@
 			
 			if (self.filteredOrgunitLevels.length === 0) self.orgunitLevelSelected = undefined;
 		
-		}
+		};
 		
 		function lowestLevel() {
 		
@@ -202,7 +202,7 @@
 					self.filteredOrgunitLevels.push(self.orgunitLevels[i]);
 				}
 			}			
-		}
+		};
 		
 				
 		self.getLevelPlaceholder = function() {
@@ -212,7 +212,7 @@
 			
 			}
 			else return "Select level";
-		}
+		};
 		
 		
 	    self.orgunitSearch = function(searchString){
@@ -232,7 +232,7 @@
 	    			
 	    		});
 	    	}
-	    }
+	    };
 		
 		
 		/** Data */
@@ -268,7 +268,7 @@
 	    		     });
 	    	}
 	    
-	    }
+	    };
 	    
 	    self.dataSelected = function (itemType, itemCode) {
 	    	if (itemType === 'de') {
@@ -293,7 +293,7 @@
 		    
 		    
 		    
-	    }
+	    };
 	    
 	    
 	      self.updateIndicatorList = function(dataItem) {
@@ -305,7 +305,7 @@
 	      			self.dataSelection[dataItem].indText = "Select indicator";  	    			
 	      		   	self.dataSelection[dataItem].ind = data;
 	      		});
-	      }
+	      };
 	      
 	      
         //item a or b
@@ -319,7 +319,7 @@
       	    else {
       	    	return self.dataSelection[item].indSelected;
       	    }
-        }
+        };
 	      	
 	    
 	    /** Periods */	    	
@@ -341,7 +341,7 @@
     		//Want most recent first (?)
     		self.periodsInYear.sort(function(a, b) { return (a.id > b.id) ? -1 : 1});
     		
-    	}
+    	};
 	    	    
 	    
 	    
@@ -396,7 +396,7 @@
   	    self.selectedPeriod = function() {
   	    	if (self.periodTypeSelected.id != 'Yearly') return self.periodSelected;
   	    	else return self.yearSelected;
-  	    }
+  	    };
   	    
 		
 		
@@ -482,7 +482,7 @@
 			self.chartSelected.options = chartOptions;
 			self.chartSelected.data = chartData; 
 				
-		}
+		};
 				
 	
 		
@@ -540,7 +540,7 @@
 			});
 			
 			self.updateCharts();
-		}
+		};
 		
 		var receiveTimeResult = function(result, errors) {
 			
@@ -585,7 +585,7 @@
 			});
 			
 			self.updateCharts();
-		}
+		};
 		
 		
 	
@@ -607,7 +607,7 @@
 			}
 			
 			return title;
-		}
+		};
 				
        	
 	   	
@@ -621,7 +621,7 @@
 	   			self.sortCol = columnKey;
 	   			self.reverse = true;
 	   		}
-	   	}
+	   	};
 	   	
 	   	self.isOutlier = function (value, stats) {
 	   		if (value === null || value === '') return false;
@@ -631,7 +631,7 @@
    			
    			if (standardScore > 2 || zScore > 3.5) return true;
    			else return false;
-   		}
+   		};
    		
 	   	
    		self.updateFilter = function() {
@@ -646,7 +646,7 @@
    			self.currentPage = 1;
    			self.pageSize = 10;   	
    			self.totalRows = self.filteredRows.length;
-   		}
+   		};
 
    		
    		function includeRow(row) {
@@ -716,7 +716,7 @@
 	   		dataForSelectedUnit(item.id);
 	   		
 	   		self.updateCharts();
-	   	}
+	   	};
 	   	
 	   	function highlightPoint() {}
 	   	
@@ -739,7 +739,7 @@
 	
 	        modalInstance.result.then(function (result) {
 	        });
-        }
+        };
         
         
         self.drillDown = function (item) {
@@ -761,7 +761,7 @@
           	});
         	
         	
-        }
+        };
 
         
         self.floatUp = function (rowMetaData) {
@@ -791,7 +791,7 @@
         	});
         	
         	
-        }
+        };
         
         
         function getDataItem(ouID) {
@@ -817,17 +817,17 @@
 	   		if (!isNaN(ratio) && isFinite(ratio)) return true;
 	   		else return false;
 	   	
-	   	}
+	   	};
 	   	
 	   	self.updateCharts = function() {
 	   		$timeout(function () { window.dispatchEvent(new Event('resize')); }, 100);
-	   	}
+	   	};
 	   	
 	   	self.dropoutRate = function(valueA, valueB) {
 	   		
 	   		return mathService.round(100*(valueA-valueB)/valueA, 2);
 	   		
-	   	}
+	   	};
 	   	        
 		init();
     	

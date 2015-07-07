@@ -40,7 +40,7 @@
         			trendChartData: undefined,
         			ouChartOptions: undefined,
         			ouChartData: undefined
-        		}
+        		};
         		
         		periods = periodService.getISOPeriods(startDate, endDate, dataset.periodType);
         		if (periods.length < 4) {
@@ -57,7 +57,7 @@
         		
         		self.completenessCharts.push(datasetCompletenessChart);  		
         	}
-        }
+        };
         
         
         var receiveCompletenessTrend = function (data, options) {
@@ -99,7 +99,7 @@
         		console.log("Completeness charts ready");
 				updateCharts();
         	}
-        }
+        };
         
         
         var receiveCompletenessOU = function (data, options) {
@@ -144,7 +144,7 @@
         		console.log("Completeness charts ready");
 				updateCharts();
         	}
-        }
+        };
                   	
     	
     	
@@ -202,12 +202,12 @@
 					yyChartData: undefined,
 					consistencyChartOptions: undefined,
 					consistencyChartData: undefined
-				}
+				};
 				
 				self.consistencyCharts.push(consistencyChart);
       		}
       		      		
-      	}
+      	};
       	
   		function receiveDataTimeConsistency(result, errors) {
   			var dataID = result.dxID;

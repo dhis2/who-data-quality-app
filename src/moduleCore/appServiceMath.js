@@ -56,7 +56,7 @@
 			
 			return self.median(absoluteDeviations);
 		
-		}
+		};
 		
 		
 		self.MeanAD = function(valueSet, median) {
@@ -70,7 +70,7 @@
 			
 			return self.getMean(absoluteDeviations);
 		
-		}
+		};
 		
 		
 		
@@ -105,7 +105,7 @@
 			};
 		
 		
-		}
+		};
 		
 		
 		
@@ -117,7 +117,7 @@
 		
 		    if(values.length % 2) return values[half];
 		    else return (values[half-1] + values[half]) / 2.0;
-		}
+		};
 		
 		
 		
@@ -135,7 +135,7 @@
 			}
 			var forecast = regression('linear', points);
 			return forecast.equation[0]*i + forecast.equation[1];
-		}
+		};
 		
 		
 		//standard (z) score
@@ -143,7 +143,7 @@
 			
 			return self.round((value-stats.mean)/stats.sd, 2);	
 		
-		}
+		};
 		
 		//Modified Z score
 		self.calculateZScore = function(value, stats) {
@@ -158,7 +158,7 @@
 			else {
 				return self.round((self.z*(value-stats.median))/stats.MAD, 2);
 			}	
-		}
+		};
 		
 		
 				
@@ -174,7 +174,7 @@
 			var factor = Math.pow(10,decimals);
 			return Math.round(value*factor)/factor;
 			
-		}
+		};
 		
 		return self;
 	

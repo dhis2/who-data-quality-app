@@ -30,7 +30,7 @@
 			self.process = {
 				'queue': [],
 				'pending': 0
-			}
+			};
 			
 			if (failed) {
 				if (self.currentAnalysisType === 'datasetCompleteness') {
@@ -133,7 +133,7 @@
 			self.analysisQueue.push(queueItem);
 			
 			nextAnalysis();
-		}
+		};
 		
 		
 		function outlierGapAnalysis(parameters) {
@@ -462,11 +462,11 @@
 					'ouBoundary': ouBoundary, 
 					'ouLevel': ouLevel
 				}
-			}
+			};
 			
 			self.analysisQueue.push(queueItem);
 			nextAnalysis();
-		}
+		};
 		
 		
 		function datasetCompletenessAnalysis(parameters) {
@@ -617,12 +617,12 @@
 					'ouBoundary': ouBoundary, 
 					'ouLevel': ouLevel
 				}
-			}
+			};
 			
 			self.analysisQueue.push(queueItem);
 			nextAnalysis();
 			
-		}
+		};
 		
 		
 		function dataCompletenessAnalysis(parameters) {
@@ -744,12 +744,12 @@
 					'boundaryOrgunit': boundaryOrgunit, 
 					'level': level
 				}
-			}
+			};
 			
 			self.analysisQueue.push(queueItem);
 			nextAnalysis();
 			
-		}
+		};
 		
 		function indicatorOutlierAnalysis(parameters) {
 			self.io = parameters;
@@ -907,11 +907,11 @@
 					'ouBoundary': ouBoundary, 
 					'ouLevel': ouLevel
 				}
-			}
+			};
 			
 			self.analysisQueue.push(queueItem);
 			nextAnalysis();
-		}
+		};
 		
 		
 		function timeConsistencyAnalysis(parameters) {
@@ -1119,11 +1119,11 @@
 					'ouBoundary': boundaryOrgunit, 
 					'ouLevel': level
 				}
-			}
+			};
 			
 			self.analysisQueue.push(queueItem);
 			nextAnalysis();
-		}
+		};
 		
 		
 		function dataConsistencyAnalysis(parameters) {
@@ -1558,7 +1558,7 @@
 			else {
 			
 				//Mark item in queue as downloaded
-				var requestType = requestSucceeded(requestURL)
+				var requestType = requestSucceeded(requestURL);
 				if (requestType != null) {
 					//Queue data for processing
 					self.process.queue.push({

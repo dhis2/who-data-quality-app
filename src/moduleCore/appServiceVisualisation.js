@@ -11,7 +11,7 @@
 		*/
 		self.lineChart = function (callback, dataIDs, periodIDs, orgunitIDs, type) {
 		
-			var requestURL = '/api/analytics.json?'
+			var requestURL = '/api/analytics.json?';
 			requestURL += "dimension=dx:" + dataIDs.join(';');
 			requestURL += "&dimension=pe:" + periodIDs.join(";");
 			requestURL += "&dimension=ou:" + orgunitIDs.join(";");
@@ -34,7 +34,7 @@
 						var chartSerie = {
 							'key': names[dataIDs[i]],
 							'values': []
-						}
+						};
 						
 						for (var j = 0; j < periodIDs.length; j++) {
 							var value = dataValue(header, data, dataIDs[i], periodIDs[j], orgunitIDs[0], null);
@@ -88,7 +88,7 @@
 				
 				callback(chartData, chartOptions);
 			});
-		}
+		};
 		
 		
 		/** NG-NVD3 Multibar */
@@ -97,7 +97,7 @@
 		*/
 		self.multiBarChart = function (callback, dataIDs, periodIDs, orgunitIDs, type) {
 				
-			var requestURL = '/api/analytics.json?'
+			var requestURL = '/api/analytics.json?';
 			requestURL += "dimension=dx:" + dataIDs.join(';');
 			requestURL += "&dimension=pe:" + periodIDs.join(";");
 			requestURL += "&dimension=ou:" + orgunitIDs.join(";");
@@ -120,7 +120,7 @@
 						var chartSerie = {
 							'key': names[dataIDs[i]],
 							'values': []
-						}
+						};
 						
 						for (var j = 0; j < periodIDs.length; j++) {
 							var value = dataValue(header, data, dataIDs[i], periodIDs[j], orgunitIDs[0], null);
@@ -178,7 +178,7 @@
 				
 				callback(chartData, chartOptions);
 			});
-		}
+		};
 		
 		
 		/** NG-NVD3 Bar */
@@ -187,7 +187,7 @@
 		*/
 		self.barChart = function (callback, dataIDs, periodIDs, orgunitIDs, type) {
 				
-			var requestURL = '/api/analytics.json?'
+			var requestURL = '/api/analytics.json?';
 			requestURL += "dimension=dx:" + dataIDs.join(';');
 			requestURL += "&dimension=pe:" + periodIDs.join(";");
 			requestURL += "&dimension=ou:" + orgunitIDs.join(";");
@@ -214,7 +214,7 @@
 						var chartSerie = {
 							'key': names[dx],
 							'values': []
-						}
+						};
 						
 						for (var j = 0; j < orgunitIDs.length; j++) {
 							var value = dataValue(header, data, dx, pe, orgunitIDs[j], null);
@@ -265,7 +265,7 @@
 				
 				callback(chartData, chartOptions);
 			});
-		}
+		};
 				
 		
 	  	/** NG-NVD3 YY line chart */
@@ -279,7 +279,7 @@
 	  		
 	  		var requestURL, requests = [];
 	  		for (var i = 0; i < periods.length; i++) {
-	  			requestURL = '/api/analytics.json?'
+	  			requestURL = '/api/analytics.json?';
   				requestURL += "dimension=dx:" + dataID;
   				requestURL += "&dimension=pe:" + periods[i].join(';');
   				requestURL += "&filter=ou:" + ouID;
@@ -390,12 +390,12 @@
   				    	'periods': periods,
   				    	'orgunitIDs': ouID
   				    }
-  				}
+  				};
   				
   				callback(chartData, chartOptions);
   				
 	  		});
-	  	}
+	  	};
 	  	
 	  	
 	  	
@@ -432,7 +432,7 @@
 	    	var chartSerie = {
 	    		'key': "Orgunits",
 	    		'values': []
-	    	}
+	    	};
 	    	
 	    	for (var i = 0; i < datapoints.length; i++) {
 	    		chartSerie.values.push({
@@ -535,7 +535,7 @@
 		    	result.chartOptions = chartOptions;
 		    	result.chartData = chartSeries;
 		    }
-	    }
+	    };
 		
 		/** Data consistency */
 		self.makeDataConsistencyChart = function (callback, result) {	    		    	
@@ -556,7 +556,7 @@
 	    	var chartSerie = {
 	    		'key': "Orgunits",
 	    		'values': []
-	    	}
+	    	};
 	    	
 	    	for (var i = 0; i < datapoints.length; i++) {
 	    		chartSerie.values.push({
@@ -646,7 +646,7 @@
 	    		result.chartOptions = chartOptions;
 	    		result.chartData = chartSeries;
 	    	}
-	    }
+	    };
 	    
 	    /** Dropout */
 	    self.makeDropoutRateChart = function(callback, result) {	    		    	
@@ -654,7 +654,7 @@
 	    	var chartSerie = {
 	    		'key': "Orgunits",
 	    		'values': []
-	    	}
+	    	};
 
 	    	var toolTip = function(key, x, y, e, graph) {
 	    		var data = result.subunitDatapoints;
@@ -703,7 +703,7 @@
 	    	        'showLegend': true,
 	    	      	'forceY': [Math.floor(minVal*10)/10, Math.ceil(maxVal*10)/10], 
 	    	    }
-	    	}
+	    	};
 	    	
 	    	if (callback) {
 	    		callback(chartSeries, chartOptions);
@@ -712,7 +712,7 @@
 	    		result.chartOptions = chartOptions;
 	    		result.chartData = chartSeries;
 	    	}
-	    }
+	    };
 		
 		
 		/** -- UTILITIES -- */

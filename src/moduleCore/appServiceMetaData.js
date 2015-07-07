@@ -305,7 +305,7 @@
 			
 			return deferred.promise;
 		
-		}
+		};
 		
 		self.getIndicatorPeriodTypes = function (indicatorID) {
 			var deferred = $q.defer();
@@ -362,7 +362,7 @@
 			
 			return deferred.promise;
 			
-		}
+		};
 		
 		
 		self.getDataElementsFromIDs = function (dataElementIDs) {
@@ -380,7 +380,7 @@
 			});
 			
 			return deferred.promise;
-		}
+		};
 		
 		
 		
@@ -497,7 +497,7 @@
 						 
 			return deferred.promise; 
 
-		}
+		};
 		
 		
 		
@@ -552,7 +552,7 @@
 			    }
 			);
 			return deferred.promise; 
-		}
+		};
 		
 		
 		self.getDataElementsFromIndicator = function(indicator) {
@@ -879,7 +879,7 @@
 				return false;
 			}
 		
-		}
+		};
 		
 		self.getMapping = function(update) {
 			var deferred = $q.defer();
@@ -894,19 +894,19 @@
 				});	
 			}
 			return deferred.promise;
-		}
+		};
 		
 		self.getGroups = function() {
 			if (!self.hasMapping()) return null;
 			
 			return mapping.groups
-		}
+		};
 		
 		self.getCoreData = function() {
 			if (!self.hasMapping()) return null;
 			
 			return mapping.coreIndicators;
-		}
+		};
 		
 		
 		self.getData = function() {
@@ -914,7 +914,7 @@
 			
 			return mapping.data;
 		
-		}
+		};
 		
 		
 		self.getDataWithCode = function(dataCode) {
@@ -926,7 +926,7 @@
 			}
 			
 			return null;
-		}
+		};
 		
 		
 		self.getDataID = function (dataCode) {
@@ -938,7 +938,7 @@
 			}
 			
 			return null;
-		}
+		};
 		
 		self.getDataPeriodType = function(dataCode) {
 			if (!self.hasMapping()) return null;
@@ -951,7 +951,7 @@
 			}
 			
 			return null;
-		}
+		};
 		
 		
 		self.getDataInGroup = function(groupCode) {
@@ -979,14 +979,14 @@
 			}
 			
 			return dataInGroup;
-		}
+		};
 		
 		
 		self.getDatasets = function() {
 			if (!self.hasMapping()) return null;
 			
 			return mapping.dataSets;
-		}
+		};
 		
 		self.getDatasetFromID = function(id) {
 			if (!self.hasMapping()) return null;
@@ -997,13 +997,13 @@
 					return datasets[i];
 				}
 			}
-		}
+		};
 		
 		self.getDataSetPeriodType = function(id) {
 			if (!self.hasMapping()) return null;
 			
 			return self.getDatasetFromID(id).periodType;		
-		}
+		};
 		
 		
 		self.getDatasetsInGroup = function(groupCode) {
@@ -1025,7 +1025,7 @@
 			}
 
 			return uniqueFilteredDatasets;
-		}
+		};
 		
 		
 		self.getRelations = function(groupCode) {
@@ -1033,7 +1033,7 @@
 			
 			return mapping.relations;
 		
-		}
+		};
 
 		
 		
