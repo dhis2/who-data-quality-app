@@ -381,6 +381,77 @@
 			
 			return deferred.promise;
 		};
+
+		/**Could be data element, indicator or data element operand*/
+		self.getDataFromIDs = function (dataIDs) {
+
+			var deferred = $q.defer();
+
+			var dataElementOperands = [];
+			var dataElementOrIndicator = [];
+			for (var i = 0; i < dataIDs.length; i++) {
+
+				if (dataIDs[i].length > 11) {
+					dataElementOperands.push(dataIDs[i]);
+				}
+				else {
+					dataElementOrIndicator.push(dataIDs[i]);
+				}
+			}
+
+			var requests = [];
+			for (var i = 0; i < dataElementOperands.length; i = i + 60) {
+				var start = i;
+				var end = (i + 60) > dataElementOperands.length ? dataElementOperands.length : (i + 60);
+
+				var IDs = dataElementOperands.slice(start, end);
+
+				var requestURL = '/api/dataElementOperands.json?';
+				requestURL += 'fields=id,name';
+				requestURL += '&filter=id:in:[' + IDs.join(',') + ']&paging=false';
+
+				requests.push(requestURL);
+			}
+
+			for (var i = 0; i < dataElementOrIndicator.length; i = i + 120) {
+				var start = i;
+				var end = (i + 120) > dataElementOrIndicator.length ? dataElementOrIndicator.length : (i + 120);
+
+				var IDs = dataElementOrIndicator.slice(start, end);
+
+				var requestURL = '/api/dataElements.json?';
+				requestURL += 'fields=id,name';
+				requestURL += '&filter=id:in:[' + IDs.join(',') + ']&paging=false';
+				requests.push(requestURL);
+
+				requestURL = '/api/indicators.json?';
+				requestURL += 'fields=id,name';
+				requestURL += '&filter=id:in:[' + IDs.join(',') + ']&paging=false';
+				requests.push(requestURL);
+			}
+
+
+			requestService.getMultiple(requests).then(
+				function(responses) { //success
+					var data = [];
+
+					for (var i = 0; i < responses.length; i++) {
+						if (responses[i].data.dataElementOperands) data.push.apply(data, responses[i].data.dataElementOperands);
+						else if (responses[i].data.dataElements) data.push.apply(data, responses[i].data.dataElements);
+						else data.push.apply(data, responses[i].data.indicators);
+					}
+
+					deferred.resolve(data);
+				},
+				function(response) { //error
+					var data = response.data;
+					deferred.reject("Error in getUserOrgunit()");
+					console.log(response);
+				}
+			);
+
+			return deferred.promise;
+		};
 		
 		
 		
@@ -615,7 +686,47 @@
 			orgunits.promise = deferred.promise;
 			return deferred.promise; 
 		};
-		
+
+
+		self.getOrgunitsWithHierarchyFromIDs = function(orgunitIDs) {
+			var deferred = $q.defer();
+
+			var requests = [];
+			for (var i = 0; i < orgunitIDs.length; i = i + 120) {
+				var start = i;
+				var end = (i + 120) > orgunitIDs.length ? orgunitIDs.length : (i + 120);
+
+				var IDs = orgunitIDs.slice(start, end);
+
+				var requestURL = '/api/organisationUnits.json?';
+				requestURL += 'fields=id,name,level,parent[id,name,level,parent[id,name,level,parent[id,name,level,parent[id,level,name]]]]';
+				requestURL += '&filter=id:in:[' + IDs.join(',') + ']&paging=false';
+
+				requests.push(requestURL);
+			}
+
+
+			requestService.getMultiple(requests).then(
+				function(responses) { //success
+					var orgunits = [];
+
+					for (var i = 0; i < responses.length; i++) {
+						orgunits.push.apply(orgunits, responses[i].data.organisationUnits);
+					}
+
+					deferred.resolve(orgunits);
+
+				},
+				function(response) { //error
+					var data = response.data;
+					deferred.reject("Error in getUserOrgunit()");
+					console.log(response);
+				}
+			);
+
+			return deferred.promise;
+
+		}
 		
 		self.getOrgunitLevels = function() { 
 			

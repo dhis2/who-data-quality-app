@@ -2,7 +2,7 @@
 	"use strict";
 
 	/**Service: Completeness*/
-	angular.module('dataQualityApp').service('dataAnalysisService', ['requestService', 'mathService', function (requestService, mathService) {
+	angular.module('dataQualityApp').service('dataAnalysisService', ['$q', 'requestService', 'mathService', 'metaDataService', function ($q, requestService, mathService, metaDataService) {
 
 		var self = this;
 
@@ -174,7 +174,7 @@
 				//make requests
 				var baseRequest;
 				baseRequest = '/api/analytics.json?';
-				baseRequest += '&hideEmptyRows=true&ignoreLimit=true';
+				baseRequest += '&hideEmptyRows=true&ignoreLimit=true&skipMeta=true';
 				baseRequest += '&tableLayout=true';
 				baseRequest += '&dimension=pe:' + self.og.periods.join(';');
 				baseRequest += '&dimension=ou:' + self.og.ouBoundary[i];
@@ -225,9 +225,9 @@
 		function outlierAnalysis(data) {
 
 			var headers = data.data.headers;
-			var names = data.data.metaData.names; //TODO: need to change if ignoring metaData in requests
+			//var names = data.data.metaData.names; //TODO: WIP ignore meta
 			var rows = data.data.rows;
-			var periods = data.data.metaData.pe;
+			var periods = self.og.periods;
 
 			var coAll = self.og.coAll;
 			var coIDs = self.og.coIDs;
@@ -241,9 +241,7 @@
 			//Get the index of the important columns
 			var ou, dx, co, valStart;
 			for (var i = 0; i < headers.length; i++) {
-
 				switch (headers[i].column) {
-
 					case 'organisationunitid':
 						ou = i;
 						break;
@@ -261,8 +259,7 @@
 				}
 			}
 
-
-			//process the actual data
+			//Process the actual data
 			var row, newRow;
 			for (var i = 0; i < rows.length; i++) {
 				row = rows[i];
@@ -273,34 +270,10 @@
 					if (!coIDs[dxID]) continue;
 				}
 
+				var ouID = row[ou];
+				var dxID = co != undefined ? row[dx] + '.' + row[co] : row[dx];
+				newRow = outlierGapNewRow(ouID, dxID);
 
-				newRow = {
-					"data": [],
-					"metaData": {
-						'ou': {
-							'name': names[row[ou]],
-							"id": row[ou]
-						},
-						'dx': {
-							"name": co != undefined ? names[row[dx]] + ' ' + names[row[co]] : names[row[dx]],
-							"id": co != undefined ? row[dx] + '.' + row[co] : row[dx]
-						}
-					},
-					'stats': {
-						"mean": undefined,
-						"median": undefined,
-						"MAD": undefined,
-						"sd": undefined,
-						"variance": undefined
-					},
-					'result': {
-						"maxSscore": 0,
-						"maxZscore": 0,
-						"gapWeight": 0,
-						"outWeight": 0,
-						"totalWeight": 0
-					}
-				};
 
 				//Iterate to get all values, and look for gaps at the same time
 				var value, valueSet = [], gaps = 0;
@@ -319,120 +292,242 @@
 				//Calculate and store the statistical properties of the set
 				newRow.stats = mathService.getStats(valueSet);
 
-				//Look for outliers
-				var standardScore, zScore, maxSscore = 0, maxZscore = 0, outliers = 0;
-				for (var j = 0; j < valueSet.length; j++) {
+				//Check if there are outliers
+				newRow.result = outlierGapAnalyseData(valueSet, newRow.stats, gaps, zScoreCriteria, sScoreCriteria)
 
-					value = parseFloat(valueSet[j]);
-
-					standardScore = Math.abs(mathService.calculateStandardScore(value, newRow.stats));
-					zScore = Math.abs(mathService.calculateZScore(value, newRow.stats));
-
-					if (standardScore > maxSscore) maxSscore = standardScore;
-					if (zScore > maxZscore) maxZscore = zScore;
-
-					if (zScore >= zScoreCriteria || standardScore >= sScoreCriteria) {
-						outliers++;
-					}
-				}
-
-				newRow.result.maxSscore = maxSscore;
-				newRow.result.maxZscore = maxZscore;
-
-				//check if row should be saved or discarded
-				if (outliers > 0 || gaps >= gapCriteria) {
-					if (outliers > 0) {
-						newRow.result.outWeight = getOutlierWeight(valueSet, newRow.stats);
-					}
-					if (gaps >= gapCriteria) {
-						newRow.result.gapWeight = mathService.round(gaps * newRow.stats.median, 0);
-					}
-
-					newRow.result.totalWeight = newRow.result.outWeight + newRow.result.gapWeight;
-
-					//Add to result set
-					result.rows.push(newRow);
-				}
+				//If there are results (i.e. outliers), result set
+				if (newRow.result) result.rows.push(newRow);
 			}
 
 			if (result.rows.length > 210000) {
-				console.log("Reached 210000 rows - prioritizing");
-				result.rows.sort(function (a, b) {
-					return b.result.totalWeight - a.result.totalWeight;
-				});
-
-				for (var i = 200000; i < result.rows.length; i++) {
-					result.rows[i] = null;
-				}
-				result.rows.splice(200000, result.rows.length - 200000);
+				outlierGapTrimResult(result)
 			}
 
 			//Mark batch of data as done, then request more for procesing
 			processingSucceeded(data.id);
 
 			if (processingDone('outlierGap')) {
-				result.metaData.dataIDs = self.og.dataIDs;
-				result.metaData.coAll = self.og.coAll;
-				result.metaData.coIDs = self.og.coIDs;
-				result.metaData.periods = periods;
-				result.metaData.ouBoundary = self.og.ouBoundary;
-				result.metaData.ouGroup = self.og.ouGroup;
-				result.metaData.ouLevel = self.og.ouLevel;
-				result.metaData.sScoreCriteria = self.og.sScoreCriteria;
-				result.metaData.zScoreCriteria = self.og.zScoreCriteria;
-				result.metaData.gapCriteria = self.og.gapCriteria;
-
-				self.og.callback(self.og.result);
-
-				if (result.rows.length > 210000) {
-					result.rows.sort(function (a, b) {
-						return b.result.totalWeight - a.result.totalWeight;
-					});
-
-					for (var i = 200000; i < result.rows.length; i++) {
-						result.rows[i] = null;
-					}
-
-					result.rows.splice(200000, result.rows.length - 200000);
-				}
-
-
-				var weights = {
-					'c0-100': 0,
-					'c100-500': 0,
-					'c500-1000': 0,
-					'c1000+': 0
-				};
-				var w;
-				for (var i = 0; i < result.rows.length; i++) {
-					w = result.rows[i].result.totalWeight;
-					if (w <= 100) {
-						weights['c0-100']++;
-					}
-					else if (w > 100 && w <= 500) {
-						weights['c100-500']++;
-					}
-					else if (w > 500 && w <= 1000) {
-						weights['c500-1000']++;
-					}
-					else {
-						weights['c1000+']++;
-					}
-				}
-
-				console.log("Weight histogram:");
-				for (key in weights) {
-					console.log(key + ": " + weights[key]);
-				}
-
-				self.inProgress = false;
-				nextAnalysis();
+				outlierGapAnalysisDone(result);
 			}
 			else {
 				processData();
 			}
 		}
 
+		/**Analyses valueSet, making returning a "result" set with maxumim outlier scores and weights*/
+		function outlierGapAnalyseData(valueSet, stats, gaps, zScoreCriteria, sScoreCriteria, gapCriteria) {
+
+			var result = {
+				"maxSscore": 0,
+				"maxZscore": 0,
+				"gapWeight": 0,
+				"outWeight": 0,
+				"totalWeight": 0
+			};
+
+			//Look for outliers
+			var standardScore, zScore, maxSscore = 0, maxZscore = 0, outliers = 0, value;
+			for (var j = 0; j < valueSet.length; j++) {
+
+				value = parseFloat(valueSet[j]);
+
+				standardScore = Math.abs(mathService.calculateStandardScore(value, stats));
+				zScore = Math.abs(mathService.calculateZScore(value, stats));
+
+				if (standardScore > maxSscore) maxSscore = standardScore;
+				if (zScore > maxZscore) maxZscore = zScore;
+
+				if (zScore >= zScoreCriteria || standardScore >= sScoreCriteria) {
+					outliers++;
+				}
+			}
+
+			result.maxSscore = maxSscore;
+			result.maxZscore = maxZscore;
+
+			//check if row should be saved or discarded
+			if (outliers > 0 || gaps >= gapCriteria) {
+				if (outliers > 0) {
+					result.outWeight = getOutlierWeight(valueSet, stats);
+				}
+				if (gaps >= gapCriteria) {
+					result.gapWeight = mathService.round(gaps * stats.median, 0);
+				}
+
+				result.totalWeight = result.outWeight + result.gapWeight;
+
+				return result;
+			}
+			else {
+				return null;
+			}
+		}
+
+		/**Creates a new empty outlier gap analysis row*/
+		function outlierGapNewRow(ouID, dxID) {
+
+			return {
+				"data": [],
+				"metaData": {
+					'ou': {
+						'name': ouID, //TODO: temporary
+						"id": ouID
+					},
+					'dx': {
+						"name": dxID, //TODO: temporary
+						"id": dxID
+					}
+				},
+				'stats': {
+					"mean": undefined,
+					"median": undefined,
+					"MAD": undefined,
+					"sd": undefined,
+					"variance": undefined
+				}
+			};
+		}
+
+		/**Trims outlier gap analysis result to 2000*/
+		function outlierGapTrimResult(result) {
+			console.log("Reached 210000 rows - prioritizing");
+			result.rows.sort(function (a, b) {
+				return b.result.totalWeight - a.result.totalWeight;
+			});
+
+			for (var i = 200000; i < result.rows.length; i++) {
+				result.rows[i] = null;
+			}
+			result.rows.splice(200000, result.rows.length - 200000);
+		}
+
+		/**Prints a "histogram" of weight to console*/
+		function outlierGapResultHistorgram(result) {
+			var weights = {
+				'c0-100': 0,
+				'c100-500': 0,
+				'c500-1000': 0,
+				'c1000+': 0
+			};
+			var w;
+			for (var i = 0; i < result.rows.length; i++) {
+				w = result.rows[i].result.totalWeight;
+				if (w <= 100) {
+					weights['c0-100']++;
+				}
+				else if (w > 100 && w <= 500) {
+					weights['c100-500']++;
+				}
+				else if (w > 500 && w <= 1000) {
+					weights['c500-1000']++;
+				}
+				else {
+					weights['c1000+']++;
+				}
+			}
+
+			console.log("Weight histogram:");
+			var key;
+			for (key in weights) {
+				console.log(key + ": " + weights[key]);
+			}
+		}
+
+		/**Called when outlier and gap analysis is done. Save metadata and calls callback method*/
+		function outlierGapAnalysisDone(result) {
+			result.metaData.dataIDs = self.og.dataIDs;
+			result.metaData.coAll = self.og.coAll;
+			result.metaData.coIDs = self.og.coIDs;
+			result.metaData.periods = self.og.periods;
+			result.metaData.ouBoundary = self.og.ouBoundary;
+			result.metaData.ouGroup = self.og.ouGroup;
+			result.metaData.ouLevel = self.og.ouLevel;
+			result.metaData.sScoreCriteria = self.og.sScoreCriteria;
+			result.metaData.zScoreCriteria = self.og.zScoreCriteria;
+			result.metaData.gapCriteria = self.og.gapCriteria;
+
+			if (result.rows.length > 200000) {
+				outlierGapTrimResult(result);
+			}
+
+			outlierGapResultHistorgram(result);
+			outlierGapMetaData(result).then(function(success) {
+				self.og.callback(result);
+
+				self.inProgress = false;
+				nextAnalysis();
+			});
+		}
+
+		/** Get names of metadata (data elements and orgunits), and orgunit hierarchy*/
+		function outlierGapMetaData(result) {
+			var deferred = $q.defer();
+
+			var dataIDs = {};
+			var ouIDs = {};
+
+			var row;
+			for (var i = 0; i < result.rows.length; i++) {
+				row = result.rows[i];
+				dataIDs[row.metaData.dx.id] = true;
+				ouIDs[row.metaData.ou.id] = true;
+			}
+
+			var dataIDsUnique = [];
+			for (var key in dataIDs) {
+				dataIDsUnique.push(key);
+			}
+
+			var ouIDsUnique = [];
+			for (var key in ouIDs) {
+				ouIDsUnique.push(key);
+			}
+
+
+			metaDataService.getDataFromIDs(dataIDsUnique).then(function (data) {
+
+				var data = data;
+
+				metaDataService.getOrgunitsWithHierarchyFromIDs(ouIDsUnique).then(function(orgunits) {
+
+					var maxDepth = 0;
+					var orgunits = orgunits;
+					for (var i = 0; i < result.rows.length; i++) {
+						row = result.rows[i];
+
+						var dx = getObjectWithID(data, row.metaData.dx.id);
+						row.metaData.dx.name = dx.name;
+
+						var ou = getObjectWithID(orgunits, row.metaData.ou.id);
+						var hierarhcy = [], parent = ou.parent, depth = 0;
+						while (parent && parent.level > 1) {
+							hierarhcy.push(parent);
+							parent = parent.parent;
+							depth++;
+							if (depth > maxDepth) maxDepth = depth;
+						}
+						row.metaData.ou.name = ou.name;
+						row.metaData.ou.hieararchy = hierarhcy;
+
+					}
+					result.metaData.maxDepth = maxDepth;
+
+					deferred.resolve(true);
+				});
+
+			});
+
+			return deferred.promise;
+
+		}
+
+		function getObjectWithID(array, id) {
+
+			for (var i = 0; i < array.length; i++) {
+				if (array[i].id === id) return array[i];
+			}
+
+		}
 
 		/** DATASET COMPLETENESS ANALYSIS*/
 		/*
@@ -531,6 +626,7 @@
 			var names = self.dsco.subunitData.metaData.names;
 			var data = self.dsco.subunitData.rows;
 
+			var key;
 			data = data.concat(self.dsco.boundaryData.rows);
 			for (key in self.dsco.boundaryData.metaData.names) {
 				names[key] = self.dsco.boundaryData.metaData.names[key];
@@ -793,7 +889,7 @@
 			var extremeLimit = self.io.indicator.extremeOutlier;
 			var moderateLimit = self.io.indicator.moderateOutlier;
 
-			var valueSet, extremeCount, moderateCount, zCount;
+			var value, valueSet, extremeCount, moderateCount, zCount;
 			for (var i = 0; i < subunits.length; i++) {
 				valueSet = [];
 				extremeCount = 0;
@@ -974,6 +1070,7 @@
 			var data = self.dsci.subunitData.rows;
 
 			data = data.concat(self.dsci.boundaryData.rows);
+			var key;
 			for (key in self.dsci.boundaryData.metaData.names) {
 				names[key] = self.dsci.boundaryData.metaData.names[key];
 			}
