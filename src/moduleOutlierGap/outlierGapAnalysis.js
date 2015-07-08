@@ -283,6 +283,13 @@
 				}
 			}			
 		};
+
+		function getLevelByLevel(level) {
+
+			for (var i = 0; i < self.orgunitLevels.length; i++) {
+				if (self.orgunitLevels[i].level === level) return self.orgunitLevels[i];
+			}
+		}
 		
 		
 		function getPeriods() {
@@ -551,6 +558,30 @@
 			self.currentResult++;
 			prepareResult();
 		};
+
+		self.getLevelsForResult = function () {
+			if (!self.result) return;
+
+			var depth = 1+self.result.metaData.maxDepth;
+			var levels = [];
+			for (var i = 2; i <= depth; i++) {
+
+				levels.push(getLevelByLevel(i));
+
+			}
+
+			return levels;
+
+		}
+
+
+		self.getRowAncestor = function(hieararchy, level) {
+			for (var i = 0; i < hieararchy.length; i++) {
+				if (hieararchy[i].level === level) return hieararchy[i].name;
+			}
+			return '';
+
+		}
 		
 		
        	    
