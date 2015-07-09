@@ -100,7 +100,7 @@ module.exports = function(grunt) {
 		'Builds app, with minimsed resources',
 		[
 			'clean',
-			'copy:content',
+			'copy-build',
 			'concat-min',
 			'zip',
 			'clean:tmp'
