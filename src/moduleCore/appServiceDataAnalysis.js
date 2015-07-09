@@ -1,6 +1,4 @@
 (function () {
-	"use strict";
-
 	/**Service: Completeness*/
 	angular.module('dataQualityApp').service('dataAnalysisService', ['$q', 'requestService', 'mathService', 'metaDataService', function ($q, requestService, mathService, metaDataService) {
 
@@ -1093,7 +1091,7 @@
 				var droppedValue = values.shift();
 				var droppedPeriod = refPe.shift();
 				errors.push({
-					'type': "warning",
+					'severity': "warning",
 					'type': "Consistency over time",
 					'item': names[dxID],
 					'msg': "Missing data: Ignoring " + droppedPeriod + " from consistency analysis due to low completeness (" + droppedValue + ")."
@@ -1103,7 +1101,7 @@
 			//Can we get consistency at all?
 			if (refPe.length === 0) {
 				errors.push({
-					'type': "warning",
+					'severity': "warning",
 					'type': "Consistency over time",
 					'item': names[dxID],
 					'msg': "Not enough reference data to calculate consistency over time."
@@ -1167,7 +1165,7 @@
 				});
 			}
 			if (ignoreList.length > 0) errors.push({
-				'type': "warning",
+				'severity': "warning",
 				'type': "Consistency over time",
 				'item': names[dxID],
 				'msg': "Skipped for the following units due to missing data: " + ignoreList.join(', ')
@@ -1311,7 +1309,7 @@
 
 			if (!isNumber(valueA)) {
 				errors.push({
-					'type': "warning",
+					'severity': "warning",
 					'type': "Consistency betweeen indicators",
 					'item': names[dxIDa],
 					'msg': "Missing data: consistency analysis " + names[dxIDa] + "/" + names[dxIDb] + " in " + pe + " skipped for " + names[ouBoundary] + " due to missing data."
@@ -1319,7 +1317,7 @@
 			}
 			else if (!isNumber(valueB)) {
 				errors.push({
-					'type': "warning",
+					'severity': "warning",
 					'type': "Consistency betweeen indicators",
 					'item': names[dxIDb],
 					'msg': "Missing data: consistency analysis " + names[dxIDa] + "/" + names[dxIDb] + " in " + pe + " skipped for " + names[ouBoundary] + " due to missing data."
@@ -1406,7 +1404,7 @@
 			}
 
 			if (ignoreList.length > 0) errors.push({
-				'type': "warning",
+				'severity': "warning",
 				'type': "Consistency betweeen indicators",
 				'item': names[dxIDa] + " - " + names[dxIDb],
 				'msg': "Skipped for the following units due to missing data: " + ignoreList.join(', ')
