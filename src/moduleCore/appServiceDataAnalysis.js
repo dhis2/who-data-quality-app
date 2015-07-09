@@ -65,7 +65,6 @@
 			var queueItem = self.analysisQueue.pop();
 
 			if (!queueItem) {
-				console.log("No more jobs in queue");
 				console.timeEnd("ANALYSIS");
 				return;
 			}
@@ -370,11 +369,11 @@
 				"data": [],
 				"metaData": {
 					'ou': {
-						'name': ouID, //TODO: temporary
+						'name': null,
 						"id": ouID
 					},
 					'dx': {
-						"name": dxID, //TODO: temporary
+						"name": null,
 						"id": dxID
 					}
 				},
@@ -450,7 +449,8 @@
 				outlierGapTrimResult(result);
 			}
 
-			outlierGapResultHistorgram(result);
+			outlierGapResultHistorgram(result); //TODO: Only for dev purposes
+
 			outlierGapMetaData(result).then(function(success) {
 				self.og.callback(result);
 
@@ -488,33 +488,61 @@
 
 				var data = data;
 
-				metaDataService.getOrgunitsWithHierarchyFromIDs(ouIDsUnique).then(function(orgunits) {
+				//TODO: Need to first get levels, then "hardcode" into ou.hierarchy to make sorting work
+				metaDataService.getOrgunitLevels().then(function(levels) {
 
-					var maxDepth = 0;
-					var orgunits = orgunits;
-					for (var i = 0; i < result.rows.length; i++) {
-						row = result.rows[i];
-
-						var dx = getObjectWithID(data, row.metaData.dx.id);
-						row.metaData.dx.name = dx.name;
-
-						var ou = getObjectWithID(orgunits, row.metaData.ou.id);
-						var hierarhcy = [], parent = ou.parent, depth = 0;
-						while (parent && parent.level > 1) {
-							hierarhcy.push(parent);
-							parent = parent.parent;
-							depth++;
-							if (depth > maxDepth) maxDepth = depth;
+					var levels = levels;
+					for (var i = 0; i < levels.length; i++) {
+						if (levels[i].level === 1) {
+							levels.splice(i, 1);
+							break;
 						}
-						row.metaData.ou.name = ou.name;
-						row.metaData.ou.hieararchy = hierarhcy;
-
 					}
-					result.metaData.maxDepth = maxDepth;
 
-					deferred.resolve(true);
-				});
+					metaDataService.getOrgunitsWithHierarchyFromIDs(ouIDsUnique).then(function(orgunits) {
 
+						var orgunits = orgunits;
+						var maxDepth = 1;
+						for (var i = 0; i < result.rows.length; i++) {
+							row = result.rows[i];
+
+							var dx = getObjectWithID(data, row.metaData.dx.id);
+							row.metaData.dx.name = dx.name;
+
+							var ou = getObjectWithID(orgunits, row.metaData.ou.id);
+
+							var hierarhcy = {}, parent = ou.parent;
+							while (parent && parent.level > 1) {
+
+
+								for (var j = 0; j < levels.length; j++) {
+									if (levels[j].level === parent.level) {
+										hierarhcy[levels[j].name] = parent.name
+									}
+								}
+
+								if (parent.level > maxDepth) maxDepth = parent.level;
+								parent = parent.parent;
+							}
+							row.metaData.ou.name = ou.name;
+							row.metaData.ou.hierarchy = hierarhcy;
+
+						}
+
+						var hierarchy = [];
+						for (var i = 2; i <= maxDepth; i++) {
+							for (var j = 0; j < levels.length; j++) {
+								if (levels[j].level === i) {
+									hierarchy.push(levels[j].name);
+								}
+							}
+						}
+
+						result.metaData.hierarchy = hierarchy;
+
+						deferred.resolve(true);
+					});
+					});
 			});
 
 			return deferred.promise;

@@ -1,14 +1,13 @@
-
 (function(){
 	
 	var app = angular.module('outlierGapAnalysis', []);
 	
 	app.filter('startFrom', function() {
-	    return function(input, start) {
-	        start = +start; //parse to int
-	        if (input) return input.slice(start);
-	        else return input;
-	    }
+		return function(input, start) {
+			start = +start; //parse to int
+			if (input) return input.slice(start);
+			else return input;
+		}
 	});
 	
 	app.controller("OutlierGapAnalysisController", function(metaDataService, periodService, requestService, dataAnalysisService, mathService, $scope, $modal) {
@@ -16,37 +15,37 @@
 		
 		self.results = [];
 		self.currentResult = undefined; 
-	    self.result = undefined;
-	    
-	    self.itemsPerPage = 25;
-	    self.hasVisual = false;
-	        
-	    self.processStatus = dataAnalysisService.status;
-	        
-	    init();
-	    initWatchers();	    
-	    	    
+		self.result = undefined;
+		
+		self.itemsPerPage = 25;
+		self.hasVisual = false;
+			
+		self.processStatus = dataAnalysisService.status;
+			
+		init();
+		initWatchers();		
+				
 		function init() {			
 			self.dataDisaggregation = 0;
 			
 			self.showFilter = false;
-	    	
-	    	self.datasets = [];
-	    	self.datasetDataelements = undefined;
-	    	self.datasetSelected = undefined;
-	    	metaDataService.getDataSets().then(function(data) { 
-	    		self.datasets = data;
-	    	});
-	    	
-	    	self.dataElementGroups = [];
-	    	self.dataElementGroupsSelected = undefined;
-	    	metaDataService.getDataElementGroups().then(function(data) { 
-	    		self.dataElementGroups = data;
-	    	});
-	    	
-	    	self.dataElements = [];
-	    	self.dataElementPlaceholder = "";
-	    	self.dataElementsSelected = [];
+			
+			self.datasets = [];
+			self.datasetDataelements = undefined;
+			self.datasetSelected = undefined;
+			metaDataService.getDataSets().then(function(data) { 
+				self.datasets = data;
+			});
+			
+			self.dataElementGroups = [];
+			self.dataElementGroupsSelected = undefined;
+			metaDataService.getDataElementGroups().then(function(data) { 
+				self.dataElementGroups = data;
+			});
+			
+			self.dataElements = [];
+			self.dataElementPlaceholder = "";
+			self.dataElementsSelected = [];
 			
 			
 			self.indicatorGroups = [];
@@ -55,83 +54,83 @@
 				self.indicatorGroups = data;
 			});
 			
-	    	self.indicators = [];
-	    	self.indicatorPlaceholder = "";
-	    	self.indicatorsSelected = [];
-	    	
-	    	
-	    	self.analysisOrgunits = [];
-	    	self.userOrgunits = [];
-	    	self.boundaryOrgunitSelected = undefined;
-	    	
-	    	self.ouSelected = null;
-	    	self.ouSearchResult = [];
-	    		    	
-	    	metaDataService.getUserOrgunits().then(function(data) { 
-	    		self.userOrgunits = data;
-	    		self.boundarySelectionType = 0;
-	    		self.boundaryOrgunitSelected = self.userOrgunits[0];
-	    		self.filterLevels();
-	    		self.orgunitUserDefaultLevel();
-	    	});
-	    	
-	    	
-	    	self.orgunitLevels = [];
-	    	self.filteredOrgunitLevels = [];
-	    	self.orgunitLevelSelected = undefined;
-	    	metaDataService.getOrgunitLevels().then(function(data) { 
-	    		self.orgunitLevels = data;
-	    		
-	    		self.lowestLevel = 0; 
-	    		for (var i = 0; i < self.orgunitLevels.length; i++) {
-	    			var level = self.orgunitLevels[i].level;
-	    			if (level > self.lowestLevel) self.lowestLevel = level;
-	    		}
-	    		
-	    		self.filterLevels();
-	    		self.orgunitUserDefaultLevel();
-	    	});
-	    	
-	    	
-	    	self.orgunitGroups = [];
-	    	self.orgunitGroupSelected = undefined;
-	    	metaDataService.getOrgunitGroups().then(function(data) { 
-	    		self.orgunitGroups = data;
-	    	});
-	    	
-	    	
-	    	self.periodTypes = [];
-	    	self.periodTypes = periodService.getPeriodTypes();
-	    	self.periodTypeSelected = self.periodTypes[1];
-	    	
-	    	self.periodCount = [];	    	
-	    	self.periodCounts = periodService.getPeriodCount();
-	    	self.periodCountSelected = self.periodCounts[11];
-	    	
-	    	self.years = periodService.getYears();
-	    	self.yearSelected = self.years[0];
-	    	
-	    	self.isoPeriods = [];
-	    	
-	    	self.currentDate = new Date();			
-	    	self.date = {
-	    		"startDate": moment().subtract(12, 'months'), 
-	    		"endDate": moment()
-	    	};
-	    	
-	    	self.periodOption = "last";	    	
-	    	
-	    	self.onlyNumbers = /^\d+$/;	    	
-	    	self.userOrgunitLabel = "";
-	    	    	
-	    	//Accordion settings
-	    	self.oneAtATime = true;
-	    	self.status = {
-	    	    isFirstOpen: true
-	    	};
-	    }
-	    	    
-	    
+			self.indicators = [];
+			self.indicatorPlaceholder = "";
+			self.indicatorsSelected = [];
+			
+			
+			self.analysisOrgunits = [];
+			self.userOrgunits = [];
+			self.boundaryOrgunitSelected = undefined;
+			
+			self.ouSelected = null;
+			self.ouSearchResult = [];
+						
+			metaDataService.getUserOrgunits().then(function(data) { 
+				self.userOrgunits = data;
+				self.boundarySelectionType = 0;
+				self.boundaryOrgunitSelected = self.userOrgunits[0];
+				self.filterLevels();
+				self.orgunitUserDefaultLevel();
+			});
+			
+			
+			self.orgunitLevels = [];
+			self.filteredOrgunitLevels = [];
+			self.orgunitLevelSelected = undefined;
+			metaDataService.getOrgunitLevels().then(function(data) { 
+				self.orgunitLevels = data;
+				
+				self.lowestLevel = 0; 
+				for (var i = 0; i < self.orgunitLevels.length; i++) {
+					var level = self.orgunitLevels[i].level;
+					if (level > self.lowestLevel) self.lowestLevel = level;
+				}
+				
+				self.filterLevels();
+				self.orgunitUserDefaultLevel();
+			});
+			
+			
+			self.orgunitGroups = [];
+			self.orgunitGroupSelected = undefined;
+			metaDataService.getOrgunitGroups().then(function(data) { 
+				self.orgunitGroups = data;
+			});
+			
+			
+			self.periodTypes = [];
+			self.periodTypes = periodService.getPeriodTypes();
+			self.periodTypeSelected = self.periodTypes[1];
+			
+			self.periodCount = [];			
+			self.periodCounts = periodService.getPeriodCount();
+			self.periodCountSelected = self.periodCounts[11];
+			
+			self.years = periodService.getYears();
+			self.yearSelected = self.years[0];
+			
+			self.isoPeriods = [];
+			
+			self.currentDate = new Date();			
+			self.date = {
+				"startDate": moment().subtract(12, 'months'), 
+				"endDate": moment()
+			};
+			
+			self.periodOption = "last";			
+			
+			self.onlyNumbers = /^\d+$/;			
+			self.userOrgunitLabel = "";
+					
+			//Accordion settings
+			self.oneAtATime = true;
+			self.status = {
+				isFirstOpen: true
+			};
+		}
+				
+		
 		function initWatchers() {
 		
 			//Data element group => get data elements in group
@@ -152,7 +151,7 @@
 					if (self.dataElementGroupsSelected) {
 						self.dataElementsSelected = [];
 						updateDataElementList();	
-					}   
+					}	
 				}
 			);
 			
@@ -164,7 +163,7 @@
 
 						updateIndicatorList();
 						
-			  		}     
+						}	 
 				}
 			);
 			
@@ -224,53 +223,53 @@
 		};
 		
 		
-	    self.orgunitSearch = function(searchString){
-	        if (searchString.length >= 3) {
-	    		var requestURL = "/api/organisationUnits.json?filter=name:like:" + searchString + "&paging=false&fields=name,id,level";
-	    		requestService.getSingle(requestURL).then(function (response) {
-	    			self.ouSearchResult = response.data.organisationUnits;
-	    		});
-	    	}
-	    };
+		self.orgunitSearch = function(searchString){
+			if (searchString.length >= 3) {
+				var requestURL = "/api/organisationUnits.json?filter=name:like:" + searchString + "&paging=false&fields=name,id,level";
+				requestService.getSingle(requestURL).then(function (response) {
+					self.ouSearchResult = response.data.organisationUnits;
+				});
+			}
+		};
 		
 	
-	    function updateDataElementList() {
-	   		self.dataElements = [];
-	   		self.dataElementsSelected = [];
-	    	if (self.dataDisaggregation === 0) {	    	
-	    		self.dataElementPlaceholder = "Loading...";
-		    	metaDataService.getDataElementGroupMembers(self.dataElementGroupsSelected.id)
-		    	 	.then(function(data) { 
+		function updateDataElementList() {
+				self.dataElements = [];
+				self.dataElementsSelected = [];
+			if (self.dataDisaggregation === 0) {			
+				self.dataElementPlaceholder = "Loading...";
+				metaDataService.getDataElementGroupMembers(self.dataElementGroupsSelected.id)
+				 	.then(function(data) { 
 
-		    	       	self.dataElementPlaceholder = "All data elements (totals) in " + self.dataElementGroupsSelected.name;
-		    	       	
-		    	       	self.dataElements = data;
-		    	     });
-	    	}
-	    	else {
-	    		self.dataElementPlaceholder = "Loading...";
-	    		metaDataService.getDataElementGroupMemberOperands(self.dataElementGroupsSelected.id)
-	    		 	.then(function(data) { 
-	    		 		self.dataElementPlaceholder = "All data elements (details) in " + self.dataElementGroupsSelected.name;
-	    		 		
-	    		       	self.dataElements = data;
-	    		     });
-	    	}
-	    
-	    }
-	    
-	    
-  	    function updateIndicatorList() {
-  	    	self.indicators = [];
-	   		self.indicatorsSelected = [];
-  	    	self.indicatorPlaceholder = "Loading...";
-  	    	metaDataService.getIndicatorGroupMembers(self.indicatorGroupsSelected.id)
-  	    		.then(function(data) { 
-  	    			self.indicatorPlaceholder = "All indicators in " + self.indicatorGroupsSelected.name;
-  	    			
-  	    		   	self.indicators = data;
-  	    		});
-  	    }
+							self.dataElementPlaceholder = "All data elements (totals) in " + self.dataElementGroupsSelected.name;
+							
+							self.dataElements = data;
+					 });
+			}
+			else {
+				self.dataElementPlaceholder = "Loading...";
+				metaDataService.getDataElementGroupMemberOperands(self.dataElementGroupsSelected.id)
+				 	.then(function(data) { 
+				 		self.dataElementPlaceholder = "All data elements (details) in " + self.dataElementGroupsSelected.name;
+				 		
+							self.dataElements = data;
+					 });
+			}
+		
+		}
+		
+		
+			function updateIndicatorList() {
+				self.indicators = [];
+				self.indicatorsSelected = [];
+				self.indicatorPlaceholder = "Loading...";
+				metaDataService.getIndicatorGroupMembers(self.indicatorGroupsSelected.id)
+					.then(function(data) { 
+						self.indicatorPlaceholder = "All indicators in " + self.indicatorGroupsSelected.name;
+						
+							self.indicators = data;
+					});
+			}
 			
 		
 		self.filterLevels = function() {
@@ -400,7 +399,7 @@
 			
 			return {
 				'dataIDs': uniqueArray(dataIDs),
-				'details': details,  
+				'details': details,	
 				'coFilter': details ? coFilter : null
 			};
 		
@@ -410,10 +409,10 @@
 		
 		
 		function uniqueArray(array) {
-		    var seen = {};
-		    return array.filter(function(item) {
-		        return seen.hasOwnProperty(item) ? false : (seen[item] = true);
-		    });
+			var seen = {};
+			return array.filter(function(item) {
+				return seen.hasOwnProperty(item) ? false : (seen[item] = true);
+			});
 		}
 		
 		
@@ -505,8 +504,8 @@
 		RESULTS
 		*/
 		
-		var receiveResult = function(result) {		    
-			    
+		var receiveResult = function(result) {			
+				
 			if (!result || !result.rows || result.rows.length === 0) { 
 				console.log("Empty result");
 			}
@@ -549,7 +548,7 @@
 			}
 			
 			//Calculate total number of columns in table
-			self.totalColumns = self.periods.length + 8;
+			self.totalColumns = self.periods.length + 8 + self.result.metaData.hierarchy.length;
 		
 		}
 		
@@ -559,190 +558,165 @@
 			prepareResult();
 		};
 
-		self.getLevelsForResult = function () {
-			if (!self.result) return;
-
-			var depth = 1+self.result.metaData.maxDepth;
-			var levels = [];
-			for (var i = 2; i <= depth; i++) {
-
-				levels.push(getLevelByLevel(i));
-
+				
+		self.isOutlier = function (value, stats) {
+			if (value === null || value === '') return false;
+			
+				var standardScore = Math.abs(mathService.calculateStandardScore(value, stats));
+				var zScore = Math.abs(mathService.calculateZScore(value, stats));
+				
+				if (standardScore > 2 || zScore > 3.5) return true;
+				else return false;
+			};
+			
+						
+			function includeRow(row) {
+				
+				if (self.stdFilterType === 0) return true;
+				
+				if (self.stdFilterType === 1) {
+					if (self.stdFilterDegree === 2) return row.result.maxSscore > 3;
+					else return row.result.maxSscore > 2;
+				}
+				
+				if (self.stdFilterType === 2) {
+					if (self.stdFilterDegree === 2) return row.result.maxZscore > 5;
+					else return row.result.maxZscore > 3.5;
+				} 
+				
+				return false;
 			}
+			
+			
+			self.updateFilter = function() {
+				self.filteredRows = [];
+				for (var i = 0; i < self.result.rows.length; i++) {
+					if (includeRow(self.result.rows[i])) {
+						self.filteredRows.push(self.result.rows[i]);
+					}
+				}
+				
+				//Store paging variables
+				self.currentPage = 1;
+				self.pageSize = 15;		
+				self.totalRows = self.filteredRows.length;
+			};
+			
+			self.sortByColumn = function (columnKey) {
+				self.currentPage = 1;
+				if (self.sortCol === columnKey) {
+					self.reverse = !self.reverse;
+				}
+				else {
+					self.sortCol = columnKey;
+					self.reverse = true;
+				}
+			};
+			
+			
+			/**INTERACTIVE FUNCTIONS*/
+			
+			//showDetails
+		self.showDetails = function(row) {
 
-			return levels;
-
-		}
-
-
-		self.getRowAncestor = function(hieararchy, level) {
-			for (var i = 0; i < hieararchy.length; i++) {
-				if (hieararchy[i].level === level) return hieararchy[i].name;
+						
+			var chartData = [{
+				'key': row.metaData.dx.name + " - " + row.metaData.ou.name,
+				'color': "green",
+				'values': []
+			}];
+			for (var i = 0; i < row.data.length; i++) {
+				var value = row.data[i];
+				if (value === '') value = null;
+				else value = parseFloat(value);
+				chartData[0].values.push({ 		
+					'y': value,
+					'x': self.periods[i]
+				});
 			}
-			return '';
+			var toolTip = function(key, x, y, e, graph) {				
+				var toolTipHTML = '<h3>' + x + '</h3>';
+				toolTipHTML += '<p style="margin-bottom: 0px">' + y + '</p>';
+				return toolTipHTML;
+			};
+			
+			
+			var chartOptions = {
+					"chart": {
+					"type": "multiBarChart",
+					"interactiveGuideline": false,
+					"height": 400,
+					"margin": {
+						"top": 40,
+						"right": 20,
+						"bottom": 40,
+						"left": 100
+					},
+					"xAxis": {
+						'rotateLabels': -30
+					},
+					'tooltips': true,
+					'tooltipContent': toolTip,
+					'showLegend': false,
+					'showControls': false
+				}
+			};
+												
+			var modalInstance = $modal.open({
+				templateUrl: "moduleOutlierGap/outlierGapGraph.html",
+				controller: "ModalGraphController",
+				controllerAs: 'mgCtrl',
+				resolve: {
+					ouName: function () {
+						return row.metaData.ou.name;
+					},
+					dxName: function () {
+						return row.metaData.dx.name;
+					},
+					chartOptions: function () {
+						return chartOptions;
+					},
+					chartData: function () {
+						return chartData;
+					}
+				}
+			});
+	
+			modalInstance.result.then(function (result) {
+			});
+		};
 
-		}
+		
+		self.sendMessage = function(metaData) {
+						
+			var modalInstance = $modal.open({
+				templateUrl: "moduleOutlierGap/outlierGapMessage.html",
+				controller: "ModalMessageController",
+				controllerAs: 'mmCtrl',
+				resolve: {
+					orgunitID: function () {
+						return metaData.ou.id;
+					},
+					orgunitName: function () {
+						return metaData.ou.name;
+					}
+				}
+			});
+	
+			modalInstance.result.then(function (result) {
+			});
+		};
 		
 		
-       	    
-	    self.isOutlier = function (value, stats) {
-	    	if (value === null || value === '') return false;
-	    	
-	   		var standardScore = Math.abs(mathService.calculateStandardScore(value, stats));
-	   		var zScore = Math.abs(mathService.calculateZScore(value, stats));
-	   		
-	   		if (standardScore > 2 || zScore > 3.5) return true;
-	   		else return false;
-	   	};
-	   	
-	   		   	
-	   	function includeRow(row) {
-	   		
-	   		if (self.stdFilterType === 0) return true;
-	   		
-	   		if (self.stdFilterType === 1) {
-	   			if (self.stdFilterDegree === 2) return row.result.maxSscore > 3;
-	   			else return row.result.maxSscore > 2;
-	   		}
-	   		
-   			if (self.stdFilterType === 2) {
-   				if (self.stdFilterDegree === 2) return row.result.maxZscore > 5;
-   				else return row.result.maxZscore > 3.5;
-   			} 
-	   		
-	   		return false;
-	   	}
-	   	
-	   	
-	   	self.updateFilter = function() {
-	   		self.filteredRows = [];
-	   		for (var i = 0; i < self.result.rows.length; i++) {
-	   			if (includeRow(self.result.rows[i])) {
-	   				self.filteredRows.push(self.result.rows[i]);
-	   			}
-	   		}
-	   		
-	   		//Store paging variables
-	   		self.currentPage = 1;
-	   		self.pageSize = 15;   	
-	   		self.totalRows = self.filteredRows.length;
-	   	};
-	   	
-	   	self.sortByColumn = function (columnKey) {
-	   		self.currentPage = 1;
-	   		if (self.sortCol === columnKey) {
-	   			self.reverse = !self.reverse;
-	   		}
-	   		else {
-	   			self.sortCol = columnKey;
-	   			self.reverse = true;
-	   		}
-	   	};
-	   	
-	   	
-	   	/**INTERACTIVE FUNCTIONS*/
-	   	
-	   	//showDetails
-        self.showDetails = function(row) {
-
-			        	
-        	var chartData = [{
-        		'key': row.metaData.dx.name + " - " + row.metaData.ou.name,
-        		'color': "green",
-        		'values': []
-        	}];
-        	for (var i = 0; i < row.data.length; i++) {
-    			var value = row.data[i];
-    			if (value === '') value = null;
-    			else value = parseFloat(value);
-    			chartData[0].values.push({ 		
-    				'y': value,
-    				'x': self.periods[i]
-    			});
-        	}
-        	var toolTip = function(key, x, y, e, graph) {        		
-        		var toolTipHTML = '<h3>' + x + '</h3>';
-        		toolTipHTML += '<p style="margin-bottom: 0px">' + y + '</p>';
-        	    return toolTipHTML;
-        	};
-        	
-        	
-        	var chartOptions = {
-        	   	"chart": {
-        	        "type": "multiBarChart",
-        	        "interactiveGuideline": false,
-        	        "height": 400,
-        	        "margin": {
-        	          "top": 40,
-        	          "right": 20,
-        	          "bottom": 40,
-        	          "left": 100
-        	        },
-        	        "xAxis": {
-        	          'rotateLabels': -30
-        	        },
-        	        'tooltips': true,
-        	        'tooltipContent': toolTip,
-        	        'showLegend': false,
-        	        'showControls': false
-        	    }
-        	};
-        	        	        				
-    		var modalInstance = $modal.open({
-	            templateUrl: "moduleOutlierGap/outlierGapGraph.html",
-	            controller: "ModalGraphController",
-	            controllerAs: 'mgCtrl',
-	            resolve: {
-	    	        ouName: function () {
-	    	            return row.metaData.ou.name;
-	    	        },
-	    	        dxName: function () {
-	    	            return row.metaData.dx.name;
-	    	        },
-	    	        chartOptions: function () {
-	    	            return chartOptions;
-	    	        },
-	    	        chartData: function () {
-	    	            return chartData;
-	    	        }
-	            }
-	        });
-	
-	        modalInstance.result.then(function (result) {
-	        });
-        };
-
-        
-        self.sendMessage = function(metaData) {
-        	        	
-        	var modalInstance = $modal.open({
-	            templateUrl: "moduleOutlierGap/outlierGapMessage.html",
-	            controller: "ModalMessageController",
-	            controllerAs: 'mmCtrl',
-	            resolve: {
-	    	        orgunitID: function () {
-	    	            return metaData.ou.id;
-	    	        },
-	    	        orgunitName: function () {
-	    	            return metaData.ou.name;
-	    	        }
-	            }
-	        });
-	
-	        modalInstance.result.then(function (result) {
-	        });
-        };
-        
-        
-        self.drillDown = function (rowMetaData) {
-        	
-        	var requestURL = "/api/organisationUnits/" + rowMetaData.ou.id + ".json?fields=children[id]";
-        	requestService.getSingle(requestURL).then(function (response) {
-        		
-        		
-        		var children = response.data.children;
-        		if (children.length > 0) {
-        		
+		self.drillDown = function (rowMetaData) {
+			
+			var requestURL = "/api/organisationUnits/" + rowMetaData.ou.id + ".json?fields=children[id]";
+			requestService.getSingle(requestURL).then(function (response) {
+				
+				
+				var children = response.data.children;
+				if (children.length > 0) {
+				
 					var orgunits = [];
 					for (var i = 0; i < children.length; i++) {
 						orgunits.push(children[i].id);
@@ -758,77 +732,89 @@
 					self.result = undefined;
 					self.results.move(self.currentResult, 0);
 					
-        		}
-        		        		
-        		else {
-        			console.log(rowMetaData.ouName + ' does not have any children');
-        		}
-        	});
-        	
-        	
-        };
+				}
+								
+				else {
+					console.log(rowMetaData.ouName + ' does not have any children');
+				}
+			});
+			
+			
+		};
 
-        
-	   	self.exportCSV = function() {
-	   				  
-			  var content = self.result.rows;
-			  var string, csvContent = '';
-			  
-			  csvContent += "Orgunit ID,Orgunit name,Data," + self.periods.join(',');
-			  csvContent += ",Max SD score,Max Z score,Gap weight,Outlier weight,Total weight\n";
-			  
-			  for (var i = 0; i < content.length; i++) {
-			      var val, value = content[i];
-			      
-			  	 string = checkExportValue(value.metaData.ou.id) + ",";	   				  	
-			  	 string += checkExportValue(value.metaData.ou.name) + ",";
-			  	 string += checkExportValue(value.metaData.dx.name) + ",";
-			  	 for (var j = 0; j < value.data.length; j++) {
-			  	 	val = fixDecimalsForExport(value.data[j]);
-			  	 	string += checkExportValue(val) + ",";	
-			  	 }
-			  	 val = fixDecimalsForExport(value.result.maxSscore);
-			     string += checkExportValue(val) + ",";
-			     val = fixDecimalsForExport(value.result.maxZscore);
-			     string += checkExportValue(val) + ",";
-			     string += checkExportValue(value.result.gapWeight) + ",";
-			     string += checkExportValue(value.result.outWeight) + ",";
-			     string += checkExportValue(value.result.totalWeight);
-			  
-			     csvContent += string + '\n';
-			  }
-			  
-			  var blob = new Blob([csvContent], {type: "text/csv;charset=utf-8"});
-			  // see FileSaver.js
-			  saveAs(blob, "outlier_gap_data.csv");
+		
+			self.exportCSV = function() {
+							
+				var content = self.result.rows;
+				var string, csvContent = '';
+				
+					csvContent += "Orgunit ID,Data ID," + self.result.metaData.hierarchy.join(',');
+				csvContent += ",Orgunit name,Data," + self.periods.join(',');
+					csvContent += ",Max SD score,Max Z score,Gap weight,Outlier weight,Total weight\n";
+				
+				for (var i = 0; i < content.length; i++) {
+					var val, value = content[i];
 
-	   	
-	   	};
-	   	
-	   	
-	   	/** UTILITIES */
-	   	
-	   	function fixDecimalsForExport(value) {
-	   		value = value.toString();
-	   		if (value.indexOf('.0') === (value.length - 2)) {
-	   		 	value = value.slice(0, - 2);
-   		 	}
-   		 	else {
-   		 		value = value.replace(',', '.');
-   		 	}
-   		 	return value;
-	   	}
-	   	
-	   	
-	   	function checkExportValue(value) {
-	   		var innerValue =  value === null ? '' : value.toString();
-	   		var result = innerValue.replace(/"/g, '""');
-	   		if (result.search(/("|,|\n)/g) >= 0)
-	   		    result = '"' + result + '"';
+					 string = checkExportValue(value.metaData.ou.id) + ",";
+					string += checkExportValue(value.metaData.dx.id) + ",";
+
+					for (var j = 0; j < self.result.metaData.hierarchy.length; j++) {
+						if (value.metaData.ou.hierarchy[self.result.metaData.hierarchy[j]]) {
+							string += checkExportValue(value.metaData.ou.hierarchy[self.result.metaData.hierarchy[j]]) + ",";
+						}
+						else {
+							string += checkExportValue('') + ",";
+						}
+					}
+
+					string += checkExportValue(value.metaData.ou.name) + ",";
+					 string += checkExportValue(value.metaData.dx.name) + ",";
+					 for (var j = 0; j < value.data.length; j++) {
+						val = fixDecimalsForExport(value.data[j]);
+						string += checkExportValue(val) + ",";	
+					 }
+					 val = fixDecimalsForExport(value.result.maxSscore);
+					 string += checkExportValue(val) + ",";
+					 val = fixDecimalsForExport(value.result.maxZscore);
+					 string += checkExportValue(val) + ",";
+					 string += checkExportValue(value.result.gapWeight) + ",";
+					 string += checkExportValue(value.result.outWeight) + ",";
+					 string += checkExportValue(value.result.totalWeight);
+					
+					 csvContent += string + '\n';
+				}
+				
+				var blob = new Blob([csvContent], {type: "text/csv;charset=utf-8"});
+				// see FileSaver.js
+				saveAs(blob, "outlier_gap_data.csv");
+
+			
+			};
+			
+			
+			/** UTILITIES */
+			
+			function fixDecimalsForExport(value) {
+				value = value.toString();
+				if (value.indexOf('.0') === (value.length - 2)) {
+				 	value = value.slice(0, - 2);
+			 	}
+			 	else {
+			 		value = value.replace(',', '.');
+			 	}
+			 	return value;
+			}
+			
+			
+			function checkExportValue(value) {
+				var innerValue =	value === null ? '' : value.toString();
+				var result = innerValue.replace(/"/g, '""');
+				if (result.search(/("|,|\n)/g) >= 0)
+					result = '"' + result + '"';
 			return result;
-	   	}     
-	   	 
-    	    
+			}	 
+			 
+			
 		return self;
 	});
 	
