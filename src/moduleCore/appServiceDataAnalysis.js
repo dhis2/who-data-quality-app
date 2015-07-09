@@ -173,7 +173,7 @@
 				//make requests
 				var baseRequest;
 				baseRequest = '/api/analytics.json?';
-				baseRequest += '&hideEmptyRows=true&ignoreLimit=true&skipMeta=true';
+				baseRequest += 'hideEmptyRows=true&ignoreLimit=true&hierarchyMeta=true';
 				baseRequest += '&tableLayout=true';
 				baseRequest += '&dimension=pe:' + self.og.periods.join(';');
 				baseRequest += '&dimension=ou:' + self.og.ouBoundary[i];
@@ -224,7 +224,8 @@
 		function outlierAnalysis(data) {
 
 			var headers = data.data.headers;
-			//var names = data.data.metaData.names; //TODO: WIP ignore meta
+			var metaData = data.data.metaData;
+			var names = metaData.names;
 			var rows = data.data.rows;
 			var periods = self.og.periods;
 
@@ -268,10 +269,17 @@
 					dxID = row[dx] + '.' + row[co];
 					if (!coIDs[dxID]) continue;
 				}
+				else {
+					dxID = row[dx];
+				}
 
 				var ouID = row[ou];
-				var dxID = co != undefined ? row[dx] + '.' + row[co] : row[dx];
-				newRow = outlierGapNewRow(ouID, dxID);
+				var ouName = names[ouID];
+				var ouHierarchy = makeOuHierarchy(ouID, metaData);
+				var dxName = co != undefined ? names[row[dx]] + ' ' + names[row[co]] : names[row[dx]];
+				newRow = outlierGapNewRow(ouID, ouName, ouHierarchy, dxID, dxName);
+
+
 
 
 				//Iterate to get all values, and look for gaps at the same time
@@ -292,7 +300,7 @@
 				newRow.stats = mathService.getStats(valueSet);
 
 				//Check if there are outliers
-				newRow.result = outlierGapAnalyseData(valueSet, newRow.stats, gaps, zScoreCriteria, sScoreCriteria)
+				newRow.result = outlierGapAnalyseData(valueSet, newRow.stats, gaps, zScoreCriteria, sScoreCriteria, gapCriteria)
 
 				//If there are results (i.e. outliers), result set
 				if (newRow.result) result.rows.push(newRow);
@@ -312,6 +320,7 @@
 				processData();
 			}
 		}
+
 
 		/**Analyses valueSet, making returning a "result" set with maxumim outlier scores and weights*/
 		function outlierGapAnalyseData(valueSet, stats, gaps, zScoreCriteria, sScoreCriteria, gapCriteria) {
@@ -362,18 +371,36 @@
 			}
 		}
 
+
+		/** Return OU hierarchy as array of names based on result metadata*/
+		function makeOuHierarchy(ouID, metaData) {
+
+			var hierarchyIDs = metaData.ouHierarchy[ouID].split('/');
+			hierarchyIDs.splice(0,2); //Get rid of leading "" and root, which is not needed
+
+			var hierarchyNames = [];
+			for (var i = 0; i < hierarchyIDs.length; i++) {
+
+				hierarchyNames.push(metaData.names[hierarchyIDs[i]]);
+
+			}
+			return hierarchyNames;
+		}
+
+
 		/**Creates a new empty outlier gap analysis row*/
-		function outlierGapNewRow(ouID, dxID) {
+		function outlierGapNewRow(ouID, ouName, ouHierarchy, dxID, dxName) {
 
 			return {
 				"data": [],
 				"metaData": {
 					'ou': {
-						'name': null,
+						'hierarchy': ouHierarchy,
+						'name': ouName,
 						"id": ouID
 					},
 					'dx': {
-						"name": null,
+						"name": dxName,
 						"id": dxID
 					}
 				},
@@ -463,86 +490,29 @@
 		function outlierGapMetaData(result) {
 			var deferred = $q.defer();
 
-			var dataIDs = {};
-			var ouIDs = {};
-
+			//Check how many levels we need - might have orgunits at different levels when using group selection
+			var maxLevels = 0;
 			var row;
 			for (var i = 0; i < result.rows.length; i++) {
 				row = result.rows[i];
-				dataIDs[row.metaData.dx.id] = true;
-				ouIDs[row.metaData.ou.id] = true;
-			}
-
-			var dataIDsUnique = [];
-			for (var key in dataIDs) {
-				dataIDsUnique.push(key);
-			}
-
-			var ouIDsUnique = [];
-			for (var key in ouIDs) {
-				ouIDsUnique.push(key);
+				if (row.metaData.ou.hierarchy.length > maxLevels) maxLevels = row.metaData.ou.hierarchy.length;
 			}
 
 
-			metaDataService.getDataFromIDs(dataIDsUnique).then(function (data) {
+			metaDataService.getOrgunitLevels().then(function(levels) {
 
-				var data = data;
+				var levels = levels;
+				levels.sort(function(a, b) { return a.level - b.level});
+				levels.splice(0,1); //remove root
 
-				//TODO: Need to first get levels, then "hardcode" into ou.hierarchy to make sorting work
-				metaDataService.getOrgunitLevels().then(function(levels) {
+				var levelNames = [];
+				for (var i = 0; i < maxLevels; i++) {
+					levelNames.push(levels[i].name);
+				}
 
-					var levels = levels;
-					for (var i = 0; i < levels.length; i++) {
-						if (levels[i].level === 1) {
-							levels.splice(i, 1);
-							break;
-						}
-					}
+				result.metaData.hierarchy = levelNames;
 
-					metaDataService.getOrgunitsWithHierarchyFromIDs(ouIDsUnique).then(function(orgunits) {
-
-						var orgunits = orgunits;
-						var maxDepth = 1;
-						for (var i = 0; i < result.rows.length; i++) {
-							row = result.rows[i];
-
-							var dx = getObjectWithID(data, row.metaData.dx.id);
-							row.metaData.dx.name = dx.name;
-
-							var ou = getObjectWithID(orgunits, row.metaData.ou.id);
-
-							var hierarhcy = {}, parent = ou.parent;
-							while (parent && parent.level > 1) {
-
-
-								for (var j = 0; j < levels.length; j++) {
-									if (levels[j].level === parent.level) {
-										hierarhcy[levels[j].name] = parent.name
-									}
-								}
-
-								if (parent.level > maxDepth) maxDepth = parent.level;
-								parent = parent.parent;
-							}
-							row.metaData.ou.name = ou.name;
-							row.metaData.ou.hierarchy = hierarhcy;
-
-						}
-
-						var hierarchy = [];
-						for (var i = 2; i <= maxDepth; i++) {
-							for (var j = 0; j < levels.length; j++) {
-								if (levels[j].level === i) {
-									hierarchy.push(levels[j].name);
-								}
-							}
-						}
-
-						result.metaData.hierarchy = hierarchy;
-
-						deferred.resolve(true);
-					});
-					});
+				deferred.resolve(true);
 			});
 
 			return deferred.promise;

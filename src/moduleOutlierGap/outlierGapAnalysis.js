@@ -759,8 +759,8 @@
 					string += checkExportValue(value.metaData.dx.id) + ",";
 
 					for (var j = 0; j < self.result.metaData.hierarchy.length; j++) {
-						if (value.metaData.ou.hierarchy[self.result.metaData.hierarchy[j]]) {
-							string += checkExportValue(value.metaData.ou.hierarchy[self.result.metaData.hierarchy[j]]) + ",";
+						if (value.metaData.ou.hierarchy[j]) {
+							string += checkExportValue(value.metaData.ou.hierarchy[j]) + ",";
 						}
 						else {
 							string += checkExportValue('') + ",";
