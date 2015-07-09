@@ -724,8 +724,7 @@
 					
 					
 					dataAnalysisService.outlierGap(receiveResult, self.result.metaData.dataIDs, self.result.metaData.coAll, self.result.metaData.coFilter, self.result.metaData.periods, orgunits, null, null, 2, 3.5, 1);	
-					
-					
+
 					
 					//Move currently shown result to front of results
 					

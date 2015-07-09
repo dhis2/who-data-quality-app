@@ -731,40 +731,23 @@
 		self.getOrgunitLevels = function() { 
 			
 			var deferred = $q.defer();
-			
-			//available locally
-			if (orgunitLevels.available) {
-	
-				deferred.resolve(orgunitLevels.data);
-			}
-			//waiting for server
-			else if (!orgunitLevels.available && orgunitLevels.promise) {
-				return orgunitLevels.promise;
-			}
-			//need to be fetched
-			else {
-			
-				var requestURL = '/api/organisationUnitLevels.json?'; 
-				requestURL += 'fields=name,id,level&paging=false';
-					  
-				requestService.getSingle(requestURL).then(
-					function(response) { //success
-				    	var data = response.data;
-				    				    	
-				    	var sortedData = data.organisationUnitLevels.sort(sortLevels);			    	
-				    	orgunitLevels.data = sortedData;
-				    	
-				    	deferred.resolve(sortedData);
-				    	orgunitLevels.available = true;
-					}, 
-					function(response) { //error
-				    	var data = response.data;
-				    	deferred.reject("Error fetching orgunits");
-				    	console.log(msg, code);
-				    }
-				);
-			}
-			orgunitLevels.promise = deferred.promise;
+
+			var requestURL = '/api/organisationUnitLevels.json?';
+			requestURL += 'fields=name,id,level&paging=false';
+
+			requestService.getSingle(requestURL).then(
+				function(response) { //success
+					var data = response.data;
+					var sortedData = data.organisationUnitLevels.sort(sortLevels);
+					deferred.resolve(sortedData);
+				},
+				function(response) { //error
+					var data = response.data;
+					deferred.reject("Error fetching orgunits");
+					console.log(msg, code);
+				}
+			);
+
 			return deferred.promise; 
 		};
 			
