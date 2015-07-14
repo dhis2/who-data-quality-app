@@ -709,7 +709,8 @@
 		
 		
 		self.drillDown = function (rowMetaData) {
-			
+
+			//TODO: Check that it has children, then use level in query rather
 			var requestURL = "/api/organisationUnits/" + rowMetaData.ou.id + ".json?fields=children[id]";
 			requestService.getSingle(requestURL).then(function (response) {
 				

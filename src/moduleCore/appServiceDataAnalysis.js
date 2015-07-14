@@ -164,19 +164,24 @@
 			var peCount = self.og.periods.length;
 			var avgCatCombo = 1;
 			if (self.og.coAll || self.og.coIDs) avgCatCombo = 4;
-			var numDEs = Math.max(Math.ceil(maxValues / (peCount * ouPerLevel * ouPerLevel * avgCatCombo)), 2);
-
-
-			for (var i = 0; i < self.og.ouBoundary.length; i++) {
+			var numDEs = Math.max(Math.ceil(maxValues / (peCount * ouPerLevel * ouPerLevel * avgCatCombo)), 2);//TODO: should take number of orgunits into account
+			var numOUs = (self.og.ouLevel || self.og.ouGroup) ? 1 : 50;
+			var ouIDs;
+			for (var i = 0; i < self.og.ouBoundary.length; i += numOUs) {
 				//make requests
 				var baseRequest;
 				baseRequest = '/api/analytics.json?';
 				baseRequest += 'hideEmptyRows=true&ignoreLimit=true&hierarchyMeta=true';
 				baseRequest += '&tableLayout=true';
 				baseRequest += '&dimension=pe:' + self.og.periods.join(';');
-				baseRequest += '&dimension=ou:' + self.og.ouBoundary[i];
+
+				var start = i;
+				var end = (i + numOUs) > self.og.ouBoundary.length ? self.og.ouBoundary.length : (i + numOUs);
+				ouIDs = self.og.ouBoundary.slice(start, end);
+				baseRequest += '&dimension=ou:' + ouIDs.join(';');
 				if (self.og.ouLevel) baseRequest += ';LEVEL-' + self.og.ouLevel;
 				else if (self.og.ouGroup) baseRequest += ';OU_GROUP-' + self.og.ouGroup;
+
 
 
 				//check whether to get categoryoptions or not
@@ -459,9 +464,12 @@
 
 		/**Called when outlier and gap analysis is done. Save metadata and calls callback method*/
 		function outlierGapAnalysisDone(result) {
+
+			console.log(result.metaData)
+
 			result.metaData.dataIDs = self.og.dataIDs;
 			result.metaData.coAll = self.og.coAll;
-			result.metaData.coIDs = self.og.coIDs;
+			result.metaData.coFilter = self.og.coIDs;
 			result.metaData.periods = self.og.periods;
 			result.metaData.ouBoundary = self.og.ouBoundary;
 			result.metaData.ouGroup = self.og.ouGroup;
@@ -505,7 +513,7 @@
 
 				var levelNames = [];
 				for (var i = 0; i < maxLevels; i++) {
-					levelNames.push(levels[i].name);
+					if (levels[i] && levels[i].name) levelNames.push(levels[i].name);
 				}
 
 				result.metaData.hierarchy = levelNames;
