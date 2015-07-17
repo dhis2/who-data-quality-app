@@ -297,15 +297,15 @@
     		}
     	}
     	
-    	
-    	
-    	/** OUTLIERS */
-  	
-    	
-    	
-      	
-      	
-      	
+
+
+    	/** -- OUTLIERS -- */
+
+
+
+
+
+
       	
       	/** -- UTILITIES -- */
       	function getPeriodTypes(datasets) {
