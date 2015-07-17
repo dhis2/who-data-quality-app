@@ -359,7 +359,7 @@
 			//check if row should be saved or discarded
 			if (outliers > 0 || gaps >= gapCriteria) {
 				if (outliers > 0) {
-					result.outWeight = getOutlierWeight(valueSet, stats, sScoreCriteria);
+					result.outWeight = getOutlierWeight(valueSet, stats, sScoreCriteria, zScoreCriteria);
 				}
 				if (gaps >= gapCriteria) {
 					result.gapWeight = mathService.round(gaps * stats.median, 0);
@@ -373,7 +373,6 @@
 				return null;
 			}
 		}
-
 
 		/** Return OU hierarchy as array of names based on result metadata*/
 		function makeOuHierarchy(ouID, metaData) {
@@ -1537,7 +1536,7 @@
 		}
 
 		//Returns difference between current sum and what would be expected from mean of those values withing 1 SD
-		function getOutlierWeight(valueSet, stats, SDlimit) {
+		function getOutlierWeight(valueSet, stats, SDlimit, Zlimit) {
 
 			if (valueSet.length <= 1 || isNaN(stats.sd) || (stats.mean === 0 && stats.sd === 0)) {
 				return 0;
@@ -1546,7 +1545,9 @@
 			var normCount = 0, normSum = 0, total = 0;
 			for (var i = 0; i < valueSet.length; i++) {
 				var value = valueSet[i];
-				if (Math.abs((value - stats.mean) / stats.sd) < SDlimit) {
+				var standardScore = Math.abs(mathService.calculateStandardScore(value, stats));
+				var zScore = Math.abs(mathService.calculateZScore(value, stats));
+				if (standardScore < SDlimit && zScore < Zlimit) {
 					normSum += value;
 					normCount++;
 				}
