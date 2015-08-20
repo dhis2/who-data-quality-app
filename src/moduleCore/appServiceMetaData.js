@@ -371,6 +371,7 @@
 			
 			
 			var requestURL = '/api/dataElements.json?paging=false&fields=name,id';
+			requestURL += '&filter=type:eq:int&filter=domainType:eq:AGGREGATE';
 			for (var i = 0; i < dataElementIDs.length; i++) {
 				requestURL += '&filter=id:eq:' + dataElementIDs[i];
 			}
@@ -420,7 +421,8 @@
 				var IDs = dataElementOrIndicator.slice(start, end);
 
 				var requestURL = '/api/dataElements.json?';
-				requestURL += 'fields=id,name';
+				requestURL += 'filter=type:eq:int&filter=domainType:eq:AGGREGATE';
+				requestURL += '&fields=id,name';
 				requestURL += '&filter=id:in:[' + IDs.join(',') + ']&paging=false';
 				requests.push(requestURL);
 
@@ -534,8 +536,9 @@
 			
 			var deferred = $q.defer();
 			
-			var requestURL = '/api/dataElements.json?'; 
-			requestURL += 'fields=name,id&paging=false&filter=dataElementGroups.id:eq:' + dataElementGroupID;
+			var requestURL = '/api/dataElements.json?';
+			requestURL += 'filter=type:eq:int&filter=domainType:eq:AGGREGATE';
+			requestURL += '&fields=name,id&paging=false&filter=dataElementGroups.id:eq:' + dataElementGroupID;
 				  
 			requestService.getSingle(requestURL).then(
 				function(response) { //success
@@ -587,8 +590,9 @@
 			}
 			//need to be fetched
 			else {
-				var requestURL = '/api/dataElements.json?'; 
-				requestURL += 'fields=id,name&paging=false';
+				var requestURL = '/api/dataElements.json?';
+				requestURL += 'filter=type:eq:int&filter=domainType:eq:AGGREGATE';
+				requestURL += '&fields=id,name&paging=false';
 					  
 				requestService.getSingle(requestURL).then(
 					function(response) { //success
