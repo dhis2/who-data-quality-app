@@ -397,6 +397,13 @@
 	    		window.dispatchEvent(new Event('resize'));
 	    	}, 250);
 	    };
+
+
+		self.progress = function() {
+
+			return Math.round(100-100*self.outstandingRequests/self.totalRequests);
+
+		}
 	    	    
 	    	    
 		return self;

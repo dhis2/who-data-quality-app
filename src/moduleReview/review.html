@@ -39,7 +39,7 @@
 <hr />
 <div ng-if="revCtrl.outstandingRequests != 0">
 <h5>Loading data...</h5>
-<progressbar animate="false" value="100-100*revCtrl.outstandingRequests/revCtrl.totalRequests" type="default"><b>{{100-100*revCtrl.outstandingRequests/revCtrl.totalRequests}}%</b></progressbar>
+<progressbar animate="false" value="revCtrl.progress()" type="default"><b>{{revCtrl.progress()}}%</b></progressbar>
 </div>
 
 <tabset ng-if="revCtrl.outstandingRequests === 0 && revCtrl.totalRequests != 0">
