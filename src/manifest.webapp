@@ -1,15 +1,15 @@
 {
-    "version": "0.3.1",
-    "name": "Data Quality Tool",
-    "description": "WHO Data Quality Analysis Tool",
+    "version": "0.4.0",
+    "name": "WHO Data Quality Tool",
+    "description": "WHO Data Quality Tool",
     "icons": {
             "48": "img/icons/export.png"
     },
     "developer": {
-        "url": "http://dhis2.org",
+        "url": "http://who.int",
         "name": "Olav Poppe",
-        "company": null,
-        "email": null
+        "company": "WHO",
+        "email": "poppeo@who.int"
     },
     "activities": {
         "dhis": {
