@@ -19,11 +19,10 @@
 		
 		self.itemsPerPage = 25;
 		self.hasVisual = false;
-			
+
 		self.processStatus = dataAnalysisService.status;
 			
 		init();
-		initWatchers();		
 				
 		function init() {			
 			self.dataDisaggregation = 0;
@@ -129,74 +128,21 @@
 				isFirstOpen: true
 			};
 		}
-				
-		
-		function initWatchers() {
-		
-			//Data element group => get data elements in group
-			$scope.$watchCollection(function() { return self.dataElementGroupsSelected; }, 
-				function() {
-					
-					if (self.dataElementGroupsSelected) {
-						updateDataElementList();	
-					}
-					
-				}
-			);
-			
-			//Data element total vs detail
-			$scope.$watchCollection(function() { return self.dataDisaggregation; }, 
-				function() {
-					
-					if (self.dataElementGroupsSelected) {
-						self.dataElementsSelected = [];
-						updateDataElementList();	
-					}	
-				}
-			);
-			
-			//Indicator group => get indicators in group
-			$scope.$watchCollection(function() { return self.indicatorGroupsSelected; }, 
-				function() {
-					
-					if (self.indicatorGroupsSelected) {
 
-						updateIndicatorList();
-						
-						}	 
-				}
-			);
-			
-			//Changed from user orgunit to manual selection
-			$scope.$watchCollection(function() { return self.boundarySelectionType; }, 
-				function(newObject, oldObject) {
-					
-					if (self.boundarySelectionType != self.userOrgunits.length) {
-						self.boundaryOrgunitSelected = self.userOrgunits[self.boundarySelectionType];
-					}
-					else {
-						self.boundaryOrgunitSelected = undefined;
-						self.orgunitLevelSelected = undefined						
-					}
-				}
-			);
-			
-			//Selected orgunit => update list of levels
-			$scope.$watchCollection(function() { return self.boundaryOrgunitSelected; }, 
-				function(newObject, oldObject) {
-					if (oldObject && newObject && oldObject.level != newObject.level) {
-						if (self.orgunitLevelSelected && self.orgunitLevelSelected.level <= newObject.level) {
-							self.orgunitLevelSelected = undefined;
-						}
-						
-						self.filterLevels();
-						self.orgunitUserDefaultLevel();
-					}
-				}
-			);
-			
-			
-		}
+		/** -- PARAMETER SELECTION -- */
+
+		/** Orgunits */
+		self.orgunitSearchModeSelected = function() {
+			self.boundaryOrgunitSelected = undefined;
+			self.orgunitLevelSelected = undefined;
+		};
+
+
+		self.orgunitUserModeSelected = function() {
+			self.boundaryOrgunitSelected = self.userOrgunits[0];
+			self.orgunitUserDefaultLevel();
+		};
+
 				
 		self.getLevelPlaceholder = function() {
 			if (!self.filteredOrgunitLevels || self.filteredOrgunitLevels.length === 0) {
@@ -233,9 +179,10 @@
 		};
 		
 	
-		function updateDataElementList() {
-				self.dataElements = [];
-				self.dataElementsSelected = [];
+		self.updateDataElementList = function() {
+			if (!self.dataElementGroupsSelected) return;
+			self.dataElements = [];
+			self.dataElementsSelected = [];
 			if (self.dataDisaggregation === 0) {			
 				self.dataElementPlaceholder = "Loading...";
 				metaDataService.getDataElementGroupMembers(self.dataElementGroupsSelected.id)
@@ -258,17 +205,17 @@
 		
 		}
 		
-		
-			function updateIndicatorList() {
-				self.indicators = [];
-				self.indicatorsSelected = [];
-				self.indicatorPlaceholder = "Loading...";
-				metaDataService.getIndicatorGroupMembers(self.indicatorGroupsSelected.id)
-					.then(function(data) { 
-						self.indicatorPlaceholder = "All indicators in " + self.indicatorGroupsSelected.name;
-						
-							self.indicators = data;
-					});
+		self.updateIndicatorList = function() {
+			if (!self.indicatorGroupsSelected) return;
+			self.indicators = [];
+			self.indicatorsSelected = [];
+			self.indicatorPlaceholder = "Loading...";
+			metaDataService.getIndicatorGroupMembers(self.indicatorGroupsSelected.id)
+				.then(function(data) {
+					self.indicatorPlaceholder = "All indicators in " + self.indicatorGroupsSelected.name;
+
+						self.indicators = data;
+				});
 			}
 			
 		

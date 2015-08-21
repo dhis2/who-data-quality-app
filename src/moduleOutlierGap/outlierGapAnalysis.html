@@ -28,7 +28,7 @@
 		<div ng-if="!aCtrl.datasetSelected">
 		<div style="display: inline-block;">
     	<label>Data elements</label><br />
-		<ui-select ng-model="aCtrl.dataElementGroupsSelected"  style="margin-bottom: 10px; width: 330px;">
+		<ui-select ng-model="aCtrl.dataElementGroupsSelected" on-select="aCtrl.updateDataElementList()" style="margin-bottom: 10px; width: 330px;">
 		  <ui-select-match placeholder="Select data element group...">
 		  	{{aCtrl.dataElementGroupsSelected.name}}
 		  </ui-select-match>
@@ -43,7 +43,7 @@
 		  		<label class="btn btn-default" ng-model="aCtrl.dataDisaggregation" btn-radio="1">Details</label>
 		</div>
 		
-		<ui-select multiple ng-if="aCtrl.dataElementGroupsSelected" ng-disabled="!aCtrl.dataElements" ng-model="aCtrl.dataElementsSelected" theme="bootstrap" style="margin-bottom: 10px; max-width: 470px;">
+		<ui-select multiple ng-if="aCtrl.dataElementGroupsSelected" ng-model="aCtrl.dataElementsSelected" theme="bootstrap" style="margin-bottom: 10px; max-width: 470px;">
 		  <ui-select-match placeholder="{{aCtrl.dataElementPlaceholder}}">
 			  {{$item.name}}
 		  </ui-select-match>
@@ -58,7 +58,7 @@
 		<!-- INDICATORS -->
 		<div ng-if="!aCtrl.datasetSelected && aCtrl.dataDisaggregation === 0">
     	<label>Indicators</label><br />
-    	<ui-select ng-model="aCtrl.indicatorGroupsSelected"  style="margin-bottom: 10px; max-width: 470px;">
+    	<ui-select ng-model="aCtrl.indicatorGroupsSelected" on-select="aCtrl.updateIndicatorList()" style="margin-bottom: 10px; max-width: 470px;">
     	  <ui-select-match placeholder="Select indicator group...">
     	  	{{aCtrl.indicatorGroupsSelected.name}}
     	  </ui-select-match>
@@ -68,7 +68,7 @@
     	  </ui-select-choices>
     	</ui-select>
     	
-		<ui-select multiple ng-if="aCtrl.indicatorGroupsSelected" ng-disabled="!aCtrl.indicators" ng-model="aCtrl.indicatorsSelected"  style="margin-bottom: 10px; max-width: 470px;">
+		<ui-select multiple ng-if="aCtrl.indicatorGroupsSelected" ng-model="aCtrl.indicatorsSelected"  style="margin-bottom: 10px; max-width: 470px;">
 		  <ui-select-match placeholder="{{aCtrl.indicatorPlaceholder}}">
 		  	{{$item.name}}
 		  </ui-select-match>
@@ -174,8 +174,8 @@
     <accordion-group heading="Orgunit" is-open="status.open">
     	<label>Boundary</label><br />
     	<div class="btn-group" style="margin-bottom: 10px; max-width: 400px;">
-    	  	<label ng-repeat="orgunit in aCtrl.userOrgunits track by $index" class="btn btn-default" ng-model="aCtrl.boundarySelectionType" btn-radio="$index">{{orgunit.name}}</label>
-    	  	<label class="btn btn-default" ng-model="aCtrl.boundarySelectionType" btn-radio="aCtrl.userOrgunits.length">Search</label>
+    	  	<label ng-repeat="orgunit in aCtrl.userOrgunits track by $index" class="btn btn-default" ng-model="aCtrl.boundarySelectionType" ng-change="aCtrl.orgunitUserModeSelected();" btn-radio="$index">{{orgunit.name}}</label>
+    	  	<label class="btn btn-default" ng-change="aCtrl.orgunitSearchModeSelected();" ng-model="aCtrl.boundarySelectionType" btn-radio="aCtrl.userOrgunits.length">Search</label>
     	</div>
 		<br />	  
 		<div ng-show="aCtrl.userOrgunits.length === aCtrl.boundarySelectionType" style="margin-bottom: 10px;">
@@ -183,7 +183,7 @@
 	    	<ui-select 
 	    		style="margin-bottom: 10px; width: 470px;" 
 	    		ng-model="aCtrl.boundaryOrgunitSelected" 
-	    		on-select="aCtrl.filterLevels()">
+	    		on-select="aCtrl.filterLevels(); aCtrl.orgunitUserDefaultLevel();">
 	    	<ui-select-match placeholder="Search for organisation unit...">
 	    		{{aCtrl.boundaryOrgunitSelected.name}}
 	    	</ui-select-match>
