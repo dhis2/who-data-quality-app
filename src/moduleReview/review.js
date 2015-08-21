@@ -377,7 +377,7 @@
 	    	for (var i = 0; i < self.map.relations.length; i++) {
 	    		relation = self.map.relations[i];
 	    		
-	    		if (indicatorIsRelevant(relation.A) && indicatorIsRelevant(relation.B)) {
+	    		if (indicatorIsRelevant(relation.A) || indicatorIsRelevant(relation.B)) {
 	    			relations.push(relation);
 	    		}
 	    	}
