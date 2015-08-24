@@ -225,11 +225,11 @@
 		<!-- CURRENT SELECTION -->
 		<label for="orgunitSelected">Selected </label>
 		<div id="orgunitSelected">
-			<p><span style="font-size: 100%;" class="label label-primary">{{aCtrl.boundaryOrgunitSelected.name}}{{aCtrl.boundaryOrgunitSelected.text}}</span><span class="glyphicon glyphicon-chevron-right"></span><span style="font-size: 100%;" class="label label-primary">{{aCtrl.orgunitLevelSelected.name}}</span></p>
-			
-			<p ng-show="aCtrl.orgunitGroupSelected"><span style="font-size: 100%;" class="label label-primary">{{aCtrl.userOrgunitLabel}}</span><span class="glyphicon glyphicon-chevron-right"></span><span style="font-size: 100%;" class="label label-primary">{{aCtrl.orgunitGroupSelected.name}}</span></p>
-			
-			<p ng-show="!aCtrl.orgunitGroupSelected && !aCtrl.orgunitLevelSelected"><span style="font-size: 100%;" class="label label-primary">{{aCtrl.userOrgunitLabel}}</span></p>
+			<p>
+				<span style="font-size: 100%;" class="label label-primary">{{aCtrl.boundaryOrgunitSelected.name}}</span>
+				<span ng-if="aCtrl.orgunitLevelSelected"><span class="glyphicon glyphicon-chevron-right"></span><span style="font-size: 100%;" class="label label-primary">{{aCtrl.orgunitLevelSelected.name}}</span></span>
+				<span ng-if="aCtrl.orgunitGroupSelected"><span class="glyphicon glyphicon-chevron-right"></span><span style="font-size: 100%;" class="label label-primary">{{aCtrl.orgunitGroupSelected.name}}</span></span>
+			</p>
 			<br />
 		</div>
     </accordion-group>
