@@ -188,16 +188,17 @@
 				metaDataService.getDataElementGroupMembers(self.dataElementGroupsSelected.id)
 				 	.then(function(data) { 
 
-							self.dataElementPlaceholder = "All data elements (totals) in " + self.dataElementGroupsSelected.name;
-							
-							self.dataElements = data;
+						if (data.length === 0) self.dataElementPlaceholder = "No valid data elements in " + self.dataElementGroupsSelected.name;
+						else self.dataElementPlaceholder = "All data elements (totals) in " + self.dataElementGroupsSelected.name;
+						self.dataElements = data;
 					 });
 			}
 			else {
 				self.dataElementPlaceholder = "Loading...";
 				metaDataService.getDataElementGroupMemberOperands(self.dataElementGroupsSelected.id)
-				 	.then(function(data) { 
-				 		self.dataElementPlaceholder = "All data elements (details) in " + self.dataElementGroupsSelected.name;
+				 	.then(function(data) {
+						if (data.length === 0) self.dataElementPlaceholder = "No valid data elements in " + self.dataElementGroupsSelected.name;
+						else self.dataElementPlaceholder = "All data elements (details) in " + self.dataElementGroupsSelected.name;
 				 		
 							self.dataElements = data;
 					 });
@@ -212,9 +213,9 @@
 			self.indicatorPlaceholder = "Loading...";
 			metaDataService.getIndicatorGroupMembers(self.indicatorGroupsSelected.id)
 				.then(function(data) {
-					self.indicatorPlaceholder = "All indicators in " + self.indicatorGroupsSelected.name;
-
-						self.indicators = data;
+					if (data.length === 0) self.indicatorPlaceholder = "No indicators in " + self.indicatorGroupsSelected.name;
+					else self.indicatorPlaceholder = "All indicators in " + self.indicatorGroupsSelected.name;
+					self.indicators = data;
 				});
 			}
 			
