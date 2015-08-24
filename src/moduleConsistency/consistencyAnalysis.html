@@ -7,7 +7,7 @@
 	
 	<!-- DATA -->
 	<accordion-group heading="Analysis Type" is-open="aCtrl.status.isFirstOpen">
-		<label>Consistency Analysis Type</label><br />
+		<label>Consistency analysis type</label><br />
 		<div class="btn-group btn-group-justified" style="width: 330px; margin-bottom: 10px;">
 				<label class="btn btn-default" ng-model="aCtrl.consistencyType" btn-radio="'relation'">Between Indicators</label>
 		  		<label class="btn btn-default" ng-model="aCtrl.consistencyType" btn-radio="'time'">Over Time</label>
@@ -58,7 +58,7 @@
 				on-select="aCtrl.updateDataElementList('a')" 
 				ng-model="aCtrl.dataSelection.a.deGroupSelected"
 				style="margin-bottom: 10px; max-width: 470px;">
-				<ui-select-match placeholder="Select data element group...">
+				<ui-select-match allow-clear="true" placeholder="Select data element group...">
 			  		{{aCtrl.dataSelection.a.deGroupSelected.name}}
 			  	</ui-select-match>
 			 	<ui-select-choices 
@@ -68,13 +68,12 @@
 			</ui-select>
 		</div>
 
-		<ui-select 
-			ng-if="aCtrl.dataSelection.a.deGroupSelected" 
-			ng-disabled="!aCtrl.dataSelection.a.de" 
+		<ui-select
+			ng-disabled="!aCtrl.dataSelection.a.de || !aCtrl.dataSelection.a.deGroupSelected"
 			ng-model="aCtrl.dataSelection.a.deSelected" 
 			on-select="aCtrl.dataSelected('de', 'a')"
 			style="margin-bottom: 10px; max-width: 470px;">
-			<ui-select-match placeholder="{{aCtrl.dataSelection.a.deText}}">
+			<ui-select-match allow-clear="true" placeholder="{{aCtrl.dataSelection.a.deText}}">
 				{{aCtrl.dataSelection.a.deSelected.name}}
 		  	</ui-select-match>
 			<ui-select-choices 
@@ -91,7 +90,7 @@
 	    		on-select="aCtrl.updateIndicatorList('a')" 
 	    		ng-model="aCtrl.dataSelection.a.indGroupSelected"  
 	    		style="margin-bottom: 10px; max-width: 470px;">
-	    		<ui-select-match placeholder="Select indicator group...">
+	    		<ui-select-match allow-clear="true" placeholder="Select indicator group...">
 	    	  		{{aCtrl.dataSelection.a.indGroupSelected.name}}
 				</ui-select-match>
 	    		<ui-select-choices
@@ -102,11 +101,10 @@
 	    	
 			<ui-select 
 				on-select="aCtrl.dataSelected('ind', 'a')"
-				ng-if="aCtrl.dataSelection.a.indGroupSelected" 
-				ng-disabled="!aCtrl.dataSelection.a.ind || aCtrl.dataSelection.a.ind.length === 0" 
+				ng-disabled="!aCtrl.dataSelection.a.ind || aCtrl.dataSelection.a.ind.length === 0 || !aCtrl.dataSelection.a.indGroupSelected"
 				ng-model="aCtrl.dataSelection.a.indSelected"
 				style="margin-bottom: 10px; max-width: 470px;">
-				<ui-select-match placeholder="{{aCtrl.dataSelection.a.indText}}">
+				<ui-select-match allow-clear="true" placeholder="{{aCtrl.dataSelection.a.indText}}">
 			  		{{aCtrl.dataSelection.a.indSelected.name}}
 				</ui-select-match>
 				<ui-select-choices 
@@ -122,8 +120,8 @@
 		<div style="margin-top: 20px;" ng-if="aCtrl.consistencyType === 'relation'">
 	   	<h4 >Indicator/Data element B</h4>	
 		<div class="btn-group btn-group-justified" style="max-width: 470px; margin-bottom: 10px;">
-			<label class="btn btn-default" ng-model="aCtrl.dataSelection.a.type" btn-radio="'de'">Data element (totals)</label>
-			<label class="btn btn-default" disabled ng-model="aCtrl.dataSelection.a.type" btn-radio="'dc'">Data element (details)</label>
+			<label class="btn btn-default" ng-model="aCtrl.dataSelection.b.type" btn-radio="'de'">Data element (totals)</label>
+			<label class="btn btn-default" disabled ng-model="aCtrl.dataSelection.b.type" btn-radio="'dc'">Data element (details)</label>
 		  	<label class="btn btn-default" ng-model="aCtrl.dataSelection.b.type" btn-radio="'ind'">Indicator</label>
 		</div>
 		
@@ -135,7 +133,7 @@
 				on-select="aCtrl.updateDataElementList('b')" 
 				ng-model="aCtrl.dataSelection.b.deGroupSelected"
 				style="margin-bottom: 10px; max-width: 470px;">
-				<ui-select-match placeholder="Select data element group...">
+				<ui-select-match allow-clear="true" placeholder="Select data element group...">
 			  		{{aCtrl.dataSelection.b.deGroupSelected.name}}
 			  	</ui-select-match>
 			 	<ui-select-choices 
@@ -145,13 +143,12 @@
 			</ui-select>
 		</div>
 		
-		<ui-select 
-			ng-if="aCtrl.dataSelection.b.deGroupSelected" 
-			ng-disabled="!aCtrl.dataSelection.b.de" 
+		<ui-select
+			ng-disabled="!aCtrl.dataSelection.b.de || !aCtrl.dataSelection.b.deGroupSelected"
 			ng-model="aCtrl.dataSelection.b.deSelected"
 			on-select="aCtrl.dataSelected('de', 'b')"
 			style="margin-bottom: 10px; max-width: 470px;">
-			<ui-select-match placeholder="{{aCtrl.dataSelection.b.deText}}">
+			<ui-select-match allow-clear="true" placeholder="{{aCtrl.dataSelection.b.deText}}">
 				{{aCtrl.dataSelection.b.deSelected.name}}
 		  	</ui-select-match>
 			<ui-select-choices 
@@ -168,7 +165,7 @@
 				on-select="aCtrl.updateIndicatorList('b')" 
 				ng-model="aCtrl.dataSelection.b.indGroupSelected"  
 				style="margin-bottom: 10px; max-width: 470px;">
-				<ui-select-match placeholder="Select indicator group...">
+				<ui-select-match allow-clear="true" placeholder="Select indicator group...">
 			  		{{aCtrl.dataSelection.b.indGroupSelected.name}}
 				</ui-select-match>
 				<ui-select-choices
@@ -177,13 +174,12 @@
 				</ui-select-choices>
 				</ui-select>
 			
-			<ui-select 
-				ng-if="aCtrl.dataSelection.b.indGroupSelected" 
-				ng-disabled="!aCtrl.dataSelection.b.ind || aCtrl.dataSelection.b.ind.length === 0" 
+			<ui-select
+				ng-disabled="!aCtrl.dataSelection.b.ind || aCtrl.dataSelection.b.ind.length === 0 || !aCtrl.dataSelection.b.indGroupSelected"
 				ng-model="aCtrl.dataSelection.b.indSelected"  
 				on-select="aCtrl.dataSelected('ind', 'b')"
 				style="margin-bottom: 10px; max-width: 470px;">
-				<ui-select-match placeholder="{{aCtrl.dataSelection.b.indText}}">
+				<ui-select-match allow-clear="true" placeholder="{{aCtrl.dataSelection.b.indText}}">
 			  		{{aCtrl.dataSelection.b.indSelected.name}}
 				</ui-select-match>
 				<ui-select-choices 
@@ -297,7 +293,7 @@
        <label for="orgunitSelect">Disaggregation</label>
 		<div id="orgunitSelect">
 			<ui-select ng-disabled="aCtrl.orgunitGroupSelected || aCtrl.filteredOrgunitLevels.length === 0" ng-model="aCtrl.orgunitLevelSelected"  style="margin-bottom: 10px; max-width: 470px;">
-			  <ui-select-match placeholder="{{aCtrl.getLevelPlaceholder();}}">
+			  <ui-select-match allow-clear="true" placeholder="{{aCtrl.getLevelPlaceholder();}}">
 			  	{{aCtrl.orgunitLevelSelected.name}}
 			  </ui-select-match>
 			  <ui-select-choices 
@@ -307,7 +303,7 @@
 			</ui-select>
 			
 			<ui-select ng-disabled="aCtrl.orgunitLevelSelected || aCtrl.filteredOrgunitLevels.length === 0" ng-model="aCtrl.orgunitGroupSelected"  style="margin-bottom: 10px; max-width: 470px;">
-				  <ui-select-match placeholder="Select organisation unit group">
+				  <ui-select-match allow-clear="true" placeholder="Select organisation unit group">
 				  	{{aCtrl.orgunitGroupSelected.name}}
 				  </ui-select-match>
 				  <ui-select-choices 
@@ -321,11 +317,11 @@
 		<!-- CURRENT SELECTION -->
 		<label for="orgunitSelected">Selected </label>
 		<div id="orgunitSelected">
-			<p><span style="font-size: 100%;" class="label label-primary">{{aCtrl.boundaryOrgunitSelected.name}}{{aCtrl.boundaryOrgunitSelected.text}}</span><span class="glyphicon glyphicon-chevron-right"></span><span style="font-size: 100%;" class="label label-primary">{{aCtrl.orgunitLevelSelected.name}}</span></p>
-			
-			<p ng-show="aCtrl.orgunitGroupSelected"><span style="font-size: 100%;" class="label label-primary">{{aCtrl.userOrgunitLabel}}</span><span class="glyphicon glyphicon-chevron-right"></span><span style="font-size: 100%;" class="label label-primary">{{aCtrl.orgunitGroupSelected.name}}</span></p>
-			
-			<p ng-show="!aCtrl.orgunitGroupSelected && !aCtrl.orgunitLevelSelected"><span style="font-size: 100%;" class="label label-primary">{{aCtrl.userOrgunitLabel}}</span></p>
+			<p>
+				<span style="font-size: 100%;" class="label label-primary">{{aCtrl.boundaryOrgunitSelected.name}}</span>
+				<span ng-if="aCtrl.orgunitLevelSelected"><span class="glyphicon glyphicon-chevron-right"></span><span style="font-size: 100%;" class="label label-primary">{{aCtrl.orgunitLevelSelected.name}}</span></span>
+				<span ng-if="aCtrl.orgunitGroupSelected"><span class="glyphicon glyphicon-chevron-right"></span><span style="font-size: 100%;" class="label label-primary">{{aCtrl.orgunitGroupSelected.name}}</span></span>
+			</p>
 			<br />
 		</div>
 		<label>NOTE</label>

@@ -13,7 +13,7 @@
 		<div>
 		<label>Data set</label><br />
 		<ui-select ng-model="aCtrl.datasetSelected"  style="margin-bottom: 10px; max-width: 470px;">
-		  <ui-select-match placeholder="Select data set...">
+		  <ui-select-match allow-clear="true" placeholder="Select data set...">
 		  	{{aCtrl.datasetSelected.name}}
 		  </ui-select-match>
 		  <ui-select-choices 
@@ -25,11 +25,10 @@
 		
 		
 		<!-- DATA ELEMENTS -->
-		<div ng-if="!aCtrl.datasetSelected">
 		<div style="display: inline-block;">
     	<label>Data elements</label><br />
-		<ui-select ng-model="aCtrl.dataElementGroupsSelected" on-select="aCtrl.updateDataElementList()" style="margin-bottom: 10px; width: 330px;">
-		  <ui-select-match placeholder="Select data element group...">
+		<ui-select ng-disabled="aCtrl.datasetSelected" ng-model="aCtrl.dataElementGroupsSelected" on-select="aCtrl.updateDataElementList()" style="margin-bottom: 10px; width: 330px;">
+		  <ui-select-match allow-clear="true" placeholder="Select data element group...">
 		  	{{aCtrl.dataElementGroupsSelected.name}}
 		  </ui-select-match>
 		  <ui-select-choices 
@@ -43,7 +42,7 @@
 		  		<label class="btn btn-default" ng-model="aCtrl.dataDisaggregation" btn-radio="1">Details</label>
 		</div>
 		
-		<ui-select multiple ng-if="aCtrl.dataElementGroupsSelected" ng-model="aCtrl.dataElementsSelected" theme="bootstrap" style="margin-bottom: 10px; max-width: 470px;">
+		<ui-select multiple ng-disabled="!aCtrl.dataElementGroupsSelected" ng-model="aCtrl.dataElementsSelected" theme="bootstrap" style="margin-bottom: 10px; max-width: 470px;">
 		  <ui-select-match placeholder="{{aCtrl.dataElementPlaceholder}}">
 			  {{$item.name}}
 		  </ui-select-match>
@@ -56,10 +55,10 @@
 		
 		
 		<!-- INDICATORS -->
-		<div ng-if="!aCtrl.datasetSelected && aCtrl.dataDisaggregation === 0">
+		<div>
     	<label>Indicators</label><br />
-    	<ui-select ng-model="aCtrl.indicatorGroupsSelected" on-select="aCtrl.updateIndicatorList()" style="margin-bottom: 10px; max-width: 470px;">
-    	  <ui-select-match placeholder="Select indicator group...">
+    	<ui-select ng-disabled="aCtrl.datasetSelected || aCtrl.dataDisaggregation != 0" ng-model="aCtrl.indicatorGroupsSelected" on-select="aCtrl.updateIndicatorList()" style="margin-bottom: 10px; max-width: 470px;">
+    	  <ui-select-match allow-clear="true" placeholder="Select indicator group...">
     	  	{{aCtrl.indicatorGroupsSelected.name}}
     	  </ui-select-match>
     	  <ui-select-choices
@@ -68,7 +67,7 @@
     	  </ui-select-choices>
     	</ui-select>
     	
-		<ui-select multiple ng-if="aCtrl.indicatorGroupsSelected" ng-model="aCtrl.indicatorsSelected"  style="margin-bottom: 10px; max-width: 470px;">
+		<ui-select multiple ng-disabled="!aCtrl.indicatorGroupsSelected" ng-model="aCtrl.indicatorsSelected"  style="margin-bottom: 10px; max-width: 470px;">
 		  <ui-select-match placeholder="{{aCtrl.indicatorPlaceholder}}">
 		  	{{$item.name}}
 		  </ui-select-match>
@@ -201,7 +200,7 @@
        <label for="orgunitSelect">Disaggregation</label>
 		<div id="orgunitSelect">
 			<ui-select ng-disabled="aCtrl.orgunitGroupSelected" ng-model="aCtrl.orgunitLevelSelected"  style="margin-bottom: 10px; max-width: 470px;">
-			  <ui-select-match placeholder="{{aCtrl.getLevelPlaceholder();}}">
+			  <ui-select-match allow-clear="true" placeholder="{{aCtrl.getLevelPlaceholder();}}">
 			  	{{aCtrl.orgunitLevelSelected.name}}
 			  </ui-select-match>
 			  <ui-select-choices 
@@ -211,7 +210,7 @@
 			</ui-select>
 			
 			<ui-select ng-disabled="aCtrl.orgunitLevelSelected" ng-model="aCtrl.orgunitGroupSelected"  style="margin-bottom: 10px; max-width: 470px;">
-				  <ui-select-match placeholder="Select organisation unit group">
+				  <ui-select-match allow-clear="true" placeholder="Select organisation unit group">
 				  	{{aCtrl.orgunitGroupSelected.name}}
 				  </ui-select-match>
 				  <ui-select-choices 
