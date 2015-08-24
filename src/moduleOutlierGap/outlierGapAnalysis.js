@@ -478,6 +478,7 @@
 			self.result = self.results[self.currentResult];
 			
 			//Reset filter
+			self.typeFilter = 0;
 			self.stdFilterType = 0;
 			self.stdFilterDegree = 1;
 			
@@ -548,6 +549,23 @@
 				self.pageSize = 15;		
 				self.totalRows = self.filteredRows.length;
 			};
+
+
+
+			self.updateType = function() {
+				switch (self.typeFilter) {
+					case 0:
+						self.sortByColumn('result.totalWeight');
+						break;
+					case 1:
+						self.sortByColumn('result.gapWeight');
+						break;
+					case 2:
+						self.sortByColumn('result.outWeight');
+						break;
+				}
+				self.reverse = true;
+			}
 			
 			self.sortByColumn = function (columnKey) {
 				self.currentPage = 1;

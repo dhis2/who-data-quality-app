@@ -265,6 +265,14 @@
 </div>
 <div collapse="!aCtrl.showFilter" class="well well-sm">
 	<div style="display: inline-block; margin-right: 15px;">
+		<label for="threshold">Display columns</label>
+		<div class="btn-group btn-group-justified" ng-click="aCtrl.updateType();" style="margin-bottom: 5px; max-width: 400px;">
+			<label class="btn btn-default" ng-model="aCtrl.typeFilter" btn-radio="0">All</label>
+			<label class="btn btn-default" ng-model="aCtrl.typeFilter" btn-radio="1">Missing data</label>
+			<label class="btn btn-default" ng-model="aCtrl.typeFilter" btn-radio="2">Outliers</label>
+		</div>
+	</div>
+	<div style="display: inline-block; margin-right: 15px;">
 		<label for="threshold">Outlier filter</label>
 		<div class="btn-group btn-group-justified" ng-click="aCtrl.updateFilter();" style="margin-bottom: 5px; max-width: 400px;">
 				<label class="btn btn-default" ng-model="aCtrl.stdFilterType" btn-radio="0">Off</label>
@@ -288,22 +296,21 @@
 			            	<th nowrap rowspan="2" ng-click="aCtrl.sortByColumn('metaData.ou.name')">Unit</th>
 			            	<th nowrap rowspan="2" style="max-width: 200px;" ng-click="aCtrl.sortByColumn('metaData.dx.name')">Data</th>
 			            	<th rowspan="2" ng-repeat="period in aCtrl.periods" nowrap>{{period}}</th>
-			            	<th colspan="2" 
-			            		popover-placement="top" popover="Maxium number of SD and the maximum modified z-Score respectively for the most extreme outlier." popover-trigger="click">Score</th>
-			            	<th colspan="3" popover-placement="top" popover="Estimated weight (importance) of the gap and outlier." popover-trigger="click">Weight</th>
+			            	<th colspan="2"
+								ng-if="aCtrl.typeFilter != 1" popover-placement="top" popover="Maxium number of SD and the maximum modified z-Score respectively for the most extreme outlier." popover-trigger="click">Score</th>
+			            	<th colspan="{{aCtrl.typeFilter === 0 ? 3 : 1}}" popover-placement="top" popover="Estimated weight (importance) of the gap and outlier." popover-trigger="click">Weight</th>
 			            	<th rowspan="2"></th>
 			            </tr>
 						<tr>
 							<th ng-click='aCtrl.sortByColumn("metaData.ou.hierarchy[" + $index + "]")'
 								ng-repeat="levelName in aCtrl.result.metaData.hierarchy track by $index">{{levelName}}</th>
-							<th ng-click="aCtrl.sortByColumn('result.maxSscore')">SD</th>
-							<th ng-click="aCtrl.sortByColumn('result.maxZscore')">Z</th>
-							<th ng-click="aCtrl.sortByColumn('result.gapWeight')">Gap</th>
-							<th ng-click="aCtrl.sortByColumn('result.outWeight')">Outlier</th>
-							<th ng-click="aCtrl.sortByColumn('result.totalWeight')">Total</th>
+							<th ng-if="aCtrl.typeFilter != 1" ng-click="aCtrl.sortByColumn('result.maxSscore')">SD</th>
+							<th ng-if="aCtrl.typeFilter != 1" ng-click="aCtrl.sortByColumn('result.maxZscore')">Z</th>
+							<th ng-if="aCtrl.typeFilter != 2" ng-click="aCtrl.sortByColumn('result.gapWeight')">Missing</th>
+							<th ng-if="aCtrl.typeFilter != 1" ng-click="aCtrl.sortByColumn('result.outWeight')">Outlier</th>
+							<th ng-if="aCtrl.typeFilter === 0" ng-click="aCtrl.sortByColumn('result.totalWeight')">Total</th>
 						</tr>
 			        </thead>
-
 			        <tfoot>
 			            <td colspan="{{aCtrl.totalColumns}}">
 				            <pagination total-items="aCtrl.totalRows" items-per-page="aCtrl.pageSize" max-size="5" ng-model="aCtrl.currentPage" class="pagination-sm pull-right" boundary-links="true" rotate="true"></pagination>
@@ -319,11 +326,11 @@
 			                <td ng-repeat="value in row.data track by $index" class="valueCell"
 			                	ng-class="{warning: value==='', danger: aCtrl.isOutlier(value, row.stats)}">
 								{{value}}</td>
-			                <td class="valueCell">{{row.result.maxSscore}}</td>
-			                <td class="valueCell"><span ng-if="row.result.maxZscore != 0">{{row.result.maxZscore}}</span></td>
-			                <td class="valueCell">{{row.result.gapWeight}}</td>
-			                <td class="valueCell">{{row.result.outWeight}}</td>
-			                <td class="valueCell">{{row.result.totalWeight}}</td>
+			                <td ng-if="aCtrl.typeFilter != 1" class="valueCell">{{row.result.maxSscore}}</td>
+			                <td ng-if="aCtrl.typeFilter != 1" class="valueCell"><span ng-if="row.result.maxZscore != 0">{{row.result.maxZscore}}</span></td>
+			                <td ng-if="aCtrl.typeFilter != 2" class="valueCell">{{row.result.gapWeight}}</td>
+			                <td ng-if="aCtrl.typeFilter != 1" class="valueCell">{{row.result.outWeight}}</td>
+			                <td ng-if="aCtrl.typeFilter === 0" class="valueCell">{{row.result.totalWeight}}</td>
 			                
 			                <td>
 			                	<span class="dropdown" dropdown>
