@@ -708,51 +708,75 @@
 			
 		};
 
+		self.exportCSV = function() {
+			var modalInstance = $modal.open({
+				templateUrl: "moduleOutlierGap/outlierGapExport.html",
+				controller: "ModalExportController",
+				controllerAs: 'exportCtrl',
+				resolve: {}
+			});
+
+			modalInstance.result.then(function (result) {
+				startCSVexport(result);
+			});
+
+		}
 		
-			self.exportCSV = function() {
-							
+			function startCSVexport(options) {
+
 				var content = self.result.rows;
 				var string, csvContent = '';
+
+				//separator
+				var s = options.separator;
+				var IDs = options.includeIDs;
 				
-					csvContent += "Orgunit ID,Data ID," + self.result.metaData.hierarchy.join(',');
-				csvContent += ",Orgunit name,Data," + self.periods.join(',');
-					csvContent += ",Max SD score,Max Z score,Gap weight,Outlier weight,Total weight\n";
+				if (IDs) csvContent += "Orgunit ID" + s + "Data ID" + s;
+				csvContent += self.result.metaData.hierarchy.join(s);
+				if (csvContent.length > 0 && csvContent.charAt(csvContent.length-1) != s) csvContent += s;
+				csvContent += "Orgunit name,Data," + self.periods.join(s);
+				csvContent += s + ["Max SD score","Max Z score","Gap weight","Outlier weight","Total weight\n"].join(s);
 				
 				for (var i = 0; i < content.length; i++) {
 					var val, value = content[i];
+					string = '';
 
-					 string = checkExportValue(value.metaData.ou.id) + ",";
-					string += checkExportValue(value.metaData.dx.id) + ",";
+					if (IDs) {
+						string += checkExportValue(value.metaData.ou.id, s) + s;
+						string += checkExportValue(value.metaData.dx.id, s) + s;
+					}
 
 					for (var j = 0; j < self.result.metaData.hierarchy.length; j++) {
 						if (value.metaData.ou.hierarchy[j]) {
-							string += checkExportValue(value.metaData.ou.hierarchy[j]) + ",";
+							string += checkExportValue(value.metaData.ou.hierarchy[j], s) + s;
 						}
 						else {
-							string += checkExportValue('') + ",";
+							string += checkExportValue('', s) + s;
 						}
 					}
 
-					string += checkExportValue(value.metaData.ou.name) + ",";
-					 string += checkExportValue(value.metaData.dx.name) + ",";
+					if (string.length > 0 && string.charAt(string.length-1) != s) string += s;
+
+					string += checkExportValue(value.metaData.ou.name, s) + s;
+					 string += checkExportValue(value.metaData.dx.name, s) + s;
 					 for (var j = 0; j < value.data.length; j++) {
 						val = fixDecimalsForExport(value.data[j]);
-						string += checkExportValue(val) + ",";	
+						string += checkExportValue(val, s) + s;
 					 }
 					 val = fixDecimalsForExport(value.result.maxSscore);
-					 string += checkExportValue(val) + ",";
+					 string += checkExportValue(val, s) + s;
 					 val = fixDecimalsForExport(value.result.maxZscore);
-					 string += checkExportValue(val) + ",";
-					 string += checkExportValue(value.result.gapWeight) + ",";
-					 string += checkExportValue(value.result.outWeight) + ",";
-					 string += checkExportValue(value.result.totalWeight);
+					 string += checkExportValue(val, s) + s;
+					 string += checkExportValue(value.result.gapWeight, s) + s;
+					 string += checkExportValue(value.result.outWeight, s) + s;
+					 string += checkExportValue(value.result.totalWeight, s);
 					
 					 csvContent += string + '\n';
 				}
 				
 				var blob = new Blob([csvContent], {type: "text/csv;charset=utf-8"});
 				// see FileSaver.js
-				saveAs(blob, "outlier_gap_data.csv");
+				saveAs(blob, options.fileName + '.csv');
 
 			
 			};
@@ -772,10 +796,10 @@
 			}
 			
 			
-			function checkExportValue(value) {
+			function checkExportValue(value, separator) {
 				var innerValue =	value === null ? '' : value.toString();
 				var result = innerValue.replace(/"/g, '""');
-				if (result.search(/("|,|\n)/g) >= 0)
+				if (result.search(/("|separator|\n)/g) >= 0)
 					result = '"' + result + '"';
 			return result;
 			}	 

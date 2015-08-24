@@ -1,0 +1,40 @@
+<div class="modal-header">
+    <h4>Download</h4>
+	<h5>CSV format</h5>
+</div>
+<div class="modal-body">
+    <table class="table table-bordered">
+        <tr>
+			<th colspan="2">Options</th>
+        </tr>
+		<tr>
+			<td>
+				Separator
+			</td>
+			<td>
+				<div class="btn-group btn-group-justified" style="width: 120px; display: inline-block;">
+					<label ng-repeat="opts in exportCtrl.separators" class="btn btn-default" ng-model="exportCtrl.options.separator" btn-radio="opts.value">{{opts.label}}</label>
+				</div>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				Include IDs
+			</td>
+			<td>
+				<input type="checkbox" ng-model="exportCtrl.options.includeIDs">
+			</td>
+		</tr>
+			<td>
+				File name
+			</td>
+			<td>
+				<input type="text" class="form-control" ng-model="exportCtrl.options.fileName">
+			</td>
+		</tr>
+    </table>
+</div>
+<div class="modal-footer" style="clear: both;">
+	<button type="button" class="btn btn-default" data-ng-click="exportCtrl.cancel()">Cancel</button>
+    <button type="button" class="btn btn-primary" data-ng-click="exportCtrl.close()">Download</button>
+</div>
