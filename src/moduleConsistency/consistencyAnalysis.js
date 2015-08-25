@@ -269,10 +269,13 @@
 
 	    self.updateItemList = function(code) {
 
+			if (!self.dataSelection[code].group) {
+				self.dataSelection[code].itemDescription = '';
+				return;
+			}
 
 	    	self.dataSelection[code].items = [];
 	    	self.dataSelection[code].item = undefined;
-
 			self.dataSelection[code].itemDescription = 'Loading...';
 
 			if (self.dataSelection[code].type === 'de') {
@@ -326,7 +329,10 @@
 	    /** Periods */
 		self.updatePeriodList = function (code) {
 			var dataType = self.dataSelection[code].type;
-			if (dataType === 'de' || dataType === 'dc') {
+			if (!self.dataSelection[code].item) {
+				return;
+			}
+			else if (dataType === 'de' || dataType === 'dc') {
 
 				var dataElementID = dataElementIDForCode(code);
 				metaDataService.getDataElementPeriodType(dataElementID).then(function (periodType) {
