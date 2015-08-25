@@ -313,7 +313,7 @@
       	    
       	    //var get data id(s)
       	    var dx;
-      	    if (self.dataSelection[item].type === 'de') {
+      	    if (self.dataSelection[item].type === 'de' || self.dataSelection[item].type === 'dc') {
       	    	return self.dataSelection[item].deSelected;
       	    }
       	    else {
@@ -753,10 +753,9 @@
         			console.log("Not possible to drill down");
         			return;
         		}
-        		
+        		self.selectedObject = {};
         		self.doAnalysis(item.id, (1 + level));
-        		
-        		
+
         		
           	});
         	
