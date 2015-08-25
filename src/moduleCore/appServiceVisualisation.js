@@ -536,7 +536,8 @@
 		    	result.chartData = chartSeries;
 		    }
 	    };
-		
+
+
 		/** Data consistency */
 		self.makeDataConsistencyChart = function (callback, result) {	    		    	
 			    
@@ -624,12 +625,12 @@
 	    	        "showDistX": true,
 	    	        "showDistY": true,
 	    	        "xAxis": {
-	    	              "axisLabel": result.dxNameA,
+	    	              "axisLabel": result.dxNameB,
 	    	              "axisLabelDistance": 30,
 	    	              "tickFormat": d3.format('g')
 	    	        },
 	    	        "yAxis": {
-	    	        	"axisLabel": result.dxNameB,
+	    	        	"axisLabel": result.dxNameA,
 	    	            "axisLabelDistance": 30,
 	    	            "tickFormat": d3.format('g')
 	    	        },
@@ -647,7 +648,8 @@
 	    		result.chartData = chartSeries;
 	    	}
 	    };
-	    
+
+
 	    /** Dropout */
 	    self.makeDropoutRateChart = function(callback, result) {	    		    	
 	    	var chartSeries = [];
@@ -714,10 +716,9 @@
 	    	}
 	    };
 		
-		
+
+
 		/** -- UTILITIES -- */
-		
-		
 		/*
 		Requires DHIS analytics data in json format. 
 		@param header			response header from analytics
