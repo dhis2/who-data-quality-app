@@ -35,29 +35,25 @@
 			self.consistencyCriteria = 20;
 			
 	    	self.dataSelection = {
-	    		'deGroups': [],
-	    		'indGroups': [],
+				deGroups: [],
+				inGroups: [],
 	    		'a': {
-	    			deGroupSelected : undefined,
-	    			de : [],
-	    			deSelected : undefined,
-	    			deText: "",
-	    			indGroupSelected : undefined,
-	    			ind : [],
-	    			indSelected : undefined,
-	    			indText: "",
-	    			type: 'de'
+					groups: [], 		//list of groups
+					group: undefined,	//selected group
+					itemDescription: '',//Placeholder for item dropdown
+					items: [],			//list of items in selected group
+					item: undefined,	//selected item
+	    			type: 'de',			//item type
+					periodType: undefined
 	    		},
 	    		'b': {
-	    			deGroupSelected : undefined,
-	    			de: [],
-	    			deSelected : undefined,
-	    			deText: "",
-	    			indGroupSelected : undefined,
-	    			ind : [],
-	    			indSelected : undefined,
-	    			indText: "",
-	    			type: 'de'
+					groups: [], 		//list of groups
+					group: undefined,	//selected group
+					itemDescription: '',//Placeholder for item dropdown
+					items: [],			//list of items in selected group
+					item: undefined,	//selected item
+					type: 'de',			//item type
+					periodType: undefined
 	    		}
 			};
 	    	
@@ -65,7 +61,7 @@
 	    		self.dataSelection.deGroups = data;
 	    	});
 			metaDataService.getIndicatorGroups().then(function(data) { 
-				self.dataSelection.indGroups = data;
+				self.dataSelection.inGroups = data;
 			});
 			
 	    	
@@ -114,7 +110,7 @@
 	    	self.periodTypes = periodService.getPeriodTypes();
 	    	self.periodTypeSelected = self.periodTypes[4];
 			self.filteredPeriodTypes = [];
-			filterPeriodTypes();
+			updatePeriodParameters();
 	    	
 	    	self.periodCount = [];	    	
 	    	self.periodCounts = periodService.getPeriodCount();
@@ -142,7 +138,31 @@
 	    	self.status = {
 	    	    isFirstOpen: true
 	    	};
+
+			initWathcers();
 	    }
+
+		function initWathcers() {
+			//Watch for changes in data selection type, clear selection if changing from data element to indicator etc
+			$scope.$watchCollection(function() { return self.dataSelection.a.type; },
+				function(newObject, oldObject) {
+					if (oldObject && newObject && oldObject != newObject) {
+						self.dataSelection.a.item = undefined;
+						self.dataSelection.a.itemDescription = '';
+						self.dataSelection.a.group = undefined;
+					}
+				}
+			);
+			$scope.$watchCollection(function() { return self.dataSelection.b.type; },
+				function(newObject, oldObject) {
+					if (oldObject && newObject && oldObject != newObject) {
+						self.dataSelection.b.item = undefined;
+						self.dataSelection.b.itemDescription = '';
+						self.dataSelection.b.group = undefined;
+					}
+				}
+			);
+		}
 
 	
 		/** -- PARAMETER SELECTION -- */
@@ -174,7 +194,8 @@
 			if (self.filteredOrgunitLevels.length === 0) self.orgunitLevelSelected = undefined;
 		
 		};
-		
+
+
 		function lowestLevel() {
 		
 			var lowest = 1;
@@ -196,7 +217,7 @@
 			for (var i = 0; i < self.orgunitLevels.length; i++) {
 			
 				var belowSelectedUnit = self.orgunitLevels[i].level > self.boundaryOrgunitSelected.level;
-				var belowMaxDepth = self.orgunitLevels[i].level > (self.boundaryOrgunitSelected.level + 2);
+				var belowMaxDepth = self.orgunitLevels[i].level > (self.boundaryOrgunitSelected.level + 3);
 			
 				if (belowSelectedUnit && !belowMaxDepth) {
 					self.filteredOrgunitLevels.push(self.orgunitLevels[i]);
@@ -236,93 +257,98 @@
 		
 		
 		/** Data */
-	    self.updateDataElementList = function(dataItem) {
-	    	self.dataSelection[dataItem].de = [];
-	    	self.dataSelection[dataItem].deSelected = undefined;
-	    	
-	    	if (self.dataSelection[dataItem].type === 'de') {	    	
-	    		self.dataSelection[dataItem].deText = "Loading...";
-		    	metaDataService.getDataElementGroupMembers(self.dataSelection[dataItem].deGroupSelected.id)
-		    	 	.then(function(data) { 
+		self.getGroupForCode = function(code) {
+			if (self.dataSelection[code].type === 'ind') {
+				return self.dataSelection.inGroups;
+			}
+			else {
+				return self.dataSelection.deGroups;
+			}
+		}
 
-		    	       	self.dataSelection[dataItem].deText = "Select data element...";
-		    	       	self.dataSelection[dataItem].de = data;
-		    	       	if (dataItem == 'a' && !self.dataSelection['b'].de) {
-							self.dataSelection['b'].deText = "Select data element...";
-							self.dataSelection['b'].de = data;		    	       		
-		    	       	}
-		    	     });
-	    	}
-	    	else {
-	    		self.dataSelection[dataItem].deText = "Loading...";
-	    		metaDataService.getDataElementGroupMemberOperands(self.dataSelection[dataItem].deGroupSelected.id)
-	    		 	.then(function(data) { 
-		    	       	self.dataSelection[dataItem].deText = "Select data element...";    		 		
-	    		       	self.dataSelection[dataItem].de = data;
-	    		       	
-	    		       	if (dataItem == 'a' && !self.dataSelection['b'].deGroupSelected) {
-	    		       		self.dataSelection['b'].deGroupSelected = angular.copy(self.dataSelection['a'].deGroupSelected);
-	    		       		self.dataSelection['b'].deText = "Select data element...";
-	    		       		self.dataSelection['b'].de = data;		    	       		
-	    		       	}
-	    		     });
-	    	}
-	    
-	    };
-	    
-	    self.dataSelected = function (itemType, itemCode) {
-	    	if (itemType === 'de') {
-		    	metaDataService.getDataElementPeriodType(self.selectedData(itemCode).id).then(function (periodType) {
-		    		self.dataSelection[itemCode].periodType = periodType;
-		    		filterPeriodTypes();
-		    		
-		    		//Select most recent period
-		    		if (self.periodsInYear.length > 0) self.periodSelected = self.periodsInYear[0];
-		    	});
-		    }
-		    else {
-		    	metaDataService.getIndicatorPeriodTypes(self.selectedData(itemCode).id).then(function (periodTypeObject) {
-		    		console.log(periodTypeObject);
-		    		self.dataSelection[itemCode].periodType = periodTypeObject.longest;
-		    		filterPeriodTypes();
 
-		    		//Select most recent period
-		    		if (self.periodsInYear.length > 0) self.periodSelected = self.periodsInYear[0];
-		    	});
-		    }
-		    
-		    
-		    
+	    self.updateItemList = function(code) {
+
+
+	    	self.dataSelection[code].items = [];
+	    	self.dataSelection[code].item = undefined;
+
+			self.dataSelection[code].itemDescription = 'Loading...';
+
+			if (self.dataSelection[code].type === 'de') {
+				metaDataService.getDataElementGroupMembers(self.dataSelection[code].group.id)
+					.then(function(data) {
+						self.dataSelection[code].itemDescription  = 'Select data element...';
+						self.dataSelection[code].items = data;
+					});
+			}
+			else if (self.dataSelection[code].type === 'dc') {
+				metaDataService.getDataElementGroupMemberOperands(self.dataSelection[code].group.id)
+					.then(function(data) {
+						self.dataSelection[code].itemDescription  = "Select data element...";
+						self.dataSelection[code].items = data;
+					});
+			}
+			else {
+				metaDataService.getIndicatorGroupMembers(self.dataSelection[code].group.id)
+					.then(function(data) {
+						self.dataSelection[code].itemDescription  = "Select indicator...";
+						self.dataSelection[code].items = data;
+					});
+			}
 	    };
-	    
-	    
-	      self.updateIndicatorList = function(dataItem) {
-	      	self.dataSelection[dataItem].ind = [];
-	    		self.dataSelection[dataItem].indSelected = undefined;
-	      	self.dataSelection[dataItem].indText = "Loading...";
-	      	metaDataService.getIndicatorGroupMembers(self.dataSelection[dataItem].indGroupSelected.id)
-	      		.then(function(data) { 
-	      			self.dataSelection[dataItem].indText = "Select indicator";  	    			
-	      		   	self.dataSelection[dataItem].ind = data;
-	      		});
-	      };
-	      
-	      
+
+		
+
+		/**
+		 * Get data element id for the selection box with the given code
+		 * @param code
+		 */
+		function dataElementIDForCode(code) {
+			var item = self.dataSelection[code].item;
+			if (item.hasOwnProperty('dataElementId')) { //I.e. data element operand
+				return item.dataElementId;
+			}
+			else {
+				return item.id;
+			}
+		}
+
+
         //item a or b
-        self.selectedData = function(item) {
+        self.dataItemForCode = function(code) {
       	    
       	    //var get data id(s)
-      	    var dx;
-      	    if (self.dataSelection[item].type === 'de' || self.dataSelection[item].type === 'dc') {
-      	    	return self.dataSelection[item].deSelected;
-      	    }
-      	    else {
-      	    	return self.dataSelection[item].indSelected;
-      	    }
+      	    return self.dataSelection[code].item;
         };
 	      	
 	    
-	    /** Periods */	    	
+	    /** Periods */
+		self.updatePeriodList = function (code) {
+			var dataType = self.dataSelection[code].type;
+			if (dataType === 'de' || dataType === 'dc') {
+
+				var dataElementID = dataElementIDForCode(code);
+				metaDataService.getDataElementPeriodType(dataElementID).then(function (periodType) {
+
+					self.dataSelection[code].periodType = periodType;
+					updatePeriodParameters();
+
+				});
+			}
+			else {
+				var indicatorID = self.dataItemForCode(itemCode).id;
+				metaDataService.getIndicatorPeriodTypes(indicatorID).then(function (periodTypeObject) {
+
+					self.dataSelection[code].periodType = periodTypeObject.longest;
+					updatePeriodParameters();
+
+				});
+			}
+		};
+		
+
+
     	self.getPeriodsInYear = function() {
     		self.periodsInYear = [];
     		var isoPeriods = periodService.getISOPeriods(self.yearSelected.name.toString() + '-01-01', self.yearSelected.name.toString() + '-12-31', self.periodTypeSelected.id);
@@ -340,24 +366,25 @@
     		
     		//Want most recent first (?)
     		self.periodsInYear.sort(function(a, b) { return (a.id > b.id) ? -1 : 1});
-    		
     	};
-	    	    
-	    
-	    
-	    function filterPeriodTypes() {
-	    	
-	    	if (!self.dataSelection['a'].periodType && !self.dataSelection['b'].periodType) {
-	    		self.filteredPeriodTypes = self.periodTypes;
-	    		return;
-	    	}
 
-	    	var longestPeriod = longestPeriodInSelection();
+	    
+	    function updatePeriodParameters() {
+
+			var periodsForRelation = self.dataSelection['a'].periodType && self.dataSelection['b'].periodType;
+			var periodsForTime = self.dataSelection['a'].periodType;
+
+			if ((self.consistencyType === 'relation' && !periodsForRelation) || (self.consistencyType && !periodsForTime)) {
+				self.filteredPeriodTypes = self.periodTypes;
+				return;
+			}
+
+	    	var longestPeriodType = longestPeriodInSelection();
 	    	
 	    	self.filteredPeriodTypes = [];
 	    	for (var i = self.periodTypes.length-1; i >= 0; i--) {
 	    		
-	    		if (self.periodTypes[i].id === longestPeriod) {
+	    		if (self.periodTypes[i].id === longestPeriodType) {
 	    			self.filteredPeriodTypes.push(self.periodTypes[i]);
 	    			break;	
 	    		}
@@ -369,7 +396,8 @@
 	    	defaultPeriodType();
 	    	self.getPeriodsInYear();
 	    }
-	    
+
+
 	    function defaultPeriodType() {
 			
 			//For drop out rate we want yearly by default
@@ -390,16 +418,14 @@
 
 	    	return periodService.longestPeriod(periods);
 	    }
-	    
-	    
-  	    
-  	    self.selectedPeriod = function() {
+
+
+		function selectedPeriod() {
   	    	if (self.periodTypeSelected.id != 'Yearly') return self.periodSelected;
   	    	else return self.yearSelected;
   	    };
   	    
-		
-		
+
 		/** REQUEST DATA */		
 		self.doAnalysis = function(ouBoundary, level) {
 			
@@ -417,8 +443,8 @@
 			var criteria = self.consistencyCriteria;
 
 
-			var period = self.selectedPeriod().id;
-			var dxA = self.selectedData('a').id;
+			var period = selectedPeriod().id;
+			var dxA = self.dataItemForCode('a').id;
 			var ouBoundary = ouBoundary ? ouBoundary : self.boundaryOrgunitSelected.id;
 			var ouLevel = level ? level : self.orgunitLevelSelected.level;
 			var ouGroup = null;//TODO			
@@ -431,7 +457,7 @@
 			
 			//1 Relation
 			if (analysisType === 'relation') {	
-				var dxB = self.selectedData('b').id;
+				var dxB = self.dataItemForCode('b').id;
 				dataAnalysisService.dataConsistency(receiveRelationResult, relationType, criteria, null, dxA, dxB, period, ouBoundary, ouLevel);
 			}
 			//2 Over time
@@ -450,18 +476,18 @@
 			var periodType = longestPeriodInSelection();
 
 			if (self.consistencyType === 'relation') {
-				var periods = periodService.getSubPeriods(self.selectedPeriod().id.toString(), periodType);
-				var dxA = self.selectedData('a').id;
-				var dxB = self.selectedData('b').id;	
+				var periods = periodService.getSubPeriods(selectedPeriod().id.toString(), periodType);
+				var dxA = self.dataItemForCode('a').id;
+				var dxB = self.dataItemForCode('b').id;
 				
 				visualisationService.multiBarChart(receiveDetailChart, [dxA, dxB], periods, [ouID], 'dataOverTime');
 				
 			}
 			else {
-				var periods = periodService.precedingPeriods(self.selectedPeriod().id.toString(), self.periodCountSelected.value);
+				var periods = periodService.precedingPeriods(selectedPeriod().id.toString(), self.periodCountSelected.value);
 				periods.push(self.mainResult.pe);
 				
-				var dxA = self.selectedData('a').id;
+				var dxA = self.dataItemForCode('a').id;
 				
 				visualisationService.multiBarChart(receiveDetailChart, [dxA], periods, [ouID], 'dataOverTime');
 				
@@ -470,7 +496,8 @@
 			}
 			
 		}
-		
+
+
 		var receiveDetailChart = function(chartData, chartOptions) {		
 			chartOptions.chart.title = {
 				'enable': true,
@@ -484,8 +511,7 @@
 				
 		};
 				
-	
-		
+
 		/**
 		RESULTS
 		*/
@@ -593,17 +619,17 @@
 			var title = "";
 			if (self.consistencyType === 'relation') {			
 				if (self.relationshipType === 'eq') {
-					title += self.selectedData('a').name + " ≈ " + self.selectedData('b').name + ". " + periodService.shortPeriodName(self.selectedPeriod().id);
+					title += self.dataItemForCode('a').name + " ≈ " + self.dataItemForCode('b').name + ". " + periodService.shortPeriodName(selectedPeriod().id);
 				}
 				if (self.relationshipType === 'aGTb') {
-					title += self.selectedData('a').name + " > " + self.selectedData('b').name + ". " + periodService.shortPeriodName(self.selectedPeriod().id);
+					title += self.dataItemForCode('a').name + " > " + self.dataItemForCode('b').name + ". " + periodService.shortPeriodName(selectedPeriod().id);
 				}
 				if (self.relationshipType === 'do') {
-					title += self.selectedData('a').name + " - " + self.selectedData('b').name + " dropout. " + periodService.shortPeriodName(self.selectedPeriod().id);
+					title += self.dataItemForCode('a').name + " - " + self.dataItemForCode('b').name + " dropout. " + periodService.shortPeriodName(selectedPeriod().id);
 				}
 			}
 			else {
-				title += self.selectedData('a').name + ' consistency over time. ' + periodService.shortPeriodName(self.selectedPeriod().id) + ' against ' + self.periodCountSelected.name + ' preceding periods';
+				title += self.dataItemForCode('a').name + ' consistency over time. ' + periodService.shortPeriodName(selectedPeriod().id) + ' against ' + self.periodCountSelected.name + ' preceding periods';
 			}
 			
 			return title;
@@ -622,56 +648,10 @@
 	   			self.reverse = true;
 	   		}
 	   	};
-	   	
-	   	self.isOutlier = function (value, stats) {
-	   		if (value === null || value === '') return false;
-	   		
-   			var standardScore = Math.abs(mathService.calculateStandardScore(value, stats));
-   			var zScore = Math.abs(mathService.calculateZScore(value, stats));
-   			
-   			if (standardScore > 2 || zScore > 3.5) return true;
-   			else return false;
-   		};
-   		
-	   	
-   		self.updateFilter = function() {
-   			self.filteredRows = [];
-   			for (var i = 0; i < self.result.rows.length; i++) {
-   				if (includeRow(self.result.rows[i])) {
-   					self.filteredRows.push(self.result.rows[i]);
-   				}
-   			}
-   			
-   			//Store paging variables
-   			self.currentPage = 1;
-   			self.pageSize = 10;   	
-   			self.totalRows = self.filteredRows.length;
-   		};
 
-   		
-   		function includeRow(row) {
-   				
-   				if (self.stdFilterType === 0) return true;
-   				
-   				if (self.stdFilterType === 1) {
-   					if (self.stdFilterDegree === 2) return row.result.maxSscore > 3;
-   					else return row.result.maxSscore > 2;
-   				}
-   				
-   				if (self.stdFilterType === 2) {
-   					if (self.stdFilterDegree === 2) return row.result.maxZscore > 5;
-   					else return row.result.maxZscore > 3.5;
-   				} 
-   				
-   				return false;
-   			}
-   		
-   		
 	   	
 	   	/**INTERACTIVE FUNCTIONS*/
-	   	
-	   	
-	   	function itemClicked(seriesIndex, pointIndex) {	   		
+		function itemClicked(seriesIndex, pointIndex) {
 	   		var orgunitID = self.chart.data[seriesIndex].values[pointIndex].z;
 	   		
 	   		for (var i = 0; i < self.tableData.length; i++) {

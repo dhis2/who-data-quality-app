@@ -5,7 +5,7 @@
 <accordion close-others="aCtrl.oneAtATime">
 
 	
-	<!-- DATA -->
+	<!-- OPTIONS -->
 	<accordion-group heading="Analysis Type" is-open="aCtrl.status.isFirstOpen">
 		<label>Consistency analysis type</label><br />
 		<div class="btn-group btn-group-justified" style="width: 330px; margin-bottom: 10px;">
@@ -40,156 +40,43 @@
 
 	<!-- DATA -->
     <accordion-group heading="Data">
-    
-    	<h4 ng-if="aCtrl.consistencyType === 'relation'">Indicator/Data element A</h4>		
-		
-		
-		<!-- DATA A -->
-		<div class="btn-group btn-group-justified" style="max-width: 470px; margin-bottom: 10px;">
-			<label class="btn btn-default" ng-model="aCtrl.dataSelection.a.type" btn-radio="'de'">Data element (totals)</label>
-			<label class="btn btn-default" ng-model="aCtrl.dataSelection.a.type" btn-radio="'dc'">Data element (details)</label>
-		  	<label class="btn btn-default" ng-model="aCtrl.dataSelection.a.type" btn-radio="'ind'">Indicator</label>
-		</div>
-		
-		<!-- DATA ELEMENTS A-->
-		<div ng-if="aCtrl.dataSelection.a.type != 'ind'">
-		<div >
-	    	<label>Data element</label><br />
-			<ui-select 
-				on-select="aCtrl.updateDataElementList('a')" 
-				ng-model="aCtrl.dataSelection.a.deGroupSelected"
-				style="margin-bottom: 10px; max-width: 470px;">
-				<ui-select-match allow-clear="true" placeholder="Select data element group...">
-			  		{{aCtrl.dataSelection.a.deGroupSelected.name}}
-			  	</ui-select-match>
-			 	<ui-select-choices 
-			  		repeat="obj in aCtrl.dataSelection.deGroups | filter: $select.search">
-					<div ng-bind-html="obj.name | highlight: $select.search"></div>
-				</ui-select-choices>
-			</ui-select>
-		</div>
 
-		<ui-select
-			ng-disabled="!aCtrl.dataSelection.a.de || !aCtrl.dataSelection.a.deGroupSelected"
-			ng-model="aCtrl.dataSelection.a.deSelected" 
-			on-select="aCtrl.dataSelected('de', 'a')"
-			style="margin-bottom: 10px; max-width: 470px;">
-			<ui-select-match allow-clear="true" placeholder="{{aCtrl.dataSelection.a.deText}}">
-				{{aCtrl.dataSelection.a.deSelected.name}}
-		  	</ui-select-match>
-			<ui-select-choices 
-		  		repeat="obj in aCtrl.dataSelection.a.de | filter: $select.search">
-		   		<div ng-bind-html="obj.name | highlight: $select.search"></div>
-			</ui-select-choices>
-		</ui-select>
-		</div>
-		
-		<!-- INDICATORS A -->
-		<div ng-if="aCtrl.dataSelection.a.type === 'ind'">
-	    	<label>Indicator</label><br />
-	    	<ui-select 
-	    		on-select="aCtrl.updateIndicatorList('a')" 
-	    		ng-model="aCtrl.dataSelection.a.indGroupSelected"  
-	    		style="margin-bottom: 10px; max-width: 470px;">
-	    		<ui-select-match allow-clear="true" placeholder="Select indicator group...">
-	    	  		{{aCtrl.dataSelection.a.indGroupSelected.name}}
-				</ui-select-match>
-	    		<ui-select-choices
-	    	  		repeat="obj in aCtrl.dataSelection.indGroups | filter: $select.search">
-	    	   		<div ng-bind-html="obj.name | highlight: $select.search"></div>
-	    		</ui-select-choices>
-	   		</ui-select>
-	    	
-			<ui-select 
-				on-select="aCtrl.dataSelected('ind', 'a')"
-				ng-disabled="!aCtrl.dataSelection.a.ind || aCtrl.dataSelection.a.ind.length === 0 || !aCtrl.dataSelection.a.indGroupSelected"
-				ng-model="aCtrl.dataSelection.a.indSelected"
+		<div ng-repeat="code in ['a', 'b']" ng-show="!(code === 'b' && aCtrl.consistencyType === 'time')">
+			<h4 ng-if="aCtrl.consistencyType === 'relation'">Indicator/Data element {{code}}</h4>
+			<div class="btn-group btn-group-justified" ng-click="alert(123);" style="max-width: 470px; margin-bottom: 10px;">
+				<label class="btn btn-default" ng-model="aCtrl.dataSelection[code].type" btn-radio="'de'">Data element (totals)</label>
+				<label class="btn btn-default" ng-model="aCtrl.dataSelection[code].type" btn-radio="'dc'">Data element (details)</label>
+				<label class="btn btn-default" ng-model="aCtrl.dataSelection[code].type" btn-radio="'ind'">Indicator</label>
+			</div>
+
+			<ui-select
+				on-select="aCtrl.updateItemList(code); aCtrl.dataSelection[code].item = null;"
+				ng-model="aCtrl.dataSelection[code].group"
 				style="margin-bottom: 10px; max-width: 470px;">
-				<ui-select-match allow-clear="true" placeholder="{{aCtrl.dataSelection.a.indText}}">
-			  		{{aCtrl.dataSelection.a.indSelected.name}}
-				</ui-select-match>
-				<ui-select-choices 
-			  		repeat="obj in aCtrl.dataSelection.a.ind | filter: $select.search">
-			   		<div ng-bind-html="obj.name | highlight: $select.search"></div>
-				</ui-select-choices>
-			</ui-select>
-		</div>
-		
-		
-		
-		<!-- DATA B -->
-		<div style="margin-top: 20px;" ng-if="aCtrl.consistencyType === 'relation'">
-	   	<h4 >Indicator/Data element B</h4>	
-		<div class="btn-group btn-group-justified" style="max-width: 470px; margin-bottom: 10px;">
-			<label class="btn btn-default" ng-model="aCtrl.dataSelection.b.type" btn-radio="'de'">Data element (totals)</label>
-			<label class="btn btn-default" ng-model="aCtrl.dataSelection.b.type" btn-radio="'dc'">Data element (details)</label>
-		  	<label class="btn btn-default" ng-model="aCtrl.dataSelection.b.type" btn-radio="'ind'">Indicator</label>
-		</div>
-		
-		<!-- DATA ELEMENTS B-->
-		<div ng-if="aCtrl.dataSelection.b.type != 'ind'">
-		<div >
-			<label>Data element</label><br />
-			<ui-select 
-				on-select="aCtrl.updateDataElementList('b')" 
-				ng-model="aCtrl.dataSelection.b.deGroupSelected"
-				style="margin-bottom: 10px; max-width: 470px;">
-				<ui-select-match allow-clear="true" placeholder="Select data element group...">
-			  		{{aCtrl.dataSelection.b.deGroupSelected.name}}
-			  	</ui-select-match>
-			 	<ui-select-choices 
-			  		repeat="obj in aCtrl.dataSelection.deGroups | filter: $select.search">
-					<div ng-bind-html="obj.name | highlight: $select.search"></div>
-				</ui-select-choices>
-			</ui-select>
-		</div>
-		
-		<ui-select
-			ng-disabled="!aCtrl.dataSelection.b.de || !aCtrl.dataSelection.b.deGroupSelected"
-			ng-model="aCtrl.dataSelection.b.deSelected"
-			on-select="aCtrl.dataSelected('de', 'b')"
-			style="margin-bottom: 10px; max-width: 470px;">
-			<ui-select-match allow-clear="true" placeholder="{{aCtrl.dataSelection.b.deText}}">
-				{{aCtrl.dataSelection.b.deSelected.name}}
-		  	</ui-select-match>
-			<ui-select-choices 
-		  		repeat="obj in aCtrl.dataSelection.b.de | filter: $select.search">
-		   		<div ng-bind-html="obj.name | highlight: $select.search"></div>
-			</ui-select-choices>
-		</ui-select>
-		</div>
-		
-		<!-- INDICATORS B -->
-		<div ng-if="aCtrl.dataSelection.b.type === 'ind'">
-			<label>Indicator</label><br />
-			<ui-select 
-				on-select="aCtrl.updateIndicatorList('b')" 
-				ng-model="aCtrl.dataSelection.b.indGroupSelected"  
-				style="margin-bottom: 10px; max-width: 470px;">
-				<ui-select-match allow-clear="true" placeholder="Select indicator group...">
-			  		{{aCtrl.dataSelection.b.indGroupSelected.name}}
+				<ui-select-match allow-clear="true" placeholder="Select group...">
+					{{aCtrl.dataSelection[code].group.name}}
 				</ui-select-match>
 				<ui-select-choices
-			  		repeat="obj in aCtrl.dataSelection.indGroups | filter: $select.search">
-			   		<div ng-bind-html="obj.name | highlight: $select.search"></div>
-				</ui-select-choices>
-				</ui-select>
-			
-			<ui-select
-				ng-disabled="!aCtrl.dataSelection.b.ind || aCtrl.dataSelection.b.ind.length === 0 || !aCtrl.dataSelection.b.indGroupSelected"
-				ng-model="aCtrl.dataSelection.b.indSelected"  
-				on-select="aCtrl.dataSelected('ind', 'b')"
-				style="margin-bottom: 10px; max-width: 470px;">
-				<ui-select-match allow-clear="true" placeholder="{{aCtrl.dataSelection.b.indText}}">
-			  		{{aCtrl.dataSelection.b.indSelected.name}}
-				</ui-select-match>
-				<ui-select-choices 
-			  		repeat="obj in aCtrl.dataSelection.b.ind | filter: $select.search">
-			   		<div ng-bind-html="obj.name | highlight: $select.search"></div>
+					repeat="obj in aCtrl.getGroupForCode(code)| filter: $select.search">
+					<div ng-bind-html="obj.name | highlight: $select.search"></div>
 				</ui-select-choices>
 			</ui-select>
-		</div>
-		</div>
+
+			<ui-select
+				ng-disabled="!aCtrl.dataSelection[code].group || aCtrl.dataSelection[code].items.length < 1"
+				ng-model="aCtrl.dataSelection[code].item"
+				on-select="aCtrl.updatePeriodList(code)"
+				style="margin-bottom: 10px; max-width: 470px;">
+				<ui-select-match allow-clear="true" placeholder="{{aCtrl.dataSelection[code].itemDescription}}">
+					{{aCtrl.dataSelection[code].item.name}}
+				</ui-select-match>
+				<ui-select-choices
+					repeat="obj in aCtrl.dataSelection[code].items | filter: $select.search">
+					<div ng-bind-html="obj.name | highlight: $select.search"></div>
+				</ui-select-choices>
+			</ui-select>
+			</div>
+
     </accordion-group>
     
     
@@ -200,7 +87,7 @@
     	<div style="display: inline-block;">
     		<label>Period type</label><br />
     		<div style="display: inline-block;">
-    		<ui-select on-select="aCtrl.getPeriodsInYear();" ng-model="aCtrl.periodTypeSelected"  style="margin-bottom: 10px; width: 200px;">
+    		<ui-select on-select="aCtrl.getPeriodsInYear(); aCtrl.periodSelected = null;" ng-model="aCtrl.periodTypeSelected"  style="margin-bottom: 10px; width: 200px;">
     		  <ui-select-match placeholder="Select period type...">
     		  	{{aCtrl.periodTypeSelected.name}}
     		  </ui-select-match>
@@ -215,7 +102,7 @@
     	<div style="display: inline-block;">
     		<label>Year</label><br />
     		<div style="display: inline-block;">
-    		<ui-select on-select="aCtrl.getPeriodsInYear();" ng-model="aCtrl.yearSelected"  style="margin-bottom: 10px; width: 200px;">
+    		<ui-select on-select="aCtrl.getPeriodsInYear(); aCtrl.periodSelected = null;" ng-model="aCtrl.yearSelected"  style="margin-bottom: 10px; width: 200px;">
     		  <ui-select-match placeholder="Select year...">
     		  	{{aCtrl.yearSelected.name}}
     		  </ui-select-match>
@@ -331,8 +218,8 @@
   </accordion>  	
   
 <button type="button" class="btn btn-primary pull-right" ng-click="aCtrl.doAnalysis(null, null); aCtrl.updateCharts();" 
-	ng-disabled="(!aCtrl.periodSelected && aCtrl.periodTypeSelected.id != 'Yearly') || !(aCtrl.dataSelection.a.deSelected || aCtrl.dataSelection.a.indSelected) ||
-		(aCtrl.consistencyType === 'relation' && !(aCtrl.dataSelection.b.deSelected || aCtrl.dataSelection.b.indSelected))" style="margin-bottom:20px">Analyze</button>
+	ng-disabled="(!aCtrl.periodSelected && aCtrl.periodTypeSelected.id != 'Yearly') || !aCtrl.dataSelection.a.item ||
+		(aCtrl.consistencyType === 'relation' && !aCtrl.dataSelection.b.item)" style="margin-bottom:20px">Analyze</button>
 <hr / style="clear: both;">
 
 <div ng-if="aCtrl.req">
@@ -361,12 +248,12 @@
 		    	<th nowrap ng-click="aCtrl.sortByColumn('name')">Unit</th>
 		    	<th ng-click="aCtrl.sortByColumn('value')">
 		    		<span ng-if="aCtrl.consistencyType === 'relation'">
-		    			{{aCtrl.selectedData('a').name}}
+		    			{{aCtrl.dataIDforCode('a').name}}
 		    		</span>
 		    		<span ng-if="aCtrl.consistencyType === 'time'">Current Period</span>
 		    	</th>
 		    	<th ng-click="aCtrl.sortByColumn('refValue')">
-			    	<span ng-if="aCtrl.consistencyType === 'relation'">{{aCtrl.selectedData('b').name}}</span>
+			    	<span ng-if="aCtrl.consistencyType === 'relation'">{{aCtrl.dataIDforCode('b').name}}</span>
 			    	<span ng-if="aCtrl.consistencyType === 'time' && aCtrl.trendType === 'constant'">Average</span>
 			    	<span ng-if="aCtrl.consistencyType === 'time' && aCtrl.trendType != 'constant'">Forecast</span>
 		    	</th>
@@ -416,10 +303,10 @@
 	    <tr>	
 	    	<th nowrap>Unit</th>
 	    	<th>
-	    		<span ng-if="aCtrl.consistencyType === 'relation'">{{aCtrl.selectedData('a').name}}</span>
+	    		<span ng-if="aCtrl.consistencyType === 'relation'">{{aCtrl.dataIDforCode('a').name}}</span>
 	    		<span ng-if="aCtrl.consistencyType === 'time'">Current Period</span></th>
 	    	<th>
-	    		<span ng-if="aCtrl.consistencyType === 'relation'">{{aCtrl.selectedData('b').name}}</span>
+	    		<span ng-if="aCtrl.consistencyType === 'relation'">{{aCtrl.dataIDforCode('b').name}}</span>
 	    		<span ng-if="aCtrl.consistencyType === 'time' && aCtrl.trendType === 'constant'">Average</span>
 	    		<span ng-if="aCtrl.consistencyType === 'time' && aCtrl.trendType != 'constant'">Forecast</span>
 	    	</th>
