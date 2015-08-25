@@ -16,9 +16,10 @@
 		<div ng-if="aCtrl.consistencyType === 'relation'">		
 		<label>Expected relationship</label><br />
 		<div class="btn-group btn-group-justified" style="width: 330px; margin-bottom: 10px;">
+				<label class="btn btn-default" ng-model="aCtrl.relationshipType" btn-radio="'level'">None</label>
 				<label class="btn btn-default" ng-model="aCtrl.relationshipType" btn-radio="'eq'">A ≈ B</label>
 		  		<label class="btn btn-default" ng-model="aCtrl.relationshipType" btn-radio="'aGTb'">A > B</label>
-		  		<label class="btn btn-default" ng-model="aCtrl.relationshipType" btn-radio="'do'">Dropout rate</label>
+		  		<label class="btn btn-default" ng-model="aCtrl.relationshipType" btn-radio="'do'">Dropout</label>
 		</div>
 		</div>
 		

@@ -30,7 +30,7 @@
 			self.selectedObject = {};
 			
 			self.consistencyType = 'relation'; 
-			self.relationshipType = 'eq';
+			self.relationshipType = 'level';
 			self.trendType = 'constant';
 			self.consistencyCriteria = 20;
 			

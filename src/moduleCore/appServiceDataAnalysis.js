@@ -96,8 +96,8 @@
 			}
 		}
 
-		/** -- ANALYSIS -- */
 
+		/** -- ANALYSIS -- */
 		/**
 		 * Performs outlier and gap analysis
 		 * @param {Object} callback - function to send result to
@@ -1384,13 +1384,30 @@
 					}
 				}
 				//A = B
-				else {
+				else if (type === 'eq') {
 					ratio = mathService.round(valueA / valueB, 3);
 					if (ratio > (1.0 + criteria * 0.01) || ratio < (1.0 - criteria * 0.01)) {
 						subunitOutliers++;
 						subunitViolationNames.push(names[subunit]);
 						violation = true;
 						weight = Math.abs(valueA - valueB);
+					}
+					else {
+						subunitsWithinThreshold++;
+					}
+				}
+
+				//Level, i.e. parent vs subunit
+				else if (type = 'level') {
+					ratio = mathService.round(valueA / valueB, 3);
+
+					var ratioOfRatios = ratio/result.boundaryRatio;
+
+					if (ratioOfRatios > (1.0 + criteria * 0.01) || ratioOfRatios < (1.0 - criteria * 0.01)) {
+						subunitOutliers++;
+						subunitViolationNames.push(names[subunit]);
+						violation = true;
+						weight = mathService.round(Math.abs(valueB*result.boundaryRatio - valueA), 0);
 					}
 					else {
 						subunitsWithinThreshold++;
