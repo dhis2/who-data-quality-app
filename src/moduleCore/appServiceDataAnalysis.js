@@ -1020,8 +1020,18 @@
 			var periods = [].concat(self.dsci.refPe);
 			periods.push(self.dsci.pe);
 
+			//Data element with disaggregation
+			var dxRequest = '';
+			if (self.dsci.dxID.length != 11) {
+				dxRequest = self.dsci.dxID.substr(0, 11) + '&dimension=co';
+			}
+			else {
+				dxRequest = self.dsci.dxID;
+			}
+
+
 			//1 request boundary consistency data for the four years
-			var requestURL = '/api/analytics.json?dimension=dx:' + self.dsci.dxID + '&dimension=ou:' + self.dsci.ouBoundary + '&dimension=pe:' + periods.join(';') + '&displayProperty=NAME';
+			var requestURL = '/api/analytics.json?dimension=dx:' + dxRequest + '&dimension=ou:' + self.dsci.ouBoundary + '&dimension=pe:' + periods.join(';') + '&displayProperty=NAME';
 
 			requestService.getSingle(requestURL).then(
 				//success
@@ -1037,7 +1047,7 @@
 
 			//2 request subunit completeness data for the four years
 			var ou = self.dsci.ouBoundary + ';LEVEL-' + self.dsci.ouLevel;
-			var requestURL = '/api/analytics.json?dimension=dx:' + self.dsci.dxID + '&dimension=ou:' + ou + '&dimension=pe:' + periods.join(';') + '&displayProperty=NAME';
+			var requestURL = '/api/analytics.json?dimension=dx:' + dxRequest + '&dimension=ou:' + ou + '&dimension=pe:' + periods.join(';') + '&displayProperty=NAME';
 
 			requestService.getSingle(requestURL).then(
 				//success
@@ -1058,7 +1068,15 @@
 			var boundaryReady = (self.dsci.boundaryData !== null);
 			if (!subunitReady || !boundaryReady) return;
 
-			var dxID = self.dsci.dxID;
+			var dxID, coID;
+			if (self.dsci.dxID.length != 11) {
+				dxID = self.dsci.dxID.substr(0, 11);
+				coID = self.dsci.dxID.substr(12, 11);
+			}
+			else { 
+				dxID = self.dsci.dxID;
+				coID = null;
+			}
 			var threshold = self.dsci.threshold;
 			var type = self.dsci.type;
 			var maxForecast = self.dsci.maxForecast;
@@ -1089,7 +1107,7 @@
 
 			var values = [];
 			for (var k = 0; k < refPe.length; k++) {
-				values.push(dataValue(headers, data, dxID, refPe[k], ouBoundary, null));
+				values.push(dataValue(headers, data, dxID, refPe[k], ouBoundary, coID));
 			}
 
 			//Check which years to include, based on data for boundary
@@ -1124,7 +1142,7 @@
 
 
 			var value, tmpVal, refValue, ratio, violation;
-			value = dataValue(headers, data, dxID, pe, ouBoundary, null);
+			value = dataValue(headers, data, dxID, pe, ouBoundary, coID);
 			refValue = referenceValue(values, type, maxForecast);
 
 			result.boundaryValue = value;
@@ -1138,11 +1156,11 @@
 				violation = false;
 				weight = 0;
 
-				value = dataValue(headers, data, dxID, pe, subunit, null);
+				value = dataValue(headers, data, dxID, pe, subunit, coID);
 
 				values = [];
 				for (var k = 0; k < refPe.length; k++) {
-					tmpVal = dataValue(headers, data, dxID, refPe[k], subunit, null);
+					tmpVal = dataValue(headers, data, dxID, refPe[k], subunit, coID);
 					if (tmpVal) values.push(tmpVal);
 				}
 				refValue = referenceValue(values, type, maxForecast);
@@ -1244,13 +1262,36 @@
 			self.dc.boundaryData = null;
 			self.dc.subunitData = null;
 
-			//1 request boundary data
-			var requestURL = '/api/analytics.json?dimension=dx:' + self.dc.dxIDa + ';' + self.dc.dxIDb + '&dimension=ou:' + self.dc.ouBoundary + '&dimension=pe:' + self.dc.pe + '&displayProperty=NAME';
+			//Check if we need data element disaggregation
+			var dxRequestA = '';
+			if (self.dc.dxIDa.length != 11) {
+				dxRequestA = self.dc.dxIDa.substr(0, 11) + '&dimension=co';
+			}
+			else {
+				dxRequestA = self.dc.dxIDa;
+			}
 
-			requestService.getSingle(requestURL).then(
+			var dxRequestB = '';
+			if (self.dc.dxIDb.length != 11) {
+				dxRequestB = self.dc.dxIDb.substr(0, 11) + '&dimension=co';
+			}
+			else {
+				dxRequestB = self.dc.dxIDb;
+			}
+
+
+			var requests = [];
+			//1 request boundary data
+			requests.push('/api/analytics.json?dimension=dx:' + dxRequestA + '&dimension=ou:' +
+				self.dc.ouBoundary + '&dimension=pe:' + self.dc.pe + '&displayProperty=NAME');
+			requests.push('/api/analytics.json?dimension=dx:' + dxRequestB + '&dimension=ou:' +
+				self.dc.ouBoundary + '&dimension=pe:' + self.dc.pe + '&displayProperty=NAME');
+
+			requestService.getMultiple(requests).then(
 				//success
 				function (response) {
-					self.dc.boundaryData = response.data;
+
+					self.dc.boundaryData = mergeAnalyticsResults(response);
 					startDataConsistencyAnalysis();
 				},
 				//error
@@ -1259,14 +1300,18 @@
 				}
 			);
 
-
 			//2 request subunit data
-			var requestURL = '/api/analytics.json?dimension=dx:' + self.dc.dxIDa + ';' + self.dc.dxIDb + '&dimension=ou:' + self.dc.ouBoundary + ';LEVEL-' + self.dc.ouLevel + '&dimension=pe:' + self.dc.pe + '&displayProperty=NAME';
+			requests = [];
+			requests.push('/api/analytics.json?dimension=dx:' + dxRequestA + '&dimension=ou:' +
+				self.dc.ouBoundary + ';LEVEL-' + self.dc.ouLevel + '&dimension=pe:' + self.dc.pe + '&displayProperty=NAME');
+			requests.push('/api/analytics.json?dimension=dx:' + dxRequestB + '&dimension=ou:' +
+				self.dc.ouBoundary + ';LEVEL-' + self.dc.ouLevel + '&dimension=pe:' + self.dc.pe + '&displayProperty=NAME');
 
-			requestService.getSingle(requestURL).then(
+			requestService.getMultiple(requests).then(
 				//success
 				function (response) {
-					self.dc.subunitData = response.data;
+
+					self.dc.subunitData = mergeAnalyticsResults(response);
 					startDataConsistencyAnalysis();
 				},
 				//error
@@ -1283,8 +1328,25 @@
 			var boundaryReady = (self.dc.boundaryData !== null);
 			if (!subunitReady || !boundaryReady) return;
 
-			var dxIDa = self.dc.dxIDa;
-			var dxIDb = self.dc.dxIDb;
+
+			var dxIDa, dxIDb, coIDa, coIDb;
+			if (self.dc.dxIDa.length != 11) {
+				dxIDa = self.dc.dxIDa.substr(0, 11);
+				coIDa = self.dc.dxIDa.substr(12, 11);
+			}
+			else {
+				dxIDa = self.dc.dxIDa;
+				coIDa = null;
+			}
+			if (self.dc.dxIDb.length != 11) {
+				dxIDb = self.dc.dxIDb.substr(0, 11);
+				coIDb = self.dc.dxIDb.substr(12, 11);
+			}
+			else {
+				dxIDb = self.dc.dxIDb;
+				coIDb = null;
+			}
+
 			var type = self.dc.type;
 			var criteria = self.dc.criteria;
 			var relationCode = self.dc.relationCode;
@@ -1311,8 +1373,8 @@
 
 
 			var boundaryRatio, boundarySubunitRatio, valueA, valueB;
-			valueA = dataValue(headers, data, dxIDa, pe, ouBoundary, null);
-			valueB = dataValue(headers, data, dxIDb, pe, ouBoundary, null);
+			valueA = dataValue(headers, data, dxIDa, pe, ouBoundary, coIDa);
+			valueB = dataValue(headers, data, dxIDb, pe, ouBoundary, coIDb);
 
 			if (!isNumber(valueA)) {
 				errors.push({
@@ -1351,8 +1413,8 @@
 				weight = 0;
 
 				ratio = null;
-				valueA = dataValue(headers, data, dxIDa, pe, subunit, null);
-				valueB = dataValue(headers, data, dxIDb, pe, subunit, null);
+				valueA = dataValue(headers, data, dxIDa, pe, subunit, coIDa);
+				valueB = dataValue(headers, data, dxIDb, pe, subunit, coIDb);
 
 				if (!isNumber(valueA) || !isNumber(valueB)) {
 					ignoreList.push(names[subunit]);
@@ -1789,6 +1851,92 @@
 
 			return !isNaN(parseFloat(number));
 
+		}
+
+		function uniqueArray(array) {
+			var seen = {};
+			return array.filter(function(item) {
+				return seen.hasOwnProperty(item) ? false : (seen[item] = true);
+			});
+		}
+
+
+		/**
+		 * Takes array analytics results as returned from "getMultiple" requests service and merges both data and
+		 * metadata. In case where the format is different (e.g. one request is disaggergated and the other not),
+		 * the "maximum" will be used and the missing fields will be empty.
+		 *
+		 * @param results	array of analytics responses (json format, with metadata)
+		 * @returns			single object in analytics response format, with all data and metadata
+		 */
+		function mergeAnalyticsResults(results) {
+
+			var result = {
+				headers: [
+					{name: 'dx'},
+					{name: 'co'},
+					{name: 'ou'},
+					{name: 'pe'},
+					{name: 'value'}
+				],
+				metaData: {
+					co: [],
+					dx: [],
+					names: {},
+					ou: [],
+					pe: []
+				},
+				rows: []
+			}
+
+			for (var i = 0; i < results.length; i++) {
+				var header = results[i].data.headers;
+				var metaData = results[i].data.metaData;
+				var rows = results[i].data.rows;
+
+				var dxi = null, pei = null, oui = null, coi = null, vali = null;
+				for (var j = 0; j < header.length; j++) {
+					if (header[j].name === 'dx' && !header[j].hidden) dxi = j;
+					if (header[j].name === 'ou' && !header[j].hidden) oui = j;
+					if (header[j].name === 'pe' && !header[j].hidden) pei = j;
+					if (header[j].name === 'co' && !header[j].hidden) coi = j;
+					if (header[j].name === 'value' && !header[j].hidden) vali = j;
+				}
+
+				//Transfer data to result object
+				var transVal;
+				for (var j = 0; j < rows.length; j++) {
+					transVal = [];
+					transVal[0] = rows[j][dxi];
+					coi ? transVal[1] = rows[j][coi] : transVal[1] = null;
+					transVal[2] = rows[j][oui];
+					transVal[3] = rows[j][pei];
+					transVal[4] = rows[j][vali];
+
+					result.rows.push(transVal);
+				}
+
+				//Transfer metadata
+				result.metaData.co.push.apply(result.metaData.co, metaData.co);
+				result.metaData.dx.push.apply(result.metaData.dx, metaData.dx);
+				result.metaData.ou.push.apply(result.metaData.ou, metaData.ou);
+				result.metaData.pe.push.apply(result.metaData.pe, metaData.pe);
+
+				for (key in metaData.names) {
+					if (metaData.names.hasOwnProperty(key)) {
+						result.metaData.names[key] = metaData.names[key];
+					}
+
+				}
+			}
+
+			//Remove duplicates in metaData
+			result.metaData.co = uniqueArray(result.metaData.co);
+			result.metaData.dx = uniqueArray(result.metaData.dx);
+			result.metaData.ou = uniqueArray(result.metaData.ou);
+			result.metaData.pe = uniqueArray(result.metaData.pe);
+
+			return result;
 		}
 
 
