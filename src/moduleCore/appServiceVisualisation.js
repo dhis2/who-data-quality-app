@@ -4,6 +4,7 @@
 	
 	  	
 	  	var self = this;
+		var maxScatterPoints = 150;
 		
 		/** NG-NVD3 Line */
 		/*
@@ -433,7 +434,8 @@
 	    		'key': "Orgunits",
 	    		'values': []
 	    	};
-	    	
+
+			datapoints = sortScatterData(datapoints);
 	    	for (var i = 0; i < datapoints.length; i++) {
 	    		chartSerie.values.push({
 	    			'x': datapoints[i].refValue,
@@ -558,8 +560,9 @@
 	    		'key': "Orgunits",
 	    		'values': []
 	    	};
-	    	
-	    	for (var i = 0; i < datapoints.length; i++) {
+
+			datapoints = sortScatterData(datapoints);
+	    	for (var i = 0; i < Math.min(datapoints.length, maxScatterPoints); i++) {
 	    		chartSerie.values.push({
 	    			'x': datapoints[i].refValue,
 	    			'y': datapoints[i].value,
@@ -750,7 +753,29 @@
 			
 			return null;		
 		}
-		
+
+
+		/**
+		 * Sorts number of data points in scatterplots. Orders first by weight, then average of
+		 * numerator and denominator
+		 */
+		function sortScatterData(datapoints) {
+
+			datapoints.sort(function (a, b) {
+				var weightDiff = b.weight - a.weight;
+				if (weightDiff === 0) {
+					var aVal = (a.value + a.refValue)/2;
+					var bVal = (b.value + b.refValue)/2;
+					return bVal - aVal;
+				}
+				else {
+					return weightDiff;
+				}
+			});
+
+			return datapoints;
+		}
+
 	  	
 	  	
 	  	return self;
