@@ -127,6 +127,8 @@
 			self.status = {
 				isFirstOpen: true
 			};
+
+			ouTreeInit();
 		}
 
 		/** -- PARAMETER SELECTION -- */
@@ -167,16 +169,74 @@
 			if (self.filteredOrgunitLevels.length === 0) self.orgunitLevelSelected = undefined;
 		
 		};
-		
-		
-		self.orgunitSearch = function(searchString){
-			if (searchString.length >= 3) {
-				var requestURL = "/api/organisationUnits.json?filter=name:like:" + searchString + "&paging=false&fields=name,id,level";
-				requestService.getSingle(requestURL).then(function (response) {
-					self.ouSearchResult = response.data.organisationUnits;
+
+
+		function ouTreeInit() {
+			self.ouTreeData = [];
+			self.ouTreeControl = {};
+
+			//Get initial batch of orgunits and populate
+			metaDataService.getAnalysisOrgunits().then(function(data) {
+
+				//Iterate in case of multiple roots
+				for (var i = 0; i < data.length; i++) {
+					var ou = data[i];
+					var root = {
+						label: ou.name,
+						data: {
+							ou: ou
+						},
+						children: []
+					}
+
+					ou.children.sort(sortName);
+
+					for (var j = 0; ou.children && j < ou.children.length; j++) {
+						var child = ou.children[j];
+						root.children.push({
+							label: child.name,
+							data: {
+								ou: child
+							},
+							noLeaf: child.children
+						});
+					}
+
+					self.ouTreeData.push(root);
+					self.ouTreeControl.select_first_branch();
+					self.ouTreeControl.expand_branch(self.ouTreeControl.get_selected_branch());
+
+				}
+			});
+
+		}
+
+
+		self.ouTreeSelect = function(orgunit) {
+			if (orgunit.noLeaf && orgunit.children.length < 1) {
+
+				//Get children
+				metaDataService.orgunitChildrenFromParentID(orgunit.data.ou.id).then(function(data) {
+					console.log(data);
+					for (var i = 0; i < data.length; i++) {
+						var child = data[i];
+						if (!orgunit.children) orgunit.children = [];
+						orgunit.children.push({
+							label: child.name,
+							data: {
+								ou: child
+							},
+							noLeaf: child.children
+						});
+
+					}
 				});
 			}
-		};
+
+			self.boundaryOrgunitSelected = orgunit.data.ou;
+			self.filterLevels();
+			self.orgunitUserDefaultLevel();
+		}
 		
 	
 		self.updateDataElementList = function() {
@@ -722,88 +782,92 @@
 
 		}
 		
-			function startCSVexport(options) {
+		function startCSVexport(options) {
 
-				var content = self.result.rows;
-				var string, csvContent = '';
+			var content = self.result.rows;
+			var string, csvContent = '';
 
-				//separator
-				var s = options.separator;
-				var IDs = options.includeIDs;
-				
-				if (IDs) csvContent += "Orgunit ID" + s + "Data ID" + s;
-				csvContent += self.result.metaData.hierarchy.join(s);
-				if (csvContent.length > 0 && csvContent.charAt(csvContent.length-1) != s) csvContent += s;
-				csvContent += "Orgunit name,Data," + self.periods.join(s);
-				csvContent += s + ["Max SD score","Max Z score","Gap weight","Outlier weight","Total weight\n"].join(s);
-				
-				for (var i = 0; i < content.length; i++) {
-					var val, value = content[i];
-					string = '';
+			//separator
+			var s = options.separator;
+			var IDs = options.includeIDs;
 
-					if (IDs) {
-						string += checkExportValue(value.metaData.ou.id, s) + s;
-						string += checkExportValue(value.metaData.dx.id, s) + s;
-					}
+			if (IDs) csvContent += "Orgunit ID" + s + "Data ID" + s;
+			csvContent += self.result.metaData.hierarchy.join(s);
+			if (csvContent.length > 0 && csvContent.charAt(csvContent.length-1) != s) csvContent += s;
+			csvContent += "Orgunit name,Data," + self.periods.join(s);
+			csvContent += s + ["Max SD score","Max Z score","Gap weight","Outlier weight","Total weight\n"].join(s);
 
-					for (var j = 0; j < self.result.metaData.hierarchy.length; j++) {
-						if (value.metaData.ou.hierarchy[j]) {
-							string += checkExportValue(value.metaData.ou.hierarchy[j], s) + s;
-						}
-						else {
-							string += checkExportValue('', s) + s;
-						}
-					}
+			for (var i = 0; i < content.length; i++) {
+				var val, value = content[i];
+				string = '';
 
-					if (string.length > 0 && string.charAt(string.length-1) != s) string += s;
-
-					string += checkExportValue(value.metaData.ou.name, s) + s;
-					 string += checkExportValue(value.metaData.dx.name, s) + s;
-					 for (var j = 0; j < value.data.length; j++) {
-						val = fixDecimalsForExport(value.data[j]);
-						string += checkExportValue(val, s) + s;
-					 }
-					 val = fixDecimalsForExport(value.result.maxSscore);
-					 string += checkExportValue(val, s) + s;
-					 val = fixDecimalsForExport(value.result.maxZscore);
-					 string += checkExportValue(val, s) + s;
-					 string += checkExportValue(value.result.gapWeight, s) + s;
-					 string += checkExportValue(value.result.outWeight, s) + s;
-					 string += checkExportValue(value.result.totalWeight, s);
-					
-					 csvContent += string + '\n';
+				if (IDs) {
+					string += checkExportValue(value.metaData.ou.id, s) + s;
+					string += checkExportValue(value.metaData.dx.id, s) + s;
 				}
-				
-				var blob = new Blob([csvContent], {type: "text/csv;charset=utf-8"});
-				// see FileSaver.js
-				saveAs(blob, options.fileName + '.csv');
 
-			
-			};
-			
-			
-			/** UTILITIES */
-			
-			function fixDecimalsForExport(value) {
-				value = value.toString();
-				if (value.indexOf('.0') === (value.length - 2)) {
-				 	value = value.slice(0, - 2);
-			 	}
-			 	else {
-			 		value = value.replace(',', '.');
-			 	}
-			 	return value;
+				for (var j = 0; j < self.result.metaData.hierarchy.length; j++) {
+					if (value.metaData.ou.hierarchy[j]) {
+						string += checkExportValue(value.metaData.ou.hierarchy[j], s) + s;
+					}
+					else {
+						string += checkExportValue('', s) + s;
+					}
+				}
+
+				if (string.length > 0 && string.charAt(string.length-1) != s) string += s;
+
+				string += checkExportValue(value.metaData.ou.name, s) + s;
+				 string += checkExportValue(value.metaData.dx.name, s) + s;
+				 for (var j = 0; j < value.data.length; j++) {
+					val = fixDecimalsForExport(value.data[j]);
+					string += checkExportValue(val, s) + s;
+				 }
+				 val = fixDecimalsForExport(value.result.maxSscore);
+				 string += checkExportValue(val, s) + s;
+				 val = fixDecimalsForExport(value.result.maxZscore);
+				 string += checkExportValue(val, s) + s;
+				 string += checkExportValue(value.result.gapWeight, s) + s;
+				 string += checkExportValue(value.result.outWeight, s) + s;
+				 string += checkExportValue(value.result.totalWeight, s);
+
+				 csvContent += string + '\n';
 			}
-			
-			
-			function checkExportValue(value, separator) {
-				var innerValue =	value === null ? '' : value.toString();
-				var result = innerValue.replace(/"/g, '""');
-				if (result.search(/("|separator|\n)/g) >= 0)
-					result = '"' + result + '"';
-			return result;
-			}	 
-			 
+
+			var blob = new Blob([csvContent], {type: "text/csv;charset=utf-8"});
+			// see FileSaver.js
+			saveAs(blob, options.fileName + '.csv');
+
+
+		};
+
+
+		/** UTILITIES */
+
+		function fixDecimalsForExport(value) {
+			value = value.toString();
+			if (value.indexOf('.0') === (value.length - 2)) {
+				value = value.slice(0, - 2);
+			}
+			else {
+				value = value.replace(',', '.');
+			}
+			return value;
+		}
+
+
+		function checkExportValue(value, separator) {
+			var innerValue =	value === null ? '' : value.toString();
+			var result = innerValue.replace(/"/g, '""');
+			if (result.search(/("|separator|\n)/g) >= 0)
+				result = '"' + result + '"';
+		return result;
+		}
+
+		function sortName(a, b) {
+			return a.name > b.name ? 1 : -1;
+		}
+
 			
 		return self;
 	});
