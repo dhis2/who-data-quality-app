@@ -273,6 +273,21 @@
 		</tfoot>
 		
 		<tbody>
+			<tr	class="info"
+				valign="middle">
+				<td>{{aCtrl.mainResult.boundaryName}}</td>
+				<td class="valueCell">{{aCtrl.mainResult.boundaryValue}}</td>
+				<td class="valueCell">{{aCtrl.mainResult.boundaryRefValue}}</td>
+				<td class="valueCell">
+	            	<span ng-if="aCtrl.mainResult.consistencyType === 'relation' && aCtrl.mainResult.type === 'do'">
+	            		{{aCtrl.dropoutRate(aCtrl.mainResult.boundaryValue, aCtrl.mainResult.boundaryRefValue)}}%
+	            	</span>
+	            	<span ng-if="aCtrl.mainResult.type != 'do' && aCtrl.validRatio(aCtrl.mainResult.boundaryRatio)">
+	            		{{aCtrl.mainResult.boundaryRatio}}
+	            	</span>
+				</td>
+				<td></td>
+			</tr>
 	    	<tr 
 	    		ng-click="aCtrl.selectOrgunit(row);" 
 	    		ng-class="{warning: row.id === aCtrl.selectedObject.id}" 
