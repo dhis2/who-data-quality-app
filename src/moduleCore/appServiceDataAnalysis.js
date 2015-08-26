@@ -1206,6 +1206,8 @@
 			result.subunitDatapoints = subunitDatapoints;
 
 			//Add key metadata to result
+			result.boundaryID = ouBoundary;
+			result.boundaryName = names[ouBoundary];
 			result.pe = pe;
 			result.dxID = dxID;
 			result.dxName = names[dxID];
@@ -1393,14 +1395,14 @@
 				});
 			}
 			else if (type === 'do') {
-				result.boundaryValueA = valueA;
-				result.boundaryValueB = valueB;
+				result.boundaryValue = valueA;
+				result.boundaryRefValue = valueB;
 				result.boundaryRatio = mathService.round(dropOutRate(valueA, valueB), 3);
 				result.boundaryPercentage = mathService.round(100 * result.boundaryRatio, 1);
 			}
 			else {
-				result.boundaryValueA = valueA;
-				result.boundaryValueB = valueB;
+				result.boundaryValue = valueA;
+				result.boundaryRefValue = valueB;
 				result.boundaryRatio = mathService.round(valueA / valueB, 3);
 				result.boundaryPercentage = mathService.round(100 * result.boundaryRatio, 1);
 			}
@@ -1506,6 +1508,8 @@
 			result.subunitDatapoints = subunitDatapoints;
 
 			//Add key metadata to result
+			result.boundaryID = ouBoundary;
+			result.boundaryName = names[ouBoundary];
 			result.dxIDa = dxIDa;
 			result.dxIDb = dxIDb;
 			result.dxNameA = names[dxIDa];
