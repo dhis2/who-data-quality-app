@@ -1,6 +1,6 @@
 
 (function(){
-	var app = angular.module('dataQualityApp', ['ngRoute', 'dashboard', 'review', 'consistencyAnalysis', 'outlierGapAnalysis', 'dataExport', 'admin', 'ui.select', 'ngSanitize', 'ui.bootstrap', 'nvd3']);
+	var app = angular.module('dataQualityApp', ['ngRoute', 'dashboard', 'review', 'consistencyAnalysis', 'outlierGapAnalysis', 'dataExport', 'admin', 'ui.select', 'ngSanitize', 'ui.bootstrap', 'nvd3', 'angularBootstrapNavTree']);
 	
 	/**Bootstrap*/
 	angular.element(document).ready( 
