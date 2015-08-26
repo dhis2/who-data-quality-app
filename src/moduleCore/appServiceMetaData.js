@@ -762,7 +762,10 @@
 			var bLevel = b.level; 
 			return ((aLevel < bLevel) ? -1 : ((aLevel > bLevel) ? 1 : 0));
 		}
-		
+
+		function sortName(a, b) {
+			return a.name > b.name ? 1 : -1;
+		}
 		
 		self.getOrgunitGroups = function() { 
 				
@@ -912,13 +915,13 @@
 			//need to be fetched
 			else {
 					var requestURL = '/api/organisationUnits.json?'; 
-					  requestURL += 'userDataViewFallback=true&fields=id,name,level,children[name,level,id]&paging=false';
+					  requestURL += 'userDataViewFallback=true&fields=id,name,level,children[name,level,id,children::isNotEmpty]&paging=false';
 					  
 				requestService.getSingle(requestURL).then(
 					function(response) { //success
 				    	var data = response.data;
-				    	rootOrgunits.data = data.organisationUnits;
-				    	deferred.resolve(rootOrgunits.data);
+
+				    	deferred.resolve(data.organisationUnits);
 				    	rootOrgunits.available = true;
 					}, 
 					function(response) { //error
@@ -931,25 +934,33 @@
 			rootOrgunits.promise = deferred.promise;
 			return deferred.promise;
 		};
-		
+
+
+
 		
 		
 		//Returns array of orgunit child objects based on parent ID
 		self.orgunitChildrenFromParentID = function(parentID) {
-			
-			var children = [];
-			for (var i = 0; i < orgunits.data.length ; i++) {
-				if (orgunits.data[i].id === parentID) {
-					children = orgunits.data[i].children;
-					break;
+
+			var deferred = $q.defer();
+
+			var requestURL = '/api/organisationUnits.json?';
+			requestURL += 'fields=name,id,level,children::isNotEmpty&paging=false&filter=parent.id:eq:' + parentID;
+
+			requestService.getSingle(requestURL).then(
+				function(response) { //success
+					var data = response.data;
+
+					deferred.resolve(data.organisationUnits.sort(sortName));
+				},
+				function(response) { //error
+					var data = response.data;
+					deferred.reject("Error fetching orgunits from parentID");
+					console.log(msg, code);
 				}
-			}
-							
-			var childrenOrgunits = [];
-			for (var i = 0; i < children.length; i++) {
-				childrenOrgunits.push(self.orgunitFromID(children[i].id));
-			}
-			return childrenOrgunits;
+			);
+
+			return deferred.promise;
 		
 		};
 		
