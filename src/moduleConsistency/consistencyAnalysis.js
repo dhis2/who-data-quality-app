@@ -551,6 +551,7 @@
 			
 			
 			self.mainResult = result;
+			self.mainResult.consistencyType = 'relation';
 			
 			self.currentPage = 1;
 			self.pageSize = 10;   	
@@ -596,6 +597,7 @@
 			}
 			
 			self.mainResult = result;
+			self.mainResult.consistencyType = 'time';
 			
 			self.currentPage = 1;
 			self.pageSize = 10;   	
@@ -623,19 +625,27 @@
 	
 		self.title = function () {
 			var title = "";
-			if (self.consistencyType === 'relation') {			
-				if (self.relationshipType === 'eq') {
-					title += self.dataItemForCode('a').name + " ≈ " + self.dataItemForCode('b').name + ". " + periodService.shortPeriodName(selectedPeriod().id);
+			if (self.mainResult.consistencyType === 'relation') {
+				if (self.mainResult.type === 'level') {
+					title += self.mainResult.dxNameA + " to " + self.mainResult.dxNameB + " ratio. " +
+						periodService.shortPeriodName(selectedPeriod().id) + '.';
 				}
-				if (self.relationshipType === 'aGTb') {
-					title += self.dataItemForCode('a').name + " > " + self.dataItemForCode('b').name + ". " + periodService.shortPeriodName(selectedPeriod().id);
+				if (self.mainResult.type === 'eq') {
+					title += self.mainResult.dxNameA + " ≈ " + self.mainResult.dxNameB + ". " +
+						periodService.shortPeriodName(selectedPeriod().id) + '.';
 				}
-				if (self.relationshipType === 'do') {
-					title += self.dataItemForCode('a').name + " - " + self.dataItemForCode('b').name + " dropout. " + periodService.shortPeriodName(selectedPeriod().id);
+				if (self.mainResult.type === 'aGTb') {
+					title += self.mainResult.dxNameA + " > " + self.mainResult.dxNameB + ". " +
+						periodService.shortPeriodName(selectedPeriod().id) + '.';
+				}
+				if (self.mainResult.type === 'do') {
+					title += self.mainResult.dxNameA + " to " + self.mainResult.dxNameB + " dropout. " +
+						periodService.shortPeriodName(selectedPeriod().id) + '.';
 				}
 			}
 			else {
-				title += self.dataItemForCode('a').name + ' consistency over time. ' + periodService.shortPeriodName(selectedPeriod().id) + ' against ' + self.periodCountSelected.name + ' preceding periods';
+				title += self.mainResult.dxName + ' consistency over time. ' +
+					periodService.shortPeriodName(selectedPeriod().id) + ' against ' + self.periodCountSelected.name + ' preceding periods.';
 			}
 			
 			return title;
@@ -742,51 +752,17 @@
         		self.selectedObject = {};
         		self.doAnalysis(item.id, (1 + level));
 
-        		
           	});
-        	
-        	
         };
 
-        
-        self.floatUp = function (rowMetaData) {
-        	
-        	var requestURL = "/api/organisationUnits/" + rowMetaData.ouID + ".json?fields=parent[id,children[id],parent[id,children[id]]";
-        	requestService.getSingle(requestURL).then(function (response) {
 
-        		var metaData = response.data;
-        		if (metaData.parent) {
-        			
-        			var orgunits = [metaData.parent.id];
-        			self.result.metaData.parameters.OUlevel = undefined;
-        			self.result.metaData.parameters.OUgroup = undefined;
-
-					
-
-					dataAnalysisService.outlier(receiveResultNew, self.result.metaData.variables, self.result.metaData.periods, orgunits, self.result.metaData.parameters);
-					
-					self.result = null;
-        		}
-        		else {
-					self.alerts.push({type: 'warning', msg: rowMetaData.ouName + ' does not have a parent'});
-        		}
-        		
-        		
-        		
-        	});
-        	
-        	
-        };
-        
         
         function getDataItem(ouID) {
-        	
         	for (var i = 0; i < self.mainResult.subunitDatapoints.length; i++) {
-        		if (self.mainResult.subunitDatapoints[i].id === ouID) {
-        			return self.mainResult.subunitDatapoints[i];
-        		}
-        	}
-        
+				if (self.mainResult.subunitDatapoints[i].id === ouID) {
+					return self.mainResult.subunitDatapoints[i];
+				}
+			}
         }
         	   	
 	   	
@@ -807,13 +783,15 @@
 	   	self.updateCharts = function() {
 	   		$timeout(function () { window.dispatchEvent(new Event('resize')); }, 100);
 	   	};
-	   	
+
+
 	   	self.dropoutRate = function(valueA, valueB) {
 	   		
-	   		return mathService.round(100*(valueA-valueB)/valueA, 2);
+	   		return mathService.round(100*(valueA-valueB)/valueA, 1);
 	   		
 	   	};
-	   	        
+
+
 		init();
     	
 		return self;

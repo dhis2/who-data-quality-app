@@ -247,20 +247,20 @@
 		    
 		    	<th nowrap ng-click="aCtrl.sortByColumn('name')">Unit</th>
 		    	<th ng-click="aCtrl.sortByColumn('value')">
-		    		<span ng-if="aCtrl.consistencyType === 'relation'">
-		    			{{aCtrl.dataIDforCode('a').name}}
+		    		<span ng-if="aCtrl.mainResult.consistencyType === 'relation'">
+		    			{{aCtrl.mainResult.dxNameA}}
 		    		</span>
-		    		<span ng-if="aCtrl.consistencyType === 'time'">Current Period</span>
+		    		<span ng-if="aCtrl.mainResult.consistencyType === 'time'">Current Period</span>
 		    	</th>
 		    	<th ng-click="aCtrl.sortByColumn('refValue')">
-			    	<span ng-if="aCtrl.consistencyType === 'relation'">{{aCtrl.dataIDforCode('b').name}}</span>
-			    	<span ng-if="aCtrl.consistencyType === 'time' && aCtrl.trendType === 'constant'">Average</span>
-			    	<span ng-if="aCtrl.consistencyType === 'time' && aCtrl.trendType != 'constant'">Forecast</span>
+			    	<span ng-if="aCtrl.mainResult.consistencyType === 'relation'">{{aCtrl.mainResult.dxNameB}}</span>
+			    	<span ng-if="aCtrl.mainResult.consistencyType === 'time' && aCtrl.mainResult.type === 'constant'">Average</span>
+			    	<span ng-if="aCtrl.mainResult.consistencyType === 'time' && aCtrl.mainResult.type != 'constant'">Forecast</span>
 		    	</th>
 		    	<th ng-click="aCtrl.sortByColumn('ratio')">
-			    	<span ng-if="aCtrl.consistencyType === 'relation' && aCtrl.relationshipType === 'do'">Dropout rate (%)</span>
-			    	<span ng-if="aCtrl.consistencyType === 'relation' && aCtrl.relationshipType != 'do'">Ratio</span>
-			    	<span ng-if="aCtrl.consistencyType === 'time'">Ratio</span>
+			    	<span ng-if="aCtrl.mainResult.consistencyType === 'relation' && aCtrl.mainResult.type === 'do'">Dropout rate (%)</span>
+			    	<span ng-if="aCtrl.mainResult.consistencyType === 'relation' && aCtrl.mainResult.type != 'do'">Ratio</span>
+			    	<span ng-if="aCtrl.mainResult.consistencyType === 'time'">Ratio</span>
 		    	</th>
 		    	<th ng-click="aCtrl.sortByColumn('weight')">Weight</th>
 		    </tr>
@@ -282,10 +282,10 @@
 	            <td class="valueCell">{{row.value}}</td>
 	            <td class="valueCell">{{row.refValue}}</td>
 	            <td class="valueCell" ng-class="{danger: row.violation}">
-	            	<span ng-if="aCtrl.consistencyType === 'relation' && aCtrl.relationshipType === 'do'">
+	            	<span ng-if="aCtrl.mainResult.consistencyType === 'relation' && aCtrl.mainResult.type === 'do'">
 	            		{{aCtrl.dropoutRate(row.value, row.refValue)}}%
 	            	</span>
-	            	<span ng-if="aCtrl.relationshipType != 'do' && aCtrl.validRatio(row.ratio)">
+	            	<span ng-if="aCtrl.mainResult.type != 'do' && aCtrl.validRatio(row.ratio)">
 	            		{{row.ratio}}
 	            	</span>
 	            </td>
@@ -303,17 +303,17 @@
 	    <tr>	
 	    	<th nowrap>Unit</th>
 	    	<th>
-	    		<span ng-if="aCtrl.consistencyType === 'relation'">{{aCtrl.dataIDforCode('a').name}}</span>
-	    		<span ng-if="aCtrl.consistencyType === 'time'">Current Period</span></th>
+	    		<span ng-if="aCtrl.mainResult.consistencyType === 'relation'">{{aCtrl.mainResult.dxNameA}}</span>
+	    		<span ng-if="aCtrl.mainResult.consistencyType === 'time'">Current Period</span></th>
 	    	<th>
-	    		<span ng-if="aCtrl.consistencyType === 'relation'">{{aCtrl.dataIDforCode('b').name}}</span>
-	    		<span ng-if="aCtrl.consistencyType === 'time' && aCtrl.trendType === 'constant'">Average</span>
-	    		<span ng-if="aCtrl.consistencyType === 'time' && aCtrl.trendType != 'constant'">Forecast</span>
+	    		<span ng-if="aCtrl.mainResult.consistencyType === 'relation'">{{aCtrl.mainResult.dxNameB}}</span>
+	    		<span ng-if="aCtrl.mainResult.consistencyType === 'time' && aCtrl.mainResult.type === 'constant'">Average</span>
+	    		<span ng-if="aCtrl.mainResult.consistencyType === 'time' && aCtrl.mainResult.type != 'constant'">Forecast</span>
 	    	</th>
 	    	<th>
-	    		<span ng-if="aCtrl.consistencyType === 'relation' && aCtrl.relationshipType === 'do'">Dropout rate (%)</span>
-	    		<span ng-if="aCtrl.consistencyType === 'relation' && aCtrl.relationshipType != 'do'">Ratio</span>
-	    		<span ng-if="aCtrl.consistencyType === 'time'">Ratio</span>
+	    		<span ng-if="aCtrl.mainResult.consistencyType === 'relation' && aCtrl.mainResult.type === 'do'">Dropout rate (%)</span>
+	    		<span ng-if="aCtrl.mainResult.consistencyType === 'relation' && aCtrl.mainResult.type != 'do'">Ratio</span>
+	    		<span ng-if="aCtrl.mainResult.consistencyType === 'time'">Ratio</span>
 	    	</th>
 	    	<th></th>
 	    </tr>
@@ -325,10 +325,10 @@
             <td class="valueCell">{{aCtrl.selectedObject.value}}</td>
             <td class="valueCell">{{aCtrl.selectedObject.refValue}}</td>
             <td class="valueCell">
-	            <span ng-if="aCtrl.consistencyType === 'relation' && aCtrl.relationshipType === 'do'">
+	            <span ng-if="aCtrl.mainResult.consistencyType === 'relation' && aCtrl.mainResult.type === 'do'">
 	            	{{aCtrl.dropoutRate(aCtrl.selectedObject.value, aCtrl.selectedObject.refValue)}}%
 	            </span>
-	            <span ng-if="aCtrl.relationshipType != 'do'">
+	            <span ng-if="aCtrl.mainResult.type != 'do'">
 	            	{{aCtrl.selectedObject.ratio}}
 	            </span>
 	        </td>
@@ -352,6 +352,5 @@
 </div>
 
 <nvd3 options='aCtrl.chartSelected.options' data='aCtrl.chartSelected.data'></nvd3>
-
 
 </div>
