@@ -42,7 +42,10 @@
 		  		<label class="btn btn-default" ng-model="aCtrl.dataDisaggregation" btn-radio="1">Details</label>
 		</div>
 		
-		<ui-select multiple ng-disabled="!aCtrl.dataElementGroupsSelected" ng-model="aCtrl.dataElementsSelected" theme="bootstrap" style="margin-bottom: 10px; max-width: 470px;">
+		<ui-select multiple
+				   ng-disabled="!aCtrl.dataElementGroupsSelected || aCtrl.dataElements.length < 1"
+				   ng-model="aCtrl.dataElementsSelected"
+				   style="margin-bottom: 10px; max-width: 470px; background-color: white">
 		  <ui-select-match placeholder="{{aCtrl.dataElementPlaceholder}}">
 			  {{$item.name}}
 		  </ui-select-match>
@@ -67,7 +70,11 @@
     	  </ui-select-choices>
     	</ui-select>
     	
-		<ui-select multiple ng-disabled="!aCtrl.indicatorGroupsSelected" ng-model="aCtrl.indicatorsSelected"  style="margin-bottom: 10px; max-width: 470px;">
+		<ui-select
+				multiple
+				ng-disabled="!aCtrl.indicatorGroupsSelected || aCtrl.indicators.length < 1"
+				ng-model="aCtrl.indicatorsSelected"
+				style="margin-bottom: 10px; max-width: 470px; background-color: white">
 		  <ui-select-match placeholder="{{aCtrl.indicatorPlaceholder}}">
 		  	{{$item.name}}
 		  </ui-select-match>
