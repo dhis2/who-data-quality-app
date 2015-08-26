@@ -1,9 +1,7 @@
 <h4 style="margin-top: 20px;">Consistency</h4>
 
-
 <!-- PARAMETERS -->
 <accordion close-others="aCtrl.oneAtATime">
-
 	
 	<!-- OPTIONS -->
 	<accordion-group heading="Analysis Type" is-open="aCtrl.status.isFirstOpen">
@@ -153,34 +151,25 @@
     <!-- ORGUNIT -->
     <accordion-group heading="Orgunit" is-open="status.open">
     	<label>Boundary</label><br />
-    	<div class="btn-group" style="margin-bottom: 10px; max-width: 400px;">
+    	<div class="btn-group btn-group-justified" style="max-width: 400px;">
     	  	<label ng-repeat="orgunit in aCtrl.userOrgunits track by $index" class="btn btn-default" ng-model="aCtrl.boundarySelectionType" ng-change="aCtrl.orgunitUserModeSelected();" btn-radio="$index">{{orgunit.name}}</label>
-    	  	<label class="btn btn-default" ng-change="aCtrl.orgunitSearchModeSelected();" ng-model="aCtrl.boundarySelectionType" btn-radio="aCtrl.userOrgunits.length">Search</label>
+    	  	<label class="btn btn-default" ng-model="aCtrl.boundarySelectionType" btn-radio="aCtrl.userOrgunits.length">All</label>
     	</div>
 		<br />	  
 		<div ng-show="aCtrl.userOrgunits.length === aCtrl.boundarySelectionType" style="margin-bottom: 10px;">
-		
-	    	<ui-select 
-	    		style="margin-bottom: 10px; width: 470px;" 
-	    		ng-model="aCtrl.boundaryOrgunitSelected" 
-	    		on-select="aCtrl.filterLevels(); aCtrl.orgunitUserDefaultLevel();">
-	    	<ui-select-match placeholder="Search for organisation unit...">
-	    		{{aCtrl.boundaryOrgunitSelected.name}}
-	    	</ui-select-match>
-	    	<ui-select-choices 
-	    		refresh="aCtrl.orgunitSearch($select.search)" 
-	    		refresh-delay="500" 
-	    		repeat="ou in aCtrl.ouSearchResult | filter: $select.search">
-	    		<div ng-bind-html="ou.name | highlight: $select.search"></div>
-	    	</ui-select-choices>
-	    	</ui-select>
-	    	
+			<div style="width:350px; height: 400px; overflow: scroll; border:1px solid lightgray; border-radius:5px;">
+				<abn-tree
+						tree-data="aCtrl.ouTreeData"
+						tree-control="aCtrl.ouTreeControl"
+						on-select="aCtrl.ouTreeSelect(branch)">
+				</abn-tree>
+			</div>
 		</div>  		    	
 		
 	<!-- DISAGGREGATION -->
        <label for="orgunitSelect">Disaggregation</label>
 		<div id="orgunitSelect">
-			<ui-select ng-disabled="aCtrl.orgunitGroupSelected || aCtrl.filteredOrgunitLevels.length === 0" ng-model="aCtrl.orgunitLevelSelected"  style="margin-bottom: 10px; max-width: 470px;">
+			<ui-select ng-disabled="aCtrl.orgunitGroupSelected || aCtrl.filteredOrgunitLevels.length === 0" ng-model="aCtrl.orgunitLevelSelected"  style="margin-bottom: 10px; max-width: 400px;">
 			  <ui-select-match allow-clear="true" placeholder="{{aCtrl.getLevelPlaceholder();}}">
 			  	{{aCtrl.orgunitLevelSelected.name}}
 			  </ui-select-match>
@@ -190,7 +179,7 @@
 			  </ui-select-choices>
 			</ui-select>
 			
-			<ui-select ng-disabled="aCtrl.orgunitLevelSelected || aCtrl.filteredOrgunitLevels.length === 0" ng-model="aCtrl.orgunitGroupSelected"  style="margin-bottom: 10px; max-width: 470px;">
+			<ui-select ng-disabled="aCtrl.orgunitLevelSelected || aCtrl.filteredOrgunitLevels.length === 0" ng-model="aCtrl.orgunitGroupSelected"  style="margin-bottom: 10px; max-width: 400px;">
 				  <ui-select-match allow-clear="true" placeholder="Select organisation unit group">
 				  	{{aCtrl.orgunitGroupSelected.name}}
 				  </ui-select-match>

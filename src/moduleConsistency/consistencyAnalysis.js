@@ -11,9 +11,11 @@
 	    }
 	});
 	
-	app.controller("ConsistencyAnalysisController", function(metaDataService, periodService, requestService, dataAnalysisService, visualisationService, mathService, $modal, $timeout, $scope) {
+	app.controller("ConsistencyAnalysisController", function(metaDataService, periodService, requestService,
+															 dataAnalysisService, visualisationService, mathService,
+															 $modal, $timeout, $scope) {
 		var self = this;
-			    
+
 	    self.result = undefined;
 	    self.mainResult = undefined;
 	    self.itemsPerPage = 25;
@@ -140,7 +142,77 @@
 	    	};
 
 			initWathcers();
+			ouTreeInit();
 	    }
+
+		function ouTreeInit() {
+			self.ouTreeData = [];
+			self.ouTreeControl = {};
+
+			//Get initial batch of orgunits and populate
+			metaDataService.getAnalysisOrgunits().then(function(data) {
+
+				//Iterate in case of multiple roots
+				for (var i = 0; i < data.length; i++) {
+					var ou = data[i];
+					var root = {
+						label: ou.name,
+						data: {
+							ou: ou
+						},
+						children: []
+					}
+
+					ou.children.sort(sortName);
+
+					for (var j = 0; ou.children && j < ou.children.length; j++) {
+						var child = ou.children[j];
+						root.children.push({
+							label: child.name,
+							data: {
+								ou: child
+							},
+							noLeaf: child.children
+						});
+					}
+
+					self.ouTreeData.push(root);
+					self.ouTreeControl.select_first_branch();
+					self.ouTreeControl.expand_branch(self.ouTreeControl.get_selected_branch());
+
+				}
+			});
+
+		}
+
+
+		self.ouTreeSelect = function(orgunit) {
+			if (orgunit.noLeaf && orgunit.children.length < 1) {
+
+				//Get children
+				metaDataService.orgunitChildrenFromParentID(orgunit.data.ou.id).then(function(data) {
+					console.log(data);
+					for (var i = 0; i < data.length; i++) {
+						var child = data[i];
+						if (!orgunit.children) orgunit.children = [];
+						orgunit.children.push({
+							label: child.name,
+							data: {
+								ou: child
+							},
+							noLeaf: child.children
+						});
+
+					}
+				});
+			}
+
+			self.boundaryOrgunitSelected = orgunit.data.ou;
+			self.filterLevels();
+			self.orgunitUserDefaultLevel();
+		}
+
+
 
 		function initWathcers() {
 			//Watch for changes in data selection type, clear selection if changing from data element to indicator etc
@@ -235,26 +307,7 @@
 			else return "Select level";
 		};
 		
-		
-	    self.orgunitSearch = function(searchString){
-	        if (searchString.length >= 3) {
-	    		var requestURL = "/api/organisationUnits.json?filter=name:like:" + searchString + "&paging=false&fields=name,id,level";
-	    		requestService.getSingle(requestURL).then(function (response) {
 
-					//will do with API filter once API-filter is stable
-	    			var orgunits = response.data.organisationUnits;
-	    			var lowest = lowestLevel();
-	    			self.ouSearchResult = [];
-	    			for (var i = 0; i < orgunits.length; i++) {
-	    				if (orgunits[i].level < lowest) {
-		    				self.ouSearchResult.push(orgunits[i]);
-		    			}
-	    			}
-	    			
-	    		});
-	    	}
-	    };
-		
 		
 		/** Data */
 		self.getGroupForCode = function(code) {
@@ -790,6 +843,10 @@
 	   		return mathService.round(100*(valueA-valueB)/valueA, 1);
 	   		
 	   	};
+
+		function sortName(a, b) {
+			return a.name > b.name ? 1 : -1;
+		}
 
 
 		init();
