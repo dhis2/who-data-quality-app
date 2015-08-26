@@ -986,7 +986,7 @@
 		 subunit percent < threshold
 		 subunit names < threshold
 		 */
-		self.timeConsistency = function (callback, type, threshold, maxForecast, dataID, coID, period, refPeriods, ouBoundary, ouLevel) {
+		self.timeConsistency = function (callback, type, threshold, maxForecast, dataID, coID, period, refPeriods, ouBoundary, ouLevel, ouGroup) {
 
 			var queueItem = {
 				'type': 'timeConsistency',
@@ -1000,7 +1000,8 @@
 					'pe': period,
 					'refPe': refPeriods,
 					'ouBoundary': ouBoundary,
-					'ouLevel': ouLevel
+					'ouLevel': ouLevel,
+					'ouGroup': ouGroup
 				}
 			};
 
@@ -1045,10 +1046,12 @@
 				}
 			);
 
-			//2 request subunit completeness data for the four years
-			var ou = self.dsci.ouBoundary + ';LEVEL-' + self.dsci.ouLevel;
-			var requestURL = '/api/analytics.json?dimension=dx:' + dxRequest + '&dimension=ou:' + ou + '&dimension=pe:' + periods.join(';') + '&displayProperty=NAME';
+			var ou = self.dsci.ouBoundary + ';';
+			if (self.dsci.ouLevel) ou += 'LEVEL-' + self.dsci.ouLevel;
+			else if (self.dsci.ouGroup) ou += 'OU_GROUP-' + self.dsci.ouGroup;
 
+			//2 request subunit completeness data for the four years
+			var requestURL = '/api/analytics.json?dimension=dx:' + dxRequest + '&dimension=ou:' + ou + '&dimension=pe:' + periods.join(';') + '&displayProperty=NAME';
 			requestService.getSingle(requestURL).then(
 				//success
 				function (response) {
@@ -1234,7 +1237,7 @@
 		 @returns				relation object with results
 		 */
 
-		self.dataConsistency = function (callback, type, criteria, relationCode, dxIDa, dxIDb, period, boundaryOrgunit, level) {
+		self.dataConsistency = function (callback, type, criteria, relationCode, dxIDa, dxIDb, period, boundaryOrgunit, level, ouGroup) {
 
 			var queueItem = {
 				'type': 'dataConsistency',
@@ -1247,7 +1250,8 @@
 					'dxIDb': dxIDb,
 					'pe': period,
 					'ouBoundary': boundaryOrgunit,
-					'ouLevel': level
+					'ouLevel': level,
+					'ouGroup': ouGroup
 				}
 			};
 
@@ -1302,12 +1306,18 @@
 				}
 			);
 
+
+			var ouDisaggregation = ';';
+			if (self.dc.ouLevel) ouDisaggregation += 'LEVEL-' + self.dc.ouLevel;
+			else if (self.dc.ouGroup) ouDisaggregation += 'OU_GROUP-' + self.dc.ouGroup;
+
+
 			//2 request subunit data
 			requests = [];
 			requests.push('/api/analytics.json?dimension=dx:' + dxRequestA + '&dimension=ou:' +
-				self.dc.ouBoundary + ';LEVEL-' + self.dc.ouLevel + '&dimension=pe:' + self.dc.pe + '&displayProperty=NAME');
+				self.dc.ouBoundary + ouDisaggregation + '&dimension=pe:' + self.dc.pe + '&displayProperty=NAME');
 			requests.push('/api/analytics.json?dimension=dx:' + dxRequestB + '&dimension=ou:' +
-				self.dc.ouBoundary + ';LEVEL-' + self.dc.ouLevel + '&dimension=pe:' + self.dc.pe + '&displayProperty=NAME');
+				self.dc.ouBoundary + ouDisaggregation + '&dimension=pe:' + self.dc.pe + '&displayProperty=NAME');
 
 			requestService.getMultiple(requests).then(
 				//success

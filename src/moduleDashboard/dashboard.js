@@ -192,7 +192,7 @@
       			visualisationService.yyLineChart(receiveYY, yyPeriods, data.localData.id, ouBoundaryID);
 				
 				
-				dataAnalysisService.timeConsistency(receiveDataTimeConsistency, data.trend, data.consistency, null, data.localData.id, null, period, refPeriods, ouBoundaryID, ouLevel);
+				dataAnalysisService.timeConsistency(receiveDataTimeConsistency, data.trend, data.consistency, null, data.localData.id, null, period, refPeriods, ouBoundaryID, ouLevel, null);
 								
 
 				consistencyChart = {

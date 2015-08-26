@@ -452,8 +452,8 @@
 			var period = selectedPeriod().id;
 			var dxA = self.dataItemForCode('a').id;
 			var ouBoundary = ouBoundary ? ouBoundary : self.boundaryOrgunitSelected.id;
-			var ouLevel = level ? level : self.orgunitLevelSelected.level;
-			var ouGroup = null;//TODO			
+			var ouLevel = level ? level : (self.orgunitLevelSelected ? self.orgunitLevelSelected.level : null);
+			var ouGroup = ouLevel ? null : self.orgunitGroupSelected.id; //if we have level, ignore group
 			
 			if (!level && self.orgunitLevelSelected) {
 				ouLevel = self.orgunitLevelSelected.level;
@@ -464,13 +464,13 @@
 			//1 Relation
 			if (analysisType === 'relation') {	
 				var dxB = self.dataItemForCode('b').id;
-				dataAnalysisService.dataConsistency(receiveRelationResult, relationType, criteria, null, dxA, dxB, period, ouBoundary, ouLevel);
+				dataAnalysisService.dataConsistency(receiveRelationResult, relationType, criteria, null, dxA, dxB, period, ouBoundary, ouLevel, ouGroup);
 			}
 			//2 Over time
 			else {
 				var refPeriods = periodService.precedingPeriods(period, self.periodCountSelected.value);
 				
-				dataAnalysisService.timeConsistency(receiveTimeResult, self.trendType, criteria, null, dxA, null, period, refPeriods, ouBoundary, ouLevel);
+				dataAnalysisService.timeConsistency(receiveTimeResult, self.trendType, criteria, null, dxA, null, period, refPeriods, ouBoundary, ouLevel, ouGroup);
 				
 			}
 			
