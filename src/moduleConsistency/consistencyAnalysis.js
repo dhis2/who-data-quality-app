@@ -166,7 +166,9 @@
 					ou.children.sort(sortName);
 
 					for (var j = 0; ou.children && j < ou.children.length; j++) {
+
 						var child = ou.children[j];
+
 						root.children.push({
 							label: child.name,
 							data: {
@@ -194,6 +196,7 @@
 					console.log(data);
 					for (var i = 0; i < data.length; i++) {
 						var child = data[i];
+
 						if (!orgunit.children) orgunit.children = [];
 						orgunit.children.push({
 							label: child.name,
@@ -206,7 +209,10 @@
 					}
 				});
 			}
-
+			//Cannot use leaf for consistency analysis, so use level above if selecting leaf
+			if (!orgunit.noLeaf) {
+				orgunit = self.ouTreeControl.get_parent_branch(orgunit);
+			}
 			self.boundaryOrgunitSelected = orgunit.data.ou;
 			self.filterLevels();
 			self.orgunitUserDefaultLevel();
