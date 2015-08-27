@@ -685,24 +685,24 @@
 			if (self.mainResult.consistencyType === 'relation') {
 				if (self.mainResult.type === 'level') {
 					title += self.mainResult.dxNameA + " to " + self.mainResult.dxNameB + " ratio. " +
-						periodService.shortPeriodName(selectedPeriod().id) + '.';
+						self.resultPeriodName() + '.';
 				}
 				if (self.mainResult.type === 'eq') {
 					title += self.mainResult.dxNameA + " ≈ " + self.mainResult.dxNameB + ". " +
-						periodService.shortPeriodName(selectedPeriod().id) + '.';
+						self.resultPeriodName() + '.';
 				}
 				if (self.mainResult.type === 'aGTb') {
 					title += self.mainResult.dxNameA + " > " + self.mainResult.dxNameB + ". " +
-						periodService.shortPeriodName(selectedPeriod().id) + '.';
+						self.resultPeriodName() + '.';
 				}
 				if (self.mainResult.type === 'do') {
 					title += self.mainResult.dxNameA + " to " + self.mainResult.dxNameB + " dropout. " +
-						periodService.shortPeriodName(selectedPeriod().id) + '.';
+						self.resultPeriodName() + '.';
 				}
 			}
 			else {
 				title += self.mainResult.dxName + ' consistency over time. ' +
-					periodService.shortPeriodName(selectedPeriod().id) + ' against ' + self.periodCountSelected.name + ' preceding periods.';
+					self.resultPeriodName() + ' against ' + self.resultReferencePeriodNames().length + ' preceding periods.';
 			}
 			
 			return title;
@@ -739,6 +739,21 @@
 			}
 
 			return description;
+		}
+
+		self.resultPeriodName = function() {
+			return periodService.shortPeriodName(self.mainResult.pe);
+
+		}
+
+		self.resultReferencePeriodNames = function() {
+			var periodNames = [];
+			for (var i = 0; i < self.mainResult.refPe.length; i++) {
+				periodNames.push(periodService.shortPeriodName(self.mainResult.refPe[i]));
+			}
+
+			return periodNames;
+
 		}
 
 
