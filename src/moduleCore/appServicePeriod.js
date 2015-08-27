@@ -18,7 +18,7 @@
 			var periods = [];
 			var periodsInYear;
 						
-			while (current <=  endYear && periodType != "yearly") {
+			while (current <=  endYear && periodType != "Yearly") {
 							
 				periodsInYear = self.periodTool.get(periodType).generatePeriods({'offset': current - thisYear, 'filterFuturePeriods': true, 'reversePeriods': false});
 								  			
