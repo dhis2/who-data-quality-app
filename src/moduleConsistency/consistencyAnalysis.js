@@ -541,20 +541,19 @@
 			var periodType = longestPeriodInSelection();
 
 			if (self.consistencyType === 'relation') {
-				var periods = periodService.getSubPeriods(selectedPeriod().id.toString(), periodType);
-				var dxA = self.dataItemForCode('a').id;
-				var dxB = self.dataItemForCode('b').id;
+				var periods = [self.mainResult.pe.toString()];
+				var dxA = self.mainResult.dxIDa;
+				var dxB = self.mainResult.dxIDb;
 				
 				visualisationService.multiBarChart(receiveDetailChart, [dxA, dxB], periods, [ouID], 'dataOverTime');
 				
 			}
 			else {
-				var periods = periodService.precedingPeriods(selectedPeriod().id.toString(), self.periodCountSelected.value);
-				periods.push(self.mainResult.pe);
+				var periods = self.mainResult.refPe.slice();
+				periods.push(self.mainResult.pe.toString());
+				var dx = self.mainResult.dxID;
 				
-				var dxA = self.dataItemForCode('a').id;
-				
-				visualisationService.multiBarChart(receiveDetailChart, [dxA], periods, [ouID], 'dataOverTime');
+				visualisationService.multiBarChart(receiveDetailChart, [dx], periods, [ouID], 'dataOverTime');
 				
 				self.chartSelected.options = null;
 				self.chartSelected.data = null;
@@ -754,8 +753,6 @@
 	   				break;
 	   			}
 	   		}
-	   		
-	   		$scope.$apply();
 	   	}
 	   	
 	   	
