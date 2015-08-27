@@ -1018,7 +1018,7 @@
 			self.dsci.boundaryData = null;
 			self.dsci.subunitData = null;
 
-			var periods = [].concat(self.dsci.refPe);
+			var periods = self.dsci.refPe.slice();
 			periods.push(self.dsci.pe);
 
 			//Data element with disaggregation
@@ -1084,7 +1084,7 @@
 			var type = self.dsci.type;
 			var maxForecast = self.dsci.maxForecast;
 			var pe = self.dsci.pe;
-			var refPe = self.dsci.refPe;
+			var refPe = self.dsci.refPe.slice();
 			var ouBoundary = self.dsci.ouBoundary;
 			var ouSubunitIDs = self.dsci.subunitData.metaData.ou;
 
@@ -1212,6 +1212,7 @@
 			result.boundaryID = ouBoundary;
 			result.boundaryName = names[ouBoundary];
 			result.pe = pe;
+			result.refPe = self.dsci.refPe;
 			result.dxID = dxID;
 			result.dxName = names[dxID];
 			result.type = type;
