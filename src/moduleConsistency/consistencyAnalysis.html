@@ -228,31 +228,52 @@
 
 <div style="display: inline-block; width: 100%;">
 
-	<nvd3 id="mainChart" style="display: inline-block; width: 60%; vertical-align: top;" options='aCtrl.chart.options' data='aCtrl.chart.data'></nvd3>
+	<nvd3 id="mainChart" style="display: inline-block; width: 55%; vertical-align: top;" options='aCtrl.chart.options' data='aCtrl.chart.data'></nvd3>
 
-	<div style="font-size: 85%; display: inline-block; width: 39%;  vertical-align: top;" class="table-responsive">
+	<div style="font-size: 85%; display: inline-block; width: 44%;  vertical-align: top;" class="table-responsive">
 	<table class="table table-bordered table-striped table-condensed table-hover">
 		<thead>
 		    <tr>
 		    
-		    	<th nowrap ng-click="aCtrl.sortByColumn('name')">Unit</th>
+		    	<th style="white-space:nowrap;" ng-click="aCtrl.sortByColumn('name')">
+					Unit
+					<span ng-if="aCtrl.sortCol === 'name'" class="glyphicon glyphicon-sort-by-attributes"></span>
+				</th>
 		    	<th ng-click="aCtrl.sortByColumn('value')">
 		    		<span ng-if="aCtrl.mainResult.consistencyType === 'relation'">
 		    			{{aCtrl.mainResult.dxNameA}}
 		    		</span>
-		    		<span ng-if="aCtrl.mainResult.consistencyType === 'time'">Current Period</span>
+		    		<span ng-if="aCtrl.mainResult.consistencyType === 'time'">
+						Current Period
+					</span>
+					<span ng-if="aCtrl.sortCol === 'value'" class="glyphicon glyphicon-sort-by-attributes"></span>
 		    	</th>
 		    	<th ng-click="aCtrl.sortByColumn('refValue')">
 			    	<span ng-if="aCtrl.mainResult.consistencyType === 'relation'">{{aCtrl.mainResult.dxNameB}}</span>
 			    	<span ng-if="aCtrl.mainResult.consistencyType === 'time' && aCtrl.mainResult.type === 'constant'">Average</span>
 			    	<span ng-if="aCtrl.mainResult.consistencyType === 'time' && aCtrl.mainResult.type != 'constant'">Forecast</span>
+					<span ng-if="aCtrl.sortCol === 'refValue'" class="glyphicon glyphicon-sort-by-attributes"></span>
 		    	</th>
-		    	<th ng-click="aCtrl.sortByColumn('ratio')">
+		    	<th style="white-space:nowrap;" ng-click="aCtrl.sortByColumn('ratio')">
 			    	<span ng-if="aCtrl.mainResult.consistencyType === 'relation' && aCtrl.mainResult.type === 'do'">Dropout rate (%)</span>
 			    	<span ng-if="aCtrl.mainResult.consistencyType === 'relation' && aCtrl.mainResult.type != 'do'">Ratio</span>
 			    	<span ng-if="aCtrl.mainResult.consistencyType === 'time'">Ratio</span>
+					<span class="glyphicon glyphicon-info-sign"
+						  style="color: black"
+						  aria-hidden="true"
+						  tooltip="{{aCtrl.ratioDescription()}}">
+					</span>
+					<span ng-if="aCtrl.sortCol === 'ratio'" class="glyphicon glyphicon-sort-by-attributes"></span>
 		    	</th>
-		    	<th ng-click="aCtrl.sortByColumn('weight')">Weight</th>
+		    	<th style="white-space:nowrap;" ng-click="aCtrl.sortByColumn('weight')">
+					Weight
+					<span class="glyphicon glyphicon-info-sign"
+						  style="color: black"
+						  aria-hidden="true"
+						  tooltip="Significance of potential data quality problem.">
+					</span>
+					<span ng-if="aCtrl.sortCol === 'weight'" class="glyphicon glyphicon-sort-by-attributes"></span>
+				</th>
 		    </tr>
 		</thead>
 		

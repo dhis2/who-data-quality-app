@@ -709,7 +709,9 @@
 			
 			return title;
 		};
-				
+
+
+
        	
 	   	
 	   	/** TABLE LAYOUT */
@@ -724,8 +726,26 @@
 	   		}
 	   	};
 
-	   	
-	   	/**INTERACTIVE FUNCTIONS*/
+		self.ratioDescription = function() {
+			var description = "";
+			if (self.mainResult.consistencyType === 'relation') {
+				if (self.mainResult.type === 'do') {
+					description += "Dropout rate from " + self.mainResult.dxNameA + " to " + self.mainResult.dxNameB + ".";
+				}
+				else {
+					description += "Ratio between " + self.mainResult.dxNameA + " and " + self.mainResult.dxNameB + ".";
+				}
+			}
+			else {
+				description += "Ratio between the selected period and preceding periods.";
+			}
+
+			return description;
+		}
+
+
+
+		/**INTERACTIVE FUNCTIONS*/
 		function itemClicked(seriesIndex, pointIndex) {
 	   		var orgunitID = self.chart.data[seriesIndex].values[pointIndex].z;
 	   		

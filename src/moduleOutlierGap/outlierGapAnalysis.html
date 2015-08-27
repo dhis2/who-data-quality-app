@@ -290,22 +290,60 @@
 			        <thead>
 			            <tr>
 							<th ng-if="aCtrl.result.metaData.hierarchy.length > 0" colspan="{{aCtrl.result.metaData.hierarchy.length}}">Hierarchy</th>
-			            	<th nowrap rowspan="2" ng-click="aCtrl.sortByColumn('metaData.ou.name')">Unit</th>
-			            	<th nowrap rowspan="2" style="max-width: 200px;" ng-click="aCtrl.sortByColumn('metaData.dx.name')">Data</th>
+			            	<th style="white-space:nowrap;" rowspan="2" ng-click="aCtrl.sortByColumn('metaData.ou.name')">
+								Unit
+								<span ng-if="aCtrl.sortCol === 'metaData.ou.name'" class="glyphicon glyphicon-sort-by-attributes"></span>
+							</th>
+			            	<th style="white-space:nowrap;" rowspan="2" style="max-width: 200px;" ng-click="aCtrl.sortByColumn('metaData.dx.name')">
+								Data
+								<span ng-if="aCtrl.sortCol === 'metaData.dx.name'" class="glyphicon glyphicon-sort-by-attributes"></span>
+							</th>
 			            	<th rowspan="2" ng-repeat="period in aCtrl.periods" nowrap>{{period}}</th>
-			            	<th colspan="2"
-								ng-if="aCtrl.typeFilter != 1" popover-placement="top" popover="Maxium number of SD and the maximum modified z-Score respectively for the most extreme outlier." popover-trigger="click">Score</th>
-			            	<th colspan="{{aCtrl.typeFilter === 0 ? 3 : 1}}" popover-placement="top" popover="Estimated weight (importance) of the gap and outlier." popover-trigger="click">Weight</th>
+			            	<th style="white-space:nowrap;" colspan="2"
+								ng-if="aCtrl.typeFilter != 1">
+								Score
+								<span class="glyphicon glyphicon-info-sign"
+									  style="color: black"
+									  aria-hidden="true"
+									  tooltip="Maxium number of standard deviations from the mean (z-score) and the maximum modified z-score respectively for the most extreme outlier.">
+								</span>
+							</th>
+			            	<th style="white-space:nowrap;" colspan="{{aCtrl.typeFilter === 0 ? 3 : 1}}">
+								Weight
+								<span class="glyphicon glyphicon-info-sign"
+									  style="color: black"
+									  aria-hidden="true"
+									  tooltip="Estimated weight (significance) of the missing data and/or outlier.">
+								</span>
+							</th>
 			            	<th rowspan="2"></th>
 			            </tr>
 						<tr>
-							<th ng-click='aCtrl.sortByColumn("metaData.ou.hierarchy[" + $index + "]")'
-								ng-repeat="levelName in aCtrl.result.metaData.hierarchy track by $index">{{levelName}}</th>
-							<th ng-if="aCtrl.typeFilter != 1" ng-click="aCtrl.sortByColumn('result.maxSscore')">SD</th>
-							<th ng-if="aCtrl.typeFilter != 1" ng-click="aCtrl.sortByColumn('result.maxZscore')">Z</th>
-							<th ng-if="aCtrl.typeFilter != 2" ng-click="aCtrl.sortByColumn('result.gapWeight')">Missing</th>
-							<th ng-if="aCtrl.typeFilter != 1" ng-click="aCtrl.sortByColumn('result.outWeight')">Outlier</th>
-							<th ng-if="aCtrl.typeFilter === 0" ng-click="aCtrl.sortByColumn('result.totalWeight')">Total</th>
+							<th style="white-space:nowrap;" ng-click='aCtrl.sortByColumn("metaData.ou.hierarchy[" + $index + "]")'
+								ng-repeat="levelName in aCtrl.result.metaData.hierarchy track by $index">
+								{{levelName}}
+								<span ng-if='aCtrl.sortCol === "metaData.ou.hierarchy[" + $index + "]"' class="glyphicon glyphicon-sort-by-attributes"></span>
+							</th>
+							<th style="white-space:nowrap;" ng-if="aCtrl.typeFilter != 1" ng-click="aCtrl.sortByColumn('result.maxSscore')">
+								SD
+								<span ng-if="aCtrl.sortCol === 'result.maxSscore'" class="glyphicon glyphicon-sort-by-attributes"></span>
+							</th>
+							<th style="white-space:nowrap;" ng-if="aCtrl.typeFilter != 1" ng-click="aCtrl.sortByColumn('result.maxZscore')">
+								Z
+								<span ng-if="aCtrl.sortCol === 'result.maxZscore'" class="glyphicon glyphicon-sort-by-attributes"></span>
+							</th>
+							<th style="white-space:nowrap;" ng-if="aCtrl.typeFilter != 2" ng-click="aCtrl.sortByColumn('result.gapWeight')">
+								Missing
+								<span ng-if="aCtrl.sortCol === 'result.gapWeight'" class="glyphicon glyphicon-sort-by-attributes"></span>
+							</th>
+							<th style="white-space:nowrap;" ng-if="aCtrl.typeFilter != 1" ng-click="aCtrl.sortByColumn('result.outWeight')">
+								Outlier
+								<span ng-if="aCtrl.sortCol === 'result.outWeight'" class="glyphicon glyphicon-sort-by-attributes"></span>
+							</th>
+							<th style="white-space:nowrap;" ng-if="aCtrl.typeFilter === 0" ng-click="aCtrl.sortByColumn('result.totalWeight')">
+								Total
+								<span ng-if="aCtrl.sortCol === 'result.totalWeight'" class="glyphicon glyphicon-sort-by-attributes"></span>
+							</th>
 						</tr>
 			        </thead>
 			        <tfoot>
