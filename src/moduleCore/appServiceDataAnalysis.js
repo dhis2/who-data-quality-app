@@ -1427,7 +1427,6 @@
 				ratio = null;
 				valueA = dataValue(headers, data, dxIDa, pe, subunit, coIDa);
 				valueB = dataValue(headers, data, dxIDb, pe, subunit, coIDb);
-
 				if (!isNumber(valueA) || !isNumber(valueB)) {
 					ignoreList.push(names[subunit]);
 				}
@@ -1488,7 +1487,7 @@
 					}
 				}
 
-				if (isNumber(ratio)) {
+				if (isNumber(valueA) && isNumber(valueB)) {
 					subunitDatapoints.push({
 						'value': valueA,
 						'refValue': valueB,
@@ -1622,10 +1621,8 @@
 
 
 		function dropOutRate(valueA, valueB) {
-
+			if (valueA === valueB) return 0; //Deals with cases where both are 0
 			return (valueA - valueB) / valueA;
-
-
 		}
 
 		//Returns difference between current sum and what would be expected from mean of those values withing 1 SD

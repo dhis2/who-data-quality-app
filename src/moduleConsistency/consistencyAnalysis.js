@@ -602,9 +602,8 @@
 			
 			self.tableData = [];
 			for (var i = 0; i < result.subunitDatapoints.length; i++) {
-				if (result.subunitDatapoints[i].value && result.subunitDatapoints[i].refValue) {
-					self.tableData.push(result.subunitDatapoints[i]);
-				}
+				self.tableData.push(result.subunitDatapoints[i]);
+
 			}
 			
 			
@@ -865,7 +864,7 @@
 
 
 	   	self.dropoutRate = function(valueA, valueB) {
-	   		
+	   		if (valueA === valueB) return 0.0;
 	   		return mathService.round(100*(valueA-valueB)/valueA, 1);
 	   		
 	   	};

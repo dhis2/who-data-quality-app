@@ -663,8 +663,17 @@
 
 	    	var toolTip = function(key, x, y, e, graph) {
 	    		var data = result.subunitDatapoints;
-	    	    return '<h3>' + data[x].name + '</h3>' +
-	    	        '<p>' +  mathService.round(100*(data[x].value-data[x].refValue)/data[x].value,1)  + '% dropout</p>'
+
+				var rate = mathService.round(100*(data[x].value-data[x].refValue)/data[x].value,1);
+				if (data[x].value === data[x].refValue) rate = 0; //Deal with cases where both are 0
+				if (isFinite(rate)) {
+	    	    	return '<h3>' + data[x].name + '</h3>' +
+	    	        '<p>' +  rate  + '% dropout</p>';
+				}
+				else {
+					return '<h3>' + data[x].name + '</h3>' +
+						'<p>Full negative dropout.</p>';
+				}
 	    	};
 	    	
 	    	var minVal = 0.9;
@@ -673,7 +682,9 @@
 	    	for (var i = 0; i < result.subunitDatapoints.length; i++) {
 	    		point = result.subunitDatapoints[i];
 	    		value = point.value/point.refValue;
-	    		
+				if (point.value === point.refValue) value = 1; //Deal with cases where both are 0
+
+
 	    		if (value > maxVal) maxVal = value;
 	    		else if (value < minVal) minVal = value;
 	    		
@@ -684,8 +695,10 @@
 	    		});
 	    	}
 
-	    	chartSeries.push(chartSerie);	    		
-	    	
+	    	chartSeries.push(chartSerie);
+
+			//Keep max chart y axis to less than 10
+			maxVal = Math.min(maxVal, 10);
 	    	var chartOptions = {
 	    	   	"chart": {
 	    	        "type": "lineChart",
@@ -706,7 +719,7 @@
 	    	        'tooltips': true,
 	    	        'tooltipContent': toolTip,
 	    	        'showLegend': true,
-	    	      	'forceY': [Math.floor(minVal*10)/10, Math.ceil(maxVal*10)/10], 
+	    	      	'yDomain': [0,maxVal]
 	    	    }
 	    	};
 	    	
@@ -775,6 +788,14 @@
 
 			return datapoints;
 		}
+
+		function validRatio(ratio) {
+			if (!isNaN(ratio) && isFinite(ratio)) return true;
+			else {
+				return false;
+			}
+
+		};
 
 	  	
 	  	
