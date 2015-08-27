@@ -440,7 +440,7 @@
 			
 			//Collapse open panels
 			$('.panel-collapse').removeClass('in');
-			
+			$('.panel-collapse').addClass('collapse');
 			
 			if (self.datasetSelected && !self.datasetDataelements) {
 				getDatasetDataelements();

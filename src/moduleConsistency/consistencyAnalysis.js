@@ -496,6 +496,7 @@
 			
 			//Collapse open panels
 			$('.panel-collapse').removeClass('in');
+			$('.panel-collapse').addClass('collapse');
 
 			self.mainResult = undefined;
 			self.result = undefined;
