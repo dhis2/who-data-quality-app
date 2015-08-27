@@ -295,14 +295,14 @@
 			for (var i = 0; i < self.orgunitLevels.length; i++) {
 			
 				var belowSelectedUnit = self.orgunitLevels[i].level > self.boundaryOrgunitSelected.level;
-				var belowMaxDepth = self.orgunitLevels[i].level > (self.boundaryOrgunitSelected.level + 3);
+				var belowMaxDepth = self.orgunitLevels[i].level > (self.boundaryOrgunitSelected.level + 2);
 			
 				if (belowSelectedUnit && !belowMaxDepth) {
 					self.filteredOrgunitLevels.push(self.orgunitLevels[i]);
 				}
 			}			
 		};
-		
+
 				
 		self.getLevelPlaceholder = function() {
 			if (!self.filteredOrgunitLevels || self.filteredOrgunitLevels.length === 0) {
