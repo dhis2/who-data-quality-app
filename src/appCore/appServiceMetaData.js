@@ -515,8 +515,9 @@
 			
 			var deferred = $q.defer();
 						
-			var requestURL = '/api/dataElementOperands.json?'; 
-			requestURL += 'fields=name,id,dataElementId,optionComboId&paging=false&filter=dataElement.dataElementGroups.id:eq:' + dataElementGroupID;
+			var requestURL = '/api/dataElementOperands.json?';
+			requestURL += 'filter=valueType:eq:int&filter=dataElement.domainType:eq:AGGREGATE';
+			requestURL += '&fields=name,id,dataElementId,optionComboId&paging=false&filter=dataElement.dataElementGroups.id:eq:' + dataElementGroupID;
 				  
 			requestService.getSingle(requestURL).then(
 				function(response) { //success
