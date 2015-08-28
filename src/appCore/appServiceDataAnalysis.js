@@ -1213,8 +1213,9 @@
 			result.boundaryName = names[ouBoundary];
 			result.pe = pe;
 			result.refPe = self.dsci.refPe;
-			result.dxID = dxID;
+			result.dxID = self.dsci.dxID;
 			result.dxName = names[dxID];
+			if (coID) result.dxName += ' ' + names[coID];
 			result.type = type;
 			result.threshold = threshold;
 
@@ -1520,10 +1521,12 @@
 			//Add key metadata to result
 			result.boundaryID = ouBoundary;
 			result.boundaryName = names[ouBoundary];
-			result.dxIDa = dxIDa;
-			result.dxIDb = dxIDb;
+			result.dxIDa = self.dc.dxIDa;
+			result.dxIDb = self.dc.dxIDb;
 			result.dxNameA = names[dxIDa];
+			if (coIDa) result.dxNameA += ' ' + names[coIDa];
 			result.dxNameB = names[dxIDb];
+			if (coIDb) result.dxNameB += ' ' + names[coIDb];
 			result.pe = pe;
 			result.type = type;
 			result.criteria = criteria;
