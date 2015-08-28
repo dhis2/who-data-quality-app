@@ -864,6 +864,31 @@
 
 		}
 
+
+		self.sendMessage = function(metaData) {
+			
+			var modalInstance = $modal.open({
+				templateUrl: "appCommons/modalMessage.html",
+				controller: "ModalMessageController",
+				controllerAs: 'mmCtrl',
+				resolve: {
+					orgunitID: function () {
+						return self.selectedObject.id;
+					},
+					orgunitName: function () {
+						return self.selectedObject.name;
+					}
+				}
+			});
+
+			modalInstance.result.then(function (result) {
+			});
+		};
+
+
+        	   	
+	   	
+	   	/** UTILITIES */
 		function getFileContent() {
 			var headers = [];
 			var rows = [];
@@ -880,11 +905,11 @@
 			}
 			else {
 				headers = headers.concat([
-						self.result.dxName + ' - ' + self.resultPeriodName(),
-						self.result.dxName + (self.result.type === 'constant'
-							? ' - average of ' + self.resultReferencePeriodNames().join(' ,')
-							: ' - forecast from ' + self.resultReferencePeriodNames().join(' ,')),
-						'Ratio']);
+					self.result.dxName + ' - ' + self.resultPeriodName(),
+					self.result.dxName + (self.result.type === 'constant'
+						? ' - average of ' + self.resultReferencePeriodNames().join(' ,')
+						: ' - forecast from ' + self.resultReferencePeriodNames().join(' ,')),
+					'Ratio']);
 			}
 
 			headers = headers.concat(["Weight"]);
@@ -931,22 +956,23 @@
 				rows: rows
 			};
 		};
-        	   	
-	   	
-	   	/** UTILITIES */
+
+
 	   	function uniqueArray(array) {
 	   	    var seen = {};
 	   	    return array.filter(function(item) {
 	   	        return seen.hasOwnProperty(item) ? false : (seen[item] = true);
 	   	    });
 	   	}
-	   	
+
+
 	   	self.validRatio = function(ratio) {
 	   		if (!isNaN(ratio) && isFinite(ratio)) return true;
 	   		else return false;
 	   	
 	   	};
-	   	
+
+
 	   	self.updateCharts = function() {
 	   		$timeout(function () { window.dispatchEvent(new Event('resize')); }, 100);
 	   	};
@@ -958,10 +984,10 @@
 	   		
 	   	};
 
+
 		function sortName(a, b) {
 			return a.name > b.name ? 1 : -1;
 		}
-
 
 		init();
     	
