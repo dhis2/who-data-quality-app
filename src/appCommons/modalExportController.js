@@ -1,6 +1,6 @@
 (function(){  
 	/**Controller: Parameters*/
-	angular.module('outlierGapAnalysis').controller("ModalExportController", function($modalInstance, fileContent, fileName) {
+	angular.module('dataQualityApp').controller("ModalExportController", function($modalInstance, fileContent, fileName) {
 	    
 	    var self = this; 
 
