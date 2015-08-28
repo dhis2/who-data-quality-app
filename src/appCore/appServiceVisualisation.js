@@ -467,7 +467,7 @@
 	    			'size': 0
 	    			}
 	    			],
-	    			'slope': boundaryRatio+consistency/100,
+	    			'slope': boundaryRatio*(1 + (consistency/100)),
 	    			'intercept': 0.001
 	    		},
 	    		{
@@ -479,7 +479,7 @@
 	    			'size': 0
 	    			}
 	    			],
-	    			'slope': boundaryRatio-consistency/100,
+	    			'slope': boundaryRatio*(1 - (consistency/100)),
 	    			'intercept': 0.001
 	    		}
 	    	);
@@ -593,7 +593,7 @@
 	    			'size': 0
 	    			}
 	    			],
-	    			'slope': boundaryRatio+consistency/100,
+	    			'slope': boundaryRatio*(1 + (consistency/100)),
 	    			'intercept': 0.001
 	    		},
 	    		{
@@ -605,7 +605,7 @@
 	    			'size': 0
 	    			}
 	    			],
-	    			'slope': boundaryRatio-consistency/100,
+	    			'slope': boundaryRatio*(1 - (consistency/100)),
 	    			'intercept': 0.001
 	    		}
 	    	);
