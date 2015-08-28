@@ -1,6 +1,6 @@
 (function(){  
 	/**Controller: Parameters*/
-	angular.module('outlierGapAnalysis').controller("ModalExportController", function($modalInstance, fileContent) {
+	angular.module('outlierGapAnalysis').controller("ModalExportController", function($modalInstance, fileContent, fileName) {
 	    
 	    var self = this; 
 
@@ -13,12 +13,21 @@
 				value: ';'
 			}
 		];
+		self.decSeparators = [
+			{
+				label: 'Comma',
+				value: ','
+			},{
+				label: 'Period',
+				value: '.'
+			}
+		];
 
 
 		self.options = {
 			'separator': ',',
-			'fileName': 'Outliers and missing data',
-			'includeIDs': false
+			'fileName': fileName,
+			'decSeparator': '.'
 		};
 
 
@@ -68,11 +77,12 @@
 
 		function fixDecimalsForExport(value) {
 			value = value.toString();
-			if (value.indexOf('.0') === (value.length - 2)) {
+			if (value.length > 3 && value.indexOf('.0') === (value.length - 2)) {
 				value = value.slice(0, - 2);
 			}
 			else {
-				value = value.replace(',', '.');
+				value = value.replace(',', self.options.decSeparator);
+				value = value.replace('.', self.options.decSeparator);
 			}
 			return value;
 		}

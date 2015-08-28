@@ -9,22 +9,34 @@
         </tr>
 		<tr>
 			<td>
-				Separator
+				Field separator
 			</td>
 			<td>
-				<div class="btn-group btn-group-justified" style="width: 120px; display: inline-block;">
-					<label ng-repeat="opts in exportCtrl.separators" class="btn btn-default" ng-model="exportCtrl.options.separator" btn-radio="opts.value">{{opts.label}}</label>
+				<div class="btn-group btn-group-justified" style="width: 200px; display: inline-block;">
+					<label
+							ng-repeat="opts in exportCtrl.separators"
+							class="btn btn-default"
+							ng-model="exportCtrl.options.separator"
+							ng-disabled="opts.value === exportCtrl.options.decSeparator"
+							btn-radio="opts.value">{{opts.label}}</label>
 				</div>
 			</td>
 		</tr>
 		<tr>
 			<td>
-				Include IDs
+				Decimal separator
 			</td>
 			<td>
-				<input type="checkbox" ng-model="exportCtrl.options.includeIDs">
+				<div class="btn-group btn-group-justified" style="width: 200px; display: inline-block;">
+					<label ng-repeat="opts in exportCtrl.decSeparators"
+						   class="btn btn-default"
+						   ng-model="exportCtrl.options.decSeparator"
+						   ng-disabled="opts.value === exportCtrl.options.separator"
+						   btn-radio="opts.value">{{opts.label}}</label>
+				</div>
 			</td>
 		</tr>
+		<tr>
 			<td>
 				File name
 			</td>
