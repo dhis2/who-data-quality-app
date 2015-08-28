@@ -16,8 +16,12 @@
 															 $modal, $timeout, $scope) {
 		var self = this;
 
+		//Variables for storing result and result history
 	    self.result = undefined;
-	    self.mainResult = undefined;
+		self.results = [];
+		self.maxResults = 5;
+		self.currentResult = null;
+
 	    self.itemsPerPage = 25;
 	    self.hasVisual = false;
 	    self.req = false;
@@ -498,8 +502,9 @@
 			$('.panel-collapse').removeClass('in');
 			$('.panel-collapse').addClass('collapse');
 
-			self.mainResult = undefined;
 			self.result = undefined;
+			if (self.results.length > 1) self.results.move(self.currentResult, 0);
+
 			self.chartSelected = {};
 			self.chart = {};
 			
@@ -542,17 +547,17 @@
 			var periodType = longestPeriodInSelection();
 
 			if (self.consistencyType === 'relation') {
-				var periods = [self.mainResult.pe.toString()];
-				var dxA = self.mainResult.dxIDa;
-				var dxB = self.mainResult.dxIDb;
+				var periods = [self.result.pe.toString()];
+				var dxA = self.result.dxIDa;
+				var dxB = self.result.dxIDb;
 				
 				visualisationService.multiBarChart(receiveDetailChart, [dxA, dxB], periods, [ouID], 'dataOverTime');
 				
 			}
 			else {
-				var periods = self.mainResult.refPe.slice();
-				periods.push(self.mainResult.pe.toString());
-				var dx = self.mainResult.dxID;
+				var periods = self.result.refPe.slice();
+				periods.push(self.result.pe.toString());
+				var dx = self.result.dxID;
 				
 				visualisationService.multiBarChart(receiveDetailChart, [dx], periods, [ouID], 'dataOverTime');
 				
@@ -581,128 +586,119 @@
 		RESULTS
 		*/
 		
-		var receiveRelationResult = function(result, errors) {
+		function receiveRelationResult(result, errors) {
+
+			result.consistencyType = 'relation';
+
+			//Save result
+			self.currentResult = 0;
+			self.results.unshift(result);
+
+			//Only keep 5
+			if (self.results.length > 5) self.results.pop();
+
+			prepareResult();
+		};
+
+		
+		function receiveTimeResult(result, errors) {
 			
 			self.req = false;
-			
-			self.chart.data = null;
-			self.chart.options = null;
-						
-			
-			if (result.type === 'do') 
-				visualisationService.makeDropoutRateChart(null, result);
-			else {
-				visualisationService.makeDataConsistencyChart(null, result);	
-			}
-			
-			result.chartOptions.chart.height = 375;
-			self.chart.data = result.chartData;
-			self.chart.options = result.chartOptions;
-			
-			
+
+			self.result = result;
+			self.result.consistencyType = 'time';
+
+			self.currentResult = 0;
+			self.results.unshift(result);
+
+			//Only keep 5
+			if (self.results.length > 5) self.results.pop();
+
+			prepareResult();
+		};
+
+
+		function prepareResult() {
+			self.result = self.results[self.currentResult];
+			self.req = false;
+
+			//self.chart.data = null;
+			//self.chart.options = null;
+
+
 			self.tableData = [];
-			for (var i = 0; i < result.subunitDatapoints.length; i++) {
-				self.tableData.push(result.subunitDatapoints[i]);
+			for (var i = 0; i < self.result.subunitDatapoints.length; i++) {
+				self.tableData.push(self.result.subunitDatapoints[i]);
 
 			}
-			
-			
-			
-			self.mainResult = result;
-			self.mainResult.consistencyType = 'relation';
-			
+
 			self.currentPage = 1;
-			self.pageSize = 10;   	
+			self.pageSize = 10;
 			self.totalRows = self.tableData.length;
-			
+
 			self.sortByColumn('weight');
 			self.reverse = true;
-			
-			//Look for click events in chart
-			$(document).on("click", "#mainChart", function(e) {
-			     
-			     var item = e.target.__data__;
-			     if( Object.prototype.toString.call(item) === '[object Object]' ) {
-			         if (item.hasOwnProperty('series') && item.hasOwnProperty('point')) {
-			         	itemClicked(item.series, item.point);
-			         }
-			     }
-			     
-			});
-			
-			self.updateCharts();
-		};
-		
-		var receiveTimeResult = function(result, errors) {
-			
-			self.req = false;
 
-			visualisationService.makeTimeConsistencyChart(null, result);
-			
-			//Adjust size to be same as table
-			result.chartOptions.chart.height = 375;
-			
-			//Display chart
-			self.chart.data = result.chartData;
-			self.chart.options = result.chartOptions;		
-			
-			
-			self.tableData = [];
-			for (var i = 0; i < result.subunitDatapoints.length; i++) {
-				if (result.subunitDatapoints[i].value && result.subunitDatapoints[i].refValue) {
-					self.tableData.push(result.subunitDatapoints[i]);
+
+
+			if (self.result.consistencyType === 'relation') {
+				if (self.result.type === 'do')
+					visualisationService.makeDropoutRateChart(null, self.result);
+				else {
+					visualisationService.makeDataConsistencyChart(null, self.result);
 				}
 			}
-			
-			self.mainResult = result;
-			self.mainResult.consistencyType = 'time';
-			
-			self.currentPage = 1;
-			self.pageSize = 10;   	
-			self.totalRows = self.tableData.length;
-			
-			self.sortByColumn('weight');
-			self.reverse = true;
-			
+			else {
+				visualisationService.makeTimeConsistencyChart(null, self.result);
+			}
+
+			//Display chart
+			self.chart.data = self.result.chartData;
+			self.chart.options = self.result.chartOptions;
+			self.chart.options.chart.height = 375;
+
 			//Look for click events in chart
 			$(document).on("click", "#mainChart", function(e) {
-			     
-			     var item = e.target.__data__;
-			     if( Object.prototype.toString.call(item) === '[object Object]' ) {
-			         if (item.hasOwnProperty('series') && item.hasOwnProperty('point')) {
-			         	itemClicked(item.series, item.point);
-			         }
-			     }
-			     
+				var item = e.target.__data__;
+				if( Object.prototype.toString.call(item) === '[object Object]' ) {
+					if (item.hasOwnProperty('series') && item.hasOwnProperty('point')) {
+						itemClicked(item.series, item.point);
+					}
+				}
 			});
-			
+
 			self.updateCharts();
+		}
+
+
+		self.previousResult = function() {
+			self.currentResult++;
+			prepareResult();
 		};
-		
 		
 	
 		self.title = function () {
 			var title = "";
-			if (self.mainResult.consistencyType === 'relation') {
-				if (self.mainResult.type === 'level') {
-					title += self.mainResult.dxNameA + " to " + self.mainResult.dxNameB + " ratio. " +
+			if (self.result.consistencyType === 'relation') {
+				if (self.result.type === 'level') {
+					title += self.result.dxNameA + " to " + self.result.dxNameB + " ratio. " +
 						self.resultPeriodName() + '.';
 				}
-				if (self.mainResult.type === 'eq') {
-					title += self.mainResult.dxNameA + " ≈ " + self.mainResult.dxNameB + ". " +
+				if (self.result.type === 'eq') {
+					title += self.result.dxNameA + " ≈ " + self.result.dxNameB + ". " +
 						self.resultPeriodName() + '.';
 				}
-				if (self.mainResult.type === 'aGTb') {
-					title += self.mainResult.dxNameA + " > " + self.mainResult.dxNameB + ". " +
+				if (self.result.type === 'aGTb') {
+					title += self.result.dxNameA + " > " + self.result.dxNameB + ". " +
 						self.resultPeriodName() + '.';
 				}
-				if (self.mainResult.type === 'do') {
-					title += self.mainResult.dxNameA + " to " + self.mainResult.dxNameB + " dropout. " +
+				if (self.result.type === 'do') {
+					title += self.result.dxNameA + " to " + self.result.dxNameB + " dropout. " +
 						self.resultPeriodName() + '.';
 				}
 			}
 			else {
-				title += self.mainResult.dxName + ' consistency over time. ' +
+				title += self.result.dxName + ' consistency over time. ' +
 					self.resultPeriodName() + ' against ' + self.resultReferencePeriodNames().length + ' preceding periods.';
 			}
 			
@@ -727,12 +723,12 @@
 
 		self.ratioDescription = function() {
 			var description = "";
-			if (self.mainResult.consistencyType === 'relation') {
-				if (self.mainResult.type === 'do') {
-					description += "Dropout rate from " + self.mainResult.dxNameA + " to " + self.mainResult.dxNameB + ".";
+			if (self.result.consistencyType === 'relation') {
+				if (self.result.type === 'do') {
+					description += "Dropout rate from " + self.result.dxNameA + " to " + self.result.dxNameB + ".";
 				}
 				else {
-					description += "Ratio between " + self.mainResult.dxNameA + " and " + self.mainResult.dxNameB + ".";
+					description += "Ratio between " + self.result.dxNameA + " and " + self.result.dxNameB + ".";
 				}
 			}
 			else {
@@ -743,14 +739,14 @@
 		}
 
 		self.resultPeriodName = function() {
-			return periodService.shortPeriodName(self.mainResult.pe);
+			return periodService.shortPeriodName(self.result.pe);
 
 		}
 
 		self.resultReferencePeriodNames = function() {
 			var periodNames = [];
-			for (var i = 0; i < self.mainResult.refPe.length; i++) {
-				periodNames.push(periodService.shortPeriodName(self.mainResult.refPe[i]));
+			for (var i = 0; i < self.result.refPe.length; i++) {
+				periodNames.push(periodService.shortPeriodName(self.result.refPe[i]));
 			}
 
 			return periodNames;
@@ -833,8 +829,7 @@
         	
         	var requestURL = "/api/organisationUnits/" + item.id + ".json?fields=level";
         	requestService.getSingle(requestURL).then(function (response) {
-        		
-        		
+
         		var level = response.data.level;
         		if (level === lowestLevel()) {
         			console.log("Not possible to drill down");
@@ -849,9 +844,9 @@
 
         
         function getDataItem(ouID) {
-        	for (var i = 0; i < self.mainResult.subunitDatapoints.length; i++) {
-				if (self.mainResult.subunitDatapoints[i].id === ouID) {
-					return self.mainResult.subunitDatapoints[i];
+        	for (var i = 0; i < self.result.subunitDatapoints.length; i++) {
+				if (self.result.subunitDatapoints[i].id === ouID) {
+					return self.result.subunitDatapoints[i];
 				}
 			}
         }
