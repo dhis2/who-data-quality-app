@@ -778,6 +778,9 @@
 					fileContent: function () {
 						return fileContent;
 					},
+					fileName: function () {
+						return 'Outlier and missing data analysis';
+					}
 				}
 			});
 
