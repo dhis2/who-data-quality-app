@@ -511,15 +511,20 @@
 		/**
 		RESULTS
 		*/
-		
 		var receiveResult = function(result) {			
 				
-			if (!result || !result.rows || result.rows.length === 0) { 
-				console.log("Empty result");
+			if (!result || !result.rows || result.rows.length === 0) {
+				notification("Info", "No data returned from server.");
 			}
 			else {
 				self.alerts = [];
 				console.log("Received " + result.rows.length + " rows");
+				if (result.trimmed) {
+					var message = "Due to its size, the result was trimmed down to " + result.rows.length + " rows.";
+					message += " Rows were prioritized based on total weight (significance of missing data and outliers), ";
+					message += "with rows with the lowest weight being left out of the result.";
+					notification("Warning", message);
+				}
 			}
 			
 			self.currentResult = 0;
@@ -761,7 +766,7 @@
 				}
 								
 				else {
-					console.log(rowMetaData.ouName + ' does not have any children');
+					notification("Warning", "Not possible to drill down, " + rowMetaData.ou.name + " has no children.");
 				}
 			});
 			
@@ -833,6 +838,25 @@
 		/** UTILITIES */
 		function sortName(a, b) {
 			return a.name > b.name ? 1 : -1;
+		}
+
+		function notification(title, message) {
+			var modalInstance = $modal.open({
+				templateUrl: "appCommons/modalNotification.html",
+				controller: "ModalNotificationController",
+				controllerAs: 'nCtrl',
+				resolve: {
+					title: function () {
+						return title;
+					},
+					message: function () {
+						return message;
+					}
+				}
+			});
+
+			modalInstance.result.then(function (result) {
+			});
 		}
 
 			

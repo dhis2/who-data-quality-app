@@ -7,7 +7,7 @@
 		//"Fixed" variables
 		var maxPendingRequests = 1;
 		var processIndex = 0;
-
+		var resultLimit = 200000;
 		self.status = {
 			'done': 0,
 			'total': 0,
@@ -309,7 +309,7 @@
 				if (newRow.result) result.rows.push(newRow);
 			}
 
-			if (result.rows.length > 210000) {
+			if (result.rows.length > parseInt(resultLimit*1.1)) {
 				outlierGapTrimResult(result)
 			}
 
@@ -418,15 +418,15 @@
 
 		/**Trims outlier gap analysis result to 2000*/
 		function outlierGapTrimResult(result) {
-			console.log("Reached 210000 rows - prioritizing");
+			console.log("Reached " + parseInt(resultLimit*1.1) + " rows - prioritizing");
 			result.rows.sort(function (a, b) {
 				return b.result.totalWeight - a.result.totalWeight;
 			});
 
-			for (var i = 200000; i < result.rows.length; i++) {
+			for (var i = resultLimit; i < result.rows.length; i++) {
 				result.rows[i] = null;
 			}
-			result.rows.splice(200000, result.rows.length - 200000);
+			result.rows.splice(resultLimit, result.rows.length - resultLimit);
 		}
 
 		/**Prints a "histogram" of weight to console*/
@@ -477,11 +477,12 @@
 			result.metaData.zScoreCriteria = self.og.zScoreCriteria;
 			result.metaData.gapCriteria = self.og.gapCriteria;
 
-			if (result.rows.length > 200000) {
+			if (result.rows.length > resultLimit) {
 				outlierGapTrimResult(result);
+				result.trimmed = true;
 			}
 
-			outlierGapResultHistorgram(result); //TODO: Only for dev purposes
+			outlierGapResultHistorgram(result); //Only for dev purposes
 
 			outlierGapMetaData(result).then(function(success) {
 				self.og.callback(result);

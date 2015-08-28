@@ -807,7 +807,7 @@
         self.sendMessage = function(row) {
         	        	
         	var modalInstance = $modal.open({
-	            templateUrl: "views/_modals/modalMessage.html",
+	            templateUrl: "appCommons/modalMessage.html",
 	            controller: "ModalMessageController",
 	            controllerAs: 'mmCtrl',
 	            resolve: {
@@ -832,7 +832,22 @@
 
         		var level = response.data.level;
         		if (level === lowestLevel()) {
-        			console.log("Not possible to drill down");
+					var modalInstance = $modal.open({
+						templateUrl: "appCommons/modalNotification.html",
+						controller: "ModalNotificationController",
+						controllerAs: 'nCtrl',
+						resolve: {
+							title: function () {
+								return "Warning";
+							},
+							message: function () {
+								return "Not possible to drill down, " + self.selectedObject.name + " has no children.";
+							}
+						}
+					});
+
+					modalInstance.result.then(function (result) {
+					});
         			return;
         		}
         		self.selectedObject = {};
