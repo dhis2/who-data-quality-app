@@ -11,7 +11,7 @@ module.exports = function(grunt) {
       		},
 			content: {
 				cwd: 'src',
-				src: [ 'module*/*.html', 'img/icons/*', 'data/**', 'fonts/**'],
+				src: [ 'module*/*.html', 'app*/*.html', 'img/icons/*', 'data/**', 'fonts/**'],
 				dest: 'build',
 				expand: true
 			},
