@@ -807,7 +807,7 @@
         self.sendMessage = function(row) {
         	        	
         	var modalInstance = $modal.open({
-	            templateUrl: "views/_modals/outlierGapMessage.html",
+	            templateUrl: "views/_modals/modalMessage.html",
 	            controller: "ModalMessageController",
 	            controllerAs: 'mmCtrl',
 	            resolve: {
@@ -842,14 +842,95 @@
         };
 
 
-        
-        function getDataItem(ouID) {
-        	for (var i = 0; i < self.result.subunitDatapoints.length; i++) {
-				if (self.result.subunitDatapoints[i].id === ouID) {
-					return self.result.subunitDatapoints[i];
+		self.exportCSV = function() {
+			var fileContent = getFileContent();
+			var modalInstance = $modal.open({
+				templateUrl: "appCommons/modalExport.html",
+				controller: "ModalExportController",
+				controllerAs: 'exportCtrl',
+				resolve: {
+					fileContent: function () {
+						return fileContent;
+					},
+					fileName: function () {
+						return 'Consistency analysis';
+					}
+				}
+			});
+
+			modalInstance.result.then(function (result) {
+				console.log("Export done");
+			});
+
+		}
+
+		function getFileContent() {
+			var headers = [];
+			var rows = [];
+
+			headers = headers.concat(["Orgunit"]);
+
+			if (self.result.consistencyType === 'relation') {
+				if (self.result.type != 'do') {
+					headers = headers.concat([self.result.dxNameA, self.result.dxNameB, 'Ratio']);
+				}
+				else {
+					headers = headers.concat([self.result.dxNameA, self.result.dxNameB, 'Dropout rate (%)']);
 				}
 			}
-        }
+			else {
+				headers = headers.concat([
+						self.result.dxName + ' - ' + self.resultPeriodName(),
+						self.result.dxName + (self.result.type === 'constant'
+							? ' - average of ' + self.resultReferencePeriodNames().join(' ,')
+							: ' - forecast from ' + self.resultReferencePeriodNames().join(' ,')),
+						'Ratio']);
+			}
+
+			headers = headers.concat(["Weight"]);
+
+
+
+
+			var data = self.result.subunitDatapoints;
+			for (var i = 0; i < data.length; i++) {
+				var row = [];
+				var value = data[i];
+				row.push(value.name);
+				row.push(value.value);
+				row.push(value.refValue);
+
+				if (self.result.type === 'do') {
+					row.push(self.dropoutRate(value.value, value.refValue));
+				}
+				else {
+					row.push(value.ratio);
+				}
+				row.push(value.weight);
+
+				rows.push(row);
+			}
+
+			rows.sort(function(a, b) {
+				return b[4] - a[4];
+			});
+
+			//Add boundary to top of export
+			var boundaryRow = [self.result.boundaryName + ' (boundary)', self.result.boundaryValue, self.result.boundaryRefValue];
+			if (self.result.type === 'do') {
+				boundaryRow.push(self.dropoutRate(self.result.boundaryValue, self.result.boundaryRefValue));
+			}
+			else {
+				boundaryRow.push(self.result.boundaryRatio);
+			}
+			boundaryRow.push(''); //weight
+			rows.unshift(boundaryRow);
+
+			return {
+				headers: headers,
+				rows: rows
+			};
+		};
         	   	
 	   	
 	   	/** UTILITIES */

@@ -225,6 +225,9 @@
 	</div>
 	<div class="pull-right">
 		<div class="btn-group">
+			<button type="button" ng-click="aCtrl.exportCSV();" class="btn btn-default" style="width: 100px">
+				Download
+			</button>
 			<button style="width: 100px" type="button" class="btn btn-default"
 					ng-disabled="aCtrl.results.length < 2 || aCtrl.currentResult >= 4 || (1 + aCtrl.currentResult) === aCtrl.results.length"
 					ng-click="aCtrl.previousResult();">
