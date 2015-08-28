@@ -698,7 +698,7 @@
 	    	chartSeries.push(chartSerie);
 
 			//Keep max chart y axis to less than 10
-			maxVal = Math.min(maxVal, 10);
+			maxVal = Math.ceil(Math.min(maxVal, 10), 1);
 	    	var chartOptions = {
 	    	   	"chart": {
 	    	        "type": "lineChart",
