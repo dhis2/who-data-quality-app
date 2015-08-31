@@ -564,6 +564,8 @@
 				self.chartSelected.options = null;
 				self.chartSelected.data = null;
 			}
+
+
 			
 		}
 
@@ -667,7 +669,6 @@
 				}
 			});
 
-			self.updateCharts();
 		}
 
 
@@ -797,8 +798,7 @@
 	   		}
 	   		
 	   		dataForSelectedUnit(item.id);
-	   		
-	   		self.updateCharts();
+
 	   	};
 	   	
 	   	function highlightPoint() {}
@@ -985,11 +985,6 @@
 	   		if (!isNaN(ratio) && isFinite(ratio)) return true;
 	   		else return false;
 	   	
-	   	};
-
-
-	   	self.updateCharts = function() {
-	   		$timeout(function () { window.dispatchEvent(new Event('resize')); }, 100);
 	   	};
 
 
