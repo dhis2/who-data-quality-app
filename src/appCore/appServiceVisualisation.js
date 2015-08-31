@@ -74,7 +74,9 @@
 					          	return periodNames[d];
 					          }
 					        },
-					        'tooltips': true,
+					        'tooltip': {
+								'enabled': true
+							},
 					        'showLegend': true
 					    },
 					    'parameters': {
@@ -163,7 +165,9 @@
 					          	return periodNames[d];
 					          }
 					        },
-					        'tooltips': true,
+							'tooltip': {
+								'enabled': true
+							},
 					        'showLegend': true
 					    },
 					    'parameters': {
@@ -244,7 +248,9 @@
 					          "bottom": 60,
 					          "left": 20
 					        },
-					        'tooltips': true,
+							'tooltip': {
+								'enabled': true
+							},
 					        'showLegend': true,
 	                        'x': function(d){return d.label;},
 	                        'y': function(d){return d.value;},
@@ -359,9 +365,9 @@
   					chartData.push(chartSeries);
   				}
   				
-  				var toolTip = function(key, x, y, e, graph) {
-  				    return '<h3>' + periodService.shortPeriodName(e.series.periods[e.point.x]) + '</h3>' +
-  				        '<p>' + y + '</p>'; 
+  				var toolTip = function(point) {
+  				    return '<h3>' + periodService.shortPeriodName(e.series.periods[point.point.point.x]) + '</h3>' +
+  				        '<p>' + point.point.point.y + '</p>';
   				};
   				
   				//Chart options		
@@ -381,8 +387,10 @@
   				          'rotateLabels': -30,
   				          'tickFormat': function(d) {return periodNames[d];}
   				        },
-  				        'tooltips': true,
-  				        'tooltipContent': toolTip,
+						'tooltip': {
+							enabled: true,
+							contentGenerator: toolTip
+						},
   				        'showLegend': true,
   				        'useInteractiveGuideline': true
   				    },
@@ -414,16 +422,17 @@
 	    	var boundaryRatio = result.boundaryRatio;
 	    	var consistency = result.threshold; 
 	    		    	
-	    	var toolTip = function(key, x, y, e, graph) {
+	    	var toolTip = function(point) {
+
 	    		var data = result.subunitDatapoints;
 	    		
-	    		var toolTipHTML = '<h3>' + data[graph.pointIndex].name + '</h3>';
-    			toolTipHTML += '<p style="margin-bottom: 0px">' + periodService.shortPeriodName(result.pe) + ': ' + y + '</p>';
+	    		var toolTipHTML = '<h3>' + data[point.pointIndex].name + '</h3>';
+    			toolTipHTML += '<p style="margin-bottom: 0px">' + periodService.shortPeriodName(result.pe) + ': ' + point.point.y + '</p>';
 	    		if (result.type === 'constant') {
-	    			toolTipHTML += '<p>Average: ' + x + '</p>'; 	    			
+	    			toolTipHTML += '<p>Average: ' + point.point.x + '</p>';
 	    		}
 	    		else {
-	    			toolTipHTML += '<p>Forecasted: ' + x + '</p>'; 	    			
+	    			toolTipHTML += '<p>Forecasted: ' + point.point.x + '</p>';
 	    		}
 	    	    return toolTipHTML;
 	    	};
@@ -516,8 +525,10 @@
 	    	            "axisLabelDistance": 30,
 	    	            "tickFormat": d3.format('g')
 	    	        },
-	    	        'tooltips': true,
-	    	        'tooltipContent': toolTip
+	    	        'tooltip': {
+						enabled: true,
+						contentGenerator: toolTip
+					}
 	    	        
 	    	    },
 	    	    "title": {
@@ -547,11 +558,12 @@
 	    	var boundaryRatio = result.boundaryRatio;
 	    	var consistency = result.criteria; 
 	    		    	
-	    	var toolTip = function(key, x, y, e, graph) {
+	    	var toolTip = function(point) {
+
 	    		var data = result.subunitDatapoints;
-	    	    return '<h3>' + data[graph.pointIndex].name + '</h3>' +
-	    	        '<p style="margin-bottom: 0px">' + result.dxNameA + ': ' + y + '</p>' + 
-	    	        '<p>' + result.dxNameB + ': ' + x + '</p>'; 
+	    	    return '<h3>' + data[point.pointIndex].name + '</h3>' +
+	    	        '<p style="margin-bottom: 0px">' + result.dxNameA + ': ' + point.point.y + '</p>' +
+	    	        '<p>' + result.dxNameB + ': ' + point.point.x + '</p>';
 	    	};
 	    	
 	    	
@@ -637,8 +649,10 @@
 	    	            "axisLabelDistance": 30,
 	    	            "tickFormat": d3.format('g')
 	    	        },
-	    	        'tooltips': true,
-	    	        'tooltipContent': toolTip
+					'tooltip': {
+						enabled: true,
+						contentGenerator: toolTip
+					}
 	    	    }
 	    	};
 	    	
@@ -661,17 +675,17 @@
 	    		'values': []
 	    	};
 
-	    	var toolTip = function(key, x, y, e, graph) {
-	    		var data = result.subunitDatapoints;
+	    	var toolTip = function(point) {
+				var data = result.subunitDatapoints;
 
-				var rate = mathService.round(100*(data[x].value-data[x].refValue)/data[x].value,1);
-				if (data[x].value === data[x].refValue) rate = 0; //Deal with cases where both are 0
+				var rate = mathService.round(100*(data[point.point.x].value-data[point.point.x].refValue)/data[point.point.x].value,1);
+				if (data[point.point.x].value === data[point.point.x].refValue) rate = 0; //Deal with cases where both are 0
 				if (isFinite(rate)) {
-	    	    	return '<h3>' + data[x].name + '</h3>' +
+	    	    	return '<h3>' + data[point.point.x].name + '</h3>' +
 	    	        '<p>' +  rate  + '% dropout</p>';
 				}
 				else {
-					return '<h3>' + data[x].name + '</h3>' +
+					return '<h3>' + data[point.point.x].name + '</h3>' +
 						'<p>Full negative dropout.</p>';
 				}
 	    	};
@@ -716,8 +730,10 @@
 	    	        "yAxis": {
 	    	          "axisLabel": "Ratio"
 	    	        },
-	    	        'tooltips': true,
-	    	        'tooltipContent': toolTip,
+					'tooltip': {
+						enabled: true,
+						contentGenerator: toolTip
+					},
 	    	        'showLegend': true,
 	    	      	'yDomain': [0,maxVal]
 	    	    }

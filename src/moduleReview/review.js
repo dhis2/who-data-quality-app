@@ -387,16 +387,11 @@
 	    
 	    
   	  	/** UTILITIES */
-  	  	
-	    
+
+
 	    self.updateCharts = function() {
-	    	$timeout(function() {
-	    		for (var i = 0; i < nv.graphs.length; i++) {
-	    			nv.graphs[i].update();
-	    		}
-	    		window.dispatchEvent(new Event('resize'));
-	    	}, 250);
-	    };
+			$timeout(function () { window.dispatchEvent(new Event('resize')); }, 100);
+		};
 
 
 		self.progress = function() {
