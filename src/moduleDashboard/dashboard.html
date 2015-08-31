@@ -1,34 +1,51 @@
 <h4 style="margin-top: 20px;">Data Quality Dashboard</h4>
-
 <tabset>
-<tab heading="Completeness" select="dashCtrl.makeCompletenessCharts();">
+<tab heading="Completeness" select="dashCtrl.makeCompletenessCharts();" id="completenessTab">
 	<div 
-	 	style="display: inline-block; width: 100%;" 
+	 	style="display: inline-block; width: 100%; height: 400px"
 	 	ng-repeat="dataset in dashCtrl.completenessCharts|orderBy:'name'">
-	
-		<nvd3 
-			ng-class="{chartFull: dashCtrl.singleCol, chartHalf: !dashCtrl.singleCol}" 
-			style="display: inline-block;" 
-			options='dataset.trendChartOptions' 
-			data='dataset.trendChartData'
-			id="{{dataset.trendChartOptions.parameters.dataIDs.join('_')}}_CT">
-		</nvd3>
-		
-		<nvd3 
-			ng-class="{chartFull: dashCtrl.singleCol, chartHalf: !dashCtrl.singleCol}" 
-			style="display: inline-block;" 
-			options='dataset.ouChartOptions' 
-			data='dataset.ouChartData'
-			id="{{dataset.ouChartOptions.parameters.dataIDs.join('_')}}_COU">
-		</nvd3>
+
+		<div ng-class="{chartFull: dashCtrl.singleCol, chartHalf: !dashCtrl.singleCol}"
+			 style="display: inline-block;">
+			<nvd3
+				options='dataset.trendChartOptions'
+				data='dataset.trendChartData'
+				id="{{dataset.trendChartOptions.parameters.dataIDs.join('_')}}_CT">
+			</nvd3>
+		</div>
+
+		<div ng-class="{chartFull: dashCtrl.singleCol, chartHalf: !dashCtrl.singleCol}"
+			style="display: inline-block;">
+			<nvd3
+				options='dataset.ouChartOptions'
+				data='dataset.ouChartData'
+				id="{{dataset.ouChartOptions.parameters.dataIDs.join('_')}}_COU">
+			</nvd3>
+		</div>
 		
 		<hr />
 	</div>
-		
+	<hr><h4>Debug:</h4>
+	<div
+			style="display: inline-block; width: 100%; height: 400px"
+			ng-repeat="dataset in dashCtrl.completenessCharts|orderBy:'name'">
+
+		<div ng-class="{chartFull: dashCtrl.singleCol, chartHalf: !dashCtrl.singleCol}"
+			 style="display: inline-block;">
+			{{dataset.trendChartData}}
+		</div>
+
+		<div ng-class="{chartFull: dashCtrl.singleCol, chartHalf: !dashCtrl.singleCol}"
+			 style="display: inline-block;">
+			{{dataset.ouChartData}}
+		</div>
+
+		<hr />
+	</div>
 </tab>
 <tab heading="Consistency" select="dashCtrl.makeConsistencyCharts();">
 	<div
-	 	style="display: inline-block; width: 100%;" 
+	 	style="display: inline-block; width: 100%; height: 400px"
 	 	ng-repeat="data in dashCtrl.consistencyCharts|orderBy:'name'|limitTo: 100">
 		<nvd3 
 			ng-class="{chartFull: dashCtrl.singleCol, chartHalf: !dashCtrl.singleCol}" 

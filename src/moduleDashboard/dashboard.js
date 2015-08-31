@@ -4,19 +4,22 @@
 	var app = angular.module('dashboard', []);
 	
 	
-	app.controller("DashboardController", function(metaDataService, periodService, requestService, visualisationService, mathService, dataAnalysisService, $scope, $window, $timeout) {
+	app.controller("DashboardController", function(metaDataService, periodService, requestService, visualisationService, mathService, dataAnalysisService, $window) {
 
 	    var self = this;
 		
 		self.ready = false;
-    	
+		self.completeness = false;
+		self.consistency = false;
+
     	     
         /** -- ANALYSIS -- */
         
         /** COMPLETENESS */
         self.makeCompletenessCharts = function() {
         	if (!self.ready) return;
-	        nv.graphs = [];
+			if (self.completeness) return;
+			else self.completeness = true;
 	        
         	self.completenessCharts = [];
         	self.trendReceived = 0;
@@ -49,14 +52,17 @@
         		else {
         			ouPeriod = periods[periods.length - 2];
         		}
-        		
+
+				self.completenessCharts.push(datasetCompletenessChart);
+
         		visualisationService.lineChart(receiveCompletenessTrend, [dataset.id], periods, [ouBoundaryID], 'dataOverTime');
         		
         		visualisationService.barChart(receiveCompletenessOU, [dataset.id], [ouPeriod], ouChildrenID, 'ou');
         		
         		
-        		self.completenessCharts.push(datasetCompletenessChart);  		
+
         	}
+
         };
         
         
@@ -95,10 +101,7 @@
         	}
         	
         	self.trendReceived++;
-        	if (self.trendReceived === self.completenessCharts.length && self.ouReceived === self.completenessCharts.length) {
-        		console.log("Completeness charts ready");
-				updateCharts();
-        	}
+			checkCompletenessFetched();
         };
         
         
@@ -137,21 +140,32 @@
         			dsc.ouChartData = data;
         			break;
         		}
+
+
         	}
         	
         	self.ouReceived++;
-        	if (self.trendReceived === self.completenessCharts.length && self.ouReceived === self.completenessCharts.length) {
-        		console.log("Completeness charts ready");
-				updateCharts();
-        	}
+			checkCompletenessFetched();
         };
-                  	
+
+
+		function checkCompletenessFetched() {
+			if (self.trendReceived === self.completenessCharts.length && self.ouReceived === self.completenessCharts.length) {
+
+				console.log("Received completeness data");
+				
+			}
+		}
+
     	
     	
     	/** CONSISTENCY */
-    	self.makeConsistencyCharts = function() { 
-    		nv.graphs = [];
-      		self.consistencyCharts = [];   
+    	self.makeConsistencyCharts = function() {
+			if (!self.ready) return;
+			if (self.consistency) return;
+			else self.consistency = true;
+
+      		self.consistencyCharts = [];
       		self.yyReceived = 0;
       		self.consistencyReceived = 0;
       		
@@ -248,10 +262,7 @@
 				}
 			}
 			self.consistencyReceived++;
-			if (self.consistencyReceived === self.consistencyCharts.length && self.yyReceived === self.consistencyCharts.length) {
-				console.log("Consistency downloaded");
-				updateCharts();
-			}
+			checkConsistencyFetched();
   		}
 
 
@@ -291,12 +302,18 @@
     			}
     		}
     		self.yyReceived++;
-    		if (self.consistencyReceived === self.consistencyCharts.length && self.yyReceived === self.consistencyCharts.length) {
-				console.log("Consistency downloaded");
-				updateCharts();
-    		}
+			checkConsistencyFetched();
     	}
-    	
+
+
+		function checkConsistencyFetched() {
+			if (self.consistencyReceived === self.consistencyCharts.length && self.yyReceived === self.consistencyCharts.length) {
+
+				console.log("Received consistency data");
+
+			}
+		}
+
 
 
     	/** -- OUTLIERS -- */
@@ -320,7 +337,18 @@
       		}
       		
       	}
-      	
+
+
+		function receivedCharts() {
+			var count = 0;
+			if (self.trendReceived) count += self.trendReceived;
+			if (self.ouReceived ) count += self.ouReceived;
+			if (self.consistencyReceived) count += self.consistencyReceived;
+			if (self.yyReceived) count += self.yyReceived
+
+			return count;
+		}
+
       	
       	function setWindowWidth() {
       		
@@ -332,13 +360,6 @@
       		else {
       			self.singleCol = false;
       		}
-      		
-      		//update if there was a change
-      		if (previous != undefined && (previous != self.singleCol)) $scope.$apply();
-      	}
-      	
-      	function updateCharts() {
-      		$timeout(function () { window.dispatchEvent(new Event('resize')); }, 500);
       	}
       	
       	function ouChildrenIDs() {
@@ -366,7 +387,6 @@
       	/** -- INIT -- */		
       	
       	function init() {
-      		nv.graphs = [];
       		setWindowWidth();
       		$( window ).resize(function() {
       			setWindowWidth();
