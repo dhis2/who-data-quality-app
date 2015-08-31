@@ -206,7 +206,7 @@
     </accordion-group>
   </accordion>  	
   
-<button type="button" class="btn btn-primary pull-right" ng-click="aCtrl.doAnalysis(null, null);"
+<button type="button" class="btn btn-primary pull-right" ng-click="aCtrl.doAnalysis(null, null); aCtrl.updateCharts();" 
 	ng-disabled="(!aCtrl.periodSelected && aCtrl.periodTypeSelected.id != 'Yearly') || !aCtrl.dataSelection.a.item ||
 		(aCtrl.consistencyType === 'relation' && !aCtrl.dataSelection.b.item)" style="margin-bottom:20px">Analyze</button>
 
