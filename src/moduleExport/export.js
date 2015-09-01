@@ -37,8 +37,40 @@
 	    		self.orgunitLevels = data;
 	    	});		    	
 	    }
-	    
-	    self.doOuExport = function() {
+
+
+		self.indicatorSearch = function(searchString){
+			if (searchString.length >= 2) {
+				var requestURL = "/api/indicators.json?filter=name:like:" + searchString + "&paging=false&fields=name,id";
+				requestService.getSingle(requestURL).then(function (response) {
+
+					//will do with API filter once API-filter is stable
+					self.indicatorSearchResult = response.data.indicators;
+					self.indicatorSearchResult.sort(function(a,b) {
+						return (a.name < b.name) ? -1 : 1;
+					});
+
+				});
+			}
+		};
+
+		self.dataElementSearch = function(searchString){
+			if (searchString.length >= 2) {
+				var requestURL = "/api/dataElements.json?filter=name:like:" + searchString + "&paging=false&fields=name,id";
+				requestService.getSingle(requestURL).then(function (response) {
+
+					//will do with API filter once API-filter is stable
+					self.dataElementSearchResult = response.data.dataElements;
+					self.dataElementSearchResult.sort(function(a,b) {
+						return (a.name < b.name) ? -1 : 1;
+					});
+
+				});
+			}
+		};
+
+
+		self.doOuExport = function() {
 	    	
 	    	
 	    	var requestURL = '/api/organisationUnits.json?fields=name,parent[name,parent[name,parent[name]]]&paging=false&filter=level:eq:' + self.orgunitLevelSelected.level;
