@@ -424,6 +424,10 @@
 			angular.element('.relationTableHolderPrint').width('300px');
 			angular.element('.relationChartPrint').width('554px');
 
+			//Workaround to overwrite bootstrap table styling
+			angular.element('.tablePrint').removeClass('table');
+			angular.element('.tablePrint').removeClass('table-bordered');
+
 			window.dispatchEvent(new Event('resize'));
 
 			interpretationToParagraph();
@@ -447,6 +451,9 @@
 					}
 				}
 			}
+
+			angular.element('.tablePrint').addClass('table');
+			angular.element('.tablePrint').addClass('table-bordered');
 
 			window.dispatchEvent(new Event('resize'));
 
