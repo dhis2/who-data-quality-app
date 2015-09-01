@@ -45,7 +45,7 @@
 	</progressbar>
 </div>
 
-<div class="onlyPrint reportPart" style="display: inline-block">
+<div class="onlyPrint reportPart noBreak" style="display: inline-block; height: 1400px;">
 	<div style="width: 200px; height: 200px; display: inline-block; vertical-align: top; ">
 		<svg width="200px" height="228px">
 			<rect width="200px" height="228px" style="fill:green;"/>
@@ -67,7 +67,7 @@
 		</svg>
 
 	</div>
-	<div style="display: inline-block; width: 650px; height: 1400px; vertical-align: top; ">
+	<div style="display: inline-block; width: 650px; vertical-align: top; ">
 		<h2 style="text-align: center; margin-top: 500px; margin-left: 100px; width: 400px;">Assessment of Health Facility Data Quality</h2>
 		<h3 style="text-align: center; margin-top: 100px; margin-left: 100px; width: 400px;">WHO Data Quality Review</h3>
 		<h3 style="text-align: center; margin-left: 100px; width: 400px;">{{revCtrl.userOrgunit.name}} - {{revCtrl.yearSelected.id}}</h3>
@@ -75,11 +75,11 @@
 </div>
 
 <div class="reviewResult" ng-if="revCtrl.outstandingRequests === 0 && revCtrl.totalRequests != 0">
-
-	<!--SUMMARY-->
 	<button style="display: inline-block;" class="btn btn-primary pull-right no-print" ng-click="revCtrl.doPrint();">Print</button>
+	
+	<!--SUMMARY-->
 	<div class="reportPart">
-		<h4>Summary</h4>
+		<h3>Summary</h3>
 		<div>
 			<div class="noBreak">
 				<h5>1 Completeness</h5>
@@ -247,7 +247,7 @@
 
 	<!--COMPLETENESS-->
 	<div class="reportPart">
-		<h4>Completeness</h4>
+		<h3>Completeness</h3>
 
 		<div class="noBreak">
 			<em>1a  Completeness of facility reporting.</em><br />The percentage of expected reports that have been entered and completed.
@@ -348,7 +348,7 @@
 
 	<!--INTERNAL CONSISTENCY-->
 	<div class="reportPart">
-		<h4>Internal Consistency</h4>
+		<h3>Internal Consistency</h3>
 
 		<div class="noBreak">
 			<em>2a  Extreme outliers.</em>
@@ -529,7 +529,7 @@
 
 
 	<div class="reportPart" ng-if="revCtrl.remarks.length > 0">
-		<h4>Remarks</h4>
+		<h3>Remarks</h3>
 		<table class="table table-bordered" style="font-size: 90%; margin-top: 20px;">
 			<tr>
 				<th>Analysis type</th>
