@@ -61,7 +61,6 @@
 					chartOptions = {
 					   	"chart": {
 					        "type": "lineChart",
-					        "height": 400,
 					        "margin": {
 					          "top": 140,
 					          "right": 20,
@@ -417,7 +416,7 @@
 		@param callback 	callback function, takes chartData and chartOptions as parameters. If null, options and data are stored in reference result object
 		@param result		result as returned from data analysis service (timeConsistency function)
 		*/
-		self.makeTimeConsistencyChart = function(callback, result) {	    		    	  		    
+		self.makeTimeConsistencyChart = function (callback, result, includeTitle) {
 	    	var datapoints = result.subunitDatapoints;
 	    	var boundaryRatio = result.boundaryRatio;
 	    	var consistency = result.threshold; 
@@ -500,7 +499,6 @@
 	    	var chartOptions = {
 	    	   	"chart": {
 	    	        "type": "scatterChart",
-	    	        "height": 300,
 	    	        "margin": {
 	    	          "top": 10,
 	    	          "right": 30,
@@ -530,16 +528,18 @@
 						contentGenerator: toolTip
 					}
 	    	        
-	    	    },
-	    	    "title": {
-	    	    	'enable': true,
-	    	    	'text': result.dxName
-	    	    },
-	    	    "subtitle": {
-	    	    	'enable': false
 	    	    }
 	    	};
-	    	
+			if (includeTitle) {
+				chartOptions.title = {
+					'enable': true,
+					'text': result.dxName
+				};
+				chartOptions.subtitle = {
+					'enable': false
+				};
+
+			}
 	    	
 	    	if (callback) {
 		    	callback(chartSeries, chartOptions);

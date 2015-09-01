@@ -649,7 +649,7 @@
 				}
 			}
 			else {
-				visualisationService.makeTimeConsistencyChart(null, self.result);
+				visualisationService.makeTimeConsistencyChart(null, self.result, null);
 			}
 
 			//Display chart

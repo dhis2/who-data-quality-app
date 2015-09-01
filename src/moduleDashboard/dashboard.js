@@ -153,7 +153,7 @@
 			if (self.trendReceived === self.completenessCharts.length && self.ouReceived === self.completenessCharts.length) {
 
 				console.log("Received completeness data");
-				
+
 			}
 		}
 
@@ -226,7 +226,7 @@
   		function receiveDataTimeConsistency(result, errors) {
   			var dataID = result.dxID;
   			if (result) {
-  				visualisationService.makeTimeConsistencyChart(null, result);
+  				visualisationService.makeTimeConsistencyChart(null, result, null);
   			}
   			
   			var options = result.chartOptions;
