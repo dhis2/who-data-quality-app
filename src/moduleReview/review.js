@@ -9,6 +9,9 @@
 	    init();
 
 	    function init() {
+
+			initPrint();
+
 	    	self.notPossible = false;
 	    	self.totalRequests = 0;
 	    	self.outstandingRequests = 0;
@@ -162,16 +165,13 @@
 	  	
 	  	
 	  	function receiveDatasetTimeConsistencyChart(chartData, chartOptions) {
-  			//Customise a bit
-  			chartOptions.title = {
-  				'enable': true,
-  				'text': 'Reporting completeness over time'
-  			};
+
   			chartOptions.chart.forceY = [0,100];
   			chartOptions.chart.yAxis = {
   				'axisLabel': "% Completeness"
   			};
   			chartOptions.chart.margin.left = 80;
+			chartOptions.chart.margin.right = 40;
   			chartOptions.chart.margin.bottom = 40;
   			
   			
@@ -220,7 +220,7 @@
 	  		
 	  	function receiveDataTimeConsistency(result, errors) {
   			if (result) {
-	  			visualisationService.makeTimeConsistencyChart(null, result);
+	  			visualisationService.makeTimeConsistencyChart(null, result, null);
   				self.consistency.data.push(result);
   			}  				
   			if (errors) {
@@ -398,8 +398,97 @@
 
 			return Math.round(100-100*self.outstandingRequests/self.totalRequests);
 
+		};
+
+		/** PRINT */
+		function initPrint() {
+			//http://tjvantoll.com/2012/06/15/detecting-print-requests-with-javascript/
+			if (window.matchMedia) {
+				var mediaQueryList = window.matchMedia('print');
+				mediaQueryList.addListener(function(mql) {
+					if (!mql.matches) {
+						printDone();
+					}
+				});
+			}
+
+			window.onafterprint = printDone;
 		}
-	    	    
+
+		self.doPrint = function () {
+
+			//Workaround for nvd3 charts. print css does not give time for charts to update
+			angular.element('.bigChart').width('860px');
+			angular.element('.bigChart').height('300px');
+			angular.element('.smallChart').width('422px');
+			angular.element('.relationTableHolderPrint').width('300px');
+			angular.element('.relationChartPrint').width('554px');
+
+			window.dispatchEvent(new Event('resize'));
+
+			interpretationToParagraph();
+
+			//Give charts time to finish animation
+			$timeout(function () { window.print(); }, 500);
+
+		}
+
+		function printDone() {
+
+			//Remove the chart scaling
+			var classes = ['.bigChart', '.smallChart', '.relationTableHolderPrint', '.relationChartPrint'];
+			for (var i = 0; i < classes.length; i++) {
+				var elements = angular.element(classes[i]);
+				for (var j = 0; j < elements.length; j++) {
+					elements[j].style.width = null;
+
+					if (classes[i] = '.bigChart') {
+						elements[j].style.height = null;
+					}
+				}
+			}
+
+			window.dispatchEvent(new Event('resize'));
+
+			interpretationFromParagraph();
+		}
+
+
+		function interpretationToParagraph() {
+			var textAreas = angular.element('.interpretation');
+
+			for (var i = 0; i < textAreas.length; i++) {
+				var text = textAreas[i].value;
+				var parent = textAreas[i].parentElement;
+
+				//If no text, remove heading
+				if (text === '') {
+					var header = textAreas[i].previousElementSibling;
+					header.classList.add('hiddenHeader');
+				}
+				else {
+					var header = textAreas[i].previousElementSibling;
+					header.classList.remove('hiddenHeader');
+				}
+				parent.innerHTML += '<p class="interpretationText">' + text + '</p>';
+			}
+
+			angular.element('.interpretation').remove();
+		}
+
+
+		function interpretationFromParagraph() {
+			var textAreas = angular.element('.interpretationText');
+
+			for (var i = 0; i < textAreas.length; i++) {
+				var text = textAreas[i].innerHTML;
+				var parent = textAreas[i].parentElement;
+				parent.innerHTML += '<textarea class="interpretation">' + text + '</textarea>';
+			}
+
+			angular.element('.interpretationText').remove();
+		}
+
 	    	    
 		return self;
 		

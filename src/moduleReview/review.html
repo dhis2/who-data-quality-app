@@ -1,470 +1,545 @@
-<h4 style="margin-top: 20px;">Annual Data Quality Report</h4>
+<h3 class="no-print" style="margin-top: 20px;">Annual Data Quality Report</h3>
 
+<!-- Parameter selection-->
 <div class="no-print" ng-if="!revCtrl.notPossible">
-<span style="white-space:nowrap;"><label>Year:</label>
-<ui-select ng-model="revCtrl.yearSelected" theme="bootstrap" style="width: 100px; display: inline-block;">
-  <ui-select-match placeholder="Select year...">
-  	{{revCtrl.yearSelected.name}}
-  </ui-select-match>
-  <ui-select-choices 
-  	repeat="obj in revCtrl.years | filter: $select.search">
-   		<div ng-bind-html="obj.name | highlight: $select.search"></div>
-  </ui-select-choices>
-</ui-select></span>
-<span style="white-space:nowrap;"><label>Level:</label>
-<ui-select ng-model="revCtrl.orgunitLevelSelected" theme="bootstrap" style="width: 200px; display: inline-block;">
-  <ui-select-match placeholder="Select level...">
-  	{{revCtrl.orgunitLevelSelected.name}}
-  </ui-select-match>
-  <ui-select-choices 
-  	repeat="obj in revCtrl.orgunitLevels | filter: $select.search">
-   		<div ng-bind-html="obj.name | highlight: $select.search"></div>
-  </ui-select-choices>
-</ui-select></span>
-<span style="white-space:nowrap;"><label>Group:</label>
-<ui-select ng-model="revCtrl.groupSelected" theme="bootstrap" style="min-width: 200px; display: inline-block;">
-  <ui-select-match placeholder="Select group...">
-  	{{revCtrl.groupSelected.name}}
-  </ui-select-match>
-  <ui-select-choices 
-  	repeat="obj in revCtrl.groups | filter: $select.search">
-   		<div ng-bind-html="obj.name | highlight: $select.search"></div>
-  </ui-select-choices>
-</ui-select></span>
-<button  ng-disabled="!self.userOrgunit && !revCtrl.orgunitLevelSelected && !revCtrl.groupSelected" style="display: inline-block;" class="btn btn-primary pull-right" ng-click="revCtrl.doAnalysis();">Generate</button>
+	<span style="white-space:nowrap;"><label>Year:</label>
+	<ui-select ng-model="revCtrl.yearSelected" theme="bootstrap" style="width: 100px; display: inline-block;">
+	  <ui-select-match placeholder="Select year...">
+		{{revCtrl.yearSelected.name}}
+	  </ui-select-match>
+	  <ui-select-choices
+		repeat="obj in revCtrl.years | filter: $select.search">
+			<div ng-bind-html="obj.name | highlight: $select.search"></div>
+	  </ui-select-choices>
+	</ui-select></span>
+	<span style="white-space:nowrap;"><label>Level:</label>
+	<ui-select ng-model="revCtrl.orgunitLevelSelected" theme="bootstrap" style="width: 200px; display: inline-block;">
+	  <ui-select-match placeholder="Select level...">
+		{{revCtrl.orgunitLevelSelected.name}}
+	  </ui-select-match>
+	  <ui-select-choices
+		repeat="obj in revCtrl.orgunitLevels | filter: $select.search">
+			<div ng-bind-html="obj.name | highlight: $select.search"></div>
+	  </ui-select-choices>
+	</ui-select></span>
+	<span style="white-space:nowrap;"><label>Group:</label>
+	<ui-select ng-model="revCtrl.groupSelected" theme="bootstrap" style="min-width: 200px; display: inline-block;">
+	  <ui-select-match placeholder="Select group...">
+		{{revCtrl.groupSelected.name}}
+	  </ui-select-match>
+	  <ui-select-choices
+		repeat="obj in revCtrl.groups | filter: $select.search">
+			<div ng-bind-html="obj.name | highlight: $select.search"></div>
+	  </ui-select-choices>
+	</ui-select></span>
+	<button ng-disabled="!self.userOrgunit && !revCtrl.orgunitLevelSelected && !revCtrl.groupSelected" style="display: inline-block;" class="btn btn-primary pull-right" ng-click="revCtrl.doAnalysis();">Generate</button>
+
 </div>
-<div ng-if="revCtrl.notPossible">
-<p>Annual review not possible for the facility level.</p>
-</div>
-<hr />
+
+<hr class="no-print"/>
+
 <div ng-if="revCtrl.outstandingRequests != 0">
-<h5>Loading data...</h5>
-<progressbar animate="false" value="revCtrl.progress()" type="default"><b>{{revCtrl.progress()}}%</b></progressbar>
+	<h5>Loading data...</h5>
+	<progressbar animate="false" value="revCtrl.progress()" type="default">
+		<b>{{revCtrl.progress()}}%</b>
+	</progressbar>
 </div>
 
-<tabset ng-if="revCtrl.outstandingRequests === 0 && revCtrl.totalRequests != 0">
-<!--SUMMARY-->
-<tab heading="Summary"> 
-<div>
-	<br />
-	<h4>1 Completeness</h4>
-	<em>1a Completeness of facility reporting.</em> The percentage of expected reports that have been entered and completed.
-	<table style="font-size: 90%;" class="table table-bordered table-condensed">
-		<tbody>
+<div class="onlyPrint reportPart" style="display: inline-block">
+	<div style="width: 200px; height: 200px; display: inline-block; vertical-align: top; ">
+		<svg width="200px" height="228px">
+			<rect width="200px" height="228px" style="fill:green;"/>
+		</svg>
+		<svg width="200px" height="228px">
+			<rect width="200px" height="228px" style="fill:yellow;"/>
+		</svg>
+		<svg width="200px" height="228px">
+			<rect width="200px" height="228px" style="fill:red;"/>
+		</svg>
+		<svg width="200px" height="228px">
+			<rect width="200px" height="228px" style="fill:green;"/>
+		</svg>
+		<svg width="200px" height="228px">
+			<rect width="200px" height="228px" style="fill:yellow;"/>
+		</svg>
+		<svg width="200px" height="228px">
+			<rect width="200px" height="228px" style="fill:red;"/>
+		</svg>
 
-		<tr bgcolor="#f9f9f9">
-		 	<th width="275">Dataset</th>
-		 	<th width="175">Overall score (%)</th>
-		 	<th width="175"># {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
-		 	<th width="175">% {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
-	    </tr>
-	 	<tr ng-repeat="dataset in revCtrl.completeness.datasets | orderBy : 'dxName'">
-    		<td>{{dataset.dxName}}</td>
-    		<td class="valueCell">{{dataset.boundaryValue}}%</td>
-    		<td class="valueCell">{{dataset.subunitsOutsideThreshold}}</td>
-    		<td class="valueCell">{{dataset.subunitViolationPercentage}}%</td>
-    	</tr>
-    	</tbody>
-    </table>
-	<em>1b Completeness of indicator data (missing or zero values)</em>
-    {{self.completeness.indicators}}
-    <table style="font-size: 90%;" class="table table-bordered table-condensed">
-    		<tbody>
-    
-    		<tr bgcolor="#f9f9f9">
-    		 	<th width="275">Dataset</th>
-    		 	<th width="175">Overall score (%)</th>
-    		 	<th width="175"># {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
-    		 	<th width="175">% {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
-    	    </tr>	    
-    	   	<tr ng-repeat="indicator in revCtrl.completeness.indicators | orderBy : 'dxName'">
-        		<td>{{indicator.dxName}}</td>
-				<td class="valueCell">{{indicator.boundaryValue}}%</td>
-				<td class="valueCell">{{indicator.subunitsOutsideThreshold}}</td>
-				<td class="valueCell">{{indicator.subunitViolationPercentage}}%</td>
-        	</tr>
-        	</tbody>
-        </table>
-    
-	<em>1c Consistency of dataset completeness over time. </em>Completeness of datasets in {{revCtrl.yearSelected.id}} compared to previous three years.
-	<table style="font-size: 90%;" class="table table-bordered table-condensed">
-		<tbody>
-
-		<tr bgcolor="#f9f9f9">
-		 	<th width="275">Dataset</th>
-		 	<th width="175">Overall score (%)</th>
-		 	<th width="175"># {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
-		 	<th width="175">% {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
-	    </tr>	    
-	   	<tr ng-repeat="dataset in revCtrl.completeness.consistency | orderBy:'dxName'">
-    		<td>{{dataset.dxName}}</td>
-    		<td class="valueCell">{{dataset.boundaryPercentage}}%</td>
-    		<td class="valueCell">{{dataset.subunitsOutsideThreshold}}</td>
-    		<td class="valueCell">{{dataset.subunitViolationPercentage}}%</td>
-    	</tr>
-    	</tbody>
-    </table>
-    <br />
-    <hr />
-    <br />
-	<h4>2 Internal consistency</h4>
-	<em>2a Extreme outliers.</em>
-    <table style="font-size: 90%;" class="table table-bordered table-condensed">
-    		<tbody>
-    		<tr bgcolor="#f9f9f9">
-    		 	<th width="275">Indicator</th>
-    		 	<th width="175">Overall score (%)</th>
-    		 	<th width="175"># {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
-    		 	<th width="175">% {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
-    	    </tr>	    
-    	   	<tr ng-repeat="indicator in revCtrl.outliers | orderBy:'name'">
-        		<td>{{indicator.name}}</td>
-        		<td class="valueCell">{{indicator.boundaryExtreme}}%</td>
-        		<td class="valueCell">{{indicator.countExtreme}}</td>
-        		<td class="valueCell">{{indicator.percentExtreme}}%</td>
-        	</tr>
-        	</tbody>
-        </table>
-	<em>2b Moderate outliers.</em> Outliers relative to the mean.
-	<table style="font-size: 90%;" class="table table-bordered table-condensed">
-		<tbody>
-		<tr bgcolor="#f9f9f9">
-		 	<th width="275">Indicator</th>
-		 	<th width="175">Overall score (%)</th>
-		 	<th width="175"># {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
-		 	<th width="175">% {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
-	    </tr>	    
-	   	<tr ng-repeat="indicator in revCtrl.outliers | orderBy:'name'">
-    		<td>{{indicator.name}}</td>
-    		<td class="valueCell">{{indicator.boundaryModerate}}%</td>
-    		<td class="valueCell">{{indicator.countModerate}}</td>
-    		<td class="valueCell">{{indicator.percentModerate}}%</td>
-    	</tr>
-    	</tbody>
-    </table>
-    <em>2c Moderate outliers.</em> Outliers relative to the median (modified Z-score > 3.5).
-    <table style="font-size: 90%;" class="table table-bordered table-condensed">
-    	<tbody>
-    	<tr bgcolor="#f9f9f9">
-    	 	<th width="275">Indicator</th>
-    	 	<th width="175">Overall score (%)</th>
-    	 	<th width="175"># {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
-    	 	<th width="175">% {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
-        </tr>	    
-       	<tr ng-repeat="indicator in revCtrl.outliers | orderBy:'name'">
-    		<td>{{indicator.name}}</td>
-    		<td class="valueCell">{{indicator.boundaryZscore}}%</td>
-    		<td class="valueCell">{{indicator.countZscore}}</td>
-    		<td class="valueCell">{{indicator.percentZscore}}%</td>
-    	</tr>
-    	</tbody>
-    </table>
-    <em>2d Consistency over time.</em>
-    <table style="font-size: 90%;" class="table table-bordered table-condensed">
-	<tbody>
-
-	<tr bgcolor="#f9f9f9">
-	 	<th width="275">Indicator</th>
-	 	<th width="175">Overall score (%)</th>
-	 	<th width="175"># {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
-	 	<th width="175">% {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
-    </tr>	    
-   	<tr ng-repeat="indicator in revCtrl.consistency.data | orderBy:'dxName'">
-		<td>{{indicator.dxName}}</td>
-		<td class="valueCell">{{indicator.boundaryPercentage}}%</td>
-		<td class="valueCell">{{indicator.subunitsOutsideThreshold}}</td>
-		<td class="valueCell">{{indicator.subunitViolationPercentage}}%</td>
-	</tr>
-	</tbody>
-</table>
-
-<em>2e Consistency between related indicators.</em>
-    <table style="font-size: 90%;" class="table table-bordered table-condensed">
-	<tbody>
-
-	<tr bgcolor="#f9f9f9">
-	 	<th width="275">Indicator</th>
-	 	<th width="175">Overall score (%)</th>
-	 	<th width="175"># {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
-	 	<th width="175">% {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
-    </tr>	    
-   	<tr ng-repeat="relation in revCtrl.consistency.relations | orderBy:'name'">
-		<td>{{revCtrl.relationName(relation.relationCode)}}</td>
-		<td class="valueCell">{{relation.boundaryPercentage}}%</td>
-		<td class="valueCell">{{relation.subunitsOutsideThreshold}}</td>
-		<td class="valueCell">{{relation.subunitViolationPercentage}}%</td>
-	</tr>
-	</tbody>
-</table>
-    
-</div>
-</tab>
-
-<!--COMPLETENESS-->
-<tab heading="Completeness" select="revCtrl.updateCharts()">
-<div>
-<br />
-<em>1a  Completeness of facility reporting.</em><br />The percentage of expected reports that have been entered and completed.
-<table style="font-size: 90%;" class="table table-bordered table-condensed">
-
-	<tr bgcolor="#f9f9f9">
-	 	<th width="200">Dataset</th>
-	 	<th width="260">Indicator</th>
-	 	<th width="80">{{revCtrl.yearSelected.name}}</th>
-	 	<th>Names</th>
-    </tr>
-    <tbody ng-repeat="dataset in revCtrl.completeness.datasets| orderBy:'dxName':false">
-  	<tr >
-		<td rowspan="3">{{dataset.dxName}}</td>
-		<td>Overall score (%)</td>
-		<td class="valueCell">{{dataset.boundaryValue}}%</td>
-		<td rowspan="3">{{dataset.subunitViolationNames.join(', ')}}.</td>
-	</tr>
-	<tr>
-		<td># {{revCtrl.orgunitLevelSelected.name}}s with completeness below {{dataset.threshold}}%</td>
-		<td class="valueCell">{{dataset.subunitsOutsideThreshold}}</td>	
-	</tr>
-	<tr>
-		<td>% {{revCtrl.orgunitLevelSelected.name}}s with completeness below {{dataset.threshold}}%</td>
-		<td class="valueCell">{{dataset.subunitViolationPercentage}}%</td>	
-	</tr>
-	</tbody>
-	</table>
-	<h5>Interpretations</h5>
-	<textarea style="width: 100%; height: 150px; list-style: outside; margin-bottom: 50px;"></textarea>
-
-<em>1b  Completeness of indicator data (missing/zero values).</em>
-<table style="font-size: 90%;" class="table table-bordered table-condensed">
-		<tbody>
-
-		<tr bgcolor="#f9f9f9">
-		 	<th width="200">Indicator</th>
-		 	<th width="80">Threshold</th>
-		 	<th width="80">Overall score (%)</th>
-		 	<th width="110"># {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
-		 	<th width="110">% {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
-		 	<th>Names</th>
-	    </tr>	    
-	   	<tr ng-repeat="indicator in revCtrl.completeness.indicators | orderBy : 'dxName'">
-    		<td>{{indicator.dxName}}</td>
-    		<td>{{indicator.threshold}}%</td>
-    		<td class="valueCell">{{indicator.boundaryValue}}%</td>
-    		<td class="valueCell">{{indicator.subunitsOutsideThreshold}}</td>
-    		<td class="valueCell">{{indicator.subunitViolationPercentage}}%</td>
-    		<td class="valueCell">{{indicator.subunitViolationNames.join(', ')}}</td>
-    	</tr>
-    	</tbody>
-    </table>
-
-<h5>Interpretations</h5>
-<textarea style="width: 100%; height: 150px; list-style: outside; margin-bottom: 50px;"></textarea>
-<br />
-
-<em>1c  Consistency of dataset completeness over time.</em><br />Difference between the current year completeness and either the average of the 3 preceding years (if expected trend is constant), or the forecasted value.
-<table style="font-size: 90%;" class="table table-bordered table-condensed">
-<tr bgcolor="#f9f9f9">
-<th width="200">Dataset</th>
-<th width="80">Expected trend</th>
-<th width="80">Quality threshold</th>
-<th width="80">Overall score (%)</th>
-<th width="110"># {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
-<th width="110">% {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
-<th>Names</th>
-</tr>
-<tr ng-repeat="dataset in revCtrl.completeness.consistency| orderBy:'dxName':false">
-<td>{{dataset.dxName}}</td>
-<td>{{dataset.type}}</td>
-<td class="valueCell">{{dataset.threshold}}%</td>
-<td class="valueCell">{{dataset.boundaryPercentage}}%</td>
-<td class="valueCell">{{dataset.subunitsOutsideThreshold}}</td>
-<td class="valueCell">{{dataset.subunitViolationPercentage}}%</td>
-<td>{{dataset.subunitViolationNames.join(', ')}}</td>
-</tr>
-
-</table>
-
-
-<br />
-<h5>Interpretations</h5>
-<textarea style="width: 100%; height: 150px; list-style: outside; margin-bottom: 20px;"></textarea>
-
-<div style="border: 1px dashed gray;">
-<nvd3 options='revCtrl.datasetConsistencyChart.options' data='revCtrl.datasetConsistencyChart.data'></nvd3>
+	</div>
+	<div style="display: inline-block; width: 650px; height: 1400px; vertical-align: top; ">
+		<h2 style="text-align: center; margin-top: 500px; margin-left: 100px; width: 400px;">Assessment of Health Facility Data Quality</h2>
+		<h3 style="text-align: center; margin-top: 100px; margin-left: 100px; width: 400px;">WHO Data Quality Review</h3>
+		<h3 style="text-align: center; margin-left: 100px; width: 400px;">{{revCtrl.userOrgunit.name}} - {{revCtrl.yearSelected.id}}</h3>
+	</div>
 </div>
 
+<div class="reviewResult" ng-if="revCtrl.outstandingRequests === 0 && revCtrl.totalRequests != 0">
+
+	<!--SUMMARY-->
+	<button style="display: inline-block;" class="btn btn-primary pull-right no-print" ng-click="revCtrl.doPrint();">Print</button>
+	<div class="reportPart">
+		<h4>Summary</h4>
+		<div>
+			<div class="noBreak">
+				<h5>1 Completeness</h5>
+				<em>1a Completeness of facility reporting.</em> The percentage of expected reports that have been entered and completed.
+				<table style="font-size: 90%;" class="table table-bordered table-condensed noBreak">
+					<tbody>
+						<tr bgcolor="#f9f9f9">
+							<th width="275">Dataset</th>
+							<th width="175">Overall score (%)</th>
+							<th width="175"># {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
+							<th width="175">% {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
+						</tr>
+						<tr ng-repeat="dataset in revCtrl.completeness.datasets | orderBy : 'dxName'">
+							<td>{{dataset.dxName}}</td>
+							<td class="valueCell">{{dataset.boundaryValue}}%</td>
+							<td class="valueCell">{{dataset.subunitsOutsideThreshold}}</td>
+							<td class="valueCell">{{dataset.subunitViolationPercentage}}%</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+
+			<div class="noBreak">
+				<em>1b Completeness of indicator data (missing or zero values)</em>
+				<table style="font-size: 90%;" class="table table-bordered table-condensed noBreak">
+					<tbody>
+						<tr bgcolor="#f9f9f9">
+							<th width="275">Dataset</th>
+							<th width="175">Overall score (%)</th>
+							<th width="175"># {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
+							<th width="175">% {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
+						</tr>
+						<tr ng-repeat="indicator in revCtrl.completeness.indicators | orderBy : 'dxName'">
+							<td>{{indicator.dxName}}</td>
+							<td class="valueCell">{{indicator.boundaryValue}}%</td>
+							<td class="valueCell">{{indicator.subunitsOutsideThreshold}}</td>
+							<td class="valueCell">{{indicator.subunitViolationPercentage}}%</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+
+			<div class="noBreak">
+				<em>1c Consistency of dataset completeness over time. </em>Completeness of datasets in {{revCtrl.yearSelected.id}} compared to previous three years.
+				<table style="font-size: 90%;" class="table table-bordered table-condensed noBreak">
+					<tbody>
+						<tr bgcolor="#f9f9f9">
+							<th width="275">Dataset</th>
+							<th width="175">Overall score (%)</th>
+							<th width="175"># {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
+							<th width="175">% {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
+						</tr>
+						<tr ng-repeat="dataset in revCtrl.completeness.consistency | orderBy:'dxName'">
+							<td>{{dataset.dxName}}</td>
+							<td class="valueCell">{{dataset.boundaryPercentage}}%</td>
+							<td class="valueCell">{{dataset.subunitsOutsideThreshold}}</td>
+							<td class="valueCell">{{dataset.subunitViolationPercentage}}%</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+
+			<div class="noBreak">
+				<h5>2 Internal consistency</h5>
+				<em>2a Extreme outliers.</em>
+				<table style="font-size: 90%;" class="table table-bordered table-condensed noBreak">
+					<tbody>
+						<tr bgcolor="#f9f9f9">
+							<th width="275">Indicator</th>
+							<th width="175">Overall score (%)</th>
+							<th width="175"># {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
+							<th width="175">% {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
+						</tr>
+						<tr ng-repeat="indicator in revCtrl.outliers | orderBy:'name'">
+							<td>{{indicator.name}}</td>
+							<td class="valueCell">{{indicator.boundaryExtreme}}%</td>
+							<td class="valueCell">{{indicator.countExtreme}}</td>
+							<td class="valueCell">{{indicator.percentExtreme}}%</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+
+			<div class="noBreak">
+				<em>2b Moderate outliers.</em> Outliers relative to the mean.
+				<table style="font-size: 90%;" class="table table-bordered table-condensed noBreak">
+					<tbody>
+						<tr bgcolor="#f9f9f9">
+							<th width="275">Indicator</th>
+							<th width="175">Overall score (%)</th>
+							<th width="175"># {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
+							<th width="175">% {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
+						</tr>
+						<tr ng-repeat="indicator in revCtrl.outliers | orderBy:'name'">
+							<td>{{indicator.name}}</td>
+							<td class="valueCell">{{indicator.boundaryModerate}}%</td>
+							<td class="valueCell">{{indicator.countModerate}}</td>
+							<td class="valueCell">{{indicator.percentModerate}}%</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+
+			<div class="noBreak">
+				<em>2c Moderate outliers.</em> Outliers relative to the median (modified Z-score > 3.5).
+				<table style="font-size: 90%;" class="table table-bordered table-condensed noBreak">
+					<tbody>
+						<tr bgcolor="#f9f9f9">
+							<th width="275">Indicator</th>
+							<th width="175">Overall score (%)</th>
+							<th width="175"># {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
+							<th width="175">% {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
+						</tr>
+						<tr ng-repeat="indicator in revCtrl.outliers | orderBy:'name'">
+							<td>{{indicator.name}}</td>
+							<td class="valueCell">{{indicator.boundaryZscore}}%</td>
+							<td class="valueCell">{{indicator.countZscore}}</td>
+							<td class="valueCell">{{indicator.percentZscore}}%</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+
+			<div class="noBreak">
+				<em>2d Consistency over time.</em>
+				<table style="font-size: 90%;" class="table table-bordered table-condensed noBreak">
+					<tbody>
+						<tr bgcolor="#f9f9f9">
+							<th width="275">Indicator</th>
+							<th width="175">Overall score (%)</th>
+							<th width="175"># {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
+							<th width="175">% {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
+						</tr>
+						<tr ng-repeat="indicator in revCtrl.consistency.data | orderBy:'dxName'">
+							<td>{{indicator.dxName}}</td>
+							<td class="valueCell">{{indicator.boundaryPercentage}}%</td>
+							<td class="valueCell">{{indicator.subunitsOutsideThreshold}}</td>
+							<td class="valueCell">{{indicator.subunitViolationPercentage}}%</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+
+			<div class="noBreak">
+				<em>2e Consistency between related indicators.</em>
+				<table style="font-size: 90%;" class="table table-bordered table-condensed">
+					<tbody>
+						<tr bgcolor="#f9f9f9">
+							<th width="275">Indicator</th>
+							<th width="175">Overall score (%)</th>
+							<th width="175"># {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
+							<th width="175">% {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
+						</tr>
+						<tr ng-repeat="relation in revCtrl.consistency.relations | orderBy:'name'">
+							<td>{{revCtrl.relationName(relation.relationCode)}}</td>
+							<td class="valueCell">{{relation.boundaryPercentage}}%</td>
+							<td class="valueCell">{{relation.subunitsOutsideThreshold}}</td>
+							<td class="valueCell">{{relation.subunitViolationPercentage}}%</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+
+	<!--COMPLETENESS-->
+	<div class="reportPart">
+		<h4>Completeness</h4>
+
+		<div class="noBreak">
+			<em>1a  Completeness of facility reporting.</em><br />The percentage of expected reports that have been entered and completed.
+			<table style="font-size: 90%;" class="table table-bordered table-condensed">
+				<thead>
+					<tr bgcolor="#f9f9f9">
+						<th width="200">Dataset</th>
+						<th width="260">Indicator</th>
+						<th width="80">{{revCtrl.yearSelected.name}}</th>
+						<th>Names</th>
+					</tr>
+				</thead>
+				<tbody ng-repeat="dataset in revCtrl.completeness.datasets| orderBy:'dxName':false">
+					<tr >
+						<td rowspan="3">{{dataset.dxName}}</td>
+						<td>Overall score (%)</td>
+						<td class="valueCell">{{dataset.boundaryValue}}%</td>
+						<td rowspan="3">{{dataset.subunitViolationNames.join(', ')}}.</td>
+					</tr>
+					<tr>
+						<td># {{revCtrl.orgunitLevelSelected.name}}s with completeness below {{dataset.threshold}}%</td>
+						<td class="valueCell">{{dataset.subunitsOutsideThreshold}}</td>
+					</tr>
+					<tr>
+						<td>% {{revCtrl.orgunitLevelSelected.name}}s with completeness below {{dataset.threshold}}%</td>
+						<td class="valueCell">{{dataset.subunitViolationPercentage}}%</td>
+					</tr>
+				</tbody>
+			</table>
+			<h5>Interpretations</h5>
+			<textarea class="interpretation"></textarea>
+		</div>
+
+		<div class="noBreak">
+			<em>1b  Completeness of indicator data (missing/zero values).</em>
+			<table style="font-size: 90%;" class="table table-bordered table-condensed">
+				<tbody>
+					<tr bgcolor="#f9f9f9">
+						<th width="200">Indicator</th>
+						<th width="80">Threshold</th>
+						<th width="80">Overall score (%)</th>
+						<th width="110"># {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
+						<th width="110">% {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
+						<th>Names</th>
+					</tr>
+					<tr ng-repeat="indicator in revCtrl.completeness.indicators | orderBy : 'dxName'">
+						<td>{{indicator.dxName}}</td>
+						<td>{{indicator.threshold}}%</td>
+						<td class="valueCell">{{indicator.boundaryValue}}%</td>
+						<td class="valueCell">{{indicator.subunitsOutsideThreshold}}</td>
+						<td class="valueCell">{{indicator.subunitViolationPercentage}}%</td>
+						<td class="valueCell">{{indicator.subunitViolationNames.join(', ')}}</td>
+					</tr>
+				</tbody>
+			</table>
+
+			<h5>Interpretations</h5>
+			<textarea class="interpretation"></textarea>
+		</div>
+
+		<div class="noBreak">
+			<em>1c  Consistency of dataset completeness over time.</em><br />Difference between the current year completeness and either the average of the 3 preceding years (if expected trend is constant), or the forecasted value.
+			<table style="font-size: 90%;" class="table table-bordered table-condensed">
+				<tr bgcolor="#f9f9f9">
+					<th width="200">Dataset</th>
+					<th width="80">Expected trend</th>
+					<th width="80">Quality threshold</th>
+					<th width="80">Overall score (%)</th>
+					<th width="110"># {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
+					<th width="110">% {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
+					<th>Names</th>
+				</tr>
+				<tr ng-repeat="dataset in revCtrl.completeness.consistency| orderBy:'dxName':false">
+					<td>{{dataset.dxName}}</td>
+					<td>{{dataset.type}}</td>
+					<td class="valueCell">{{dataset.threshold}}%</td>
+					<td class="valueCell">{{dataset.boundaryPercentage}}%</td>
+					<td class="valueCell">{{dataset.subunitsOutsideThreshold}}</td>
+					<td class="valueCell">{{dataset.subunitViolationPercentage}}%</td>
+					<td>{{dataset.subunitViolationNames.join(', ')}}</td>
+				</tr>
+			</table>
+
+			<h5>Interpretations</h5>
+			<textarea class="interpretation"></textarea>
+		</div>
+
+
+		<div style="border: 1px dashed gray" class="noBreak" >
+			<h5 class="chartTitle">Reporting completeness over time</h5>
+			<div class="bigChart">
+				<nvd3 options='revCtrl.datasetConsistencyChart.options' data='revCtrl.datasetConsistencyChart.data'></nvd3>
+			</div>
+		</div>
+
+	</div>
+
+
+	<!--INTERNAL CONSISTENCY-->
+	<div class="reportPart">
+		<h4>Internal Consistency</h4>
+
+		<div class="noBreak">
+			<em>2a  Extreme outliers.</em>
+			<table style="font-size: 90%;" class="table table-bordered table-condensed">
+				<tbody>
+					<tr bgcolor="#f9f9f9">
+						<th width="200">Indicator</th>
+						<th width="80">Threshold</th>
+						<th width="80">Overall score (%)</th>
+						<th width="110"># {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
+						<th width="110">% {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
+						<th>Names</th>
+					</tr>
+					<tr ng-repeat="indicator in revCtrl.outliers | orderBy : 'name'">
+						<td>{{indicator.name}}</td>
+						<td class="valueCell">{{indicator.extremeOutlier}} SD</td>
+						<td class="valueCell">{{indicator.boundaryExtreme}}%</td>
+						<td class="valueCell">{{indicator.countExtreme}}</td>
+						<td class="valueCell">{{indicator.percentExtreme}}%</td>
+						<td class="valueCell">{{indicator.namesExtreme.join(', ')}}</td>
+					</tr>
+				</tbody>
+			</table>
+
+			<h5>Interpretations</h5>
+			<textarea class="interpretation"></textarea>
+		</div>
+
+		<div class="noBreak">
+			<em>2b  Moderate outliers.</em>
+			<table style="font-size: 90%;" class="table table-bordered table-condensed">
+				<tbody>
+					<tr bgcolor="#f9f9f9">
+						<th width="200">Indicator</th>
+						<th width="80">Threshold</th>
+						<th width="80">Overall score (%)</th>
+						<th width="110"># {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
+						<th width="110">% {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
+						<th>Names</th>
+					</tr>
+					<tr ng-repeat="indicator in revCtrl.outliers | orderBy : 'name'">
+						<td>{{indicator.name}}</td>
+						<td class="valueCell">{{indicator.moderateOutlier}} SD</td>
+						<td class="valueCell">{{indicator.boundaryModerate}}%</td>
+						<td class="valueCell">{{indicator.countModerate}}</td>
+						<td class="valueCell">{{indicator.percentModerate}}%</td>
+						<td class="valueCell">{{indicator.namesModerate.join(', ')}}</td>
+					</tr>
+				</tbody>
+			</table>
+
+			<h5>Interpretations</h5>
+			<textarea class="interpretation"></textarea>
+		</div>
+
+		<div class="noBreak">
+			<em>2c  Moderate outliers.</em> Based on median (modified Z score).
+			<table style="font-size: 90%;" class="table table-bordered table-condensed">
+				<tbody>
+					<tr bgcolor="#f9f9f9">
+						<th width="200">Indicator</th>
+						<th width="80">Threshold</th>
+						<th width="80">Overall score (%)</th>
+						<th width="110"># {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
+						<th width="110">% {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
+						<th>Names</th>
+					</tr>
+					<tr ng-repeat="indicator in revCtrl.outliers | orderBy : 'name'">
+						<td>{{indicator.name}}</td>
+						<td class="valueCell">3.5</td>
+						<td class="valueCell">{{indicator.boundaryZscore}}%</td>
+						<td class="valueCell">{{indicator.countZscore}}</td>
+						<td class="valueCell">{{indicator.percentZscore}}%</td>
+						<td class="valueCell">{{indicator.namesZscore.join(', ')}}</td>
+					</tr>
+				</tbody>
+			</table>
+
+			<h5>Interpretations</h5>
+			<textarea class="interpretation"></textarea>
+		</div>
+
+		<div class="noBreak">
+			<em>2d  Consistency of indicator values over time.</em><br />Difference between the current year and either the average of the 3 preceding years (if expected trend is constant), or the forecasted value.
+			<table style="font-size: 90%;" class="table table-bordered table-condensed">
+				<tr bgcolor="#f9f9f9">
+					<th width="200">Indicator</th>
+					<th width="80">Expected trend</th>
+					<th width="80">Quality threshold</th>
+					<th width="80">Overall score (%)</th>
+					<th width="110"># {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
+					<th width="110">% {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
+					<th>Names</th>
+				</tr>
+				<tr ng-repeat="indicator in revCtrl.consistency.data | orderBy:'dxName'">
+					<td>{{indicator.dxName}}</td>
+					<td>{{indicator.type}}</td>
+					<td class="valueCell">{{indicator.threshold}}%</td>
+					<td class="valueCell">{{indicator.boundaryPercentage}}%</td>
+					<td class="valueCell">{{indicator.subunitsOutsideThreshold}}</td>
+					<td class="valueCell">{{indicator.subunitViolationPercentage}}%</td>
+					<td>{{indicator.subunitViolationNames.join(', ')}}</td>
+				</tr>
+			</table>
+
+			<h5>Interpretations</h5>
+			<textarea class="interpretation"></textarea>
+		</div>
+
+		<div style="border: 1px dashed gray" class="noBreak" >
+			<h5 class="chartTitle">Reporting over time</h5>
+			<div class="bigChart">
+				<nvd3 options='revCtrl.dataConsistencyChart.options' data='revCtrl.dataConsistencyChart.data'></nvd3>
+			</div>
+		</div>
+
+		<div style="width: 100%; margin-top: 30px; margin-bottom: 30px; display: inline-block;">
+			<div class="noBreak chartHolder elementHalfWidth"
+				ng-repeat="indicator in revCtrl.consistency.data | orderBy:'dxName'"
+				style="border: 1px dashed gray; display: inline-block;">
+
+				<h5 class="chartTitle">{{indicator.dxName}}</h5>
+				<div class="smallChart">
+					<nvd3 options='indicator.chartOptions' data='indicator.chartData'></nvd3>
+				</div>
+			</div>
+		</div>
+
+
+		<div class="noBreak"
+			 style="display: inline-block; width: 100%; margin-bottom: 10px;"
+			 ng-repeat="relation in revCtrl.consistency.relations track by $index | orderBy:'name'">
+			<em ng-if="$index === 0" style="display: inline-block; width: 100%;">2e  Consistency between related indicators</em>
+			<div class="elementHalfWidth relationTableHolderPrint" style="display: inline-block;">
+				<table style="font-size: 90%; margin-bottom: 10px;" class="table table-bordered table-condensed">
+					<tr bgcolor="#f9f9f9"><th colspan="2">{{revCtrl.relationName(relation.relationCode)}}</th></tr>
+						<tr>
+							<td>Year</td>
+							<td>{{revCtrl.yearSelected.name}}</td>
+					</tr>
+					<tr>
+						<td>Expected relationship</td>
+						<td>{{revCtrl.relationTypeName(relation.type)}}</td>
+					</tr>
+					<tr>
+						<td>Quality threshold</td>
+						<td ng-if="relation.type != 'do'">{{relation.criteria}}</td>
+						<td ng-if="relation.type === 'do'">Not negative</td>
+					</tr>
+					<tr>
+						<td>National score</td>
+						<td>{{relation.boundaryPercentage}}%</td>
+					</tr>
+					<tr>
+						<td># {{revCtrl.orgunitLevelSelected.name}}s with poor score</td>
+						<td>{{relation.subunitsOutsideThreshold}}</td>
+					</tr>
+					<tr>
+						<td>% {{revCtrl.orgunitLevelSelected.name}}s with poor score</td>
+						<td>{{relation.subunitViolationPercentage}}%</td>
+					</tr>
+					<tr ng-if="relation.subunitViolationNames.length > 0">
+						<td colspan="2">Names:</td>
+					</tr>
+					<tr height="69px" ng-if="relation.subunitViolationNames.length > 0">
+						<td colspan="2">{{relation.subunitViolationNames.join(', ')}}</td>
+					</tr>
+				</table>
+			</div>
+			<div class="elementHalfWidth relationChartPrint" style="vertical-align: top; border: 1px dashed gray; display: inline-block; margin-bottom: 10px;">
+				<nvd3 options='relation.chartOptions' data='relation.chartData'></nvd3>
+			</div>
+
+			<h5 style="margin-top: 5px;">Interpretations</h5>
+			<textarea class="interpretation"></textarea>
+		</div>
+	</div>
+
+
+	<div class="reportPart" ng-if="revCtrl.remarks.length > 0">
+		<h4>Remarks</h4>
+		<table class="table table-bordered" style="font-size: 90%; margin-top: 20px;">
+			<tr>
+				<th>Analysis type</th>
+				<th>Item</th>
+				<th>Remarks</th></tr>
+			<tr ng-repeat="alert in revCtrl.remarks track by $index">
+				<td>{{alert.type}}</td>
+				<td>{{alert.item}}</td>
+				<td>{{alert.msg}}</td>
+			</tr>
+		</table>
+	</div>
 </div>
-</tab>
-
-<!--INTERNAL CONSISTENCY-->
-<tab heading="Internal Consistency" select="revCtrl.updateCharts()">
-<br />
-<em>2a  Extreme outliers.</em>
-	<table style="font-size: 90%;" class="table table-bordered table-condensed">
-		<tbody>
-
-		<tr bgcolor="#f9f9f9">
-		 	<th width="200">Indicator</th>
-		 	<th width="80">Threshold</th>
-		 	<th width="80">Overall score (%)</th>
-		 	<th width="110"># {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
-		 	<th width="110">% {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
-		 	<th>Names</th>
-	    </tr>	    
-	   	<tr ng-repeat="indicator in revCtrl.outliers | orderBy : 'name'">
-    		<td>{{indicator.name}}</td>
-    		<td class="valueCell">{{indicator.extremeOutlier}} SD</td>
-    		<td class="valueCell">{{indicator.boundaryExtreme}}%</td>
-    		<td class="valueCell">{{indicator.countExtreme}}</td>
-    		<td class="valueCell">{{indicator.percentExtreme}}%</td>
-    		<td class="valueCell">{{indicator.namesExtreme.join(', ')}}</td>
-    	</tr>
-    	</tbody>
-    </table>
-    
-    <h5>Interpretations</h5>
-    <textarea style="width: 100%; height: 150px; list-style: outside; margin-bottom: 50px;"></textarea>
-    <br />
-
-<em>2b  Moderate outliers.</em>
-	<table style="font-size: 90%;" class="table table-bordered table-condensed">
-		<tbody>
-
-		<tr bgcolor="#f9f9f9">
-		 	<th width="200">Indicator</th>
-		 	<th width="80">Threshold</th>
-		 	<th width="80">Overall score (%)</th>
-		 	<th width="110"># {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
-		 	<th width="110">% {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
-		 	<th>Names</th>
-	    </tr>	    
-	   	<tr ng-repeat="indicator in revCtrl.outliers | orderBy : 'name'">
-    		<td>{{indicator.name}}</td>
-    		<td class="valueCell">{{indicator.moderateOutlier}} SD</td>
-    		<td class="valueCell">{{indicator.boundaryModerate}}%</td>
-    		<td class="valueCell">{{indicator.countModerate}}</td>
-    		<td class="valueCell">{{indicator.percentModerate}}%</td>
-    		<td class="valueCell">{{indicator.namesModerate.join(', ')}}</td>
-    	</tr>
-    	</tbody>
-    </table>
-    
-    <h5>Interpretations</h5>
-    <textarea style="width: 100%; height: 150px; list-style: outside; margin-bottom: 50px;"></textarea>
-    <br />
-
-<em>2c  Moderate outliers.</em> Based on median (modified Z score).
-	<table style="font-size: 90%;" class="table table-bordered table-condensed">
-		<tbody>
-
-		<tr bgcolor="#f9f9f9">
-		 	<th width="200">Indicator</th>
-		 	<th width="80">Threshold</th>
-		 	<th width="80">Overall score (%)</th>
-		 	<th width="110"># {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
-		 	<th width="110">% {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
-		 	<th>Names</th>
-	    </tr>	    
-	   	<tr ng-repeat="indicator in revCtrl.outliers | orderBy : 'name'">
-    		<td>{{indicator.name}}</td>
-    		<td class="valueCell">3.5</td>
-    		<td class="valueCell">{{indicator.boundaryZscore}}%</td>
-    		<td class="valueCell">{{indicator.countZscore}}</td>
-    		<td class="valueCell">{{indicator.percentZscore}}%</td>
-    		<td class="valueCell">{{indicator.namesZscore.join(', ')}}</td>
-    	</tr>
-    	</tbody>
-    </table>
-    
-    <h5>Interpretations</h5>
-    <textarea style="width: 100%; height: 150px; list-style: outside; margin-bottom: 50px;"></textarea>
-    <br />
-    
-	<em>2d  Consistency of indicator values over time.</em><br />Difference between the current year and either the average of the 3 preceding years (if expected trend is constant), or the forecasted value.
-	<table style="font-size: 90%;" class="table table-bordered table-condensed">
-		<tr bgcolor="#f9f9f9">
-		<th width="200">Indicator</th>
-		<th width="80">Expected trend</th>
-		<th width="80">Quality threshold</th>
-		<th width="80">Overall score (%)</th>
-		<th width="110"># {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
-		<th width="110">% {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
-		<th>Names</th>
-		</tr>
-		<tr ng-repeat="indicator in revCtrl.consistency.data | orderBy:'dxName'">
-			<td>{{indicator.dxName}}</td>
-			<td>{{indicator.type}}</td>
-			<td class="valueCell">{{indicator.threshold}}%</td>
-			<td class="valueCell">{{indicator.boundaryPercentage}}%</td>
-			<td class="valueCell">{{indicator.subunitsOutsideThreshold}}</td>
-			<td class="valueCell">{{indicator.subunitViolationPercentage}}%</td>
-			<td>{{indicator.subunitViolationNames.join(', ')}}</td>
-		</tr>
-	</table>
-		
-	<h5>Interpretations</h5>
-	<textarea style="width: 100%; height: 150px; list-style: outside; margin-bottom: 20px;"></textarea>
-	<br />
-	
-	<div style="border: 1px dashed gray;">
-	<nvd3 options='revCtrl.dataConsistencyChart.options' data='revCtrl.dataConsistencyChart.data'></nvd3>
-	</div>
-	<div style="width: 100%; margin-top: 30px; margin-bottom: 30px;">
-			<nvd3 style="width: 49%; display: inline-block; margin: 5px; margin-left: 0px; text-align: left; border: 1px dashed gray;" ng-repeat="indicator in revCtrl.consistency.data | orderBy:'dxName'" options='indicator.chartOptions' data='indicator.chartData'></nvd3>		
-	</div>	
-
-	<br style="margin-top: 30px;" />
-	
-	<em>2e  Consistency between related indicators</em>
-	<div style="display: inline-block; width: 100%; margin-bottom: 10px;" ng-repeat="relation in revCtrl.consistency.relations | orderBy:'name'">
-	<div style="width: 49%; display: inline-block;">
-	<table style="font-size: 90%; margin-bottom: 10px;" class="table table-bordered table-condensed">
-		<tr bgcolor="#f9f9f9"><th colspan="2">{{revCtrl.relationName(relation.relationCode)}}</th></tr>
-		<tr>
-			<td>Year</td>
-			<td>{{revCtrl.yearSelected.name}}</td>
-		</tr>
-		<tr>
-		<td>Expected relationship</td>
-		<td>{{revCtrl.relationTypeName(relation.type)}}</td>
-		</tr>
-		<tr>
-		<td>Quality threshold</td>
-		<td ng-if="relation.type != 'do'">{{relation.criteria}}</td>
-		<td ng-if="relation.type === 'do'">Not negative</td>
-		</tr>
-		<tr>
-		<td>National score</td>
-		<td>{{relation.boundaryPercentage}}%</td>
-		</tr>
-		<tr>
-		<td># {{revCtrl.orgunitLevelSelected.name}}s with poor score</td>
-		<td>{{relation.subunitsOutsideThreshold}}</td>
-		</tr>
-		<tr>
-		<td>% {{revCtrl.orgunitLevelSelected.name}}s with poor score</td>
-		<td>{{relation.subunitViolationPercentage}}%</td>
-		</tr>
-		<tr ng-if="relation.subunitViolationNames.length > 0">
-			<td colspan="2">Names:</td>
-		</tr>
-		<tr ng-if="relation.subunitViolationNames.length > 0">
-			<td colspan="2">{{relation.subunitViolationNames.join(', ')}}</td>
-		</tr>
-	</table>
-	</div>
-	<div style="vertical-align: top; border: 1px dashed gray; width: 49%; display: inline-block; margin-bottom: 10px;">
-	<nvd3 options='relation.chartOptions' data='relation.chartData'></nvd3>
-	</div>
-	<h5 style="margin-top: 5px;">Interpretations</h5>
-	<textarea style="width: 100%; height: 150px; list-style: outside; margin-bottom: 30px;"></textarea>
-	</div>
-
-</tab>
-<tab heading="Remarks" ng-if="revCtrl.remarks.length > 0">
-<table class="table table-bordered" style="font-size: 90%; margin-top: 20px;">
-<tr><th>Analysis type</th><th>Item</th><th>Remarks</th></tr>
-<tr ng-repeat="alert in revCtrl.remarks track by $index"><td>{{alert.type}}</td><td>{{alert.item}}</td><td>{{alert.msg}}</td></tr>
-</table>
-</tab>
-
-</tabset>
