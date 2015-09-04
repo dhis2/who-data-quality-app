@@ -1150,10 +1150,29 @@
 		
 		self.getRelations = function(groupCode) {
 			if (!self.hasMapping()) return null;
-			
-			return mapping.relations;
-		
+
+			var relation, relations = [];
+			for (var i = 0; i < mapping.relations.length; i++) {
+				relation = mapping.relations[i];
+				if (indicatorIsRelevant(relation.A, groupCode) || indicatorIsRelevant(relation.B, groupCode)) {
+					relations.push(relation);
+				}
+
+			}
+
+			return relations;
 		};
+
+		function indicatorIsRelevant(dataCode, groupCode) {
+
+			var data = self.getDataInGroup(groupCode);
+
+			for (var i = 0; i < data.length; i++) {
+				if (data[i].code === dataCode) return true
+			}
+
+			return false;
+		}
 
 		
 		
