@@ -153,10 +153,8 @@
 	  			var deferred = $q.defer();
 	  			
 	  			var requestURL = '/api/dataSets.json?paging=false&fields=name,id,periodType';
-	  			for (var i = 0; i < dataSetIDs.length; i++) {
-	  				requestURL += '&filter=id:eq:' + dataSetIDs[i];
-	  			}
-	  			
+				requestURL += '&filter=id:in:[' + dataSetIDs.join(',') + ']';
+
 	  			requestService.getSingle(requestURL).then( function (response) {
 	  				deferred.resolve(response.data);
 	  			});
@@ -276,10 +274,8 @@
 			var deferred = $q.defer();
 
 			var requestURL = '/api/indicators.json?paging=false&fields=name,id,numerator,denominator';
-			for (var i = 0; i < indicatorIDs.length; i++) {
-				requestURL += '&filter=id:eq:' + indicatorIDs[i];
-			}
-			
+			requestURL += '&filter=id:in:[' + indicatorIDs.join(',') + ']';
+
 			requestService.getSingle(requestURL).then(function (response) {
 				
 				var indicators = response.data.indicators;
@@ -372,10 +368,8 @@
 			
 			var requestURL = '/api/dataElements.json?paging=false&fields=name,id';
 			requestURL += '&filter=type:eq:int&filter=domainType:eq:AGGREGATE';
-			for (var i = 0; i < dataElementIDs.length; i++) {
-				requestURL += '&filter=id:eq:' + dataElementIDs[i];
-			}
-			
+			requestURL += '&filter=id:in:[' + dataElementIDs.join(',') + ']';
+
 			requestService.getSingle(requestURL).then( function (response) {
 				deferred.resolve(response.data);
 			});
@@ -558,15 +552,31 @@
 		
 		self.getDataElementDataSets = function (dataElementIDs) {
 			var deferred = $q.defer();
-			
-			var requestURL = '/api/dataSets.json?paging=false&fields=name,id';
-			for (var i = 0; i < dataElementIDs.length; i++) {
-				requestURL += '&filter=dataElements.id:eq:' + dataElementIDs[i];
-			}
+
+
+			var requestURL = '/api/dataElements.json?paging=false&fields=dataSets[name,id]';
+			requestURL += '&filter=id:in:[' + dataElementIDs.join(',') + ']';
 			
 			requestService.getSingle(requestURL).then(function (response) {
-			
-				deferred.resolve(response.data);
+				var dataElements = response.data.dataElements;
+
+				var dataSets = {};
+				for (var i = 0; i < dataElements.length; i++) {
+					for (var j = 0; j < dataElements[i].dataSets.length; j++) {
+						dataSets[dataElements[i].dataSets[j].id] = dataElements[i].dataSets[j];
+					}
+				}
+
+				var dataSetList = [];
+				for (var key in dataSets) {
+					if (dataSets.hasOwnProperty(key)) {
+						dataSetList.push(dataSets[key]);
+					}
+				}
+
+
+
+				deferred.resolve(dataSetList);
 			
 			});
 						 

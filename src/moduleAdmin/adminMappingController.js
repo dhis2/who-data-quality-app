@@ -69,24 +69,25 @@
 		    	metaDataService.getDataElementDataSets([self.dataElementsSelected.id])
 		    		.then(function(data) {
 		    			 
-	    			   	self.dataSets = data.dataSets;
+	    			   	self.dataSets = data;
 	    			});
 	    	}
 	    	else {
-	    		//TODO: indicator
 	    		metaDataService.getIndicatorDataElements([self.indicatorsSelected.id])
 	    			.then(function(data) {
 	    				 
 	    			   	var dataIDs = [];
-	    			   	for (var i = 0; i < data.dataElements.length; i++) {
-	    			   		dataIDs.push(data.dataElements[i].id);	
+	    			   	for (var i = 0; i < data.length; i++) {
+	    			   		dataIDs.push(data[i].id);
 	    			   	}
-	    			   	metaDataService.getDataElementDataSets(dataIDs)
-	    			   	.then(function(data) {
-	    			   		 
-	    			   	   	self.dataSets = data.dataSets;
-	    			   	});
-	    			   	
+
+						if (dataIDs.length > 0) {
+							metaDataService.getDataElementDataSets(dataIDs)
+							.then(function(data) {
+
+								self.dataSets = data;
+							});
+						}
 	    			   	
 	    			});
 	    	}
