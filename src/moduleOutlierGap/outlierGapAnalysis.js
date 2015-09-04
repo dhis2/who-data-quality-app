@@ -439,8 +439,8 @@
 		self.doAnalysis = function() {
 			
 			//Collapse open panels
-			$('.panel-collapse').removeClass('in');
-			$('.panel-collapse').addClass('collapse');
+			angular.element('.panel-collapse').removeClass('in');
+			angular.element('.panel-collapse').addClass('collapse');
 			
 			if (self.datasetSelected && !self.datasetDataelements) {
 				getDatasetDataelements();

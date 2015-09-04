@@ -502,8 +502,8 @@
 		self.doAnalysis = function(ouBoundary, level) {
 			
 			//Collapse open panels
-			$('.panel-collapse').removeClass('in');
-			$('.panel-collapse').addClass('collapse');
+			angular.element('.panel-collapse').removeClass('in');
+			angular.element('.panel-collapse').addClass('collapse');
 
 			self.result = undefined;
 			if (self.results.length > 1) self.results.move(self.currentResult, 0);
