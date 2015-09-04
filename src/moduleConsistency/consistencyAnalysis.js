@@ -481,6 +481,9 @@
 	    
 	    
 	    function longestPeriodInSelection() {
+
+			//TODO: Should use result, not parameters
+
 	    	var periods = [];
 	    	if (self.dataSelection['a'].periodType) periods.push(self.dataSelection['a'].periodType);
 	    	if (self.consistencyType === 'relation' && self.dataSelection['b'].periodType) periods.push(self.dataSelection['b'].periodType);
@@ -663,11 +666,16 @@
 				if( Object.prototype.toString.call(item) === '[object Object]' ) {
 					if (item.hasOwnProperty('series') && item.hasOwnProperty('point')) {
 						itemClicked(item.series, item.point);
+
+						//TODO: Workaround for tooltip getting re-created rather than re-used
+						var elements = angular.element('.nvtooltip');
+						for (var i = 0; i < elements.length - 1; i++) {
+							elements[i].remove(); //Keep under 2 - rest is old
+						}
 					}
 				}
 			});
 
-			self.updateCharts();
 		}
 
 
@@ -797,8 +805,7 @@
 	   		}
 	   		
 	   		dataForSelectedUnit(item.id);
-	   		
-	   		self.updateCharts();
+
 	   	};
 	   	
 	   	function highlightPoint() {}
@@ -985,11 +992,6 @@
 	   		if (!isNaN(ratio) && isFinite(ratio)) return true;
 	   		else return false;
 	   	
-	   	};
-
-
-	   	self.updateCharts = function() {
-	   		$timeout(function () { window.dispatchEvent(new Event('resize')); }, 100);
 	   	};
 
 
