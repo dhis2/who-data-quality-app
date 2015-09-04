@@ -749,6 +749,49 @@
 	    };
 		
 
+		/** -- MODIFYING OPTIONS -- */
+
+
+		self.setChartTitle = function(options, title, subtitle) {
+			if (title) {
+				options.title = {
+					'enable': true,
+					'text': title
+				};
+			}
+			if (subtitle) {
+				options.subtitle = {
+					'enable': true,
+					'text': subtitle
+				};
+			}
+		}
+
+		self.setChartHeight = function(options, height) {
+			options.chart.height = height;
+		}
+
+		self.setChartYAxis = function(options, start, end) {
+			options.chart.forceY = [start, end];
+		}
+
+		self.setChartLegend = function(options, showLegend) {
+			options.chart.showLegend = showLegend;
+		}
+
+		self.setChartMargins = function(options, top, right, bottom, left) {
+			options.chart.margin = {
+				"top": top,
+				"right": right,
+				"bottom": bottom,
+				"left": left
+			};
+		}
+
+
+
+
+
 
 		/** -- UTILITIES -- */
 		/*
