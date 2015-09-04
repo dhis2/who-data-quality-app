@@ -251,8 +251,10 @@
 		<h4>Result</h4>
 	</div>
 	<div class="pull-right">
+		<button type="button" class="btn btn-default" ng-model="aCtrl.showFilter" btn-checkbox btn-checkbox-true="true" btn-checkbox-false="false">
+			Options
+		</button>
 		<div class="btn-group">
-	       <button style="width: 100px" type="button" ng-click="aCtrl.showFilter = !aCtrl.showFilter" class="btn btn-default">Options</button>
 	       <button style="width: 100px" type="button" ng-click="aCtrl.exportCSV();" class="btn btn-default">Download</button>
 	       	<button style="width: 100px" type="button"
 					class="btn btn-default"
