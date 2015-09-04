@@ -511,6 +511,9 @@
 		/**
 		RESULTS
 		*/
+
+		/*TODO: link with result controller/directive. Idea: have a tmp variable that is "wathced" by the directive, which then
+		puts it in the list of results etc*/
 		var receiveResult = function(result) {			
 				
 			if (!result || !result.rows || result.rows.length === 0) {
@@ -862,6 +865,26 @@
 			
 		return self;
 	});
-	
+
+
+	app.directive('outlierResult', function () {
+		return {
+			scope: {
+				"localResult": "=result"
+			},
+			bindToController: true,
+			controller: "OutlierResultController",
+			controllerAs: 'resultCtrl',
+			templateUrl: 'moduleOutlierGap/outlierGapResult.html'
+		};
+	});
+
+	app.controller("OutlierResultController", function() {
+		var self = this;
+
+
+		return self;
+
+	});
 })();
 
