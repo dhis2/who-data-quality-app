@@ -62,6 +62,7 @@
 					chartOptions = {
 					   	"chart": {
 					        "type": "lineChart",
+							"height": 400,
 					        "margin": {
 					          "top": 140,
 					          "right": 20,
@@ -69,7 +70,7 @@
 					          "left": 100
 					        },
 					        "xAxis": {
-					          'rotateLabels': -30,
+					          'rotateLabels': -45,
 					          'tickFormat': function(d) {
 					          	return periodNames[d];
 					          }
@@ -168,7 +169,7 @@
 					          "left": 100
 					        },
 					        "xAxis": {
-					          'rotateLabels': -30,
+					          'rotateLabels': -45,
 					          'tickFormat': function(d) {
 					          	return periodNames[d];
 					          }
@@ -270,9 +271,9 @@
 					        'showLegend': true,
 	                        'x': function(d){return d.label;},
 	                        'y': function(d){return d.value;},
-	                        'transitionDuration': 500,
+	                        'transitionDuration': 50,
 	                        'xAxis': {
-	                            'rotateLabels': -30
+	                            'rotateLabels': -45
 	                        }
 					    },
 					    'parameters': {
