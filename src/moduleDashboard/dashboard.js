@@ -4,48 +4,37 @@
 	var app = angular.module('dashboard', []);
 	
 	
-	app.controller("DashboardController", function(metaDataService, periodService, requestService, visualisationService, mathService, dataAnalysisService, $window) {
+	app.controller("DashboardController", function(metaDataService, periodService, requestService, visualisationService, mathService, dataAnalysisService, $window, $q, $scope, $timeout) {
 
 	    var self = this;
 		
 		self.ready = false;
 		self.completeness = false;
 		self.consistency = false;
-
+		self.dataConsistency = false;
     	     
         /** -- ANALYSIS -- */
         
         /** COMPLETENESS */
         self.makeCompletenessCharts = function() {
         	if (!self.ready) return;
-			if (self.completeness) return;
+			if (self.completeness) {
+				updateCharts();
+				return;
+			}
 			else self.completeness = true;
-	        
-        	self.completenessCharts = [];
-        	self.trendReceived = 0;
-        	self.ouReceived = 0;
-        	
-        	//One year of data
-        	var endDate = moment().subtract(new Date().getDate(), 'days');
-        	var startDate = moment(endDate).subtract(12, 'months').add(1, 'day'); 
-        	
+
+			self.completenessCharts = [];
+
         	var datasets = metaDataService.getDatasetsInGroup(self.group);
-        	var ouBoundaryID = self.ouBoundary.id;
+			self.expectedCompletenessCharts = datasets.length;
+			var ouBoundaryID = self.ouBoundary.id;
        		var ouChildrenID = ouChildrenIDs();
-        	var dataset, periods, ouPeriod, datasetCompletenessChart;
+        	var dataset, periods, ouPeriod;
         	for (var i = 0; i < datasets.length; i++) {
                	dataset = datasets[i];
-               	
-        		datasetCompletenessChart = {
-        			name: dataset.name,
-        			id: dataset.id,
-        			trendChartOptions: undefined,
-        			trendChartData: undefined,
-        			ouChartOptions: undefined,
-        			ouChartData: undefined
-        		};
-        		
-        		periods = periodService.getISOPeriods(startDate, endDate, dataset.periodType);
+
+        		periods = periodService.getISOPeriods(self.startDate, self.endDate, dataset.periodType);
         		if (periods.length < 4) {
         			ouPeriod = periods[periods.length - 1];
         		}
@@ -53,266 +42,192 @@
         			ouPeriod = periods[periods.length - 2];
         		}
 
-				self.completenessCharts.push(datasetCompletenessChart);
+				var promises = [];
+				promises.push(promiseObject(dataset));
+				promises.push(visualisationService.lineChart(null, [dataset.id], periods, [ouBoundaryID], 'dataOverTime'));
+				promises.push(visualisationService.barChart(null, [dataset.id], [ouPeriod], ouChildrenID, 'ou'));
 
-        		visualisationService.lineChart(receiveCompletenessTrend, [dataset.id], periods, [ouBoundaryID], 'dataOverTime');
-        		
-        		visualisationService.barChart(receiveCompletenessOU, [dataset.id], [ouPeriod], ouChildrenID, 'ou');
-        		
-        		
+				$q.all(promises).then(function(datas) {
+
+					var datasetCompletenessChart = {
+						name: datas[0].name,
+						id: datas[0].id,
+						trendChartOptions: datas[1].opts,
+						trendChartData: datas[1].data,
+						ouChartOptions: datas[2].opts,
+						ouChartData: datas[2].data
+					};
+
+					visualisationService.setChartHeight(datasetCompletenessChart.trendChartOptions, 400);
+					visualisationService.setChartLegend(datasetCompletenessChart.trendChartOptions, false);
+					visualisationService.setChartYAxis(datasetCompletenessChart.trendChartOptions, 0, 100);
+					visualisationService.setChartMargins(datasetCompletenessChart.trendChartOptions, 20, 20, 100, 40);
+
+					visualisationService.setChartHeight(datasetCompletenessChart.ouChartOptions, 400);
+					visualisationService.setChartLegend(datasetCompletenessChart.ouChartOptions, false);
+					visualisationService.setChartYAxis(datasetCompletenessChart.ouChartOptions, 0, 100);
+					visualisationService.setChartMargins(datasetCompletenessChart.ouChartOptions, 20, 20, 100, 40);
+
+					self.completenessCharts.push(datasetCompletenessChart);
+
+					if (self.expectedCompletenessCharts === self.completenessCharts.length) {
+						updateCharts();
+					}
+				});
 
         	}
 
         };
-        
-        
-        var receiveCompletenessTrend = function (data, options) {
-        	var datasetID = options.parameters.dataIDs[0];
-        	
-        	//Modify options
-        	options.chart.forceY = [0, 100];
-        	options.chart.margin = {
-	        	  "top": 20,
-	        	  "right": 10,
-	        	  "bottom": 60,
-	        	  "left": 30
-	        	};
-	        options.chart.height = 300;
-	        options.chart.showLegend = false;
-	        	        
-        
-        	var dsc;
-        	for (var i = 0; i < self.completenessCharts.length; i++) {
-        		dsc = self.completenessCharts[i];
-        		if (dsc.id === datasetID) {
-        		
-        			options.title = {	
-        				'enable': true,
-        				'text': dsc.name + ' completeness'
-        			};
-        			options.subtitle = {	
-        				'enable': true,
-        				'text': 'Trend over time'
-        			};
-        			dsc.trendChartOptions = options;
-        			dsc.trendChartData = data;
-        			break;
-        		}
-        	}
-        	
-        	self.trendReceived++;
-			checkCompletenessFetched();
-        };
-        
-        
-        var receiveCompletenessOU = function (data, options) {
-        	var datasetID = options.parameters.dataIDs[0];
-        	
-        	//Modify options
-        	options.chart.forceY = [0, 100];
-        	options.chart.margin = {
-        		  "top": 20,
-        		  "right": 10,
-        		  "bottom": 60,
-        		  "left": 30
-        		};
-        	options.chart.height = 300;
-        	options.chart.showLegend = false;
-    		options.chart.yAxis = {
-    			'tickFormat': d3.format('g')
-    		};
-        
-        	var dsc;
-        	for (var i = 0; i < self.completenessCharts.length; i++) {
-        		dsc = self.completenessCharts[i];
-        		if (dsc.id === datasetID) {
-        		
-        			options.title = {	
-        				'enable': true,
-        				'text': dsc.name + ' completeness'
-        			};
-        			options.subtitle = {	
-        				'enable': true,
-        				'text': 'Comparison for ' + periodService.shortPeriodName(options.parameters.periods[0])
-        			};
-        		
-        			dsc.ouChartOptions = options;
-        			dsc.ouChartData = data;
-        			break;
-        		}
 
-
-        	}
-        	
-        	self.ouReceived++;
-			checkCompletenessFetched();
-        };
-
-
-		function checkCompletenessFetched() {
-			if (self.trendReceived === self.completenessCharts.length && self.ouReceived === self.completenessCharts.length) {
-
-				console.log("Received completeness data");
-
-			}
-		}
 
     	
-    	
-    	/** CONSISTENCY */
-    	self.makeConsistencyCharts = function() {
+    	/** CONSISTENCY OVER TIME */
+    	self.makeTimeConsistencyCharts = function() {
 			if (!self.ready) return;
-			if (self.consistency) return;
+			if (self.consistency) {
+				updateCharts();
+				return;
+			}
 			else self.consistency = true;
 
       		self.consistencyCharts = [];
       		self.yyReceived = 0;
-      		self.consistencyReceived = 0;
-      		
-      		
+
       		var ouBoundaryID = self.ouBoundary.id;
    			var ouLevel = self.ouBoundary.level + 1;
-      		
       		var data, endDate, startDate, periodType, yyPeriods, period, refPeriods; 	
    			var datas = metaDataService.getDataInGroup(self.group);
-   			var consistencyChart;
+			self.expectedConsistencyCharts = datas.length;
+			var consistencyChart;
 			for (var i = 0; i < datas.length; i++) {
-      			
       			
       			data = datas[i];
       			periodType = metaDataService.getDataPeriodType(data.code);
-      			endDate = moment().subtract(new Date().getDate(), 'days');
-      			startDate = moment(endDate).subtract(12, 'months').add(1, 'day'); 
-      			
-      			refPeriods = periodService.getISOPeriods(startDate, endDate, periodType);
-      				if (refPeriods.length < 4) {
-      					period = refPeriods[refPeriods.length - 1];
-      				}
-      				else {
-      					period = refPeriods[refPeriods.length - 2];
-      				}
-      			
-      			
-      			
+
+      			refPeriods = periodService.getISOPeriods(self.startDate, self.endDate, periodType);
+				if (refPeriods.length < 4) {
+					period = refPeriods[refPeriods.length - 1];
+				}
+				else {
+					period = refPeriods[refPeriods.length - 2];
+				}
       			yyPeriods = [];
+				startDate = self.startDate;
+				endDate = self.endDate;
       			yyPeriods.push(periodService.getISOPeriods(startDate, endDate, periodType));
       			for (var j = 0; j < 2; j++) {
       				startDate = moment(startDate).subtract(1, 'year');
       				endDate = moment(endDate).subtract(1, 'year');
       				yyPeriods.push(periodService.getISOPeriods(startDate, endDate, periodType));
       			}
-      			
-      			
-      			visualisationService.yyLineChart(receiveYY, yyPeriods, data.localData.id, ouBoundaryID);
-				
-				
-				dataAnalysisService.timeConsistency(receiveDataTimeConsistency, data.trend, data.consistency, null, data.localData.id, null, period, refPeriods, ouBoundaryID, ouLevel, null);
-								
 
-				consistencyChart = {
-					name: data.name,
-					id: data.localData.id,
-					yyChartOptions: undefined,
-					yyChartData: undefined,
-					consistencyChartOptions: undefined,
-					consistencyChartData: undefined
-				};
-				
-				self.consistencyCharts.push(consistencyChart);
+				var promises = [];
+				promises.push(promiseObject(data));
+				promises.push(visualisationService.yyLineChart(null, yyPeriods, data.localData.id, ouBoundaryID));
+				promises.push(dataAnalysisService.timeConsistency(null, data.trend, data.consistency, null, data.localData.id, null, period, refPeriods, ouBoundaryID, ouLevel, null));
+
+				$q.all(promises).then(function(datas) {
+
+					var data = datas[0];
+					var yyLine = datas[1];
+					var tConsistency = datas[2];
+
+					//Add chart data to time consistency result object
+					visualisationService.makeTimeConsistencyChart(null, tConsistency.result, null);
+
+
+					var consistencyChart = {
+						name: data.name,
+						id: data.id,
+						yyChartOptions: yyLine.opts,
+						yyChartData: yyLine.data,
+						consistencyChartOptions: tConsistency.result.chartOptions,
+						consistencyChartData: tConsistency.result.chartData
+					};
+
+
+					visualisationService.setChartHeight(consistencyChart.yyChartOptions, 400);
+					visualisationService.setChartLegend(consistencyChart.yyChartOptions, false);
+					visualisationService.setChartYAxis(consistencyChart.yyChartOptions, 0, 100);
+					visualisationService.setChartMargins(consistencyChart.yyChartOptions, 20, 20, 100, 40);
+
+					visualisationService.setChartHeight(consistencyChart.consistencyChartOptions, 400);
+					visualisationService.setChartLegend(consistencyChart.consistencyChartOptions, false);
+					visualisationService.setChartYAxis(consistencyChart.consistencyChartOptions, 0, 100);
+					visualisationService.setChartMargins(consistencyChart.consistencyChartOptions, 20, 20, 100, 40);
+					
+
+					self.consistencyCharts.push(consistencyChart);
+
+					if (self.expectedConsistencyCharts === self.consistencyCharts.length) {
+						updateCharts();
+					}
+				});
+
       		}
       		      		
       	};
-      	
-  		function receiveDataTimeConsistency(result, errors) {
-  			var dataID = result.dxID;
-  			if (result) {
-  				visualisationService.makeTimeConsistencyChart(null, result, null);
-  			}
-  			
-  			var options = result.chartOptions;
-  			options.chart.margin = {
-  				  "top": 20,
-  				  "right": 10,
-  				  "bottom": 80,
-  				  "left": 120
-  			};
-  			var data = result.chartData;			
-			
-			
-			//Modify options
-			options.chart.height = 300;
+
+
 		
-			var dc;
-			for (var i = 0; i < self.consistencyCharts.length; i++) {
-				dc = self.consistencyCharts[i];
-				if (dc.id === dataID) {
-				
-					options.title = {	
-						'enable': true,
-						'text': dc.name
-					};
-					options.subtitle = {	
-						'enable': true,
-						'text': 'Consistency over time'
-					};
-				
-					dc.consistencyChartOptions = options;
-					dc.consistencyChartData = data;
-					break;
-				}
+		/** CONSISTENCY OVER TIME */
+		self.makeDataConsistencyCharts = function() {
+			if (!self.ready) return;
+
+			if (self.dataConsistency) {
+				updateCharts();
+				return;
 			}
-			self.consistencyReceived++;
-			checkConsistencyFetched();
-  		}
+			else {
+				self.dataConsistency = true;
+			}
+
+			self.dataConsistencyCharts = [];
+
+			var ouBoundaryID = self.ouBoundary.id;
+			var ouLevel = self.ouBoundary.level + 1;
+			var period = 2014;
+
+			var relations = metaDataService.getRelations(self.group);
+			self.expectedDataConsistencyCharts = relations.length;
+			for (var i = 0; i < relations.length; i++) {
+				var relation = relations[i];
+				var indicatorA = metaDataService.getDataWithCode(relation.A);
+				var indicatorB = metaDataService.getDataWithCode(relation.B);
+
+				var promises = [];
+				promises.push(relation);
+				promises.push(dataAnalysisService.dataConsistency(null, relation.type, relation.criteria, relation.code, indicatorA.localData.id, indicatorB.localData.id, period, ouBoundaryID, ouLevel, null));
+				$q.all(promises).then(function(datas) {
+					var data = datas[0]
+					var result = datas[1];
+					if (result.result.type != 'do') {
+						visualisationService.makeDataConsistencyChart(null, result.result, null);
+					}
+					else {
+						visualisationService.makeDropoutRateChart(null, result.result, null);
+					}
+
+					var dataConsistencyChart = {
+						name: data.name,
+						period: result.result.pe,
+						chartOptions: result.result.chartOptions,
+						chartData: result.result.chartData
+					};
 
 
-    	
-    	function receiveYY(data, options) {
-			var dataID = options.parameters.dataID;
+					visualisationService.setChartHeight(dataConsistencyChart.chartOptions, 400);
+					visualisationService.setChartLegend(dataConsistencyChart.chartOptions, true);
+					visualisationService.setChartYAxis(dataConsistencyChart.chartOptions, 0, 100);
+					visualisationService.setChartMargins(dataConsistencyChart.chartOptions, 60, 20, 100, 100);
 
-    		//Modify options
-    		options.chart.margin = {
-    			  "top": 20,
-    			  "right": 10,
-    			  "bottom": 30,
-    			  "left": 50
-    			};
-    		options.chart.height = 300;
-    		options.chart.yAxis = {
-    			'tickFormat': d3.format('g')
-    		};
-    	
-    		var dc;
-    		for (var i = 0; i < self.consistencyCharts.length; i++) {
-    			dc = self.consistencyCharts[i];
-    			if (dc.id === dataID) {
-    			
-    				options.title = {	
-    					'enable': true,
-    					'text': dc.name
-    				};
-    				options.subtitle = {	
-    					'enable': true,
-    					'text': 'Year over year'
-    				};
-    			
-    				dc.yyChartOptions = options;
-    				dc.yyChartData = data;
-    				break;
-    			}
-    		}
-    		self.yyReceived++;
-			checkConsistencyFetched();
-    	}
-
-
-		function checkConsistencyFetched() {
-			if (self.consistencyReceived === self.consistencyCharts.length && self.yyReceived === self.consistencyCharts.length) {
-
-				console.log("Received consistency data");
+					self.dataConsistencyCharts.push(dataConsistencyChart);
+				});
 
 			}
-		}
+
+		};
+      	
 
 
 
@@ -325,7 +240,15 @@
 
       	
       	/** -- UTILITIES -- */
-      	function getPeriodTypes(datasets) {
+
+		function promiseObject(object) {
+			var deferred = $q.defer();
+			deferred.resolve(object);
+			return deferred.promise;
+		}
+
+
+		function getPeriodTypes(datasets) {
       		
   			var data, pTypes = {};
   			for (var i = 0; i < self.dataAvailable.length; i++) {
@@ -338,22 +261,13 @@
       		
       	}
 
-
-		function receivedCharts() {
-			var count = 0;
-			if (self.trendReceived) count += self.trendReceived;
-			if (self.ouReceived ) count += self.ouReceived;
-			if (self.consistencyReceived) count += self.consistencyReceived;
-			if (self.yyReceived) count += self.yyReceived
-
-			return count;
+		function updateCharts() {
+			$timeout(function () { window.dispatchEvent(new Event('resize')); }, 100);
 		}
 
       	
       	function setWindowWidth() {
-      		
-      		var previous = self.singleCol;
-      		
+
       		if ($window.innerWidth < 768) {
       			self.singleCol = true;
       		}
@@ -390,6 +304,7 @@
       		setWindowWidth();
       		$( window ).resize(function() {
       			setWindowWidth();
+				$scope.$apply();
       		});
       		
       		self.group = 'core';
@@ -409,6 +324,9 @@
 				//Completeness is the default - get that once we have user orgunit
 	      		self.makeCompletenessCharts();
 			});
+
+			self.endDate = moment().subtract(new Date().getDate(), 'days');
+			self.startDate = moment(self.endDate).subtract(12, 'months').add(1, 'day');
       	}
       	
 		//Make sure mapping is available, then intialise
