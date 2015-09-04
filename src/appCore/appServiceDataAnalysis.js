@@ -988,7 +988,7 @@
 		 subunit names < threshold
 		 */
 		self.timeConsistency = function (callback, type, threshold, maxForecast, dataID, coID, period, refPeriods, ouBoundary, ouLevel, ouGroup) {
-
+			var deferred = $q.defer();
 			var queueItem = {
 				'type': 'timeConsistency',
 				'parameters': {
@@ -1002,12 +1002,14 @@
 					'refPe': refPeriods,
 					'ouBoundary': ouBoundary,
 					'ouLevel': ouLevel,
-					'ouGroup': ouGroup
+					'ouGroup': ouGroup,
+					'deferred': deferred
 				}
 			};
 
 			self.analysisQueue.push(queueItem);
 			nextAnalysis();
+			return deferred.promise;
 		};
 
 
@@ -1220,8 +1222,15 @@
 			result.type = type;
 			result.threshold = threshold;
 
-			self.dsci.callback(result, errors);
-
+			if (self.dsci.callback) {
+				self.dsci.callback(result, errors);
+			}
+			else {
+				self.dsci.deferred.resolve({
+					result: result,
+					errors: errors
+				});
+			}
 			self.inProgress = false;
 			nextAnalysis();
 		}
@@ -1241,7 +1250,7 @@
 		 */
 
 		self.dataConsistency = function (callback, type, criteria, relationCode, dxIDa, dxIDb, period, boundaryOrgunit, level, ouGroup) {
-
+			var deferred = $q.defer();
 			var queueItem = {
 				'type': 'dataConsistency',
 				'parameters': {
@@ -1254,12 +1263,15 @@
 					'pe': period,
 					'ouBoundary': boundaryOrgunit,
 					'ouLevel': level,
-					'ouGroup': ouGroup
+					'ouGroup': ouGroup,
+					'deferred': deferred
 				}
 			};
 
 			self.analysisQueue.push(queueItem);
 			nextAnalysis();
+
+			return deferred.promise;
 		};
 
 
@@ -1533,8 +1545,15 @@
 			result.criteria = criteria;
 			result.relationCode = relationCode;
 
-
-			self.dc.callback(result, errors);
+			if (self.dc.callback) {
+				self.dc.callback(result, errors);
+			}
+			else {
+				self.dc.deferred.resolve({
+					result: result,
+					errors: errors
+				});
+			}
 
 			self.inProgress = false;
 			nextAnalysis();
