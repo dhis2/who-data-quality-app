@@ -1,6 +1,6 @@
 (function(){  
 	/**Service: Completeness*/
-	angular.module('dataQualityApp').service('visualisationService', ['periodService', 'requestService', 'mathService', function (periodService, requestService, mathService) {
+	angular.module('dataQualityApp').service('visualisationService', ['periodService', 'requestService', 'mathService', '$q', function (periodService, requestService, mathService, $q) {
 	
 	  	
 	  	var self = this;
@@ -11,7 +11,8 @@
 		Takes IDs as parameters, returns chartData and chartOptions for use with angular-nvd3
 		*/
 		self.lineChart = function (callback, dataIDs, periodIDs, orgunitIDs, type) {
-		
+
+			var deferred = $q.defer();
 			var requestURL = '/api/analytics.json?';
 			requestURL += "dimension=dx:" + dataIDs.join(';');
 			requestURL += "&dimension=pe:" + periodIDs.join(";");
@@ -87,9 +88,17 @@
 					}
 				
 				}
-				
-				callback(chartData, chartOptions);
+				if (callback) {
+					callback(chartData, chartOptions);
+				}
+				else {
+					deferred.resolve({
+						data: chartData,
+						opts: chartOptions
+					});
+				}
 			});
+			return deferred.promise;
 		};
 		
 		
@@ -98,7 +107,7 @@
 		Takes IDs as parameters, returns chartData and chartOptions for use with angular-nvd3
 		*/
 		self.multiBarChart = function (callback, dataIDs, periodIDs, orgunitIDs, type) {
-				
+			var deferred = $q.defer();
 			var requestURL = '/api/analytics.json?';
 			requestURL += "dimension=dx:" + dataIDs.join(';');
 			requestURL += "&dimension=pe:" + periodIDs.join(";");
@@ -178,10 +187,17 @@
 					}
 				
 				}
-				
-				
-				callback(chartData, chartOptions);
+				if (callback) {
+					callback(chartData, chartOptions);
+				}
+				else {
+					deferred.resolve({
+						data: chartData,
+						opts: chartOptions
+					});
+				}
 			});
+			return deferred.promise;
 		};
 		
 		
@@ -190,7 +206,8 @@
 		Takes IDs as parameters, returns chartData and chartOptions for use with angular-nvd3
 		*/
 		self.barChart = function (callback, dataIDs, periodIDs, orgunitIDs, type) {
-				
+			var deferred = $q.defer();
+
 			var requestURL = '/api/analytics.json?';
 			requestURL += "dimension=dx:" + dataIDs.join(';');
 			requestURL += "&dimension=pe:" + periodIDs.join(";");
@@ -267,10 +284,21 @@
 					}
 				
 				}
-				
-				
-				callback(chartData, chartOptions);
+				deferred.resolve({
+					data: chartData,
+					opts: chartOptions
+				});
+				if (callback) {
+					callback(chartData, chartOptions);
+				}
+				else {
+					deferred.resolve({
+						data: chartData,
+						opts: chartOptions
+					});
+				}
 			});
+			return deferred.promise;;
 		};
 				
 		
@@ -282,7 +310,9 @@
 	  	@param ouID			orgunit ID
 	  	*/
 	  	self.yyLineChart = function (callback, periods, dataID, ouID) {
-	  		
+
+			var deferred = $q.defer();
+
 	  		var requestURL, requests = [];
 	  		for (var i = 0; i < periods.length; i++) {
 	  			requestURL = '/api/analytics.json?';
@@ -383,7 +413,7 @@
   				          "left": 100
   				        },
   				        "xAxis": {
-  				          'rotateLabels': -30,
+  				          'rotateLabels': -45,
   				          'tickFormat': function(d) {return periodNames[d];}
   				        },
 						'tooltip': {
@@ -399,10 +429,20 @@
   				    	'orgunitIDs': ouID
   				    }
   				};
-  				
-  				callback(chartData, chartOptions);
+
+				if (callback) {
+					callback(chartData, chartOptions);
+				}
+				else {
+					deferred.resolve({
+						data: chartData,
+						opts: chartOptions
+					});
+				}
   				
 	  		});
+
+			return deferred.promise
 	  	};
 	  	
 	  	
