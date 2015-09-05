@@ -39,7 +39,7 @@
 					controllerAs: 'aCtrl'
 				}).
 				when('/outlier_gap', {
-					templateUrl: 'moduleOutlierGap/outlierGapAnalysis.html',
+					templateUrl: 'moduleOutlierGap/viewOutlierAnalysis.html',
 					controller: 'OutlierGapAnalysisController',
 					controllerAs: 'aCtrl'
 				}).

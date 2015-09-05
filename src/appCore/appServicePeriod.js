@@ -3,7 +3,7 @@
 	angular.module('dataQualityApp').service('periodService', [function () {
 		
 		var self = this;
-		self.periodTool = new PeriodType();
+		var periodTool = new PeriodType();
 		
 		self.getISOPeriods = function(startDate, endDate, periodType) {
 				
@@ -20,7 +20,7 @@
 						
 			while (current <=  endYear && periodType != "Yearly") {
 							
-				periodsInYear = self.periodTool.get(periodType).generatePeriods({'offset': current - thisYear, 'filterFuturePeriods': true, 'reversePeriods': false});
+				periodsInYear = periodTool.get(periodType).generatePeriods({'offset': current - thisYear, 'filterFuturePeriods': true, 'reversePeriods': false});
 								  			
 				for (var i = 0; i < periodsInYear.length; i++) {
 					if (periodsInYear[i].endDate >= startDate && periodsInYear[i].endDate <= endDate) {
@@ -164,7 +164,8 @@
 			return periodType;
 		
 		};
-		
+
+
 		self.shortestPeriod = function (periodTypes) {
 			var w = false, m = false, q = false, s = false, y = false, pt;
 			for (var i = 0; i < periodTypes.length; i++) {
@@ -236,7 +237,7 @@
 			//Need start and end date of the given period
 			var year = yearFromISOPeriod(period);
 			var thisYear = parseInt(moment().format("YYYY"));
-			var sourcePeriods = self.periodTool.get(pt).generatePeriods({'offset': year-thisYear, 'filterFuturePeriods': true, 'reversePeriods': false});
+			var sourcePeriods = periodTool.get(pt).generatePeriods({'offset': year-thisYear, 'filterFuturePeriods': true, 'reversePeriods': false});
 			
 			var startDate, endDate;
 			for (var i = 0; i < sourcePeriods.length; i++) {
@@ -300,7 +301,7 @@
 			var year = yearFromISOPeriod(period);
 			var thisYear = parseInt(moment().format("YYYY"));
 			
-			var periodsInYear = self.periodTool.get(pType).generatePeriods({'offset': year-thisYear, 'filterFuturePeriods': true, 'reversePeriods': false});
+			var periodsInYear = periodTool.get(pType).generatePeriods({'offset': year-thisYear, 'filterFuturePeriods': true, 'reversePeriods': false});
 			for (var i = 0; i < periodsInYear.length; i++) {
 				if (periodsInYear[i].iso === period) {
 					return periodsInYear[i];
@@ -320,7 +321,8 @@
 		function dateToISOdate(date) {
 			return moment(new Date(date)).format('YYYY-MM-DD');
 		}
-		
+
+
 		return self;
 	
 	}]);

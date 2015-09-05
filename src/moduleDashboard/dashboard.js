@@ -169,7 +169,7 @@
       	};
 
 
-		
+
 		/** CONSISTENCY OVER TIME */
 		self.makeDataConsistencyCharts = function() {
 			if (!self.ready) return;

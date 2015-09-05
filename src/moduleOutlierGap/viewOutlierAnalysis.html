@@ -236,10 +236,10 @@
 
 <hr / style="clear: both;">
 
-<div ng-if="aCtrl.processStatus.total > 0 && aCtrl.result === undefined">
+<div ng-if="aCtrl.processStatus.total > 0 && aCtrl.processStatus.progress != 100">
 <h5>Loading data...</h5>
 <progressbar animate="false" value="aCtrl.processStatus.progress" type="default"><b>{{aCtrl.processStatus.progress}}%</b></progressbar>
 </div>
 
 <!-- RESULT -->
-<outlier-result ng-if="aCtrl.result != undefined" result="aCtrl.result"></outlier-result>
+<outlier-result result-control="aCtrl.resultControl"></outlier-result>

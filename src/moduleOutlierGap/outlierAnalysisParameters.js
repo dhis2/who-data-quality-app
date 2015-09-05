@@ -1,127 +1,117 @@
-(function(){
-	
-	var app = angular.module('outlierGapAnalysis', []);
-	
-	app.filter('startFrom', function() {
-		return function(input, start) {
-			start = +start; //parse to int
-			if (input) return input.slice(start);
-			else return input;
-		}
-	});
-	
-	app.controller("OutlierGapAnalysisController", function(metaDataService, periodService, requestService, dataAnalysisService, mathService, $scope, $modal) {
+(function() {
+
+	angular.module('outlierGapAnalysis').controller("OutlierGapAnalysisController", function(metaDataService, periodService, requestService, dataAnalysisService, mathService, $scope, $modal) {
 		var self = this;
-		
+
 		self.results = [];
-		self.currentResult = undefined; 
+		self.currentResult = undefined;
 		self.result = undefined;
-		
+
 		self.itemsPerPage = 25;
 		self.hasVisual = false;
 
 		self.processStatus = dataAnalysisService.status;
-			
+
 		init();
-				
-		function init() {			
+
+		function init() {
 			self.dataDisaggregation = 0;
-			
+
 			self.showFilter = false;
-			
+
 			self.datasets = [];
 			self.datasetDataelements = undefined;
 			self.datasetSelected = undefined;
-			metaDataService.getDataSets().then(function(data) { 
+			metaDataService.getDataSets().then(function (data) {
 				self.datasets = data;
 			});
-			
+
 			self.dataElementGroups = [];
 			self.dataElementGroupsSelected = undefined;
-			metaDataService.getDataElementGroups().then(function(data) { 
+			metaDataService.getDataElementGroups().then(function (data) {
 				self.dataElementGroups = data;
 			});
-			
+
 			self.dataElements = [];
 			self.dataElementPlaceholder = "";
 			self.dataElementsSelected = [];
-			
-			
+
+
 			self.indicatorGroups = [];
 			self.indicatorGroupsSelected = undefined;
-			metaDataService.getIndicatorGroups().then(function(data) { 
+			metaDataService.getIndicatorGroups().then(function (data) {
 				self.indicatorGroups = data;
 			});
-			
+
 			self.indicators = [];
 			self.indicatorPlaceholder = "";
 			self.indicatorsSelected = [];
-			
-			
+
+
 			self.analysisOrgunits = [];
 			self.userOrgunits = [];
 			self.boundaryOrgunitSelected = undefined;
-			
+
 			self.ouSelected = null;
 			self.ouSearchResult = [];
-						
-			metaDataService.getUserOrgunits().then(function(data) { 
+
+			metaDataService.getUserOrgunits().then(function (data) {
 				self.userOrgunits = data;
 				self.boundarySelectionType = 0;
 				self.boundaryOrgunitSelected = self.userOrgunits[0];
 				self.filterLevels();
 				self.orgunitUserDefaultLevel();
 			});
-			
-			
+
+
 			self.orgunitLevels = [];
 			self.filteredOrgunitLevels = [];
 			self.orgunitLevelSelected = undefined;
-			metaDataService.getOrgunitLevels().then(function(data) { 
+			metaDataService.getOrgunitLevels().then(function (data) {
 				self.orgunitLevels = data;
-				
-				self.lowestLevel = 0; 
+
+				self.lowestLevel = 0;
 				for (var i = 0; i < self.orgunitLevels.length; i++) {
 					var level = self.orgunitLevels[i].level;
 					if (level > self.lowestLevel) self.lowestLevel = level;
 				}
-				
+
 				self.filterLevels();
 				self.orgunitUserDefaultLevel();
 			});
-			
-			
+
+
 			self.orgunitGroups = [];
 			self.orgunitGroupSelected = undefined;
-			metaDataService.getOrgunitGroups().then(function(data) { 
+			metaDataService.getOrgunitGroups().then(function (data) {
 				self.orgunitGroups = data;
 			});
-			
-			
+
+
 			self.periodTypes = [];
 			self.periodTypes = periodService.getPeriodTypes();
 			self.periodTypeSelected = self.periodTypes[1];
-			
-			self.periodCount = [];			
+
+			self.periodCount = [];
 			self.periodCounts = periodService.getPeriodCount();
 			self.periodCountSelected = self.periodCounts[11];
-			
+
 			self.years = periodService.getYears();
 			self.yearSelected = self.years[0];
-			
+
 			self.isoPeriods = [];
-			
-			self.currentDate = new Date();			
+
+			self.currentDate = new Date();
 			self.date = {
-				"startDate": moment().subtract(12, 'months'), 
+				"startDate": moment().subtract(12, 'months'),
 				"endDate": moment()
 			};
-			
-			self.periodOption = "last";			
-			
-			self.onlyNumbers = /^\d+$/;			
+
+			self.periodOption = "last";
+
+			self.onlyNumbers = /^\d+$/;
 			self.userOrgunitLabel = "";
-					
+
 			//Accordion settings
 			self.oneAtATime = true;
 			self.status = {
@@ -134,40 +124,40 @@
 		/** -- PARAMETER SELECTION -- */
 
 		/** Orgunits */
-		self.orgunitSearchModeSelected = function() {
+		self.orgunitSearchModeSelected = function () {
 			self.boundaryOrgunitSelected = undefined;
 			self.orgunitLevelSelected = undefined;
 		};
 
 
-		self.orgunitUserModeSelected = function() {
+		self.orgunitUserModeSelected = function () {
 			self.boundaryOrgunitSelected = self.userOrgunits[0];
 			self.orgunitUserDefaultLevel();
 		};
 
-				
-		self.getLevelPlaceholder = function() {
+
+		self.getLevelPlaceholder = function () {
 			if (!self.filteredOrgunitLevels || self.filteredOrgunitLevels.length === 0) {
 				if (self.boundaryOrgunitSelected && self.boundaryOrgunitSelected.level === self.lowestLevel) return "N/A";
 				else return "Loading...";
-			
+
 			}
 			else return "Select level";
 		};
-		
-		self.orgunitUserDefaultLevel = function() {
-			
+
+		self.orgunitUserDefaultLevel = function () {
+
 			if (!self.boundaryOrgunitSelected || !self.filteredOrgunitLevels) return;
-		
+
 			var level = self.boundaryOrgunitSelected.level;
 			for (var i = 0; i < self.filteredOrgunitLevels.length; i++) {
-				if (self.filteredOrgunitLevels[i].level === (level+1)) {
+				if (self.filteredOrgunitLevels[i].level === (level + 1)) {
 					self.orgunitLevelSelected = self.filteredOrgunitLevels[i];
 				}
 			}
-			
+
 			if (self.filteredOrgunitLevels.length === 0) self.orgunitLevelSelected = undefined;
-		
+
 		};
 
 
@@ -176,7 +166,7 @@
 			self.ouTreeControl = {};
 
 			//Get initial batch of orgunits and populate
-			metaDataService.getAnalysisOrgunits().then(function(data) {
+			metaDataService.getAnalysisOrgunits().then(function (data) {
 
 				//Iterate in case of multiple roots
 				for (var i = 0; i < data.length; i++) {
@@ -212,11 +202,11 @@
 		}
 
 
-		self.ouTreeSelect = function(orgunit) {
+		self.ouTreeSelect = function (orgunit) {
 			if (orgunit.noLeaf && orgunit.children.length < 1) {
 
 				//Get children
-				metaDataService.orgunitChildrenFromParentID(orgunit.data.ou.id).then(function(data) {
+				metaDataService.orgunitChildrenFromParentID(orgunit.data.ou.id).then(function (data) {
 					console.log(data);
 					for (var i = 0; i < data.length; i++) {
 						var child = data[i];
@@ -237,58 +227,58 @@
 			self.filterLevels();
 			self.orgunitUserDefaultLevel();
 		}
-		
-	
-		self.updateDataElementList = function() {
+
+
+		self.updateDataElementList = function () {
 			if (!self.dataElementGroupsSelected) return;
 			self.dataElements = [];
 			self.dataElementsSelected = [];
-			if (self.dataDisaggregation === 0) {			
+			if (self.dataDisaggregation === 0) {
 				self.dataElementPlaceholder = "Loading...";
 				metaDataService.getDataElementGroupMembers(self.dataElementGroupsSelected.id)
-				 	.then(function(data) { 
+					.then(function (data) {
 
 						if (data.length === 0) self.dataElementPlaceholder = "No valid data elements in " + self.dataElementGroupsSelected.name;
 						else self.dataElementPlaceholder = "All data elements (totals) in " + self.dataElementGroupsSelected.name;
 						self.dataElements = data;
-					 });
+					});
 			}
 			else {
 				self.dataElementPlaceholder = "Loading...";
 				metaDataService.getDataElementGroupMemberOperands(self.dataElementGroupsSelected.id)
-				 	.then(function(data) {
+					.then(function (data) {
 						if (data.length === 0) self.dataElementPlaceholder = "No valid data elements in " + self.dataElementGroupsSelected.name;
 						else self.dataElementPlaceholder = "All data elements (details) in " + self.dataElementGroupsSelected.name;
-				 		
-							self.dataElements = data;
-					 });
+
+						self.dataElements = data;
+					});
 			}
-		
+
 		}
-		
-		self.updateIndicatorList = function() {
+
+		self.updateIndicatorList = function () {
 			if (!self.indicatorGroupsSelected) return;
 			self.indicators = [];
 			self.indicatorsSelected = [];
 			self.indicatorPlaceholder = "Loading...";
 			metaDataService.getIndicatorGroupMembers(self.indicatorGroupsSelected.id)
-				.then(function(data) {
+				.then(function (data) {
 					if (data.length === 0) self.indicatorPlaceholder = "No indicators in " + self.indicatorGroupsSelected.name;
 					else self.indicatorPlaceholder = "All indicators in " + self.indicatorGroupsSelected.name;
 					self.indicators = data;
 				});
-			}
-			
-		
-		self.filterLevels = function() {
+		}
+
+
+		self.filterLevels = function () {
 			self.filteredOrgunitLevels = [];
-			
+
 			if (!self.orgunitLevels || !self.boundaryOrgunitSelected) return;
 			for (var i = 0; i < self.orgunitLevels.length; i++) {
 				if (self.orgunitLevels[i].level > self.boundaryOrgunitSelected.level) {
 					self.filteredOrgunitLevels.push(self.orgunitLevels[i]);
 				}
-			}			
+			}
 		};
 
 		function getLevelByLevel(level) {
@@ -297,10 +287,10 @@
 				if (self.orgunitLevels[i].level === level) return self.orgunitLevels[i];
 			}
 		}
-		
-		
+
+
 		function getPeriods() {
-			
+
 			var startDate, endDate;
 			if (self.periodOption === "last") {
 				endDate = moment().format("YYYY-MM-DD");
@@ -311,45 +301,45 @@
 					startDate = moment().subtract(self.periodCountSelected.value, 'months').format("YYYY-MM-DD");
 				}
 				else if (self.periodTypeSelected.id === 'BiMonthly') {
-					startDate = moment().subtract(self.periodCountSelected.value*2, 'months').format("YYYY-MM-DD");
+					startDate = moment().subtract(self.periodCountSelected.value * 2, 'months').format("YYYY-MM-DD");
 				}
 				else if (self.periodTypeSelected.id === 'Quarterly') {
 					startDate = moment().subtract(self.periodCountSelected.value, 'quarters').format("YYYY-MM-DD");
 				}
 				else if (self.periodTypeSelected.id === 'SixMonthly') {
-					startDate = moment().subtract(self.periodCountSelected.value*2, 'quarters').format("YYYY-MM-DD");
+					startDate = moment().subtract(self.periodCountSelected.value * 2, 'quarters').format("YYYY-MM-DD");
 				}
 				else if (self.periodTypeSelected.id === 'Yearly') {
 					startDate = moment().subtract(self.periodCountSelected.value, 'years').format("YYYY-MM-DD");
 				}
 			}
 			else if (self.periodOption === "year") {
-				
+
 				if (self.yearSelected.name === moment().format('YYYY')) {
 					endDate = moment().format('YYYY-MM-DD');
 				}
 				else {
 					endDate = self.yearSelected.id + "-12-31";
 				}
-			
+
 				startDate = self.yearSelected.id + "-01-01";
-				
-				
+
+
 			}
 			else {
 				startDate = self.date.startDate;
 				endDate = self.date.endDate;
 			}
-			
+
 			return periodService.getISOPeriods(startDate, endDate, self.periodTypeSelected.id);
-		
+
 		}
-		
-		
+
+
 		function getDataForAnalysis() {
-		
+
 			var details = (self.dataDisaggregation != 0);
-			
+
 			var dataIDs = [];
 			if (!details && self.indicatorGroupsSelected) {
 				if (self.indicatorsSelected.length > 0) {
@@ -363,14 +353,14 @@
 					}
 				}
 			}
-			
+
 			var coFilter = {};
 			if (self.dataElementGroupsSelected) {
 				if (details) {
 					if (self.dataElementsSelected.length > 0) {
 						for (var i = 0; i < self.dataElementsSelected.length; i++) {
 							coFilter[self.dataElementsSelected[i].id] = true;
-							dataIDs.push(self.dataElementsSelected[i].dataElementId);	
+							dataIDs.push(self.dataElementsSelected[i].dataElementId);
 						}
 					}
 					else { //Selected group but did not specify = all
@@ -392,82 +382,80 @@
 						}
 					}
 				}
-				
+
 			}
-			
-			
+
+
 			if (self.datasetSelected) {
 				dataIDs = [];
-				
+
 				for (var i = 0; i < self.datasetDataelements.length; i++) {
-					dataIDs.push(self.datasetDataelements[i].id);	
+					dataIDs.push(self.datasetDataelements[i].id);
 				}
-								
+
 			}
-			
+
 			return {
 				'dataIDs': uniqueArray(dataIDs),
-				'details': details,	
+				'details': details,
 				'coFilter': details ? coFilter : null
 			};
-		
-		
-		
+
+
 		}
-		
-		
+
+
 		function uniqueArray(array) {
 			var seen = {};
-			return array.filter(function(item) {
+			return array.filter(function (item) {
 				return seen.hasOwnProperty(item) ? false : (seen[item] = true);
 			});
 		}
-		
-		
+
+
 		function getDatasetDataelements() {
-			
+
 			var requestURL = '/api/dataSets/' + self.datasetSelected.id + '.json?fields=dataElements[id]';
 			requestService.getSingle(requestURL).then(function (response) {
 				self.datasetDataelements = response.data.dataElements;
 				self.doAnalysis();
 			});
-		
+
 		}
-		
-		
-		
-		self.doAnalysis = function() {
-			
+
+
+		self.doAnalysis = function () {
+
 			//Collapse open panels
 			angular.element('.panel-collapse').removeClass('in');
 			angular.element('.panel-collapse').addClass('collapse');
-			
+
 			if (self.datasetSelected && !self.datasetDataelements) {
 				getDatasetDataelements();
 				return;
 			}
-			
+
 			//Clear previous result
 			self.result = undefined;
 			if (self.results.length > 1) self.results.move(self.currentResult, 0);
-			
+
 			var data = getDataForAnalysis();
-			var variables = data.dataIDs;			
+			var variables = data.dataIDs;
 			var periods = getPeriods();
-			
+
 			//If dataset, include all optioncombos
 			var coAll = false;
 			if (self.datasetSelected) coAll = true;
-			
+
 			var ouGroup = null;
 			if (self.orgunitGroupSelected) ouGroup = self.orgunitGroupSelected.id;
-			
+
 			var ouLevel = null;
 			if (self.orgunitLevelSelected) {
 				ouLevel = self.orgunitLevelSelected.level;
-				var depth = (ouLevel-self.boundaryOrgunitSelected.level);
+				var depth = (ouLevel - self.boundaryOrgunitSelected.level);
 				if (depth > 2) {
-					
+
 					//Split queries by grandchildren of selected ou
 					var requestURL = '/api/organisationUnits.json';
 					if (depth === 3) {
@@ -479,10 +467,10 @@
 					else if (depth === 5) {
 						requestURL += '?filter=parent.parent.parent.id:eq:' + self.boundaryOrgunitSelected.id;
 					}
-					
+
 					requestURL += '&filter=children:ne:0';
 					requestURL += '&fields=id&paging=false';
-					
+
 					requestService.getSingle(requestURL).then(function (response) {
 						console.log(response);
 						var orgunits = response.data.organisationUnits;
@@ -490,8 +478,8 @@
 						for (var i = 0; i < orgunits.length; i++) {
 							ouIDs.push(orgunits[i].id);
 						}
-						dataAnalysisService.outlierGap(receiveResult, variables, coAll, data.coFilter, periods, ouIDs, ouLevel, ouGroup, 2, 3.5, 1);					
-						
+						dataAnalysisService.outlierGap(receiveResult, variables, coAll, data.coFilter, periods, ouIDs, ouLevel, ouGroup, 2, 3.5, 1);
+
 					});
 				}
 				else {
@@ -501,340 +489,9 @@
 			else {
 				dataAnalysisService.outlierGap(receiveResult, variables, coAll, data.coFilter, periods, [self.boundaryOrgunitSelected.id], ouLevel, ouGroup, 2, 3.5, 1);
 			}
-			
-						
+
+
 			self.datasetDataelements = null;
-		};
-		
-		
-		
-		/**
-		RESULTS
-		*/
-
-		/*TODO: link with result controller/directive. Idea: have a tmp variable that is "wathced" by the directive, which then
-		puts it in the list of results etc*/
-		var receiveResult = function(result) {			
-				
-			if (!result || !result.rows || result.rows.length === 0) {
-				notification("Info", "No data returned from server.");
-			}
-			else {
-				self.alerts = [];
-				console.log("Received " + result.rows.length + " rows");
-				if (result.trimmed) {
-					var message = "Due to its size, the result was trimmed down to " + result.rows.length + " rows.";
-					message += " Rows were prioritized based on total weight (significance of missing data and outliers), ";
-					message += "with rows with the lowest weight being left out of the result.";
-					notification("Warning", message);
-				}
-			}
-			
-			self.currentResult = 0;
-			self.results.unshift(result);
-			
-			//Only keep 5
-			if (self.results.length > 5) self.results.pop();
-			
-			
-			prepareResult();
-		};
-		
-				
-		
-		function prepareResult() {
-			
-			self.result = self.results[self.currentResult];
-			
-			//Reset filter
-			self.typeFilter = 0;
-			self.stdFilterType = 0;
-			self.stdFilterDegree = 1;
-			
-			self.updateFilter();
-			
-			//Default sort column
-			self.sortCol = 'result.totalWeight';
-			self.reverse = true;
-			
-			//Get nice period names
-			self.periods = [];
-			for (var i = 0; i < self.result.metaData.periods.length; i++) {
-				var period = self.result.metaData.periods[i];
-				self.periods.push(periodService.shortPeriodName(period));
-			}
-			
-			//Calculate total number of columns in table
-			self.totalColumns = self.periods.length + 8 + self.result.metaData.hierarchy.length;
-		
-		}
-		
-		
-		self.previousResult = function() {
-			self.currentResult++;
-			prepareResult();
-		};
-
-				
-		self.isOutlier = function (value, stats) {
-			if (value === null || value === '') return false;
-			
-				var standardScore = Math.abs(mathService.calculateStandardScore(value, stats));
-				var zScore = Math.abs(mathService.calculateZScore(value, stats));
-				
-				if (standardScore > 2 || zScore > 3.5) return true;
-				else return false;
-			};
-			
-						
-			function includeRow(row) {
-				
-				if (self.stdFilterType === 0) return true;
-				
-				if (self.stdFilterType === 1) {
-					if (self.stdFilterDegree === 2) return row.result.maxSscore > 3;
-					else return row.result.maxSscore > 2;
-				}
-				
-				if (self.stdFilterType === 2) {
-					if (self.stdFilterDegree === 2) return row.result.maxZscore > 5;
-					else return row.result.maxZscore > 3.5;
-				} 
-				
-				return false;
-			}
-			
-			
-			self.updateFilter = function() {
-				self.filteredRows = [];
-				for (var i = 0; i < self.result.rows.length; i++) {
-					if (includeRow(self.result.rows[i])) {
-						self.filteredRows.push(self.result.rows[i]);
-					}
-				}
-				
-				//Store paging variables
-				self.currentPage = 1;
-				self.pageSize = 15;		
-				self.totalRows = self.filteredRows.length;
-			};
-
-
-
-			self.updateType = function() {
-				switch (self.typeFilter) {
-					case 0:
-						self.sortByColumn('result.totalWeight');
-						break;
-					case 1:
-						self.sortByColumn('result.gapWeight');
-						break;
-					case 2:
-						self.sortByColumn('result.outWeight');
-						break;
-				}
-				self.reverse = true;
-			}
-			
-			self.sortByColumn = function (columnKey) {
-				self.currentPage = 1;
-				if (self.sortCol === columnKey) {
-					self.reverse = !self.reverse;
-				}
-				else {
-					self.sortCol = columnKey;
-					self.reverse = true;
-				}
-			};
-			
-			
-			/**INTERACTIVE FUNCTIONS*/
-			
-			//showDetails
-		self.showDetails = function(row) {
-
-						
-			var chartData = [{
-				'key': row.metaData.dx.name + " - " + row.metaData.ou.name,
-				'color': "green",
-				'values': []
-			}];
-			for (var i = 0; i < row.data.length; i++) {
-				var value = row.data[i];
-				if (value === '') value = null;
-				else value = parseFloat(value);
-				chartData[0].values.push({ 		
-					'y': value,
-					'x': self.periods[i]
-				});
-			}
-			var toolTip = function(key, x, y, e, graph) {				
-				var toolTipHTML = '<h3>' + x + '</h3>';
-				toolTipHTML += '<p style="margin-bottom: 0px">' + y + '</p>';
-				return toolTipHTML;
-			};
-			
-			
-			var chartOptions = {
-					"chart": {
-					"type": "multiBarChart",
-					"interactiveGuideline": false,
-					"height": 400,
-					"margin": {
-						"top": 40,
-						"right": 20,
-						"bottom": 40,
-						"left": 100
-					},
-					"xAxis": {
-						'rotateLabels': -30
-					},
-					'tooltips': true,
-					'tooltipContent': toolTip,
-					'showLegend': false,
-					'showControls': false
-				}
-			};
-												
-			var modalInstance = $modal.open({
-				templateUrl: "moduleOutlierGap/outlierGapGraph.html",
-				controller: "ModalGraphController",
-				controllerAs: 'mgCtrl',
-				resolve: {
-					ouName: function () {
-						return row.metaData.ou.name;
-					},
-					dxName: function () {
-						return row.metaData.dx.name;
-					},
-					chartOptions: function () {
-						return chartOptions;
-					},
-					chartData: function () {
-						return chartData;
-					}
-				}
-			});
-	
-			modalInstance.result.then(function (result) {
-			});
-		};
-
-		
-		self.sendMessage = function(metaData) {
-						
-			var modalInstance = $modal.open({
-				templateUrl: "appCommons/modalMessage.html",
-				controller: "ModalMessageController",
-				controllerAs: 'mmCtrl',
-				resolve: {
-					orgunitID: function () {
-						return metaData.ou.id;
-					},
-					orgunitName: function () {
-						return metaData.ou.name;
-					}
-				}
-			});
-	
-			modalInstance.result.then(function (result) {
-			});
-		};
-		
-		
-		self.drillDown = function (rowMetaData) {
-
-			//TODO: Check that it has children, then use level in query rather
-			var requestURL = "/api/organisationUnits/" + rowMetaData.ou.id + ".json?fields=children[id]";
-			requestService.getSingle(requestURL).then(function (response) {
-				
-				
-				var children = response.data.children;
-				if (children.length > 0) {
-				
-					var orgunits = [];
-					for (var i = 0; i < children.length; i++) {
-						orgunits.push(children[i].id);
-					}
-					
-					
-					dataAnalysisService.outlierGap(receiveResult, self.result.metaData.dataIDs, self.result.metaData.coAll, self.result.metaData.coFilter, self.result.metaData.periods, orgunits, null, null, 2, 3.5, 1);	
-
-					
-					//Move currently shown result to front of results
-					
-					self.result = undefined;
-					self.results.move(self.currentResult, 0);
-					
-				}
-								
-				else {
-					notification("Warning", "Not possible to drill down, " + rowMetaData.ou.name + " has no children.");
-				}
-			});
-			
-			
-		};
-
-		self.exportCSV = function() {
-			var fileContent = getFileContent();
-			var modalInstance = $modal.open({
-				templateUrl: "appCommons/modalExport.html",
-				controller: "ModalExportController",
-				controllerAs: 'exportCtrl',
-				resolve: {
-					fileContent: function () {
-						return fileContent;
-					},
-					fileName: function () {
-						return 'Outlier and missing data analysis';
-					}
-				}
-			});
-
-			modalInstance.result.then(function (result) {
-				console.log("Export done");
-			});
-
-		}
-		
-		function getFileContent() {
-			var headers = [];
-			var rows = [];
-
-			headers = headers.concat(["Orgunit ID", "Data ID"]);
-			headers = headers.concat(self.result.metaData.hierarchy);
-			headers = headers.concat(["Orgunit name", "Data"]);
-			headers = headers.concat(self.periods);
-			headers = headers.concat(["Max SD score","Max Z score","Gap weight","Outlier weight","Total weight"]);
-
-			var data = self.result.rows;
-			for (var i = 0; i < data.length; i++) {
-				var row = [];
-				var value = data[i];
-
-				row.push(value.metaData.ou.id);
-				row.push(value.metaData.dx.id);
-				for (var j = 0; j < self.result.metaData.hierarchy.length; j++) {
-					value.metaData.ou.hierarchy[j] ? row.push(value.metaData.ou.hierarchy[j]) : row.push('');
-				}
-				row.push(value.metaData.ou.name);
-				row.push(value.metaData.dx.name);
-				for (var j = 0; j < value.data.length; j++) {
-					row.push(value.data[j]);
-				}
-				row.push(value.result.maxSscore);
-				row.push(value.result.maxZscore);
-				row.push(value.result.gapWeight);
-				row.push(value.result.outWeight);
-				row.push(value.result.totalWeight);
-
-				rows.push(row);
-			}
-			return {
-				headers: headers,
-				rows: rows
-			};
 		};
 
 
@@ -842,6 +499,7 @@
 		function sortName(a, b) {
 			return a.name > b.name ? 1 : -1;
 		}
+
 
 		function notification(title, message) {
 			var modalInstance = $modal.open({
@@ -862,29 +520,13 @@
 			});
 		}
 
-			
-		return self;
-	});
 
-
-	app.directive('outlierResult', function () {
-		return {
-			scope: {
-				"localResult": "=result"
-			},
-			bindToController: true,
-			controller: "OutlierResultController",
-			controllerAs: 'resultCtrl',
-			templateUrl: 'moduleOutlierGap/outlierGapResult.html'
-		};
-	});
-
-	app.controller("OutlierResultController", function() {
-		var self = this;
-
+		//Directive will add its function here:
+		self.resultControl = {};
+		function receiveResult(result) {
+			self.resultControl.receiveResult(result);
+		}
 
 		return self;
-
 	});
 })();
-
