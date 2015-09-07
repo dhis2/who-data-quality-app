@@ -298,15 +298,17 @@
       	
       	function setWindowWidth() {
 
-			//Remove 3% margins on each side
-			var width = Math.floor($window.innerWidth*0.94);
 
-      		if ($window.innerWidth < 768) {
-				//Remove box lines
+			var width = $window.innerWidth;
+
+      		if ($window.innerWidth <= 768) {
+				//Remove box lines and padding
 				width -= 2;
+				width -= 8;
       		}
       		else {
 				width -= 4;
+				width -= 40;
       			width = width/2;
       		}
 

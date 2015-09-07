@@ -1,39 +1,34 @@
-<div style="width: 100%; height: 60px; clear: both; display: inline-block">
-	<div>
-		<h4  class="pull-left"  style="margin-top: 18px; display: inline-block;">Data Quality Dashboard</h4>
-		<div class="btn-group pull-right" style="margin-top: 20px; margin-left: 20px; display: inline-block;">
-			<button  popover-placement="bottom"
-					 popover-template='dashCtrl.partialOuUrl'
-					 popover-title="Organisation unit"
-					 ng-click="dashCtrl.ouTreeInit();"
-					 type="button"
-					 class="btn btn-primary"
-					 style="width: 80px">
-				Orgunit
-			</button>
-			<button  popover-placement="bottom"
-					 popover-template='dashCtrl.partialDateUrl'
-					 popover-title="Period (end)"
-					 type="button"
-					 class="btn btn-primary"
-					 style="width: 80px">
-				Period
-			</button>
-			<button  popover-placement="left"
-					 popover-template="dashCtrl.partialGroupUrl"
-					 popover-title="Data group"
-					 tooltip-append-to-body="true"
-					 type="button"
-					 class="btn btn-primary"
-					 style="width: 80px">
-				Data
-			</button>
+<div class="btn-group" style="width: 100%; margin-top: 20px; margin-bottom: 10px; display: inline-block;">
+	<button  popover-placement="bottom"
+			 popover-template='dashCtrl.partialOuUrl'
+			 popover-title="Organisation unit"
+			 ng-click="dashCtrl.ouTreeInit();"
+			 type="button"
+			 class="btn btn-default"
+			 style="width: 33.3%">
+		Orgunit
+	</button>
+	<button  popover-placement="bottom"
+			 popover-template='dashCtrl.partialDateUrl'
+			 popover-title="Period"
+			 type="button"
+			 class="btn btn-default"
+			 style="width: 33.3%">
+		Period
+	</button>
+	<button  popover-placement="bottom"
+			 popover-template="dashCtrl.partialGroupUrl"
+			 popover-title="Data group"
+			 tooltip-append-to-body="true"
+			 type="button"
+			 class="btn btn-default"
+			 style="width: 33.3%">
+		Data
+	</button>
 
-		</div>
-	</div>
 </div>
 
-<tabset>
+<tabset justified="true">
 	<tab heading="Completeness" select="dashCtrl.selectedTab = 0; dashCtrl.makeCompletenessCharts();">
 		<div
 			style="display: inline-block; width: 100%; margin-top: 10px"
