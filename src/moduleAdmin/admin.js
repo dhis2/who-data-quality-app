@@ -1,21 +1,12 @@
 
 (function(){
 	
-	var app = angular.module('admin', []);
-	
-	
-	app.directive("admin", function() {
-		return {
-			restrict: "E",
-	        templateUrl: "views/admin.html"
-		};
-      
-	});
-	
-		
+	angular.module('admin', []);
 	
 	/**Controller: Parameters*/
-	app.controller("AdminController", function(metaDataService, requestService, $modal) {
+	angular.module('admin').controller("AdminController",
+	['metaDataService', 'requestService', '$modal',
+	function(metaDataService, requestService, $modal) {
 	    	    
 	    var self = this;
 	    
@@ -646,7 +637,7 @@
 	        
 		return self;
 		
-	});
+	}]);
 	
 })();
 

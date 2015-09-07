@@ -1,6 +1,8 @@
 (function(){  
 	/**Controller: Parameters*/
-	angular.module('dataQualityApp').controller("ModalMessageController", function($modalInstance, requestService, orgunitID, orgunitName) {
+	angular.module('dataQualityApp').controller("ModalMessageController",
+	['$modalInstance', 'requestService', 'orgunitID', 'orgunitName',
+	function($modalInstance, requestService, orgunitID, orgunitName) {
 	    
 	    var self = this; 
 	    
@@ -167,5 +169,5 @@
 	        $modalInstance.close(self.text);
 	    };
 	    
-	});
+	}]);
 })();

@@ -1,10 +1,12 @@
 
 (function(){
 	
-	var app = angular.module('dataExport', []);
+	angular.module('dataExport', []);
 	
 	/**Controller: Parameters*/
-	app.controller("ExportController", function(metaDataService, periodService, requestService, BASE_URL) {
+	angular.module('dataExport').controller("ExportController",
+	['metaDataService', 'periodService', 'requestService', 'BASE_URL',
+	function(metaDataService, periodService, requestService, BASE_URL) {
 	    	    
 	    var self = this;
 	    
@@ -171,7 +173,7 @@
 	        
 		return self;
 		
-	});
+	}]);
 	
 })();
 

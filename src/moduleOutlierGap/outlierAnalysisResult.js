@@ -22,7 +22,9 @@
 		}
 	});
 
-	app.controller("OutlierResultController", function(periodService, mathService, dataAnalysisService, requestService, visualisationService, $modal) {
+	app.controller("OutlierResultController",
+	['periodService', 'mathService', 'dataAnalysisService', 'requestService', 'visualisationService', '$modal',
+	function(periodService, mathService, dataAnalysisService, requestService, visualisationService, $modal) {
 		var self = this;
 
 		//"API" for sending result
@@ -365,6 +367,6 @@
 		}
 
 		return self;
-	});
+	}]);
 
 })();

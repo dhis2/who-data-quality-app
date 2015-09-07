@@ -1,6 +1,9 @@
 (function() {
 
-	angular.module('outlierGapAnalysis').controller("OutlierGapAnalysisController", function(metaDataService, periodService, requestService, dataAnalysisService, mathService, $scope, $modal) {
+	angular.module('outlierGapAnalysis').controller("OutlierGapAnalysisController",
+	['metaDataService', 'periodService', 'requestService', 'dataAnalysisService', 'mathService', '$scope', '$modal',
+	function(metaDataService, periodService, requestService, dataAnalysisService, mathService, $scope, $modal) {
+
 		var self = this;
 
 		self.results = [];
@@ -528,5 +531,5 @@
 		}
 
 		return self;
-	});
+	}]);
 })();

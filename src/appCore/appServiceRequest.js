@@ -1,5 +1,7 @@
 (function(){  
-	angular.module('dataQualityApp').service('requestService', ['BASE_URL', '$http', '$q', function (BASE_URL, $http, $q) {
+	angular.module('dataQualityApp').service('requestService',
+	['BASE_URL', '$http', '$q',
+	function (BASE_URL, $http, $q) {
 	
 		var self = this;
 		      

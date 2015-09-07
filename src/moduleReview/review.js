@@ -1,9 +1,12 @@
 
 (function(){
 	
-	var app = angular.module('review', []);
-	
-	app.controller("ReviewController", function(metaDataService, periodService, mathService, requestService, dataAnalysisService, visualisationService, $timeout, $scope) {
+	angular.module('review', []);
+
+	angular.module('review').controller("ReviewController",
+	['metaDataService', 'periodService', 'mathService', 'requestService', 'dataAnalysisService', 'visualisationService',
+		'$timeout',
+	function(metaDataService, periodService, mathService, requestService, dataAnalysisService, visualisationService, $timeout) {
 		var self = this;    
 		
 	    init();
@@ -499,7 +502,7 @@
 	    	    
 		return self;
 		
-	});
+	}]);
 	
 })();
 

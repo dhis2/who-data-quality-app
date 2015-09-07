@@ -1,6 +1,8 @@
 (function(){  
 	/**Controller: Parameters*/
-	angular.module('outlierGapAnalysis').controller("ModalGraphController", function($modalInstance, requestService, ouName, dxName, chartOptions, chartData) {
+	angular.module('outlierGapAnalysis').controller("ModalGraphController",
+	['$modalInstance', 'requestService', 'ouName', 'dxName', 'chartOptions', 'chartData',
+	function($modalInstance, requestService, ouName, dxName, chartOptions, chartData) {
 	    
 	    var self = this; 
 	    
@@ -15,5 +17,5 @@
 	        $modalInstance.close(self.text);
 	    };
 	    
-	});
+	}]);
 })();

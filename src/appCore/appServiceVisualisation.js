@@ -1,6 +1,8 @@
 (function(){  
 	/**Service: Completeness*/
-	angular.module('dataQualityApp').service('visualisationService', ['periodService', 'requestService', 'mathService', '$q', function (periodService, requestService, mathService, $q) {
+	angular.module('dataQualityApp').service('visualisationService',
+	['periodService', 'requestService', 'mathService', '$q',
+	function (periodService, requestService, mathService, $q) {
 	
 	  	
 	  	var self = this;

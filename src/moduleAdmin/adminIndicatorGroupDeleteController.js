@@ -1,6 +1,8 @@
 (function(){  
 	/**Controller: Parameters*/
-	angular.module('admin').controller("ModalDeleteIndicatorGroupController", function($modalInstance, $scope, groups) {
+	angular.module('admin').controller("ModalDeleteIndicatorGroupController",
+	['$modalInstance', '$scope', 'groups',
+	function($modalInstance, $scope, groups) {
 	    	    
 	    var self = this; 
 	    
@@ -17,5 +19,5 @@
 	        $modalInstance.close({'group': self.groupSelected.code});
 	    };
 	    
-	});
+	}]);
 })();

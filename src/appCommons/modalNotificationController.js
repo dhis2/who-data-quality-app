@@ -1,6 +1,8 @@
 (function(){  
 	/**Controller: Parameters*/
-	angular.module('dataQualityApp').controller("ModalNotificationController", function($modalInstance, title, message) {
+	angular.module('dataQualityApp').controller("ModalNotificationController",
+	['$modalInstance', 'title', 'message',
+	function($modalInstance, title, message) {
 	    
 	    var self = this; 
 	    
@@ -12,5 +14,5 @@
 	    };
 
 		return self;
-	});
+	}]);
 })();

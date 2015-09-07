@@ -1,6 +1,8 @@
 (function(){  
 	/**Service: Completeness*/
-	angular.module('dataQualityApp').service('periodService', [function () {
+	angular.module('dataQualityApp').service('periodService',
+	[
+	function () {
 		
 		var self = this;
 		var periodTool = new PeriodType();

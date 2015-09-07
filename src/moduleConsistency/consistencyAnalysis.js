@@ -1,19 +1,21 @@
 
 (function(){
 	
-	var app = angular.module('consistencyAnalysis', []);
-	
-	app.filter('startFrom', function() {
+	angular.module('consistencyAnalysis', []);
+
+	angular.module('consistencyAnalysis').filter('startFrom', function() {
 	    return function(input, start) {
 	        start = +start; //parse to int
 	        if (input) return input.slice(start);
 	        else return input;
 	    }
 	});
-	
-	app.controller("ConsistencyAnalysisController", function(metaDataService, periodService, requestService,
-															 dataAnalysisService, visualisationService, mathService,
-															 $modal, $timeout, $scope) {
+
+	angular.module('consistencyAnalysis').controller("ConsistencyAnalysisController",
+	['metaDataService', 'periodService', 'requestService', 'dataAnalysisService', 'visualisationService', 'mathService',
+		'$modal', '$timeout', '$scope',
+	function(metaDataService, periodService, requestService, dataAnalysisService, visualisationService, mathService,
+			 $modal, $timeout, $scope) {
 		var self = this;
 
 		//Variables for storing result and result history
@@ -1009,7 +1011,7 @@
 		init();
     	
 		return self;
-	});
+	}]);
 	
 })();
 

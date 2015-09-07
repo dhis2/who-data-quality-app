@@ -1,6 +1,8 @@
 (function(){  
 	/**Controller: Parameters*/
-	angular.module('admin').controller("ModalMappingController", function($modalInstance, $scope, requestService, metaDataService, indicator, groups) {
+	angular.module('admin').controller("ModalMappingController",
+	['$modalInstance', '$scope', 'requestService', 'metaDataService', 'indicator', 'groups',
+	function($modalInstance, $scope, requestService, metaDataService, indicator, groups) {
 	    	    
 	    var self = this; 
 	    self.indicator = indicator;
@@ -171,5 +173,5 @@
 	        $modalInstance.close(self.indicator);
 	    };
 	    
-	});
+	}]);
 })();

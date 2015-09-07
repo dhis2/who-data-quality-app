@@ -5,15 +5,9 @@
 	angular.module('dashboard', []);
 
 	//Define DashboardController
-	angular.module('dashboard').controller("DashboardController", DashboardController);
-
-	//Inject dependencies for DashboardController
-	DashboardController.$inject('metaDataService', 'periodService', 'visualisationService',
-		'dataAnalysisService', '$window', '$q', '$scope', '$timeout');
-
-	//DashboardController code
-	function DashboardController(metaDataService, periodService, visualisationService,
-								 dataAnalysisService, $window, $q, $scope, $timeout) {
+	angular.module('dashboard').controller("DashboardController",
+	['metaDataService', 'periodService', 'visualisationService', 'dataAnalysisService', '$window', '$q', '$scope',
+	function(metaDataService, periodService, visualisationService, dataAnalysisService, $window, $q, $scope) {
 
 	    var self = this;
 
@@ -593,5 +587,5 @@
 			
 		return self;
 		
-	};
+	}]);
 })();

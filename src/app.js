@@ -1,8 +1,8 @@
 
 (function(){
-	var app = angular.module('dataQualityApp', [
-		'ngRoute', 'dashboard', 'review', 'consistencyAnalysis', 'outlierGapAnalysis', 'dataExport', 'admin',
-		'ui.select', 'ngSanitize', 'ui.bootstrap', 'nvd3', 'angularBootstrapNavTree']);
+	var app = angular.module('dataQualityApp',
+	['ngRoute', 'dashboard', 'review', 'consistencyAnalysis', 'outlierGapAnalysis', 'dataExport', 'admin', 'ui.select',
+		'ngSanitize', 'ui.bootstrap', 'nvd3', 'angularBootstrapNavTree']);
 	
 	/**Bootstrap*/
 	angular.element(document).ready( 
@@ -20,10 +20,10 @@
 	);
 	 
 	/**Config*/
-	app.config(function(uiSelectConfig) {
+	app.config(['uiSelectConfig', function(uiSelectConfig) {
 		uiSelectConfig.theme = 'bootstrap';
 		uiSelectConfig.resetSearchInput = true;
-	});
+	}]);
 	
 	app.config(['$routeProvider',
 		function($routeProvider) {
@@ -67,7 +67,9 @@
 
 
 	/**Controller: Navigation*/
-	app.controller("NavigationController", function(BASE_URL, $location, $window) {
+	app.controller("NavigationController",
+	['BASE_URL', '$location', '$window',
+	function(BASE_URL, $location, $window) {
 		var self = this;
 		
 		self.isCollapsed = true;	
@@ -85,7 +87,7 @@
 		};
 
 		return self;
-	});
+	}]);
 
 })();
 

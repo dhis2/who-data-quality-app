@@ -1,6 +1,8 @@
 (function(){  
 	/**Controller: Parameters*/
-	angular.module('admin').controller("ModalAddEditRelationController", function($modalInstance, $scope, indicators, relation) {
+	angular.module('admin').controller("ModalAddEditRelationController",
+	['$modalInstance', '$scope', 'indicators', 'relation',
+	function($modalInstance, $scope, indicators, relation) {
 	    	    
 	    var self = this; 
 	    self.indicators = indicators;
@@ -72,5 +74,5 @@
 	        $modalInstance.close({'relation': self.relation});
 	    };
 	    
-	});
+	}]);
 })();

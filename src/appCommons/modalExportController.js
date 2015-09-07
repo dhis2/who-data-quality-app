@@ -1,6 +1,8 @@
 (function(){  
 	/**Controller: Parameters*/
-	angular.module('dataQualityApp').controller("ModalExportController", function($modalInstance, fileContent, fileName) {
+	angular.module('dataQualityApp').controller("ModalExportController",
+	['$modalInstance', 'fileContent', 'fileName',
+	function($modalInstance, fileContent, fileName) {
 	    
 	    var self = this; 
 
@@ -109,5 +111,5 @@
 
 
 	    
-	});
+	}]);
 })();

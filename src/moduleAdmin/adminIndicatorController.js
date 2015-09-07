@@ -1,6 +1,8 @@
 (function(){  
 	/**Controller: Parameters*/
-	angular.module('admin').controller("ModalAddIndicatorController", function($modalInstance, $scope, groups) {
+	angular.module('admin').controller("ModalAddIndicatorController",
+	['$modalInstance', '$scope', 'groups',
+	function($modalInstance, $scope, groups) {
 	    	    
 	    var self = this; 
 	    
@@ -19,5 +21,5 @@
 	        $modalInstance.close({'group': self.groupSelected.code, 'name': self.name, 'definition': self.definition});
 	    };
 	    
-	});
+	}]);
 })();

@@ -1,5 +1,7 @@
 (function(){  
-	angular.module('dataQualityApp').service('metaDataService', ['$q', 'requestService', 'periodService', function ($q, requestService, periodService) {
+	angular.module('dataQualityApp').service('metaDataService',
+	['$q', 'requestService', 'periodService',
+	function ($q, requestService, periodService) {
 	  	
 	  	var self = this;
 	  	
