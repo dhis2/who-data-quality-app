@@ -16,7 +16,9 @@
 								 dataAnalysisService, $window, $q, $scope, $timeout) {
 
 	    var self = this;
-		
+
+		self.test = '600px';
+
 		self.ready = false;
 		self.completeness = false;
 		self.consistency = false;
@@ -31,34 +33,34 @@
         /** COMPLETENESS */
         self.makeCompletenessCharts = function() {
         	if (!self.ready) return;
-			if (self.completeness) {
-				updateCharts();
+			if (self.completeness && !self.widthChanged[0]) {
 				return;
 			}
-			else self.completeness = true;
+			else {
+				self.completeness = true;
+				self.widthChanged[0] = false;
+			}
 
+			var datasets = metaDataService.getDatasetsInGroup(self.group.code);
 			self.completenessCharts = [];
-
-        	var datasets = metaDataService.getDatasetsInGroup(self.group.code);
 			self.expectedCompletenessCharts = datasets.length;
+
 			var ouBoundaryID = self.ouBoundary.id;
-       		var ouChildrenID = ouChildrenIDs();
+
         	var dataset, periods, ouPeriod;
         	for (var i = 0; i < datasets.length; i++) {
                	dataset = datasets[i];
 
         		periods = periodService.getISOPeriods(self.startDate, self.endDate, dataset.periodType);
-        		if (periods.length < 4) {
-        			ouPeriod = periods[periods.length - 1];
-        		}
-        		else {
-        			ouPeriod = periods[periods.length - 2];
-        		}
+        		ouPeriod = periods[periods.length - 1];
+
+				var level;
+				if (self.orgunitLevelSelected) level = self.orgunitLevelSelected.level;
 
 				var promises = [];
 				promises.push(promiseObject(dataset));
 				promises.push(visualisationService.lineChart(null, [dataset.id], periods, [ouBoundaryID], 'dataOverTime'));
-				promises.push(visualisationService.barChart(null, [dataset.id], [ouPeriod], ouChildrenID, 'ou'));
+				promises.push(visualisationService.barChart(null, [dataset.id], [ouPeriod], [ouBoundaryID], 'ou', level));
 
 				$q.all(promises).then(function(datas) {
 
@@ -83,9 +85,6 @@
 
 					self.completenessCharts.push(datasetCompletenessChart);
 
-					if (self.expectedCompletenessCharts === self.completenessCharts.length) {
-						updateCharts();
-					}
 				});
 
         	}
@@ -97,17 +96,20 @@
     	/** CONSISTENCY OVER TIME */
     	self.makeTimeConsistencyCharts = function() {
 			if (!self.ready) return;
-			if (self.consistency) {
-				updateCharts();
+			if (self.consistency  && !self.widthChanged[1]) {
 				return;
 			}
-			else self.consistency = true;
+			else {
+				self.consistency = true;
+				self.widthChanged[1] = false;
+			}
 
       		self.consistencyCharts = [];
       		self.yyReceived = 0;
 
       		var ouBoundaryID = self.ouBoundary.id;
-   			var ouLevel = self.ouBoundary.level + 1;
+			var ouLevel;
+			if (self.orgunitLevelSelected) ouLevel = self.orgunitLevelSelected.level;
       		var data, endDate, startDate, periodType, yyPeriods, period, refPeriods; 	
    			var datas = metaDataService.getDataInGroup(self.group.code);
 			self.expectedConsistencyCharts = datas.length;
@@ -118,12 +120,8 @@
       			periodType = metaDataService.getDataPeriodType(data.code);
 
       			refPeriods = periodService.getISOPeriods(self.startDate, self.endDate, periodType);
-				if (refPeriods.length < 4) {
-					period = refPeriods[refPeriods.length - 1];
-				}
-				else {
-					period = refPeriods[refPeriods.length - 2];
-				}
+				period = refPeriods.pop();
+
       			yyPeriods = [];
 				startDate = self.startDate;
 				endDate = self.endDate;
@@ -162,19 +160,16 @@
 					visualisationService.setChartHeight(consistencyChart.yyChartOptions, 400);
 					visualisationService.setChartLegend(consistencyChart.yyChartOptions, false);
 					visualisationService.setChartYAxis(consistencyChart.yyChartOptions, 0, 100);
-					visualisationService.setChartMargins(consistencyChart.yyChartOptions, 20, 20, 100, 40);
+					visualisationService.setChartMargins(consistencyChart.yyChartOptions, 20, 20, 100, 50);
 
 					visualisationService.setChartHeight(consistencyChart.consistencyChartOptions, 400);
-					visualisationService.setChartLegend(consistencyChart.consistencyChartOptions, false);
+					visualisationService.setChartLegend(consistencyChart.consistencyChartOptions, true);
 					visualisationService.setChartYAxis(consistencyChart.consistencyChartOptions, 0, 100);
-					visualisationService.setChartMargins(consistencyChart.consistencyChartOptions, 20, 20, 100, 40);
+					visualisationService.setChartMargins(consistencyChart.consistencyChartOptions, 60, 30, 90, 110);
 					
 
 					self.consistencyCharts.push(consistencyChart);
 
-					if (self.expectedConsistencyCharts === self.consistencyCharts.length) {
-						updateCharts();
-					}
 				});
 
       		}
@@ -187,18 +182,20 @@
 		self.makeDataConsistencyCharts = function() {
 			if (!self.ready) return;
 
-			if (self.dataConsistency) {
-				updateCharts();
+			if (self.dataConsistency && !self.widthChanged[2]) {
 				return;
 			}
 			else {
 				self.dataConsistency = true;
+				self.widthChanged[2] = false;
 			}
 
 			self.dataConsistencyCharts = [];
 
 			var ouBoundaryID = self.ouBoundary.id;
-			var ouLevel = self.ouBoundary.level + 1;
+			var ouLevel;
+			if (self.orgunitLevelSelected) ouLevel = self.orgunitLevelSelected.level;
+
 			var period = 2014;
 
 			var relations = metaDataService.getRelations(self.group.code);
@@ -261,17 +258,9 @@
 				self.outliers = true;
 			}
 
-			//Get orgunit IDs
-			var orgunits;
-			if (self.ouGrandChildren && self.ouGrandChildren.length > 0) {
-				orgunits = ouGrandChildrenIDs();
-			}
-			else if (self.ouChildren && self.ouChildren.length > 0) {
-				orunits = ouChildrenIDs();
-			}
-			else {
-				orgunits = [self.ouBoundary.id];
-			}
+			var level;
+			if (self.orgunitLevelSelectedOutliers) level = self.orgunitLevelSelectedOutliers.level;
+
 
 			//Get period IDs
 			var periods = periodService.getISOPeriods(self.startDate, self.endDate, 'Monthly');
@@ -285,7 +274,7 @@
 			}
 
 
-			dataAnalysisService.outlierGap(receiveResult, dataIDs, null, null, periods, orgunits, null, null, 2, 3.5, 1);
+			dataAnalysisService.outlierGap(receiveResult, dataIDs, null, null, periods, [self.ouBoundary.id], level, null, 2, 3.5, 1);
 		}
 
 
@@ -312,20 +301,29 @@
       		}
       		
       	}
-
-		function updateCharts() {
-			$timeout(function () { window.dispatchEvent(new Event('resize')); }, 100);
-		}
-
       	
       	function setWindowWidth() {
 
+			//Remove 3% margins on each side
+			var width = Math.floor($window.innerWidth*0.94);
+
       		if ($window.innerWidth < 768) {
-      			self.singleCol = true;
+				//Remove box lines
+				width -= 2;
       		}
       		else {
-      			self.singleCol = false;
+				width -= 4;
+      			width = width/2;
       		}
+
+			self.halfChart = width.toString() + 'px';
+
+			for (var i = 0; i < 3; i++) {
+				self.widthChanged[i] = true;
+			}
+			self.widthChanged[self.selectedTab] = false;
+
+
       	}
       	
       	function ouChildrenIDs() {
@@ -362,12 +360,58 @@
 			self.dataConsistency = false;
 			self.outliers = false;
 
-			//TODO: set startdate to endDate - 1 year
+			self.startDate = moment(self.endDate).subtract(12, 'months').add(1, 'day');
 
-			self.makeCompletenessCharts(); //TODO: Depend on open tab
+
+			switch (self.selectedTab) {
+				case 0:
+					self.makeCompletenessCharts();
+					break;
+				case 1:
+					self.makeTimeConsistencyCharts();
+					break;
+				case 2:
+					self.makeDataConsistencyCharts();
+					break;
+				case 3:
+					self.makeOutlierTable();
+					break;
+			}
 		}
 
-		function ouTreeInit() {
+		self.ouTreeInit = function () {
+
+			if (self.wasOpen === undefined) self.wasOpen = true;
+
+			if (self.ouTreeData && self.ouTreeData.length > 0) {
+
+				if (self.wasOpen ) {
+					self.wasOpen  = !self.wasOpen;
+					return;
+				}
+				else {
+					self.wasOpen  = !self.wasOpen;
+				}
+
+				//Workaround - nodes are shown as open even if they are closed
+				self.ouTreeControl.collapse_all();
+
+				var current = self.currentSelection;
+				self.ouTreeControl.select_branch(self.currentSelection);
+				if (current.expanded) {
+					self.ouTreeControl.expand_branch(current);
+				}
+				else {
+					self.ouTreeControl.collapse_branch(current);
+				}
+				current = self.ouTreeControl.get_parent_branch(current);
+				while (current) {
+					current.expanded = true;
+					current = self.ouTreeControl.get_parent_branch();
+				}
+
+				return;
+			}
 			self.ouTreeData = [];
 			self.ouTreeControl = {};
 
@@ -389,6 +433,7 @@
 
 					for (var j = 0; ou.children && j < ou.children.length; j++) {
 						var child = ou.children[j];
+
 						root.children.push({
 							label: child.name,
 							data: {
@@ -409,11 +454,10 @@
 
 
 		self.ouTreeSelect = function (orgunit) {
-			if (orgunit.noLeaf && orgunit.children.length < 1) {
+			if (orgunit.noLeaf && orgunit.children.length < 1 && orgunit.expanded) {
 
 				//Get children
 				metaDataService.orgunitChildrenFromParentID(orgunit.data.ou.id).then(function (data) {
-					console.log(data);
 					for (var i = 0; i < data.length; i++) {
 						var child = data[i];
 						if (!orgunit.children) orgunit.children = [];
@@ -428,14 +472,16 @@
 					}
 				});
 			}
-
+			self.currentSelection = orgunit;
 			self.ouBoundary = orgunit.data.ou;
 			self.filterLevels();
 			self.orgunitUserDefaultLevel();
+			self.update();
 		}
 
 		self.filterLevels = function () {
 			self.filteredOrgunitLevels = [];
+			self.filteredOrgunitLevelsOutliers = [];
 
 			if (!self.orgunitLevels || !self.ouBoundary) return;
 			for (var i = 0; i < self.orgunitLevels.length; i++) {
@@ -446,6 +492,14 @@
 					self.filteredOrgunitLevels.push(self.orgunitLevels[i]);
 				}
 			}
+			for (var i = 0; i < self.orgunitLevels.length; i++) {
+				var belowSelectedUnit = self.orgunitLevels[i].level > self.ouBoundary.level;
+				var belowMaxDepth = self.orgunitLevels[i].level > (self.ouBoundary.level + 3);
+
+				if (belowSelectedUnit && !belowMaxDepth) {
+					self.filteredOrgunitLevelsOutliers.push(self.orgunitLevels[i]);
+				}
+			}
 		};
 
 		self.orgunitUserDefaultLevel = function () {
@@ -454,26 +508,51 @@
 
 			var level = self.ouBoundary.level;
 			for (var i = 0; i < self.filteredOrgunitLevels.length; i++) {
-				if (self.filteredOrgunitLevels[i].level === (level + 2)) {
+				if (self.filteredOrgunitLevels[i].level === (level + 1)) {
 					self.orgunitLevelSelected = self.filteredOrgunitLevels[i];
 				}
 			}
 
+			if (!self.ouBoundary || !self.filteredOrgunitLevelsOutliers) return;
+			var level = self.ouBoundary.level;
+			for (var i = 0; i < self.filteredOrgunitLevelsOutliers.length; i++) {
+				if (self.filteredOrgunitLevelsOutliers[i].level === (level + 2)) {
+					self.orgunitLevelSelectedOutliers = self.filteredOrgunitLevelsOutliers[i];
+				}
+			}
+
 			if (self.filteredOrgunitLevels.length === 0) self.orgunitLevelSelected = undefined;
+			if (self.filteredOrgunitLevelsOutliers.length === 0) self.orgunitLevelSelectedOutliers = undefined;
 
 		};
       	
       	/** -- INIT -- */		
       	
       	function init() {
+			self.widthChanged = [];
       		setWindowWidth();
       		$( window ).resize(function() {
       			setWindowWidth();
 				$scope.$apply();
       		});
+			for (var i = 0; i < 3; i++) {
+				self.widthChanged[i] = false;
+			}
 
-			metaDataService.getOrgunitLevels().then(function (data) {
-				self.orgunitLevels = data;
+			//ouTreeInit();
+      		
+      		self.group = {name: 'Core', code: 'core'};
+			self.groups = metaDataService.getGroups();
+			self.groups.unshift(self.group);
+
+			self.selectedTab = 0;
+
+			var promises = [];
+			promises.push(metaDataService.getUserOrgunit());
+			promises.push(metaDataService.getOrgunitLevels());
+			$q.all(promises).then(function(datas) {
+				self.ouBoundary = datas[0];
+				self.orgunitLevels = datas[1];
 
 				self.lowestLevel = 0;
 				for (var i = 0; i < self.orgunitLevels.length; i++) {
@@ -483,29 +562,12 @@
 
 				self.filterLevels();
 				self.orgunitUserDefaultLevel();
+
+				//Completeness is the default tab
+				self.makeCompletenessCharts();
 			});
 
-			ouTreeInit();
-      		
-      		self.group = {name: 'Core', code: 'core'};
-			self.groups = metaDataService.getGroups();
-			self.groups.unshift(self.group);
 
-      		metaDataService.getUserOrgunitHierarchy().then(function(data) {
-				self.ouBoundary = data[0];
-				
-				self.ouChildren = self.ouBoundary.children;
-				self.ouGrandChildren = [];
-				if (self.ouChildren && self.ouChildren.length > 0) {
-					for (var i = 0; i < self.ouChildren.length; i++) {
-						self.ouGrandChildren.push.apply(self.ouGrandChildren, self.ouChildren[i].children);
-					}
-				}
-				if (self.ouGrandChildren.length === 0) self.ouGrandChildren = null;
-				
-				//Completeness is the default - get that once we have user orgunit
-	      		self.makeCompletenessCharts();
-			});
 
 			self.endDate = moment().subtract(new Date().getDate(), 'days');
 			self.startDate = moment(self.endDate).subtract(12, 'months').add(1, 'day');
@@ -522,6 +584,10 @@
 				init();
 			});
 		}
+
+		self.partialGroupUrl='moduleDashboard/selectGroup.html';
+		self.partialDateUrl='moduleDashboard/selectPeriod.html';
+		self.partialOuUrl='moduleDashboard/selectOu.html';
 			
 			
 			

@@ -1,71 +1,52 @@
-<div style="width: 100%; height: 60px; clear: both">
+<div style="width: 100%; height: 60px; clear: both; display: inline-block">
 	<div>
-		<h4  class="pull-left"  style="margin-top: 20px;">Data Quality Dashboard</h4>
-		<button style="margin-top: 15px;" class="pull-right btn btn-default" type="button" ng-model="resultCtrl.showParameters" btn-checkbox btn-checkbox-true="true" btn-checkbox-false="false">
-			Choose data
-		</button>
+		<h4  class="pull-left"  style="margin-top: 18px; display: inline-block;">Data Quality Dashboard</h4>
+		<div class="btn-group pull-right" style="margin-top: 20px; margin-left: 20px; display: inline-block;">
+			<button  popover-placement="bottom"
+					 popover-template='dashCtrl.partialOuUrl'
+					 popover-title="Organisation unit"
+					 ng-click="dashCtrl.ouTreeInit();"
+					 type="button"
+					 class="btn btn-primary"
+					 style="width: 80px">
+				Orgunit
+			</button>
+			<button  popover-placement="bottom"
+					 popover-template='dashCtrl.partialDateUrl'
+					 popover-title="Period (end)"
+					 type="button"
+					 class="btn btn-primary"
+					 style="width: 80px">
+				Period
+			</button>
+			<button  popover-placement="left"
+					 popover-template="dashCtrl.partialGroupUrl"
+					 popover-title="Data group"
+					 tooltip-append-to-body="true"
+					 type="button"
+					 class="btn btn-primary"
+					 style="width: 80px">
+				Data
+			</button>
+
+		</div>
 	</div>
 </div>
-<div collapse="!resultCtrl.showParameters" class="well well-lg">
-	<!-- Group -->
-	<div style="display: inline-block; width: 300px; margin-right: 10px; vertical-align: top">
-		<label>Data group</label><br/>
-		<ui-select class="well well-sm" ng-model="dashCtrl.group" theme="bootstrap" style="width: 100%; display: inline-block;">
-			<ui-select-match placeholder="Select group...">
-				{{dashCtrl.group.name}}
-			</ui-select-match>
-			<ui-select-choices
-					repeat="obj in dashCtrl.groups | filter: $select.search">
-				<div ng-bind-html="obj.name | highlight: $select.search"></div>
-			</ui-select-choices>
-		</ui-select>
-	</div>
-	<!-- Period -->
-	<div style="display: inline-block; width: 300px; margin-right: 10px; vertical-align: top">
-		<label>End period</label>
-		<datepicker class="well well-sm" ng-model="dashCtrl.endDate" datepicker-mode="'month'" max-date="dashCtrl.currentDate" starting-day="1" min-mode="month"></datepicker>
-	</div>
-	<!-- Orgunits-->
-	<div style="display: inline-block; width: 300px; margin-right: 10px; vertical-align: top"">
-		<label>Organisation unit</label>
-		<abn-tree class="well well-sm" style="width: 300px; min-height: 54px; max-height: 186px; overflow: scroll" ng-if="dashCtrl.ouTreeData"
-				tree-data="dashCtrl.ouTreeData"
-				tree-control="dashCtrl.ouTreeControl"
-				on-select="dashCtrl.ouTreeSelect(branch)">
-		</abn-tree>
-	</div>
-	<div style="display: inline-block; width: 300px; margin-right: 10px; vertical-align: top"">
-	<label>Organisation unit level</label><br/>
-		<ui-select class="well well-sm" ng-model="dashCtrl.orgunitLevelSelected" theme="bootstrap" style="width: 100%; display: inline-block;">
-			<ui-select-match placeholder="Select level...">
-				{{dashCtrl.orgunitLevelSelected.name}}
-			</ui-select-match>
-			<ui-select-choices
-					repeat="obj in dashCtrl.filteredOrgunitLevels | filter: $select.search">
-				<div ng-bind-html="obj.name | highlight: $select.search"></div>
-			</ui-select-choices>
-		</ui-select>
-	</div>
-	<div style="clear: all; height: 20px">
-		<button class="btn btn-primary pull-right" ng-click="dashCtrl.update()">Update</button>
-	</div>
-</div>
+
 <tabset>
-	<tab heading="Completeness" select="dashCtrl.makeCompletenessCharts();">
+	<tab heading="Completeness" select="dashCtrl.selectedTab = 0; dashCtrl.makeCompletenessCharts();">
 		<div
 			style="display: inline-block; width: 100%; margin-top: 10px"
 			ng-repeat="dataset in dashCtrl.completenessCharts|orderBy:'name'">
 			<h5>"{{dataset.name}}" completeness</h5>
-			<div ng-class="{elementFullWidth: dashCtrl.singleCol, elementHalfWidth: !dashCtrl.singleCol}"
-				 style="display: inline-block;">
+			<div style="display: inline-block; border: 1px dotted gray; width: {{dashCtrl.halfChart}}">
 				<nvd3
 					options='dataset.trendChartOptions'
 					data='dataset.trendChartData'>
 				</nvd3>
 			</div>
 			<h5 ng-if="dashCtrl.singleCol">"{{dataset.name}}" completeness</h5>
-			<div ng-class="{elementFullWidth: dashCtrl.singleCol, elementHalfWidth: !dashCtrl.singleCol}"
-				style="display: inline-block;">
+			<div style="display: inline-block; border: 1px dotted gray; width: {{dashCtrl.halfChart}}">
 				<nvd3 style="width: 100%"
 					options='dataset.ouChartOptions'
 					data='dataset.ouChartData'>
@@ -73,40 +54,35 @@
 			</div>
 		</div>
 	</tab>
-	<tab heading="Consistency over time" select="dashCtrl.makeTimeConsistencyCharts();">
+	<tab heading="Consistency - time" select="dashCtrl.selectedTab = 1;dashCtrl.makeTimeConsistencyCharts(); ">
 		<div
 			style="display: inline-block; width: 100%; margin-top: 10px"
 			ng-repeat="data in dashCtrl.consistencyCharts|orderBy:'name'|limitTo: 100">
 			<h5>{{data.name}}</h5>
-			<nvd3
-				ng-class="{elementFullWidth: dashCtrl.singleCol, elementHalfWidth: !dashCtrl.singleCol}"
-				style="display: inline-block;"
+			<nvd3 style="display: inline-block; border: 1px dotted gray; width: {{dashCtrl.halfChart}}"
 				options='data.yyChartOptions'
 				data='data.yyChartData'>
 			</nvd3>
 			<h5 ng-if="dashCtrl.singleCol">{{data.name}}</h5>
-			<nvd3
-				ng-class="{elementFullWidth: dashCtrl.singleCol, elementHalfWidth: !dashCtrl.singleCol}"
-				style="display: inline-block;"
+			<nvd3 style="display: inline-block; border: 1px dotted gray; width: {{dashCtrl.halfChart}}"
 				options='data.consistencyChartOptions'
 				data='data.consistencyChartData'>
 			</nvd3>
 		</div>
 	</tab>
-	<tab heading="Consistency between indicators" select="dashCtrl.makeDataConsistencyCharts();">
-		<div
-				style="display: inline-block; width: 100%; margin-top: 10px"
+	<tab heading="Consistency - data" select="dashCtrl.selectedTab = 2; dashCtrl.makeDataConsistencyCharts();">
+		<div style="display: inline-block; width: 100%; margin-top: 10px"
 				ng-repeat="data in dashCtrl.dataConsistencyCharts|orderBy:'name'|limitTo: 100">
 			<h5>{{data.name}} - {{data.period}}</h5>
 			<nvd3
 					class="elementFullWidth"
-					style="display: inline-block;"
+					style="display: inline-block; border: 1px dotted gray"
 					options='data.chartOptions'
 					data='data.chartData'>
 			</nvd3>
 		</div>
 	</tab>
-	<tab heading="Outliers" select="dashCtrl.makeOutlierTable();">
+	<tab heading="Outliers" select=" dashCtrl.selectedTab = 3; dashCtrl.makeOutlierTable();">
 		<div style="margin-bottom: 20px"></div>
 		<outlier-result  result-control="dashCtrl.resultControl"></outlier-result>
 	</tab>

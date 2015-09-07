@@ -1,0 +1,9 @@
+<ui-select on-select="dashCtrl.update();" ng-model="dashCtrl.group" theme="bootstrap" style="width: 200px; display: inline-block;">
+	<ui-select-match placeholder="Select group...">
+		{{dashCtrl.group.name}}
+	</ui-select-match>
+	<ui-select-choices
+			repeat="obj in dashCtrl.groups | filter: $select.search">
+		<div ng-bind-html="obj.name | highlight: $select.search"></div>
+	</ui-select-choices>
+</ui-select>

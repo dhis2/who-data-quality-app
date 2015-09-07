@@ -43,6 +43,10 @@
 		margin-bottom: 30px;
 	}
 
+	div.popover {
+		max-width: 330px;
+	}
+
 }
 
 @media screen {
