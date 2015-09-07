@@ -345,6 +345,25 @@
 			};
 		};
 
+		function notification(title, message) {
+			var modalInstance = $modal.open({
+				templateUrl: "appCommons/modalNotification.html",
+				controller: "ModalNotificationController",
+				controllerAs: 'nCtrl',
+				resolve: {
+					title: function () {
+						return title;
+					},
+					message: function () {
+						return message;
+					}
+				}
+			});
+
+			modalInstance.result.then(function (result) {
+			});
+		}
+
 		return self;
 	});
 
