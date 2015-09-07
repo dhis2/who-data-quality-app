@@ -206,13 +206,17 @@
 		/*
 		Takes IDs as parameters, returns chartData and chartOptions for use with angular-nvd3
 		*/
-		self.barChart = function (callback, dataIDs, periodIDs, orgunitIDs, type) {
+		self.barChart = function (callback, dataIDs, periodIDs, orgunitIDs, type, orgunitLevel) {
 			var deferred = $q.defer();
 
 			var requestURL = '/api/analytics.json?';
 			requestURL += "dimension=dx:" + dataIDs.join(';');
 			requestURL += "&dimension=pe:" + periodIDs.join(";");
 			requestURL += "&dimension=ou:" + orgunitIDs.join(";");
+
+			if (orgunitLevel) {
+				requestURL += ';LEVEL-' + orgunitLevel;
+			}
 						
 			requestService.getSingle(requestURL).then(function (response) {
 				
