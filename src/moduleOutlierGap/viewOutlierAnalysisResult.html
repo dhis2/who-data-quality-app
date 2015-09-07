@@ -42,7 +42,7 @@
 			</div>
 		</div>
 	</div>
-	<div style="margin-top: 10px; font-size: 85%;" class="table-responsive">
+	<div style="margin-top: 10px; font-size: 85%; margin-bottom: 100px" class="table-responsive">
 		<table class="table table-bordered table-striped table-condensed table-hover">
 			<thead>
 			<tr>
@@ -104,9 +104,11 @@
 			</tr>
 			</thead>
 			<tfoot>
-			<td colspan="{{resultCtrl.totalColumns}}">
-				<pagination total-items="resultCtrl.totalRows" items-per-page="resultCtrl.pageSize" max-size="5" ng-model="resultCtrl.currentPage" class="pagination-sm pull-right" boundary-links="true" rotate="true"></pagination>
-			</td>
+				<tr height="81px">
+					<td colspan="{{resultCtrl.totalColumns}}">
+						<pagination ng-if="resultCtrl.totalRows > resultCtrl.pageSize" total-items="resultCtrl.totalRows" items-per-page="resultCtrl.pageSize" max-size="5" ng-model="resultCtrl.currentPage" class="pagination-sm pull-right" boundary-links="true" rotate="true"></pagination>
+					</td>
+				</tr>
 			</tfoot>
 
 			<tbody>
@@ -125,16 +127,16 @@
 				<td ng-if="resultCtrl.typeFilter === 0" class="valueCell">{{row.result.totalWeight}}</td>
 
 				<td>
-									<span class="dropdown" dropdown>
-									  <a href class="dropdown-toggle" dropdown-toggle>
-										  <span class="glyphicon glyphicon-th-list" style="color: black" aria-hidden="true"></span>
-									  </a>
-									  <ul class="dropdown-menu dropdown-menu-right">
-										  <li><a href ng-click="resultCtrl.showDetails(row);">Visualise</a></li>
-										  <li><a href ng-click="resultCtrl.drillDown(row.metaData);">Drill down</a></li>
-										  <li><a href ng-click="resultCtrl.sendMessage(row.metaData);">Contact</a></li>
-									  </ul>
-									  </span>
+					<span class="dropdown" dropdown>
+					  <a href class="dropdown-toggle" dropdown-toggle>
+						  <span class="glyphicon glyphicon-th-list" style="color: black" aria-hidden="true"></span>
+					  </a>
+					  <ul class="dropdown-menu dropdown-menu-right">
+						  <li><a href ng-click="resultCtrl.showDetails(row);">Visualise</a></li>
+						  <li><a href ng-click="resultCtrl.drillDown(row.metaData);">Drill down</a></li>
+						  <li><a href ng-click="resultCtrl.sendMessage(row.metaData);">Contact</a></li>
+					  </ul>
+					  </span>
 				</td>
 			</tr>
 			</tbody>

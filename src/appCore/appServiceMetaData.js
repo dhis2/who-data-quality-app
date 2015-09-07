@@ -881,20 +881,11 @@
 			  
 			requestService.getSingle(requestURL).then(
 				function(response) { //success
-			    	var data = response.data.organisationUnits;
-			    	
-			    	var minLevel = 100;
-			    	var lowestOrgunit = null;
-			    	for (var i = 0; i < data.length; i++) {
-			    		if (data[i].level < minLevel) {
-			    			minLevel = data[i].level;
-			    			lowestOrgunit = data[i];
-			    		}
-			    	}
-			    	
-			    	
-			    	deferred.resolve(lowestOrgunit);
-			    	userOrgunits.available = true;
+
+					var data = response.data.organisationUnits;
+
+			    	deferred.resolve(data);
+
 				}, 
 				function(response) { //error
 			    	var data = response.data;

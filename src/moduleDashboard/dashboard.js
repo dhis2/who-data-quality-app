@@ -1,10 +1,19 @@
 
 (function(){
-	
-	var app = angular.module('dashboard', []);
-	
-	
-	app.controller("DashboardController", function(metaDataService, periodService, requestService, visualisationService, mathService, dataAnalysisService, $window, $q, $scope, $timeout) {
+
+	//Define module
+	angular.module('dashboard', []);
+
+	//Define DashboardController
+	angular.module('dashboard').controller("DashboardController", DashboardController);
+
+	//Inject dependencies for DashboardController
+	DashboardController.$inject('metaDataService', 'periodService', 'visualisationService',
+		'dataAnalysisService', '$window', '$q', '$scope', '$timeout');
+
+	//DashboardController code
+	function DashboardController(metaDataService, periodService, visualisationService,
+								 dataAnalysisService, $window, $q, $scope, $timeout) {
 
 	    var self = this;
 		
@@ -12,7 +21,11 @@
 		self.completeness = false;
 		self.consistency = false;
 		self.dataConsistency = false;
-    	     
+		self.outliers = false;
+
+
+
+
         /** -- ANALYSIS -- */
         
         /** COMPLETENESS */
@@ -233,8 +246,47 @@
 
     	/** -- OUTLIERS -- */
 
+		self.resultControl = {};
+		function receiveResult(result) {
+			self.resultControl.receiveResult(result);
+		}
+
+		self.makeOutlierTable = function() {
+			if (!self.ready) return;
+
+			if (self.outliers) {
+				return;
+			}
+			else {
+				self.outliers = true;
+			}
+
+			//Get orgunit IDs
+			var orgunits;
+			if (self.ouGrandChildren && self.ouGrandChildren.length > 0) {
+				orgunits = ouGrandChildrenIDs();
+			}
+			else if (self.ouChildren && self.ouChildren.length > 0) {
+				orunits = ouChildrenIDs();
+			}
+			else {
+				orgunits = [self.ouBoundary.id];
+			}
+
+			//Get period IDs
+			var periods = periodService.getISOPeriods(self.startDate, self.endDate, 'Monthly');
 
 
+			//Get data IDs
+			var data = metaDataService.getDataInGroup(self.group);
+			var dataIDs = [];
+			for (var i = 0; i < data.length; i++) {
+				dataIDs.push(data[i].localData.id);
+			}
+
+
+			dataAnalysisService.outlierGap(receiveResult, dataIDs, null, null, periods, orgunits, null, null, 2, 3.5, 1);
+		}
 
 
 
@@ -291,7 +343,7 @@
   			
   			if (!self.ouGrandChildren) return [];
   			for (var i = 0; i < self.ouGrandChildren.length; i++) {
-  				IDs.push(self.self.ouGrandChildren[i].id)
+  				IDs.push(self.ouGrandChildren[i].id)
   			}
   			
       		return IDs;
@@ -309,14 +361,14 @@
       		
       		self.group = 'core';
 
-      		metaDataService.getUserOrgunitHierarchy().then(function(data) { 
-				self.ouBoundary = data;
+      		metaDataService.getUserOrgunitHierarchy().then(function(data) {
+				self.ouBoundary = data[0];
 				
-				self.ouChildren = data.children;
+				self.ouChildren = self.ouBoundary.children;
 				self.ouGrandChildren = [];
 				if (self.ouChildren && self.ouChildren.length > 0) {
-					for (var i = 0; i < self.ouChildren.count; i++) {
-						self.ouGrandChildren.push(self.ouChildren[i].children);
+					for (var i = 0; i < self.ouChildren.length; i++) {
+						self.ouGrandChildren.push.apply(self.ouGrandChildren, self.ouChildren[i].children);
 					}
 				}
 				if (self.ouGrandChildren.length === 0) self.ouGrandChildren = null;
@@ -345,5 +397,5 @@
 			
 		return self;
 		
-	});
+	};
 })();
