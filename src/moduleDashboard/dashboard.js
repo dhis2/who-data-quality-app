@@ -22,8 +22,8 @@
 		self.consistency = false;
 		self.dataConsistency = false;
 		self.outliers = false;
-
-
+		self.orgunitLevelSelected;
+		self.orgunitLevels = [];
 
 
         /** -- ANALYSIS -- */
@@ -39,7 +39,7 @@
 
 			self.completenessCharts = [];
 
-        	var datasets = metaDataService.getDatasetsInGroup(self.group);
+        	var datasets = metaDataService.getDatasetsInGroup(self.group.code);
 			self.expectedCompletenessCharts = datasets.length;
 			var ouBoundaryID = self.ouBoundary.id;
        		var ouChildrenID = ouChildrenIDs();
@@ -109,7 +109,7 @@
       		var ouBoundaryID = self.ouBoundary.id;
    			var ouLevel = self.ouBoundary.level + 1;
       		var data, endDate, startDate, periodType, yyPeriods, period, refPeriods; 	
-   			var datas = metaDataService.getDataInGroup(self.group);
+   			var datas = metaDataService.getDataInGroup(self.group.code);
 			self.expectedConsistencyCharts = datas.length;
 			var consistencyChart;
 			for (var i = 0; i < datas.length; i++) {
@@ -201,7 +201,7 @@
 			var ouLevel = self.ouBoundary.level + 1;
 			var period = 2014;
 
-			var relations = metaDataService.getRelations(self.group);
+			var relations = metaDataService.getRelations(self.group.code);
 			self.expectedDataConsistencyCharts = relations.length;
 			for (var i = 0; i < relations.length; i++) {
 				var relation = relations[i];
@@ -278,7 +278,7 @@
 
 
 			//Get data IDs
-			var data = metaDataService.getDataInGroup(self.group);
+			var data = metaDataService.getDataInGroup(self.group.code);
 			var dataIDs = [];
 			for (var i = 0; i < data.length; i++) {
 				dataIDs.push(data[i].localData.id);
@@ -348,7 +348,120 @@
   			
       		return IDs;
   		}
-      	
+
+		function sortName(a, b) {
+			return a.name > b.name ? 1 : -1;
+		}
+
+
+		/** -- OU TREE -- */
+
+		self.update = function() {
+			self.completeness = false;
+			self.consistency = false;
+			self.dataConsistency = false;
+			self.outliers = false;
+
+			//TODO: set startdate to endDate - 1 year
+
+			self.makeCompletenessCharts(); //TODO: Depend on open tab
+		}
+
+		function ouTreeInit() {
+			self.ouTreeData = [];
+			self.ouTreeControl = {};
+
+			//Get initial batch of orgunits and populate
+			metaDataService.getAnalysisOrgunits().then(function (data) {
+
+				//Iterate in case of multiple roots
+				for (var i = 0; i < data.length; i++) {
+					var ou = data[i];
+					var root = {
+						label: ou.name,
+						data: {
+							ou: ou
+						},
+						children: []
+					}
+
+					ou.children.sort(sortName);
+
+					for (var j = 0; ou.children && j < ou.children.length; j++) {
+						var child = ou.children[j];
+						root.children.push({
+							label: child.name,
+							data: {
+								ou: child
+							},
+							noLeaf: child.children
+						});
+					}
+
+					self.ouTreeData.push(root);
+					self.ouTreeControl.select_first_branch();
+					self.ouTreeControl.expand_branch(self.ouTreeControl.get_selected_branch());
+
+				}
+			});
+
+		}
+
+
+		self.ouTreeSelect = function (orgunit) {
+			if (orgunit.noLeaf && orgunit.children.length < 1) {
+
+				//Get children
+				metaDataService.orgunitChildrenFromParentID(orgunit.data.ou.id).then(function (data) {
+					console.log(data);
+					for (var i = 0; i < data.length; i++) {
+						var child = data[i];
+						if (!orgunit.children) orgunit.children = [];
+						orgunit.children.push({
+							label: child.name,
+							data: {
+								ou: child
+							},
+							noLeaf: child.children
+						});
+
+					}
+				});
+			}
+
+			self.ouBoundary = orgunit.data.ou;
+			self.filterLevels();
+			self.orgunitUserDefaultLevel();
+		}
+
+		self.filterLevels = function () {
+			self.filteredOrgunitLevels = [];
+
+			if (!self.orgunitLevels || !self.ouBoundary) return;
+			for (var i = 0; i < self.orgunitLevels.length; i++) {
+				var belowSelectedUnit = self.orgunitLevels[i].level > self.ouBoundary.level;
+				var belowMaxDepth = self.orgunitLevels[i].level > (self.ouBoundary.level + 2);
+
+				if (belowSelectedUnit && !belowMaxDepth) {
+					self.filteredOrgunitLevels.push(self.orgunitLevels[i]);
+				}
+			}
+		};
+
+		self.orgunitUserDefaultLevel = function () {
+
+			if (!self.ouBoundary || !self.filteredOrgunitLevels) return;
+
+			var level = self.ouBoundary.level;
+			for (var i = 0; i < self.filteredOrgunitLevels.length; i++) {
+				if (self.filteredOrgunitLevels[i].level === (level + 2)) {
+					self.orgunitLevelSelected = self.filteredOrgunitLevels[i];
+				}
+			}
+
+			if (self.filteredOrgunitLevels.length === 0) self.orgunitLevelSelected = undefined;
+
+		};
       	
       	/** -- INIT -- */		
       	
@@ -358,8 +471,25 @@
       			setWindowWidth();
 				$scope.$apply();
       		});
+
+			metaDataService.getOrgunitLevels().then(function (data) {
+				self.orgunitLevels = data;
+
+				self.lowestLevel = 0;
+				for (var i = 0; i < self.orgunitLevels.length; i++) {
+					var level = self.orgunitLevels[i].level;
+					if (level > self.lowestLevel) self.lowestLevel = level;
+				}
+
+				self.filterLevels();
+				self.orgunitUserDefaultLevel();
+			});
+
+			ouTreeInit();
       		
-      		self.group = 'core';
+      		self.group = {name: 'Core', code: 'core'};
+			self.groups = metaDataService.getGroups();
+			self.groups.unshift(self.group);
 
       		metaDataService.getUserOrgunitHierarchy().then(function(data) {
 				self.ouBoundary = data[0];
