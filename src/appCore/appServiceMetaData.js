@@ -897,43 +897,30 @@
 
 			return deferred.promise;
 		};
-		
-		
-		
-				
+
 		
 		self.getAnalysisOrgunits = function() {
 		
 			var deferred = $q.defer();
 			
-			//available locally
-			if (rootOrgunits.available) {
-				deferred.resolve(rootOrgunits.data);
-			}
-			//waiting for server
-			else if (!rootOrgunits.available && rootOrgunits.promise) {
-				return rootOrgunits.promise;
-			}
-			//need to be fetched
-			else {
-					var requestURL = '/api/organisationUnits.json?'; 
-					  requestURL += 'userDataViewFallback=true&fields=id,name,level,children[name,level,id,children::isNotEmpty]&paging=false';
-					  
-				requestService.getSingle(requestURL).then(
-					function(response) { //success
-				    	var data = response.data;
 
-				    	deferred.resolve(data.organisationUnits);
-				    	rootOrgunits.available = true;
-					}, 
-					function(response) { //error
-				    	var data = response.data;
-				    	deferred.reject("Error fetching orgunits");
-				    	console.log(msg, code);
-				    }
-				);
-			}
-			rootOrgunits.promise = deferred.promise;
+			var requestURL = '/api/organisationUnits.json?';
+			requestURL += 'userDataViewFallback=true&fields=id,name,level,children[name,level,id,children::isNotEmpty]&paging=false';
+
+			requestService.getSingle(requestURL).then(
+				function(response) { //success
+					var data = response.data;
+
+					deferred.resolve(data.organisationUnits);
+				},
+				function(response) { //error
+					var data = response.data;
+					deferred.reject("Error fetching orgunits");
+					console.log(msg, code);
+				}
+			);
+
+
 			return deferred.promise;
 		};
 
