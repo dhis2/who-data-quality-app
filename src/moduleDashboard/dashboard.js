@@ -324,33 +324,27 @@
       	self.setWindowWidth = function() {
 
 
-			var contentWidth = $window.innerWidth;
+			var contentWidth = angular.element('.mainView').width();
+
+			//TODO: For now, assume there is a scrollbar - which on Win Chrome is 17 px
+			contentWidth -= 17;
+
 			var chartWidth;
       		if (contentWidth <= 600) {
-
-				contentWidth -= 10; //body padding
-
 				chartWidth = contentWidth - 2; //border
       		}
 			else if (contentWidth <= 768) {
-
 				if (self.showParameters) contentWidth -= 330; //parameter box + margin
-
-				contentWidth -= 10; //body padding
 
 				chartWidth = contentWidth - 2; //border
 			}
 			else if (contentWidth <= 900 && self.showParameters) {
-
 				contentWidth -= 330; //parameter box + margin
-				contentWidth -= 40; //body padding
 
 				chartWidth = contentWidth - 2; //border
 			}
       		else {
 				if (self.showParameters) contentWidth -= 330; //parameter box + margin
-
-				contentWidth -= 40; //body padding
 
       			chartWidth = contentWidth - 4; //border
 				chartWidth = chartWidth/2; //half width for chart

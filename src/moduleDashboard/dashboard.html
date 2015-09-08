@@ -19,7 +19,6 @@
 		</td>
 	</tr>
 </table>
-
 <div style="width: 100%; display: inline-block;">
 	<div collapse="!dashCtrl.showParameters" class="well well-sm no-print" style="vertical-align: top; height: auto; margin-right: 10px; width: 320px; margin-top: 42px; float:left">
 		<div style="height: auto;">
@@ -36,20 +35,20 @@
 			</div>
 		</div>
 	</div>
-	<tabset justified="true" style="display: inline-block; vertical-align: top; width: {{dashCtrl.contentWidth}}; float:right">
+	<tabset justified="true" ng-style="{width: dashCtrl.contentWidth, 'display': 'inline-block', 'vertical-align': 'top', 'float': 'right'}">
 		<tab heading="Completeness" select="dashCtrl.selectedTab = 0; dashCtrl.makeCompletenessCharts();">
 			<div
 				style="display: inline-block; width: 100%; margin-top: 10px"
 				ng-repeat="dataset in dashCtrl.completenessCharts|orderBy:'name'">
 				<h5>"{{dataset.name}}" completeness</h5>
-				<div style="display: inline-block; border: 1px dotted gray; width: {{dashCtrl.halfChart}}">
+				<div ng-style="{width: dashCtrl.halfChart}" style="display: inline-block; border: 1px dotted gray; height: 400px">
 					<nvd3
 						options='dataset.trendChartOptions'
 						data='dataset.trendChartData'>
 					</nvd3>
 				</div>
 				<h5 ng-if="dashCtrl.singleCol">"{{dataset.name}}" completeness</h5>
-				<div style="display: inline-block; border: 1px dotted gray; width: {{dashCtrl.halfChart}}">
+				<div ng-style="{width: dashCtrl.halfChart}" style="display: inline-block; border: 1px dotted gray; height: 400px">
 					<nvd3 style="width: 100%"
 						options='dataset.ouChartOptions'
 						data='dataset.ouChartData'>
@@ -62,13 +61,15 @@
 				style="display: inline-block; width: 100%; margin-top: 10px"
 				ng-repeat="data in dashCtrl.consistencyCharts|orderBy:'name'|limitTo: 100">
 				<h5>{{data.name}}</h5>
-				<nvd3 style="display: inline-block; border: 1px dotted gray; width: {{dashCtrl.halfChart}}"
+				<nvd3 style="display: inline-block; border: 1px dotted gray; height: 400px"
+					  ng-style="{width: dashCtrl.halfChart}"
 					options='data.yyChartOptions'
 					data='data.yyChartData'>
 				</nvd3>
 				<h5 ng-if="dashCtrl.singleCol">{{data.name}}</h5>
-				<nvd3 style="display: inline-block; border: 1px dotted gray; width: {{dashCtrl.halfChart}}"
-					options='data.consistencyChartOptions'
+				<nvd3 style="display: inline-block; border: 1px dotted gray; height: 400px"
+					  ng-style="{width: dashCtrl.halfChart}"
+					  options='data.consistencyChartOptions'
 					data='data.consistencyChartData'>
 				</nvd3>
 			</div>
@@ -79,7 +80,7 @@
 				<h5>{{data.name}} - {{data.period}}</h5>
 				<nvd3
 						class="elementFullWidth"
-						style="display: inline-block; border: 1px dotted gray"
+						style="display: inline-block; border: 1px dotted gray; height: 400px"
 						options='data.chartOptions'
 						data='data.chartData'>
 				</nvd3>
