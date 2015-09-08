@@ -1,84 +1,79 @@
-<div class="btn-group" style="width: 100%; margin-top: 20px; margin-bottom: 10px; display: inline-block;">
-	<button  popover-placement="bottom"
-			 popover-template='dashCtrl.partialOuUrl'
-			 popover-title="Organisation unit"
-			 ng-click="dashCtrl.ouTreeInit();"
-			 type="button"
-			 class="btn btn-default"
-			 style="width: 33.3%">
-		Orgunit
-	</button>
-	<button  popover-placement="bottom"
-			 popover-template='dashCtrl.partialDateUrl'
-			 popover-title="Period"
-			 type="button"
-			 class="btn btn-default"
-			 style="width: 33.3%">
-		Period
-	</button>
-	<button  popover-placement="bottom"
-			 popover-template="dashCtrl.partialGroupUrl"
-			 popover-title="Data group"
-			 tooltip-append-to-body="true"
-			 type="button"
-			 class="btn btn-default"
-			 style="width: 33.3%">
-		Data
-	</button>
+<button class="btn btn-default no-print"
+		ng-click="dashCtrl.showParameters = !dashCtrl.showParameters; dashCtrl.setWindowWidth(); dashCtrl.updateCurrent();"
+		style="width: 140px; margin-top: 10px; margin-bottom: 10px">
+	<span ng-if="dashCtrl.showParameters">Hide parameters</span>
+	<span ng-if="!dashCtrl.showParameters">Show parameters</span>
+</button>
+
+<div style="width: 100%; display: inline-block;">
+	<div collapse="!dashCtrl.showParameters" class="well well-sm no-print" style="vertical-align: top; height: auto; margin-right: 10px; width: 320px; float:left">
+		<div style="height: auto;">
+			<label>Data</label>
+			<div ng-include="dashCtrl.partialGroupUrl">
+			</div>
+			<hr/>
+			<label>Period</label>
+			<div ng-include="dashCtrl.partialDateUrl">
+			</div>
+			<hr/>
+			<label>Orgunit</label>
+			<div ng-include="dashCtrl.partialOuUrl">
+			</div>
+		</div>
+	</div>
+	<tabset justified="true" style="display: inline-block; vertical-align: top; width: {{dashCtrl.contentWidth}}; float:right">
+		<tab heading="Completeness" select="dashCtrl.selectedTab = 0; dashCtrl.makeCompletenessCharts();">
+			<div
+				style="display: inline-block; width: 100%; margin-top: 10px"
+				ng-repeat="dataset in dashCtrl.completenessCharts|orderBy:'name'">
+				<h5>"{{dataset.name}}" completeness</h5>
+				<div style="display: inline-block; border: 1px dotted gray; width: {{dashCtrl.halfChart}}">
+					<nvd3
+						options='dataset.trendChartOptions'
+						data='dataset.trendChartData'>
+					</nvd3>
+				</div>
+				<h5 ng-if="dashCtrl.singleCol">"{{dataset.name}}" completeness</h5>
+				<div style="display: inline-block; border: 1px dotted gray; width: {{dashCtrl.halfChart}}">
+					<nvd3 style="width: 100%"
+						options='dataset.ouChartOptions'
+						data='dataset.ouChartData'>
+					</nvd3>
+				</div>
+			</div>
+		</tab>
+		<tab heading="Consistency - time" select="dashCtrl.selectedTab = 1;dashCtrl.makeTimeConsistencyCharts();">
+			<div
+				style="display: inline-block; width: 100%; margin-top: 10px"
+				ng-repeat="data in dashCtrl.consistencyCharts|orderBy:'name'|limitTo: 100">
+				<h5>{{data.name}}</h5>
+				<nvd3 style="display: inline-block; border: 1px dotted gray; width: {{dashCtrl.halfChart}}"
+					options='data.yyChartOptions'
+					data='data.yyChartData'>
+				</nvd3>
+				<h5 ng-if="dashCtrl.singleCol">{{data.name}}</h5>
+				<nvd3 style="display: inline-block; border: 1px dotted gray; width: {{dashCtrl.halfChart}}"
+					options='data.consistencyChartOptions'
+					data='data.consistencyChartData'>
+				</nvd3>
+			</div>
+		</tab>
+		<tab heading="Consistency - data" select="dashCtrl.selectedTab = 2; dashCtrl.makeDataConsistencyCharts();">
+			<div style="display: inline-block; width: 100%; margin-top: 10px"
+					ng-repeat="data in dashCtrl.dataConsistencyCharts|orderBy:'name'|limitTo: 100">
+				<h5>{{data.name}} - {{data.period}}</h5>
+				<nvd3
+						class="elementFullWidth"
+						style="display: inline-block; border: 1px dotted gray"
+						options='data.chartOptions'
+						data='data.chartData'>
+				</nvd3>
+			</div>
+		</tab>
+		<tab heading="Outliers" select=" dashCtrl.selectedTab = 3; dashCtrl.makeOutlierTable();">
+			<div style="margin-bottom: 20px"></div>
+			<outlier-result  result-control="dashCtrl.resultControl"></outlier-result>
+		</tab>
+	</tabset>
 
 </div>
-
-<tabset justified="true">
-	<tab heading="Completeness" select="dashCtrl.selectedTab = 0; dashCtrl.makeCompletenessCharts();">
-		<div
-			style="display: inline-block; width: 100%; margin-top: 10px"
-			ng-repeat="dataset in dashCtrl.completenessCharts|orderBy:'name'">
-			<h5>"{{dataset.name}}" completeness</h5>
-			<div style="display: inline-block; border: 1px dotted gray; width: {{dashCtrl.halfChart}}">
-				<nvd3
-					options='dataset.trendChartOptions'
-					data='dataset.trendChartData'>
-				</nvd3>
-			</div>
-			<h5 ng-if="dashCtrl.singleCol">"{{dataset.name}}" completeness</h5>
-			<div style="display: inline-block; border: 1px dotted gray; width: {{dashCtrl.halfChart}}">
-				<nvd3 style="width: 100%"
-					options='dataset.ouChartOptions'
-					data='dataset.ouChartData'>
-				</nvd3>
-			</div>
-		</div>
-	</tab>
-	<tab heading="Consistency - time" select="dashCtrl.selectedTab = 1;dashCtrl.makeTimeConsistencyCharts(); ">
-		<div
-			style="display: inline-block; width: 100%; margin-top: 10px"
-			ng-repeat="data in dashCtrl.consistencyCharts|orderBy:'name'|limitTo: 100">
-			<h5>{{data.name}}</h5>
-			<nvd3 style="display: inline-block; border: 1px dotted gray; width: {{dashCtrl.halfChart}}"
-				options='data.yyChartOptions'
-				data='data.yyChartData'>
-			</nvd3>
-			<h5 ng-if="dashCtrl.singleCol">{{data.name}}</h5>
-			<nvd3 style="display: inline-block; border: 1px dotted gray; width: {{dashCtrl.halfChart}}"
-				options='data.consistencyChartOptions'
-				data='data.consistencyChartData'>
-			</nvd3>
-		</div>
-	</tab>
-	<tab heading="Consistency - data" select="dashCtrl.selectedTab = 2; dashCtrl.makeDataConsistencyCharts();">
-		<div style="display: inline-block; width: 100%; margin-top: 10px"
-				ng-repeat="data in dashCtrl.dataConsistencyCharts|orderBy:'name'|limitTo: 100">
-			<h5>{{data.name}} - {{data.period}}</h5>
-			<nvd3
-					class="elementFullWidth"
-					style="display: inline-block; border: 1px dotted gray"
-					options='data.chartOptions'
-					data='data.chartData'>
-			</nvd3>
-		</div>
-	</tab>
-	<tab heading="Outliers" select=" dashCtrl.selectedTab = 3; dashCtrl.makeOutlierTable();">
-		<div style="margin-bottom: 20px"></div>
-		<outlier-result  result-control="dashCtrl.resultControl"></outlier-result>
-	</tab>
-</tabset>

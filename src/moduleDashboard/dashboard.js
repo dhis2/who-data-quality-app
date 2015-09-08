@@ -16,7 +16,7 @@
 		self.ready = false;
 		self.completeness = false;
 		self.consistency = false;
-		self.dataConsistency = false;
+		self.consistencyData = false;
 		self.outliers = false;
 		self.orgunitLevelSelected;
 		self.orgunitLevels = [];
@@ -176,11 +176,11 @@
 		self.makeDataConsistencyCharts = function() {
 			if (!self.ready) return;
 
-			if (self.dataConsistency && !self.widthChanged[2]) {
+			if (self.consistencyData && !self.widthChanged[2]) {
 				return;
 			}
 			else {
-				self.dataConsistency = true;
+				self.consistencyData = true;
 				self.widthChanged[2] = false;
 			}
 
@@ -296,31 +296,50 @@
       		
       	}
       	
-      	function setWindowWidth() {
+      	self.setWindowWidth = function() {
 
 
-			var width = $window.innerWidth;
+			var contentWidth = $window.innerWidth;
+			var chartWidth;
+      		if (contentWidth <= 600) {
 
-      		if ($window.innerWidth <= 768) {
-				//Remove box lines and padding
-				width -= 2;
-				width -= 8;
+				contentWidth -= 10; //body padding
+
+				chartWidth = contentWidth - 2; //border
       		}
+			else if (contentWidth <= 768) {
+
+				if (self.showParameters) contentWidth -= 330; //parameter box + margin
+
+				contentWidth -= 10; //body padding
+
+				chartWidth = contentWidth - 2; //border
+			}
+			else if (contentWidth <= 900 && self.showParameters) {
+
+				contentWidth -= 330; //parameter box + margin
+				contentWidth -= 40; //body padding
+
+				chartWidth = contentWidth - 2; //border
+			}
       		else {
-				width -= 4;
-				width -= 40;
-      			width = width/2;
+				if (self.showParameters) contentWidth -= 330; //parameter box + margin
+
+				contentWidth -= 40; //body padding
+
+      			chartWidth = contentWidth - 4; //border
+				chartWidth = chartWidth/2; //half width for chart
       		}
 
-			self.halfChart = width.toString() + 'px';
+			self.halfChart = Math.floor(chartWidth).toString() + 'px';
+			self.contentWidth = Math.floor(contentWidth).toString() + 'px';
 
 			for (var i = 0; i < 3; i++) {
 				self.widthChanged[i] = true;
 			}
 			self.widthChanged[self.selectedTab] = false;
 
-
-      	}
+		}
       	
       	function ouChildrenIDs() {
       		var IDs = [];
@@ -353,7 +372,7 @@
 		self.update = function() {
 			self.completeness = false;
 			self.consistency = false;
-			self.dataConsistency = false;
+			self.consistencyData = false;
 			self.outliers = false;
 
 			self.startDate = moment(self.endDate).subtract(12, 'months').add(1, 'day');
@@ -375,39 +394,27 @@
 			}
 		}
 
+		self.updateCurrent = function() {
+			switch (self.selectedTab) {
+				case 0:
+					self.completeness = false;
+					self.makeCompletenessCharts();
+					break;
+				case 1:
+					self.consistency = false;
+					self.makeTimeConsistencyCharts();
+					break;
+				case 2:
+					self.consistencyData = false;
+					self.makeDataConsistencyCharts();
+					break;
+			}
+		}
+
 		self.ouTreeInit = function () {
 
-			if (self.wasOpen === undefined) self.wasOpen = true;
+			if (self.ouTreeData) return;
 
-			if (self.ouTreeData && self.ouTreeData.length > 0) {
-
-				if (self.wasOpen ) {
-					self.wasOpen  = !self.wasOpen;
-					return;
-				}
-				else {
-					self.wasOpen  = !self.wasOpen;
-				}
-
-				//Workaround - nodes are shown as open even if they are closed
-				self.ouTreeControl.collapse_all();
-
-				var current = self.currentSelection;
-				self.ouTreeControl.select_branch(self.currentSelection);
-				if (current.expanded) {
-					self.ouTreeControl.expand_branch(current);
-				}
-				else {
-					self.ouTreeControl.collapse_branch(current);
-				}
-				current = self.ouTreeControl.get_parent_branch(current);
-				while (current) {
-					current.expanded = true;
-					current = self.ouTreeControl.get_parent_branch();
-				}
-
-				return;
-			}
 			self.ouTreeData = [];
 			self.ouTreeControl = {};
 
@@ -521,21 +528,22 @@
 			if (self.filteredOrgunitLevelsOutliers.length === 0) self.orgunitLevelSelectedOutliers = undefined;
 
 		};
-      	
+
       	/** -- INIT -- */		
       	
       	function init() {
+			self.showParameters = false;
 			self.widthChanged = [];
-      		setWindowWidth();
+      		self.setWindowWidth();
       		$( window ).resize(function() {
-      			setWindowWidth();
+      			self.setWindowWidth();
 				$scope.$apply();
       		});
 			for (var i = 0; i < 3; i++) {
 				self.widthChanged[i] = false;
 			}
 
-			//ouTreeInit();
+			self.ouTreeInit();
       		
       		self.group = {name: 'Core', code: 'core'};
 			self.groups = metaDataService.getGroups();
