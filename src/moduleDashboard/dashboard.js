@@ -190,7 +190,16 @@
 			var ouLevel;
 			if (self.orgunitLevelSelected) ouLevel = self.orgunitLevelSelected.level;
 
-			var period = 2014;
+
+			var period;
+			var endDate = moment(self.endDate);
+			if (endDate.month() <= 5) {
+				period = endDate.subtract(12, 'months').year();
+			}
+			else {
+				period = endDate.year();
+			}
+
 
 			var relations = metaDataService.getRelations(self.group.code);
 			self.expectedDataConsistencyCharts = relations.length;
