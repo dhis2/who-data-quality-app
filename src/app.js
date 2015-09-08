@@ -68,10 +68,18 @@
 
 	/**Controller: Navigation*/
 	app.controller("NavigationController",
-	['BASE_URL', '$location', '$window',
-	function(BASE_URL, $location, $window) {
+	['BASE_URL', '$location', '$window', 'notificationService',
+	function(BASE_URL, $location, $window, notificationService) {
 		var self = this;
-		
+
+		self.validBrowser = (navigator.userAgent.indexOf('MSIE 9') >= 0
+			|| navigator.userAgent.indexOf('MSIE 8') >= 0
+			|| navigator.userAgent.indexOf('MSIE 7') >= 0) ? false : true;
+
+		if (!self.validBrowser) notificationService.notify("Warning", "This browser is not supported. Please upgrade to a recent version of " +
+			"Google Chrome or Mozilla Firefox.");
+
+
 		self.isCollapsed = true;	
 		self.navClass = function (page) {
 			var currentRoute = $location.path().substring(1) || 'dashboard';

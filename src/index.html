@@ -41,6 +41,7 @@
 	<script lang="javascript" src="appCore/appServiceDataAnalysis.js"></script>
 	<script lang="javascript" src="appCore/appServiceMath.js"></script>
 	<script lang="javascript" src="appCore/appServiceMetaData.js"></script>
+	<script lang="javascript" src="appCore/appServiceNotification.js"></script>
 	<script lang="javascript" src="appCore/appServicePeriod.js"></script>
 	<script lang="javascript" src="appCore/appServiceRequest.js"></script>
 	<script lang="javascript" src="appCore/appServiceVisualisation.js"></script>
@@ -147,7 +148,8 @@
 					</li>	
 			</ul>
 			<ul class="nav navbar-nav navbar-right">
-			<li><a href="#" ng-click="navCtrl.exit()">Exit</a></li>
+				<li ng-if="!navCtrl.validBrowser"><a class="warning">This browser is not supported!</a></li>
+				<li><a href="#" ng-click="navCtrl.exit()">Exit</a></li>
 			</ul>
 			</div><!-- /.nav-collapse -->
 		</div><!-- /.container-fluid -->
