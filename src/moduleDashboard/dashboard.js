@@ -13,6 +13,11 @@
 
 		self.test = '600px';
 
+		self.cmpLoading = false;
+		self.tcLoading = false;
+		self.dcLoading = false;
+		self.outLoading = false;
+
 		self.ready = false;
 		self.completeness = false;
 		self.consistency = false;
@@ -38,7 +43,7 @@
 			var datasets = metaDataService.getDatasetsInGroup(self.group.code);
 			self.completenessCharts = [];
 			self.expectedCompletenessCharts = datasets.length;
-
+			self.cmpLoading = true;
 			var ouBoundaryID = self.ouBoundary.id;
 
         	var dataset, periods, ouPeriod;
@@ -79,6 +84,8 @@
 
 					self.completenessCharts.push(datasetCompletenessChart);
 
+					if (self.completenessCharts.length === self.expectedCompletenessCharts) self.cmpLoading = false;
+
 				});
 
         	}
@@ -107,6 +114,7 @@
       		var data, endDate, startDate, periodType, yyPeriods, period, refPeriods; 	
    			var datas = metaDataService.getDataInGroup(self.group.code);
 			self.expectedConsistencyCharts = datas.length;
+			self.tcLoading = true;
 			var consistencyChart;
 			for (var i = 0; i < datas.length; i++) {
       			
@@ -163,6 +171,7 @@
 					
 
 					self.consistencyCharts.push(consistencyChart);
+					if (self.consistencyCharts.length === self.expectedConsistencyCharts) self.tcLoading = false;
 
 				});
 
@@ -203,6 +212,7 @@
 
 			var relations = metaDataService.getRelations(self.group.code);
 			self.expectedDataConsistencyCharts = relations.length;
+			self.dcLoading = true;
 			for (var i = 0; i < relations.length; i++) {
 				var relation = relations[i];
 				var indicatorA = metaDataService.getDataWithCode(relation.A);
@@ -235,6 +245,8 @@
 					visualisationService.setChartMargins(dataConsistencyChart.chartOptions, 60, 20, 100, 100);
 
 					self.dataConsistencyCharts.push(dataConsistencyChart);
+
+					if (self.dataConsistencyCharts.length === self.expectedDataConsistencyCharts) self.dcLoading = false;
 				});
 
 			}
@@ -248,6 +260,10 @@
 
 		self.resultControl = {};
 		function receiveResult(result) {
+			self.outLoading = false;
+			self.resultControl.loading = function (status) {
+				self.outLoading = status;
+			};
 			self.resultControl.receiveResult(result);
 		}
 
@@ -276,7 +292,7 @@
 				dataIDs.push(data[i].localData.id);
 			}
 
-
+			self.outLoading = true;
 			dataAnalysisService.outlierGap(receiveResult, dataIDs, null, null, periods, [self.ouBoundary.id], level, null, 2, 3.5, 1);
 		}
 

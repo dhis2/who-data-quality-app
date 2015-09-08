@@ -1,12 +1,27 @@
-<button class="btn btn-default no-print"
-		ng-click="dashCtrl.showParameters = !dashCtrl.showParameters; dashCtrl.setWindowWidth(); dashCtrl.updateCurrent();"
-		style="width: 140px; margin-top: 10px; margin-bottom: 10px">
-	<span ng-if="dashCtrl.showParameters">Hide parameters</span>
-	<span ng-if="!dashCtrl.showParameters">Show parameters</span>
-</button>
+<table style="width: 100%">
+	<tr  height="60px">
+		<td width="50px">
+			<button class="btn btn-primary no-print"
+					ng-click="dashCtrl.showParameters = !dashCtrl.showParameters; dashCtrl.setWindowWidth(); dashCtrl.updateCurrent();"
+					style="width: 40px">
+				<span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span>
+			</button>
+		</td>
+		<td>
+			<h4>Dashboard</h4>
+		</td>
+		<td>
+			<progressbar ng-if="dashCtrl.cmpLoading || dashCtrl.tcLoading || dashCtrl.dcLoading || dashCtrl.outLoading"
+					style="width: 140px; float: right; margin-top: 20px"
+					class="progress-striped active" value="100" type="default"><i ng-show="showWarning">Processing</i>
+			</progressbar>
+			<p></p>
+		</td>
+	</tr>
+</table>
 
 <div style="width: 100%; display: inline-block;">
-	<div collapse="!dashCtrl.showParameters" class="well well-sm no-print" style="vertical-align: top; height: auto; margin-right: 10px; width: 320px; float:left">
+	<div collapse="!dashCtrl.showParameters" class="well well-sm no-print" style="vertical-align: top; height: auto; margin-right: 10px; width: 320px; margin-top: 42px; float:left">
 		<div style="height: auto;">
 			<label>Data</label>
 			<div ng-include="dashCtrl.partialGroupUrl">
