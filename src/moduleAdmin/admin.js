@@ -5,8 +5,8 @@
 	
 	/**Controller: Parameters*/
 	angular.module('admin').controller("AdminController",
-	['metaDataService', 'requestService', '$modal',
-	function(metaDataService, requestService, $modal) {
+	['metaDataService', 'requestService', '$modal', 'notificationService',
+	function(metaDataService, requestService, $modal, notificationService) {
 	    	    
 	    var self = this;
 	    
@@ -19,7 +19,17 @@
 	    	self.outlierOptions = makeOutlierOptions();
 	    	
 	    	self.groupSelect = {};
-	    	
+
+			self.isAdmin = false;
+			metaDataService.isDQadmin().then(function(data) {
+				self.isAdmin = data;
+				if (!data) {
+					notificationService.notify('Info', "You do not have the required authorities to change the " +
+						"configuration of the Data Quality Tool. However, you can use this module to look at " +
+						"the existing data quality parameters.");
+				}
+			});
+
 	    	var needUpdate = false;
 	    	var needReset = false;
 	    	    		

@@ -1156,6 +1156,44 @@
 			return false;
 		}
 
+		self.isDQadmin = function() {
+			var deferred = $q.defer();
+			requestService.getSingle('/api/currentUser.json?fields=userCredentials[userRoles]').then(
+				function(response) { //success
+					var data = response.data.userCredentials.userRoles;
+					var IDs = [];
+					for (var i = 0; i < data.length; i++) {
+						IDs.push(data[i].id);
+					}
+
+					requestService.getSingle('/api/userRoles.json?fields=authorities&filter=id:in:[' + IDs.join(',') + ']')
+						.then(function(response) {
+							var authorized = false;
+
+
+							var data = response.data.userRoles;
+							for (var i = 0; !authorized && i < data.length; i++) {
+								for (var j = 0; !authorized && j < data[i].authorities.length; j++) {
+									if (data[i].authorities[j] === 'M_dhis-web-maintenance-settings') {
+										authorized = true;
+									}
+									if (data[i].authorities[j] === 'ALL') {
+										authorized = true;
+									}
+								}
+							}
+
+							deferred.resolve(authorized);
+					});
+
+
+
+				}
+			);
+
+			return deferred.promise;
+		}
+
 		
 		
 	  	return self;
