@@ -10,7 +10,7 @@
 	    self.message = message;
 	    
 	    self.close = function () {
-	        $modalInstance.close(self.text);
+	        $modalInstance.close(true);
 	    };
 
 		return self;

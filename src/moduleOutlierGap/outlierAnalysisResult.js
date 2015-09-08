@@ -178,11 +178,6 @@
 					'x': self.periods[i]
 				});
 			}
-			var toolTip = function (key, x, y, e, graph) {
-				var toolTipHTML = '<h3>' + x + '</h3>';
-				toolTipHTML += '<p style="margin-bottom: 0px">' + y + '</p>';
-				return toolTipHTML;
-			};
 
 
 			var chartOptions = {
@@ -199,8 +194,9 @@
 					"xAxis": {
 						'rotateLabels': -30
 					},
-					'tooltips': true,
-					'tooltipContent': toolTip,
+					'tooltip': {
+						enabled: true
+					},
 					'showLegend': false,
 					'showControls': false
 				}
