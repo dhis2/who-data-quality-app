@@ -258,7 +258,7 @@
 			var requestURL = "/api/organisationUnits/" + rowMetaData.ou.id + ".json?fields=children[id]";
 			requestService.getSingle(requestURL).then(function (response) {
 
-
+				if (!requestService.validResponse(response)) return;
 				var children = response.data.children;
 				if (children.length > 0) {
 

@@ -585,6 +585,7 @@
 			requestService.getSingle(requestURL).then(
 				//success
 				function (response) {
+					if (!requestService.validResponse(response)) return;
 					self.dsco.boundaryData = response.data;
 					startDatasetCompletenessAnalysis();
 				},
@@ -604,6 +605,7 @@
 			requestService.getSingle(requestURL).then(
 				//success
 				function (response) {
+					if (!requestService.validResponse(response)) return;
 					self.dsco.subunitData = response.data;
 					startDatasetCompletenessAnalysis();
 				},
@@ -734,6 +736,7 @@
 			requestService.getSingle(requestURL).then(
 				//success
 				function (response) {
+					if (!requestService.validResponse(response)) return;
 					self.dco.data = response.data;
 					startDataCompletenessAnalysis();
 				},
@@ -859,6 +862,7 @@
 			requestService.getSingle(requestURL).then(
 				//success
 				function (response) {
+					if (!requestService.validResponse(response)) return;
 					self.io.data = response.data;
 					startIndicatorOutlierAnalysis();
 				},
@@ -1042,6 +1046,7 @@
 			requestService.getSingle(requestURL).then(
 				//success
 				function (response) {
+					if (!requestService.validResponse(response)) return;
 					self.dsci.boundaryData = response.data;
 					startTimeConsistencyAnalysis();
 				},
@@ -1060,6 +1065,7 @@
 			requestService.getSingle(requestURL).then(
 				//success
 				function (response) {
+					if (!requestService.validResponse(response)) return;
 					self.dsci.subunitData = response.data;
 					startTimeConsistencyAnalysis();
 				},
@@ -1313,7 +1319,7 @@
 			requestService.getMultiple(requests).then(
 				//success
 				function (response) {
-
+					if (!requestService.validResponse(response)) return;
 					self.dc.boundaryData = mergeAnalyticsResults(response);
 					startDataConsistencyAnalysis();
 				},
@@ -1339,7 +1345,7 @@
 			requestService.getMultiple(requests).then(
 				//success
 				function (response) {
-
+					if (!requestService.validResponse(response)) return;
 					self.dc.subunitData = mergeAnalyticsResults(response);
 					startDataConsistencyAnalysis();
 				},
@@ -1691,6 +1697,7 @@
 				requestService.getSingle(request.url).then(
 					//success
 					function (response) {
+						requestService.validResponse(response);
 						self.requests.pending--;
 						storeResponse(response);
 						self.status.done++;
@@ -1785,6 +1792,12 @@
 				//Probably time out - try again
 				else if (status === 0) {
 					console.log("Timout - retrying");
+					requestFailed(requestURL);
+				}
+
+				else if (status === 302) {
+					console.log("User has been logged out");
+					console.log(response);
 					requestFailed(requestURL);
 				}
 

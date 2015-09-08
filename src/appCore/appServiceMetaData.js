@@ -139,6 +139,7 @@
 	  			    	dataSets.available = true;
 	  				}, 
 	  				function(response) { //error
+						requestService.validResponse(response);
 	  			    	deferred.reject("Error fetching datasets");
 	  			    	console.log(msg, code);
 	  			    }
@@ -989,6 +990,7 @@
 			}			
 			else {
 				requestService.getSingle('/api/systemSettings/DQAmapping').then(function(response) {
+					if (!requestService.validResponse(response)) return;
 					mapping = response.data;
 					deferred.resolve(mapping);
 				});	
