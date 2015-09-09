@@ -1,0 +1,108 @@
+<div class="modal-header">
+	<h3>{{addCtrl.title}}</h3>
+</div>
+<div class="modal-body">
+
+	<table class="table table-bordered">
+		<tr>
+			<th width="170px">Name</th>
+			<td><input type="text" class="form-control" style="width: 100%;" ng-model="addCtrl.name"/></td>
+		</tr>
+		<tr>
+			<th>Type</th>
+			<td>
+				<ui-select ng-model="addCtrl.typeSelected" theme="bootstrap" style="width: 100%;">
+					<ui-select-match placeholder="Select type...">
+						{{addCtrl.typeSelected.name}}
+					</ui-select-match>
+					<ui-select-choices
+							repeat="obj in addCtrl.types | filter: $select.search">
+						<div ng-bind-html="obj.name | highlight: $select.search"></div>
+					</ui-select-choices>
+				</ui-select>
+			</td>
+		</tr>
+		<tr>
+			<th rowspan="2">Indicator A</th>
+			<td><ui-select ng-model="addCtrl.dataTypeA" theme="bootstrap" style="width: 100%;">
+				<ui-select-match placeholder="Select data type...">
+					{{addCtrl.dataTypeA.name}}
+				</ui-select-match>
+				<ui-select-choices
+						repeat="obj in addCtrl.dataTypes| filter: $select.search">
+					<div ng-bind-html="obj.name | highlight: $select.search"></div>
+				</ui-select-choices>
+			</ui-select></td>
+		<tr>
+			<td>
+				<ui-select
+						style="margin-bottom: 10px; max-width: 470px;"
+						ng-model="addCtrl.dataA">
+					<ui-select-match allow-clear="true" placeholder="Search...">
+						{{addCtrl.dataA.name}}
+					</ui-select-match>
+					<ui-select-choices
+							refresh="addCtrl.dataSearch($select.search, 'a')"
+							refresh-delay="500"
+							repeat="de in addCtrl.dataSearchResultA | filter: $select.search">
+						<div ng-bind-html="de.name | highlight: $select.search"></div>
+					</ui-select-choices>
+				</ui-select>
+			</td>
+		</tr>
+		<tr>
+			<th rowspan="2">Indicator B</th>
+			<td><ui-select ng-model="addCtrl.dataTypeB" theme="bootstrap" style="width: 100%;">
+				<ui-select-match placeholder="Select data type...">
+					{{addCtrl.dataTypeB.name}}
+				</ui-select-match>
+				<ui-select-choices
+						repeat="obj in addCtrl.dataTypes| filter: $select.search">
+					<div ng-bind-html="obj.name | highlight: $select.search"></div>
+				</ui-select-choices>
+			</ui-select></td>
+		<tr>
+			<td>
+				<ui-select
+						style="margin-bottom: 10px; max-width: 470px;"
+					ng-model="addCtrl.dataB">
+				<ui-select-match allow-clear="true" placeholder="Search...">
+					{{addCtrl.dataB.name}}
+				</ui-select-match>
+				<ui-select-choices
+						refresh="addCtrl.dataSearch($select.search, 'b')"
+						refresh-delay="500"
+						repeat="de in addCtrl.dataSearchResultB | filter: $select.search">
+					<div ng-bind-html="de.name | highlight: $select.search"></div>
+				</ui-select-choices>
+				</ui-select>
+			</td>
+		</tr>
+		<tr>
+			<th>Lowest available level</th>
+			<td>
+				<ui-select ng-model="addCtrl.lowLevel" theme="bootstrap" style="width: 100%;">
+					<ui-select-match placeholder="Select level...">
+						{{addCtrl.lowLevel.name}}
+					</ui-select-match>
+					<ui-select-choices
+							repeat="obj in addCtrl.levels | filter: $select.search">
+						<div ng-bind-html="obj.name | highlight: $select.search"></div>
+					</ui-select-choices>
+				</ui-select>
+			</td>
+		</tr>
+		<tr ng-if="addCtrl.typeSelected.code != 'do'">
+			<th>Threshold (+/- %)</th>
+			<td><input type="number" class="form-control" style="width: 100px;" ng-model="addCtrl.criteria"/></td>
+		</tr>
+	</table>
+
+	<div style="margin-bottom: 10px;">
+		<strong>Threshold</strong> denotes the % difference from the national ratio that is accepted for a sub-national unit.
+	</div>
+
+	<div class="modal-footer" style="clear: both;">
+		<button type="button" class="btn btn-default" data-ng-click="addCtrl.cancel()">Cancel</button>
+		<button type="button" class="btn btn-default" data-ng-click="addCtrl.save()" ng-disabled="addCtrl.name === '' || addCtrl.typeSelected === undefined || addCtrl.dataA === undefined || addCtrl.dataA === undefined || addCtrl.criteria === undefined || addCtrl.lowLevel === undefined">Save</button>
+	</div>

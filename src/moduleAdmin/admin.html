@@ -60,7 +60,33 @@
 			<button ng-disabled="!admCtrl.isAdmin" type="button" class="btn btn-primary" ng-click="admCtrl.addIndicatorGroup();" style="margin: 5px;">Add Group</button>
 			<button ng-disabled="!admCtrl.isAdmin" type="button" class="btn btn-danger" ng-click="admCtrl.deleteIndicatorGroup();" style="margin:5px">Delete Group</button>
 		</tab>
-		
+
+		<tab heading="Denominators">
+			<br />
+			<p>Please map alternative denominators for comparison.</p>
+			<table class="table table-bordered table-striped table-condensed table-hover">
+				<tr>
+					<th>Name</th>
+					<th>Indicator A</th>
+					<th>Indicator B</th>
+					<th>Criteria</th>
+					<th width="100px"></th>
+				</tr>
+				<tr ng-repeat="denominator in admCtrl.mapping.denominators | orderBy:'type'">
+					<td class="vert-align">{{denominator.name}}</td>
+					<td class="vert-align">{{admCtrl.getDataName(denominator.idA)}}</td>
+					<td class="vert-align">{{admCtrl.getDataName(denominator.idB)}}</td>
+					<td class="vert-align">{{denominator.criteria}} %</td>
+					<td class="vert-align" align="center">
+						<button ng-disabled="!admCtrl.isAdmin" ng-click="admCtrl.editDenominator(denominator);" class="btn btn-default btn-xs">Edit</button>
+						<button ng-disabled="!admCtrl.isAdmin || denominator.type === 'un'" ng-click="admCtrl.deleteDenominator(denominator.code);" class="btn btn-danger btn-xs">Delete</button></td>
+					</tr>
+				<tfoot>
+				<tr><td colspan="6"><button ng-disabled="!admCtrl.isAdmin" type="button" class="btn btn-primary pull-right btn-sm" ng-click="admCtrl.addDenominator();" style="width: 90px;">Add</button></td></tr></tfoot>
+			</table>
+
+		</tab>
+
 		<tab heading="Data Relations">
 		<br />
 					<h4>Internal consistency</h4>

@@ -5,8 +5,8 @@
 	
 	/**Controller: Parameters*/
 	angular.module('admin').controller("AdminController",
-	['metaDataService', 'requestService', '$modal', 'notificationService',
-	function(metaDataService, requestService, $modal, notificationService) {
+	['metaDataService', 'requestService', '$modal', 'notificationService', '$q',
+	function(metaDataService, requestService, $modal, notificationService, $q) {
 	    	    
 	    var self = this;
 	    
@@ -30,7 +30,7 @@
 				}
 			});
 
-	    	var needUpdate = false;
+	    	var needUpdate = true;
 	    	var needReset = false;
 	    	    		
     		//TODO: check for updates to metaData
@@ -46,8 +46,6 @@
     			
     				requestService.getSingleLocal('data/metaData.json').then(function(response) {
     					self.mapping = response.data;
-    					
-    					
     				});
     			}
     		});	
@@ -56,8 +54,61 @@
 		function updateMeta() {
 			
 			needUpdate = false;
-			self.mapping.relations = [];
-			
+
+			if (!self.mapping.denominators) {
+				self.mapping.denominators = [
+					{
+						"idA": "",
+						"idB": "",
+						"type": "un",
+						"criteria": 10,
+						"name": "Consistency with UN projection",
+						"code": "P1",
+						"maxLevel": 1,
+					},
+					{
+						"idA": "",
+						"idB": "",
+						"type": "total",
+						"criteria": 10,
+						"name": "Total population",
+						"code": "P2",
+						"maxLevel": 2
+					},
+					{
+						"idA": "",
+						"idB": "",
+						"type": "lb",
+						"criteria": 10,
+						"name": "Live births",
+						"code": "P3",
+						"maxLevel": 2
+					},
+					{
+						"idA": "",
+						"idB": "",
+						"type": "ep",
+						"criteria": 10,
+						"name": "Expected pregnancies",
+						"code": "P4",
+						"maxLevel": 2
+					},
+					{
+						"idA": "",
+						"idB": "",
+						"type": "lt1",
+						"criteria": 10,
+						"name": "Children < 1 year",
+						"code": "P5",
+						"maxLevel": 2
+					}
+				];
+			}
+
+			for (var i = 0; i < self.mapping.denominators.length; i++) {
+				//delete self.mapping.denominators[i]['custom'];
+			}
+
 			saveMapping();
 
 		}
@@ -629,7 +680,37 @@
 	    	
 	    	saveMapping();
 	    }
-	    
+
+		function saveEditedDenominator(denominator) {
+
+			for (var i = 0; i < self.mapping.denominators.length; i++) {
+				if (self.mapping.denominators[i].code === denominator.code) {
+					self.mapping.denominators[i] = denominator;
+					break;
+				}
+			}
+
+			saveMapping();
+		}
+
+		function getNewDenominatorCode() {
+
+			//Get and return next possible code
+			var current, found;
+			for (var i = 0; i <= self.mapping.denominators.length; i++) {
+
+				current = "R" + parseInt(i + 1);
+				existing = false;
+
+				for (var j = 0; j < self.mapping.denominators.length; j++) {
+					if (self.mapping.denominators[j].code === current) existing = true;
+				}
+
+				if (!existing) return current;
+			}
+
+			console.log("Error finding new denominator code");
+		}
 	    
 	    
 	    self.deleteRelation = function(relation) {
@@ -644,6 +725,71 @@
 	    	self.editRelation(null);
 	    
 	    };
+
+		self.getDataName = function(id) {
+			return metaDataService.getDataName(id);
+		}
+
+		self.addDenominator = function() {
+			self.editDenominator(null);
+		}
+
+		self.editDenominator = function(denominator) {
+
+			var data = [];
+			for (var i = 0; i < self.mapping.data.length; i++) {
+				if (self.mapping.data[i].matched) data.push(self.mapping.data[i]);
+			}
+
+			var modalInstance = $modal.open({
+				templateUrl: "moduleAdmin/adminDenominator.html",
+				controller: "ModalAddEditDenominatorController",
+				controllerAs: 'addCtrl',
+				resolve: {
+					denominator: function () {
+						return denominator;
+					}
+				}
+			});
+
+			modalInstance.result.then(function (result) {
+				if (result) {
+					//check if new or existing (= has code already)
+					console.log(result);
+					if (result.denominator.code != null) {
+						saveEditedDenominator(result.denominator);
+					}
+					else {
+						result.denominator.code = getNewRelationCode();
+						self.mapping.denominators.push(result.denominator);
+						saveMapping();
+					}
+				}
+			});
+
+		};
+		self.deleteDenominator = function(code) {
+			for (var i = 0; i < self.mapping.denominators.length; i++) {
+				if (self.mapping.denominators[i].code === code) {
+					self.mapping.denominators.splice(i, 1);
+				}
+			}
+		}
+
+
+		var nameCache = {};
+		self.getDataName = function(id) {
+			if (!id) return null;
+
+			if (!nameCache[id]) {
+				nameCache[id] = true;
+				metaDataService.getDataName(id).then(function(name) {
+					nameCache[id] = name;
+				});
+			}
+
+			return nameCache[id];
+		};
 	        
 		return self;
 		

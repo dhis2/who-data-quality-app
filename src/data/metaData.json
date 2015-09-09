@@ -1,5 +1,5 @@
 {
-	"metaDataVersion": 0.2,
+	"metaDataVersion": 0.3,
 	"coreIndicators": ["D1", "D3", "D27", "D5", "D8"],
 	"groups": [
 	{
@@ -427,5 +427,52 @@
 		"code": "R3"
 		
 	}
-	]
+	],
+	"denominators": [
+	  {
+		"idA": "",
+		"idB": "",
+		"type": "un",
+		"criteria": 10,
+		"name": "Consistency with UN projection",
+		"code": "P1",
+		"maxLevel": 1
+	  },
+	  {
+		"idA": "",
+		"idB": "",
+		"type": "total",
+		"criteria": 10,
+		"name": "Total population",
+		"code": "P2",
+		"maxLevel": 2
+	  },
+	  {
+	  "idA": "",
+	  "idB": "",
+	  "type": "lb",
+	  "criteria": 10,
+	  "name": "Live births",
+	  "code": "P3",
+	  "maxLevel": 2
+	},
+	  {
+		"idA": "",
+		"idB": "",
+		"type": "ep",
+		"criteria": 10,
+		"name": "Expected pregnancies",
+		"code": "P4",
+		"maxLevel": 2
+	  },
+	  {
+		"idA": "",
+		"idB": "",
+		"type": "lt1",
+		"criteria": 10,
+		"name": "Children < 1 year",
+		"code": "P5",
+		"maxLevel": 2
+	  }
+  ]
 }

@@ -28,8 +28,6 @@
 	    //Edit
 	    else {
 	    	self.title = "Edit relation";
-	    	
-	    	self.title = "Add relation";
 	    	self.relation = {
 	    		"A": relation.A,
 	    		"B": relation.B,

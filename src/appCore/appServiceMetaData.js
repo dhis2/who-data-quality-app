@@ -1156,6 +1156,55 @@
 			return false;
 		}
 
+
+		self.getDataName = function(id) {
+			var deferred = $q.defer();
+
+			if (!id) {
+				deferred.resolve(null);
+			}
+			else {
+				self.getData(id).then(function (data) {
+					deferred.resolve(data.name);
+				});
+			}
+
+			return deferred.promise;
+
+		}
+
+		self.getData = function(id) {
+
+			var deferred = $q.defer();
+
+			requestService.getSingle('/api/dataElements.json?fields=name,id&filter=id:eq:' + id).then(
+				function(response) { //success
+					var data = response.data.dataElements;
+					if (data && data.length === 1) {
+						deferred.resolve(data[0]);
+					}
+					else {
+
+						requestService.getSingle('/api/indicators.json?fields=name,id&filter=id:eq:' + id)
+							.then(function(response) {
+								var data = response.data.indicators;
+								if (data && data.length === 1) {
+									deferred.resolve(data[0]);
+								}
+								else {
+									return null;
+								}
+							});
+
+					}
+				}
+			);
+
+			return deferred.promise;
+
+		}
+
+
 		self.isDQadmin = function() {
 			var deferred = $q.defer();
 			requestService.getSingle('/api/currentUser.json?fields=userCredentials[userRoles]').then(
