@@ -1,12 +1,5 @@
 <table style="width: 100%">
 	<tr  height="60px">
-		<td width="50px">
-			<button class="btn btn-primary no-print"
-					ng-click="dashCtrl.showParameters = !dashCtrl.showParameters; dashCtrl.setWindowWidth(); dashCtrl.updateCurrent();"
-					style="width: 40px">
-				<span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span>
-			</button>
-		</td>
 		<td>
 			<h4>Dashboard</h4>
 		</td>
@@ -17,10 +10,18 @@
 			</progressbar>
 			<p></p>
 		</td>
+		<td width="50px">
+			<button class="btn btn-primary no-print"
+					ng-click="dashCtrl.showParameters = !dashCtrl.showParameters; dashCtrl.setWindowWidth(); dashCtrl.updateCurrent();"
+					style="width: 40px; margin-left: 10px">
+				<span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span>
+			</button>
+		</td>
 	</tr>
 </table>
+
 <div style="width: 100%; display: inline-block;">
-	<div collapse="!dashCtrl.showParameters" class="well well-sm no-print" style="vertical-align: top; height: auto; margin-right: 10px; width: 320px; margin-top: 42px; float:left">
+	<div ng-show="dashCtrl.innerWidth <= 600" collapse="!dashCtrl.showParameters" class="well well-sm no-print" style="vertical-align: top; height: auto; width: 320px; clear: right">
 		<div style="height: auto;">
 			<label>Data</label>
 			<div ng-include="dashCtrl.partialGroupUrl">
@@ -35,7 +36,7 @@
 			</div>
 		</div>
 	</div>
-	<tabset justified="true" ng-style="{width: dashCtrl.contentWidth, 'display': 'inline-block', 'vertical-align': 'top', 'float': 'right'}">
+	<tabset justified="true" ng-style="{width: dashCtrl.contentWidth, 'display': 'inline-block', 'vertical-align': 'top', 'float': 'left'}">
 		<tab heading="Completeness" select="dashCtrl.selectedTab = 0; dashCtrl.makeCompletenessCharts();">
 			<div
 				style="display: inline-block; width: 100%; margin-top: 10px"
@@ -91,5 +92,19 @@
 			<outlier-result  result-control="dashCtrl.resultControl"></outlier-result>
 		</tab>
 	</tabset>
-
+	<div ng-show="dashCtrl.innerWidth > 600" collapse="!dashCtrl.showParameters" class="well well-sm no-print" style="vertical-align: top; height: auto; margin-left: 10px; width: 320px; margin-top: 42px; float:right">
+		<div style="height: auto;">
+			<label>Data</label>
+			<div ng-include="dashCtrl.partialGroupUrl">
+			</div>
+			<hr/>
+			<label>Period</label>
+			<div ng-include="dashCtrl.partialDateUrl">
+			</div>
+			<hr/>
+			<label>Orgunit</label>
+			<div ng-include="dashCtrl.partialOuUrl">
+			</div>
+		</div>
+	</div>
 </div>

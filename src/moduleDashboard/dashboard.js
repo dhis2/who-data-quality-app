@@ -325,9 +325,9 @@
 
 
 			var contentWidth = angular.element('.mainView').width();
-
 			//TODO: For now, assume there is a scrollbar - which on Win Chrome is 17 px
 			contentWidth -= 17;
+			self.innerWidth = contentWidth;
 
 			var chartWidth;
       		if (contentWidth <= 600) {
@@ -551,16 +551,24 @@
       	/** -- INIT -- */		
       	
       	function init() {
-			self.showParameters = false;
+
+			if (angular.element('.mainView').width() > 1280) {
+				self.showParameters = true;
+			}
+			else {
+				self.showParameters = false;
+			}
+
 			self.widthChanged = [];
-      		self.setWindowWidth();
+			for (var i = 0; i < 3; i++) {
+				self.widthChanged[i] = false;
+			}
+
+			self.setWindowWidth();
       		$( window ).resize(function() {
       			self.setWindowWidth();
 				$scope.$apply();
       		});
-			for (var i = 0; i < 3; i++) {
-				self.widthChanged[i] = false;
-			}
 
 			self.ouTreeInit();
       		
