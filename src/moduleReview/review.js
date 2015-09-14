@@ -5,8 +5,9 @@
 
 	angular.module('review').controller("ReviewController",
 	['metaDataService', 'periodService', 'mathService', 'requestService', 'dataAnalysisService', 'visualisationService',
-		'$timeout',
-	function(metaDataService, periodService, mathService, requestService, dataAnalysisService, visualisationService, $timeout) {
+		'dqAnalysisDenominator', '$timeout',
+	function(metaDataService, periodService, mathService, requestService, dataAnalysisService, visualisationService,
+			 dqAnalysisDenominator, $timeout) {
 		var self = this;    
 		
 	    init();
@@ -64,7 +65,10 @@
 	    		self.groups.unshift({'name': '[ Core ]', 'code': 'C'});
 	    		self.groupSelected = self.groups[0];
 	    	});
+
+			metaDataService.getMapping(false);
 	    }
+
 	    
 	  	
 	  	/** START ANALYSIS*/
@@ -133,6 +137,25 @@
 	  			
 	  			self.outstandingRequests++;
 	  		}
+
+
+
+			//4 Denominator consistency
+			var denominatorChecks = metaDataService.denominatorRelations();
+			for (var i = 0; i < denominatorChecks.length; i++) {
+
+				console.log(denominatorChecks[i]);
+
+				/*dqAnalysisDenominator.setData('qS7fMGPzLPi', 'zuSs1qGvT1M.aCBQR4JlxOR');
+				dqAnalysisDenominator.setPeriod(2014);
+				dqAnalysisDenominator.setOrgunit('LHNiyIWuLdc', null, null);
+				dqAnalysisDenominator.setType('un');
+
+				dqAnalysisDenominator.analyse().then(function(data) {
+					console.log(data);
+				});*/
+			}
+
 	  		
 	  		self.totalRequests = self.outstandingRequests;
 			

@@ -1,7 +1,7 @@
 
 (function(){
 	var app = angular.module('dataQualityApp',
-	['ngRoute', 'dashboard', 'review', 'consistencyAnalysis', 'outlierGapAnalysis', 'dataExport', 'admin', 'ui.select',
+	['d2',  'dqAnalysis', 'ngRoute', 'dashboard', 'review', 'consistencyAnalysis', 'outlierGapAnalysis', 'dataExport', 'admin', 'ui.select',
 		'ngSanitize', 'ui.bootstrap', 'nvd3', 'angularBootstrapNavTree']);
 	
 	/**Bootstrap*/
