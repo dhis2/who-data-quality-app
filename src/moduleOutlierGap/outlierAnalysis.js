@@ -1,6 +1,6 @@
 (function(){
 	
-	var app = angular.module('outlierGapAnalysis', []);
+	angular.module('outlierGapAnalysis', []);
 
 })();
 
