@@ -8,9 +8,11 @@
 		self.getMultiple = function(requestURLs) {
 			
 			var promises = requestURLs.map(function(request) {
+
 				//Cache analytics requests
 				var cache = false;
 //				if (request.indexOf("api/analytics") > -1); cache = true;
+
 				var fullURL = BASE_URL + request;
 		    	return $http.get(fullURL, {"cache": cache});
 		    });
@@ -28,6 +30,29 @@
 			var fullURL = BASE_URL + requestURL;	  	
 		  	return $http.get(fullURL, {"cache": cache});
 		};
+
+
+		self.getSingleData = function(requestURL) {
+			var deferred = $q.defer();
+
+			//Cache analytics requests
+			var cache = false;
+			//if (requestURL.indexOf("api/analytics") > -1); cache = true;
+
+			var fullURL = BASE_URL + requestURL;
+			$http.get(fullURL, {"cache": cache}).then(function(response) {
+				if (self.validResponse(response)) {
+					deferred.resolve(response.data);
+				}
+				else {
+					deferred.resolve(null);
+				}
+			});
+
+			return deferred.promise;
+		};
+
+
 		
 		self.getSingleLocal = function(requestURL) {  	
 		  	return $http.get(requestURL);
