@@ -1164,7 +1164,7 @@
 				deferred.resolve(null);
 			}
 			else {
-				self.getData(id).then(function (data) {
+				self.getD2Data(id).then(function (data) {
 					deferred.resolve(data.name);
 				});
 			}
@@ -1173,7 +1173,7 @@
 
 		}
 
-		self.getData = function(id) {
+		self.getD2Data = function(id) {
 
 			var deferred = $q.defer();
 
@@ -1241,6 +1241,20 @@
 			);
 
 			return deferred.promise;
+		}
+
+
+		self.denominatorRelations = function() {
+			if (!self.hasMapping()) return null;
+
+			var denominators = [];
+			for (var i = 0; i < mapping.denominators.length; i++) {
+				if (mapping.denominators[i].idA && mapping.denominators[i].idB) {
+					denominators.push(mapping.denominators[i]);
+				}
+			}
+			return denominators;
+
 		}
 
 		

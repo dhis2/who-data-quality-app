@@ -774,6 +774,8 @@
 					self.mapping.denominators.splice(i, 1);
 				}
 			}
+
+			saveMapping();
 		}
 
 

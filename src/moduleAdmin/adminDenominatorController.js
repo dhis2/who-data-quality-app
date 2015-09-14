@@ -17,6 +17,7 @@
 					{'name': 'Other', 'code': 'other'}
 				];
 				self.typeSelected = null;
+
 				self.dataTypes = [
 					{'name': 'Data element (total)', 'code': 'det'},
 					{'name': 'Data element (details)', 'code': 'ded'},
@@ -27,6 +28,7 @@
 
 				self.dataA;
 				self.dataB;
+
 				self.dataSearchResultA = [];
 				self.dataSearchResultB = [];
 
@@ -36,10 +38,10 @@
 					function(levels) {
 						self.levels = levels;
 
-						if (denominator && denominator.maxLevel) {
+						if (denominator && denominator.lowLevel) {
 							for (var i = 0; i < levels.length; i++) {
 
-								if (denominator.maxLevel === levels[i].level) {
+								if (denominator.lowLevel === levels[i].level) {
 									self.lowLevel = levels[i];
 								}
 
@@ -59,10 +61,10 @@
 				else {
 					self.title = "Edit denominator";
 					self.name = denominator.name;
-					metaDataService.getData(denominator.idA).then(function(data) {
+					metaDataService.getD2Data(denominator.idA).then(function(data) {
 						self.dataA = data;
 					});
-					metaDataService.getData(denominator.idB).then(function(data) {
+					metaDataService.getD2Data(denominator.idB).then(function(data) {
 						self.dataB = data;
 					});
 					self.typeSelected = getType(denominator.type);
