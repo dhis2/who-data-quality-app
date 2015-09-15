@@ -44,7 +44,13 @@
 				}
 
 				function arrayMerge(a, b) {
-					for (var i = 0; i < b.length; i++) {
+					if (a && !isArray(a)) a = [a];
+					if (b && !isArray(b)) b = [b];
+
+					if (!a && b) return b;
+					if (!b && a) return a;
+
+					for (var i = 0;a && b &&  i < b.length; i++) {
 						a.push(b[i]);
 					}
 					return a;
