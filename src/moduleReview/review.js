@@ -1,13 +1,12 @@
-
 (function(){
 	
 	angular.module('review', []);
 
 	angular.module('review').controller("ReviewController",
 	['metaDataService', 'periodService', 'mathService', 'requestService', 'dataAnalysisService', 'visualisationService',
-		'dqAnalysisDenominator', '$timeout',
+		'dqAnalysisConsistency', '$timeout',
 	function(metaDataService, periodService, mathService, requestService, dataAnalysisService, visualisationService,
-			 dqAnalysisDenominator, $timeout) {
+			 dqAnalysisConsistency, $timeout) {
 		var self = this;    
 		
 	    init();
@@ -55,7 +54,8 @@
 	    		});
 	    		
 	    	});
-	    	
+
+
 	    	//Get mapped data
 	    	requestService.getSingle('/api/systemSettings/DQAmapping').then(function(response) {
 	    		
@@ -66,17 +66,17 @@
 	    		self.groupSelected = self.groups[0];
 	    	});
 
+
 			metaDataService.getMapping(false);
 	    }
 
-	    
 	  	
 	  	/** START ANALYSIS*/
 	  	self.doAnalysis = function() {
 	  		
 	  		clearResults();
-	  		self.outstandingRequests = 0;		  		
-	  		
+	  		self.outstandingRequests = 0;
+
 	  		//Metadata for queries
 	  		var datasets = datasetsForAnalysis();
 	  		var indicators = indicatorsForAnalysis();
@@ -139,22 +139,41 @@
 	  		}
 
 
-
 			//4 Denominator consistency
-			var denominatorChecks = metaDataService.denominatorRelations();
+			var denominator, denominatorChecks = metaDataService.denominatorRelations();
 			for (var i = 0; i < denominatorChecks.length; i++) {
+				denominator = denominatorChecks[i];
 
-				console.log(denominatorChecks[i]);
+				dqAnalysisConsistency.analyse(denominator.idA, denominator.idB, period, null, ouBoundary, ouLevel, null, 'data', 'eq', denominator.criteria)
+					.then(function(data) {
 
-				/*dqAnalysisDenominator.setData('qS7fMGPzLPi', 'zuSs1qGvT1M.aCBQR4JlxOR');
-				dqAnalysisDenominator.setPeriod(2014);
-				dqAnalysisDenominator.setOrgunit('LHNiyIWuLdc', null, null);
-				dqAnalysisDenominator.setType('un');
+						self.outstandingRequests--;
 
-				dqAnalysisDenominator.analyse().then(function(data) {
-					console.log(data);
-				});*/
+						if (data.errors) self.remarks = self.remarks.concat(data.errors);
+
+						//Check type and format data accordingly for charts
+						if (data.result.type === 'do') {
+							visualisationService.makeDropoutRateChart(null, data.result);
+						}
+						else {
+							visualisationService.makeDataConsistencyChart(null, data.result);
+						}
+
+						if (denominator.type != 'un') {
+							self.denominators.relations.push(data.result);
+						}
+						else {
+							self.denominators.un = data.result;
+						}
+
+						console.log(self.denominators);
+
+				});
+
+				self.outstandingRequests++;
 			}
+
+
 
 	  		
 	  		self.totalRequests = self.outstandingRequests;
@@ -185,6 +204,11 @@
   			
   			self.dataConsistencyChart = {};
   			self.datasetConsistencyChart = {};
+
+			self.denominators = {
+				'un': null,
+				'relations': []
+			};
   			
   			self.remarks = [];
 	  	}
