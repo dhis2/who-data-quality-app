@@ -161,6 +161,11 @@
 				return self.round((self.z*(value-stats.median))/stats.MAD, 2);
 			}	
 		};
+
+		self.dropOutRate = function (valueA, valueB) {
+			if (valueA === valueB) return 0; //Deals with cases where both are 0
+			return (valueA - valueB) / valueA;
+		}
 		
 		
 				

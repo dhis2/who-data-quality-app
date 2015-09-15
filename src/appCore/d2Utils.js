@@ -8,7 +8,8 @@
 					isNumber: isNumber,
 					isArray: isArray,
 					toArray: toArray,
-					arrayRemoveDuplicates: arrayRemoveDuplicates
+					arrayRemoveDuplicates: arrayRemoveDuplicates,
+					arrayMerge: arrayMerge
 				};
 
 
@@ -40,6 +41,13 @@
 					return array.filter(function(item) {
 						return seen.hasOwnProperty(item) ? false : (seen[item] = true);
 					});
+				}
+
+				function arrayMerge(a, b) {
+					for (var i = 0; i < b.length; i++) {
+						a.push(b[i]);
+					}
+					return a;
 				}
 
 
