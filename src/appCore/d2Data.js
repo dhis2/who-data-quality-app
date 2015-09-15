@@ -6,38 +6,26 @@
 
 				//Define factory API
 				var service = {
-					reset: reset,
 					addRequest: addRequest,
 					fetch: fetch,
 					value: dataValue,
-					name: name,
-					data: data
+					name: name
 				};
 
 				//Private variables
-				var requests = [];
+				var _newRequests = [];		//Store new requests
+				var _requestBatches = [];	//Batches of requests are queued here
+				var _currentBatch;			//Batch currently being fetched
+
 				var receivedData = [];
-				var mergedData = {};
-				var deferred;
-				var remaining;
+				var mergedData;
+
 
 				/**
 				 * === === === === === ===
 				 * PUBLIC FUNCTIONS
 				 * === === === === === ===
 				 */
-
-				/**
-				 * Reset all parameters and the result, so that the factory can be re-used.
-				 */
-				function reset() {
-					requests = [];
-					receivedData = [];
-					mergedData = {};
-					deferred = null;
-					remaining = 0;
-				};
-
 
 				/**
 				 * Add request for data to be fetched
@@ -50,15 +38,14 @@
 				 */
 				function addRequest(dx, pe, ouBoundary, ouLevel, ouGroup) {
 
-					var newRequests = makeRequestURLs(
+					_newRequests = d2Utils.arrayMerge(_newRequests,
+						makeRequestURLs(
 						d2Utils.toArray(dx),
 						d2Utils.toArray(pe),
 						d2Utils.toArray(ouBoundary),
 						ouLevel,
 						ouGroup
-					);
-
-					requests.push.apply(requests, newRequests);
+					));
 
 				};
 
@@ -69,14 +56,14 @@
 				 * @returns {* promise}
 				 */
 				function fetch() {
-					remaining = requests.length;
-					if (remaining === 0) return null;
 
-					deferred = $q.defer();
+					var newBatch = new Batch(_newRequests);
+					_requestBatches.push(newBatch);
+					_newRequests = [];
 
-					fetchNextRequest();
+					if (!_currentBatch) fetchNextRequest();
 
-					return deferred.promise;
+					return newBatch.promise();
 				};
 
 
@@ -137,42 +124,6 @@
 					return name;
 				}
 
-
-				/**
-				 * Get all orgunits. Accepts options "exception" parameter to exclude certain orgunits
-				 *
-				 * @param exception 	(Array of) orgunit IDs not to include, typically boundary orgunit IDs
-				 */
-				function orgunits(exceptions) {
-					exceptions = d2Utils.toArray(exceptions);
-
-					var filteredOrgunits = [];
-					var orgunits = mergedData.metaData.ou;
-					for (var i = 0; i < orgunits.length; i++) {
-
-						var include = true;
-						for (var j = 0; j < exceptions.length; j++) {
-							if (orgunits[i] === exceptions[j]) {
-								include = false;
-							}
-						}
-
-						if (include) filteredOrgunits.push(orgunits[i]);
-					}
-
-					return filteredOrgunits;
-
-				}
-
-
-				/**
-				 * Get result set (all data)
-				 *
-				 * @returns {Object} 	Result set
-				 */
-				function data() {
-					return mergedData;
-				}
 
 
 				/**
@@ -243,14 +194,28 @@
 				 */
 				function fetchNextRequest() {
 
-					var request = requests.pop();
+
+					//Need to get new batch
+					if (!_currentBatch) {
+						_currentBatch = _requestBatches.pop();
+						if (!_currentBatch) return;
+					}
+
+					//Get next request in batch
+					var request = _currentBatch.request();
+					if (!request) return;
+
 					requestService.getSingleData(request).then( function(data) {
 
 						if (data) receivedData.push(data);
 
-						if (--remaining === 0) {
+
+						//Current batch is done - merge the data we have so far, and fulfill the promise
+						if (_currentBatch.done()) {
 							mergeAnalyticsResults();
+							resolveCurrentBatch();
 						}
+						//We are not done, so fetch the next
 						else {
 							fetchNextRequest();
 						}
@@ -266,22 +231,25 @@
 				 */
 				function mergeAnalyticsResults() {
 
-					mergedData = {
-						headers: [
-							{name: 'dx'},
-							{name: 'co'},
-							{name: 'ou'},
-							{name: 'pe'},
-							{name: 'value'}
-						],
-						metaData: {
-							co: [],
-							dx: [],
-							names: {},
-							ou: [],
-							pe: []
-						},
-						rows: []
+					//Create "skeleton" if it does not exist
+					if (!mergedData) {
+						mergedData = {
+							headers: [
+								{name: 'dx'},
+								{name: 'co'},
+								{name: 'ou'},
+								{name: 'pe'},
+								{name: 'value'}
+							],
+							metaData: {
+								co: [],
+								dx: [],
+								names: {},
+								ou: [],
+								pe: []
+							},
+							rows: []
+						}
 					}
 
 					for (var i = 0; i < receivedData.length; i++) {
@@ -331,8 +299,51 @@
 					mergedData.metaData.ou = d2Utils.arrayRemoveDuplicates(mergedData.metaData.ou);
 					mergedData.metaData.pe = d2Utils.arrayRemoveDuplicates(mergedData.metaData.pe);
 
-					//We are done here, and can return the result.
-					deferred.resolve(mergedData);
+					//Clear the data we have now merged
+					receivedData = [];
+				}
+
+
+				/**
+				 * Call when data for the current batch has been fetched and merged.
+				 * Resolves the data promise, clears the current batch, and calls for more data
+				 */
+				function resolveCurrentBatch() {
+					_currentBatch.resolve(mergedData);
+					_currentBatch = null;
+					fetchNextRequest();
+				}
+
+
+
+				/** === BATCH CLASS ===
+				 * Class used to store "batches" of requests. Has an array of requests and a promise, with methods
+				 * to query and access these.
+				 */
+
+				function Batch(requests) {
+					this._requests = requests;
+					this._deferred = $q.defer();
+				}
+
+				Batch.prototype.promise = function() {
+					return this._deferred.promise;
+				}
+
+				Batch.prototype.resolve = function(data) {
+					this._deferred.resolve(data);
+				}
+
+				Batch.prototype.request = function() {
+					return this._requests.pop();
+				}
+
+				Batch.prototype.done = function() {
+					return this._requests.length === 0 ? true : false;
+				}
+
+				Batch.prototype.id = function() {
+					return this._id;
 				}
 
 
