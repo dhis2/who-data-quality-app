@@ -1,17 +1,11 @@
 (function(){
 	'use strict';
 
-	angular.module('dqAnalysis').factory('dqAnalysisDenominator',
-		['d2Data', 'd2Utils', 'mathService', '$q',
-			function (d2Data, d2Utils, mathService, $q) {
+	angular.module('dqAnalysis').factory('dqAnalysisConsistency',
+		['d2Data', 'd2Meta', 'd2Utils', 'mathService', '$q',
+			function (d2Data, d2Meta, d2Utils, mathService, $q) {
 
 				var service = {
-					reset: reset,
-					setData: setData,
-					setPeriod: setPeriod,
-					setOrgunit: setOrgunit,
-					setType: setType,
-					validParameters: validParameters,
 					analyse: analyse
 				};
 
@@ -25,78 +19,115 @@
 				var _consistencyType;
 				var _analysisType;
 				var _criteria;
+				var _deferred;
 
-				var deferred;
+				var requests = [];
+				var request = null;
+				var _pendingRequest = false;
+				var subunits;
 
-
-				/** === GETTERS AND SETTERS === */
-				function reset() {
-					_dxA = null;
-					_dxB = null;
-					_pe = null;
-					_peRef = null;
-					_ouBoundary = null;
-					_ouLevel = null;
-					_ouGroup = null;
-					_consistencyType = null;
-					_analysisType = null;
-					deferred = null;
-				};
-
-
-				function setData(dxA, dxB) {
-					_dxA = dxA;
-					_dxB = dxB;
-				};
-
-
-				function setPeriod(pe, peRef) {
-					_pe = pe;
-					_peRef = peRef;
-				};
-
-
-				function setOrgunit(ouBoundary, ouLevel, ouGroup) {
-					_ouBoundary = ouBoundary;
-					_ouLevel = ouLevel;
-					_ouGroup = ouGroup;
-				};
-
-
-				function setType(analysisType, consistencyType, criteria) {
-					_consistencyType = consistencyType;
-					_analysisType = analysisType;
-					_criteria = criteria;
-				};
-
-
-
-				function validParameters() {
-					if (_dxA && _dxB && _pe && _ouBoundary) return true;
-					else return false;
-				};
-
-
-				function analyse() {
-					deferred = $q.defer();
-
-					requestData();
-
-					return deferred.promise;
-				};
-
-
-				/** === ANALYSIS === */
 
 				/**
-				 * Check consistency of total population with UN population.
-				 * Assumes both are stored as data elements or indicators in DHIS.
+				 * === === === === === ===
+				 * PUBLIC FUNCTIONS
+				 * === === === === === ===
+				 */
+
+
+				/**
+				 * Start analysis according to passed parameters
+				 *
+				 * @param dxA				data a
+				 * @param dxB				data b, null when consistencyType is 'time'
+				 * @param pe				period
+				 * @param peRef				reference periods, nulle when consistencyType is 'data'
+				 * @param ouBoundary		boundary orgunit
+				 * @param ouLevel			orgunit level
+				 * @param ouGroup			orgunit group - level is used if both level and group is specified
+				 * @param consistencyType	'time' or 'data' consistency
+				 * @param analysisType		specific type of 'time' or 'data' consistency check, i.e. dropout rate
+				 * @param criteria			criteria for when subnational units are counted as outlier
+				 * @returns {*}
+				 */
+				function analyse(dxA, dxB, pe, peRef, ouBoundary, ouLevel, ouGroup, consistencyType, analysisType, criteria) {
+
+					//Store a new request object and queue it
+					var newRequest = {
+						'dxA': dxA,
+						'dxB': dxB,
+						'pe': pe,
+						'peRef': d2Utils.toArray(peRef),
+						'ouBoundary': ouBoundary,
+						'ouLevel': ouLevel,
+						'ouGroup': ouGroup,
+						'consistencyType': consistencyType,
+						'analysisType': analysisType,
+						'criteria': criteria,
+						'deferred': $q.defer()
+					};
+					requests.push(newRequest);
+
+					//Request data needed for the analysis
+					requestData();
+
+					//Return promise of data
+					return newRequest.deferred.promise;
+				};
+
+
+
+				/**
+				 * === === === === === ===
+				 * PRIVATE FUNCTIONS
+				 * === === === === === ===
+				 */
+
+
+				/**
+				 * Gets the next request from the queue of requests, and requests if from the d2Data factory
 				 */
 				function requestData() {
 
+					//Check if we already have pending data, in which case we wait
+					if (_pendingRequest) return;
+
+					//Load next request from queue
+					var request = requests.pop();
+					if (!request) return;
+
+					//We are now busy
+					_pendingRequest = true;
+
+					//Read parameters for the next request
+					_dxA = request.dxA;
+					_dxB = request.dxB;
+					_pe = request.pe;
+					_peRef = request.peRef;
+					_ouBoundary = request.ouBoundary;
+					_ouLevel = request.ouLevel;
+					_ouGroup = request.ouGroup;
+					_consistencyType = request.consistencyType;
+					_analysisType = request.analysisType;
+					_criteria = request.criteria;
+					_deferred = request.deferred;
+
+					//Make sure we include all periods in our request
 					var pe = d2Utils.arrayMerge(_pe, _peRef);
+
+					//Add request for boundary data
+					d2Data.addRequest([_dxA, _dxB], pe, _ouBoundary, null, null);
+
+					//Add request for subunit data
 					d2Data.addRequest([_dxA, _dxB], pe, _ouBoundary, _ouLevel, _ouGroup);
-					d2Data.fetch().then(function(data) {
+
+					//Request data and orgunit data
+					var promises = [];
+					promises.push(d2Data.fetch());										//Request data
+					promises.push(d2Meta.orgunitIDs(_ouBoundary, _ouLevel, _ouGroup));	//Request list of orgunits
+					$q.all(promises).then(function(datas) {
+
+						//Store subunits
+						subunits = datas[1].subunits;
 
 						if (_consistencyType === 'data') {
 							dataConsistencyAnalysis();
@@ -105,6 +136,7 @@
 							timeConsistencyAnalysis();
 						}
 					});
+
 				}
 
 
@@ -164,12 +196,19 @@
 					result.criteria = _criteria;
 					//result.relationCode = relationCode;
 
-					deferred.resolve({'result': result, 'errors': errors});
+
+					//Resolve current promise
+					_deferred.resolve({'result': result, 'errors': errors});
+
+
+					//Get next request
+					_pendingRequest = false;
+					requestData();
 				}
 
 
 				/**
-				 * Performs data consistnecy analysis for the subunits
+				 * Performs data consistency analysis on the subunits
 				 *
 				 * @param boundaryRatio
 				 * @returns {{ignored: Array, nonOutlierCount: number, outlierCount: number, outlierNames: Array, datapoints: Array}}
@@ -184,7 +223,6 @@
 						datapoints: []
 					}
 
-					var subunits = d2Data.orgunits(_ouBoundary);
 					for (var j = 0; j < subunits.length; j++) {
 						var subunit = subunits[j];
 
@@ -223,10 +261,11 @@
 
 					}
 					subunitData.error = makeSubunitError(subunitData.ignored);
-
 					return subunitData;
 				}
 
+
+				
 
 				/**
 				 * Calculates the ratio and percentage based on the given analysis type and criteria
