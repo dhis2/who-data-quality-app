@@ -150,6 +150,7 @@
 
 	div.reportPart { /* Make it possible to start new "parts" of the report on new page */
 		page-break-after: always;
+		page-break-before: always;
 	}
 
 	.noBreak { /* Elements with this class will not be spread across pages*/
@@ -179,9 +180,8 @@
 
 
 
-
 	/* TABLES */
-	.table {
+	.tablePrint {
 		width: 100%;
 		border: 1px solid darkgray !important;
 		margin-bottom: 20px;
@@ -189,13 +189,13 @@
 		font-size: 11px;
 	}
 
-	.table th {
+	.tablePrint th {
 		background-color: white !important;
 		border: 1px solid darkgray !important;
 		padding: 3px;
 	}
 
-	.table td {
+	.tablePrint td {
 		border: 1px solid darkgray !important;
 		padding: 3px;
 		vertical-align: top;
