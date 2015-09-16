@@ -20,6 +20,7 @@
 				var _analysisType;
 				var _criteria;
 				var _deferred;
+				var _meta;
 
 				var requests = [];
 				var request = null;
@@ -47,9 +48,10 @@
 				 * @param consistencyType	'time' or 'data' consistency
 				 * @param analysisType		specific type of 'time' or 'data' consistency check, i.e. dropout rate
 				 * @param criteria			criteria for when subnational units are counted as outlier
+				 * @param meta				object that is simply passed on in the result, for various metadata
 				 * @returns {*}
 				 */
-				function analyse(dxA, dxB, pe, peRef, ouBoundary, ouLevel, ouGroup, consistencyType, analysisType, criteria) {
+				function analyse(dxA, dxB, pe, peRef, ouBoundary, ouLevel, ouGroup, consistencyType, analysisType, criteria, meta) {
 
 					//Store a new request object and queue it
 					var newRequest = {
@@ -63,6 +65,7 @@
 						'consistencyType': consistencyType,
 						'analysisType': analysisType,
 						'criteria': criteria,
+						'meta': meta,
 						'deferred': $q.defer()
 					};
 					requests.push(newRequest);
@@ -109,6 +112,7 @@
 					_consistencyType = request.consistencyType;
 					_analysisType = request.analysisType;
 					_criteria = request.criteria;
+					_meta = request.meta;
 					_deferred = request.deferred;
 
 					//Make sure we include all periods in our request
@@ -194,6 +198,7 @@
 					result.pe = _pe;
 					result.type = _analysisType;
 					result.criteria = _criteria;
+					result.meta = _meta;
 					//result.relationCode = relationCode;
 
 
@@ -265,7 +270,7 @@
 				}
 
 
-				
+
 
 				/**
 				 * Calculates the ratio and percentage based on the given analysis type and criteria
