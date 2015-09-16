@@ -1,42 +1,43 @@
 <h3 class="no-print" style="margin-top: 20px;">Annual Data Quality Report</h3>
 
 <!-- Parameter selection-->
-<div class="no-print" ng-if="!revCtrl.notPossible">
+<div class="no-print well" ng-if="!revCtrl.notPossible">
 	<span style="white-space:nowrap;"><label>Year:</label>
 	<ui-select ng-model="revCtrl.yearSelected" theme="bootstrap" style="width: 100px; display: inline-block;">
-	  <ui-select-match placeholder="Select year...">
+	 <ui-select-match placeholder="Select year...">
 		{{revCtrl.yearSelected.name}}
-	  </ui-select-match>
-	  <ui-select-choices
+	 </ui-select-match>
+	 <ui-select-choices
 		repeat="obj in revCtrl.years | filter: $select.search">
 			<div ng-bind-html="obj.name | highlight: $select.search"></div>
-	  </ui-select-choices>
+	 </ui-select-choices>
 	</ui-select></span>
 	<span style="white-space:nowrap;"><label>Level:</label>
 	<ui-select ng-model="revCtrl.orgunitLevelSelected" theme="bootstrap" style="width: 200px; display: inline-block;">
-	  <ui-select-match placeholder="Select level...">
+	 <ui-select-match placeholder="Select level...">
 		{{revCtrl.orgunitLevelSelected.name}}
-	  </ui-select-match>
-	  <ui-select-choices
+	 </ui-select-match>
+	 <ui-select-choices
 		repeat="obj in revCtrl.orgunitLevels | filter: $select.search">
 			<div ng-bind-html="obj.name | highlight: $select.search"></div>
-	  </ui-select-choices>
+	 </ui-select-choices>
 	</ui-select></span>
 	<span style="white-space:nowrap;"><label>Group:</label>
 	<ui-select ng-model="revCtrl.groupSelected" theme="bootstrap" style="min-width: 200px; display: inline-block;">
-	  <ui-select-match placeholder="Select group...">
+	 <ui-select-match placeholder="Select group...">
 		{{revCtrl.groupSelected.name}}
-	  </ui-select-match>
-	  <ui-select-choices
+	 </ui-select-match>
+	 <ui-select-choices
 		repeat="obj in revCtrl.groups | filter: $select.search">
 			<div ng-bind-html="obj.name | highlight: $select.search"></div>
-	  </ui-select-choices>
+	 </ui-select-choices>
 	</ui-select></span>
-	<button ng-disabled="!self.userOrgunit && !revCtrl.orgunitLevelSelected && !revCtrl.groupSelected" style="display: inline-block;" class="btn btn-primary pull-right" ng-click="revCtrl.doAnalysis();">Generate</button>
+	<div class="inline pull-right">
+		<button ng-disabled="!self.userOrgunit && !revCtrl.orgunitLevelSelected && !revCtrl.groupSelected"class="btn btn-primary inline" ng-click="revCtrl.doAnalysis();">Generate</button>
+		<button ng-disabled="!(revCtrl.outstandingRequests === 0 && revCtrl.totalRequests != 0)" class="btn btn-primary inline" ng-click="revCtrl.doPrint();">Print</button>
+	</div>
 
 </div>
-
-<hr class="no-print"/>
 
 <div ng-if="revCtrl.outstandingRequests != 0">
 	<h5>Loading data...</h5>
@@ -65,7 +66,6 @@
 		<svg width="200px" height="228px">
 			<rect width="200px" height="228px" style="fill:red;"/>
 		</svg>
-
 	</div>
 	<div style="display: inline-block; width: 650px; vertical-align: top; ">
 		<h2 style="text-align: center; margin-top: 500px; margin-left: 100px; width: 400px;">Assessment of Health Facility Data Quality</h2>
@@ -74,9 +74,8 @@
 	</div>
 </div>
 
-<div class="reviewResult" ng-if="revCtrl.outstandingRequests === 0 && revCtrl.totalRequests != 0">
-	<button style="display: inline-block;" class="btn btn-primary pull-right no-print" ng-click="revCtrl.doPrint();">Print</button>
-	
+
+<div class="reviewResult reportPart" ng-if="revCtrl.outstandingRequests === 0 && revCtrl.totalRequests != 0">
 	<!--SUMMARY-->
 	<div class="reportPart">
 		<h3>Summary</h3>
@@ -84,7 +83,7 @@
 			<div class="noBreak">
 				<h5>1 Completeness</h5>
 				<em>1a Completeness of facility reporting.</em> The percentage of expected reports that have been entered and completed.
-				<table style="font-size: 90%;" class="table table-bordered table-condensed tablePrint noBreak">
+				<table style="" class="table table-bordered table-condensed noBreak">
 					<tbody>
 						<tr bgcolor="#f9f9f9">
 							<th width="275">Dataset</th>
@@ -104,7 +103,7 @@
 
 			<div class="noBreak">
 				<em>1b Completeness of indicator data (missing or zero values)</em>
-				<table style="font-size: 90%;" class="table table-bordered table-condensed tablePrint noBreak">
+				<table style="" class="table table-bordered table-condensed noBreak">
 					<tbody>
 						<tr bgcolor="#f9f9f9">
 							<th width="275">Dataset</th>
@@ -124,7 +123,7 @@
 
 			<div class="noBreak">
 				<em>1c Consistency of dataset completeness over time. </em>Completeness of datasets in {{revCtrl.yearSelected.id}} compared to previous three years.
-				<table style="font-size: 90%;" class="table table-bordered table-condensed tablePrint noBreak">
+				<table style="" class="table table-bordered table-condensed noBreak">
 					<tbody>
 						<tr bgcolor="#f9f9f9">
 							<th width="275">Dataset</th>
@@ -145,7 +144,7 @@
 			<div class="noBreak">
 				<h5>2 Internal consistency</h5>
 				<em>2a Extreme outliers.</em>
-				<table style="font-size: 90%;" class="table table-bordered table-condensed tablePrint noBreak">
+				<table style="" class="table table-bordered table-condensed noBreak">
 					<tbody>
 						<tr bgcolor="#f9f9f9">
 							<th width="275">Indicator</th>
@@ -165,7 +164,7 @@
 
 			<div class="noBreak">
 				<em>2b Moderate outliers.</em> Outliers relative to the mean.
-				<table style="font-size: 90%;" class="table table-bordered table-condensed tablePrint noBreak">
+				<table style="" class="table table-bordered table-condensed noBreak">
 					<tbody>
 						<tr bgcolor="#f9f9f9">
 							<th width="275">Indicator</th>
@@ -185,7 +184,7 @@
 
 			<div class="noBreak">
 				<em>2c Moderate outliers.</em> Outliers relative to the median (modified Z-score > 3.5).
-				<table style="font-size: 90%;" class="table table-bordered table-condensed tablePrint noBreak">
+				<table style="" class="table table-bordered table-condensed noBreak">
 					<tbody>
 						<tr bgcolor="#f9f9f9">
 							<th width="275">Indicator</th>
@@ -205,7 +204,7 @@
 
 			<div class="noBreak">
 				<em>2d Consistency over time.</em>
-				<table style="font-size: 90%;" class="table table-bordered table-condensed tablePrint noBreak">
+				<table style="" class="table table-bordered table-condensed noBreak">
 					<tbody>
 						<tr bgcolor="#f9f9f9">
 							<th width="275">Indicator</th>
@@ -225,7 +224,7 @@
 
 			<div class="noBreak">
 				<em>2e Consistency between related indicators.</em>
-				<table style="font-size: 90%;" class="table table-bordered table-condensed tablePrint">
+				<table style="" class="table table-bordered table-condensed ">
 					<tbody>
 						<tr bgcolor="#f9f9f9">
 							<th width="275">Indicator</th>
@@ -250,8 +249,8 @@
 		<h3>Completeness</h3>
 
 		<div class="noBreak">
-			<em>1a  Completeness of facility reporting.</em><br />The percentage of expected reports that have been entered and completed.
-			<table style="font-size: 90%;" class="table table-bordered table-condensed tablePrint">
+			<em>1a Completeness of facility reporting.</em><br />The percentage of expected reports that have been entered and completed.
+			<table style="" class="table table-bordered table-condensed ">
 				<thead>
 					<tr bgcolor="#f9f9f9">
 						<th width="200">Dataset</th>
@@ -282,8 +281,8 @@
 		</div>
 
 		<div class="noBreak">
-			<em>1b  Completeness of indicator data (missing/zero values).</em>
-			<table style="font-size: 90%;" class="table table-bordered table-condensed tablePrint">
+			<em>1b Completeness of indicator data (missing/zero values).</em>
+			<table style="" class="table table-bordered table-condensed ">
 				<tbody>
 					<tr bgcolor="#f9f9f9">
 						<th width="200">Indicator</th>
@@ -309,8 +308,8 @@
 		</div>
 
 		<div class="noBreak">
-			<em>1c  Consistency of dataset completeness over time.</em><br />Difference between the current year completeness and either the average of the 3 preceding years (if expected trend is constant), or the forecasted value.
-			<table style="font-size: 90%;" class="table table-bordered table-condensed tablePrint">
+			<em>1c Consistency of dataset completeness over time.</em><br />Difference between the current year completeness and either the average of the 3 preceding years (if expected trend is constant), or the forecasted value.
+			<table style="" class="table table-bordered table-condensed ">
 				<tr bgcolor="#f9f9f9">
 					<th width="200">Dataset</th>
 					<th width="80">Expected trend</th>
@@ -351,8 +350,8 @@
 		<h3>Internal Consistency</h3>
 
 		<div class="noBreak">
-			<em>2a  Extreme outliers.</em>
-			<table style="font-size: 90%;" class="table table-bordered table-condensed tablePrint">
+			<em>2a Extreme outliers.</em>
+			<table style="" class="table table-bordered table-condensed ">
 				<tbody>
 					<tr bgcolor="#f9f9f9">
 						<th width="200">Indicator</th>
@@ -378,8 +377,8 @@
 		</div>
 
 		<div class="noBreak">
-			<em>2b  Moderate outliers.</em>
-			<table style="font-size: 90%;" class="table table-bordered table-condensed tablePrint">
+			<em>2b Moderate outliers.</em>
+			<table style="" class="table table-bordered table-condensed ">
 				<tbody>
 					<tr bgcolor="#f9f9f9">
 						<th width="200">Indicator</th>
@@ -406,8 +405,8 @@
 		</div>
 
 		<div class="noBreak">
-			<em>2c  Moderate outliers.</em> Based on median (modified Z score).
-			<table style="font-size: 90%;" class="table table-bordered table-condensed tablePrint">
+			<em>2c Moderate outliers.</em> Based on median (modified Z score).
+			<table style="" class="table table-bordered table-condensed ">
 				<tbody>
 					<tr bgcolor="#f9f9f9">
 						<th width="200">Indicator</th>
@@ -433,8 +432,8 @@
 		</div>
 
 		<div class="noBreak">
-			<em>2d  Consistency of indicator values over time.</em><br />Difference between the current year and either the average of the 3 preceding years (if expected trend is constant), or the forecasted value.
-			<table style="font-size: 90%;" class="table table-bordered table-condensed tablePrint">
+			<em>2d Consistency of indicator values over time.</em><br />Difference between the current year and either the average of the 3 preceding years (if expected trend is constant), or the forecasted value.
+			<table style="" class="table table-bordered table-condensed ">
 				<tr bgcolor="#f9f9f9">
 					<th width="200">Indicator</th>
 					<th width="80">Expected trend</th>
@@ -467,7 +466,7 @@
 		</div>
 
 		<div style="width: 100%; margin-top: 30px; margin-bottom: 30px; display: inline-block;">
-			<div class="noBreak chartHolder elementHalfWidth"
+			<div class="noBreak chartHolder halfWidth"
 				ng-repeat="indicator in revCtrl.consistency.data | orderBy:'dxName'"
 				style="border: 1px dashed gray; display: inline-block;">
 
@@ -479,12 +478,14 @@
 		</div>
 
 
-		<div class="noBreak"
-			 style="display: inline-block; width: 100%; margin-bottom: 10px;"
+		<div class="noBreak inline fullWidth"
+			 style="margin-bottom: 10px;"
 			 ng-repeat="relation in revCtrl.consistency.relations track by $index | orderBy:'name'">
-			<em ng-if="$index === 0" style="display: inline-block; width: 100%;">2e  Consistency between related indicators</em>
-			<div class="elementHalfWidth relationTableHolderPrint" style="display: inline-block;">
-				<table style="font-size: 90%; margin-bottom: 10px;" class="table table-bordered table-condensed tablePrint">
+
+			<em ng-if="$index === 0" class="inline fullWidth">2e Consistency between related indicators</em>
+
+			<div class="inline relationTable halfWidth">
+				<table class="table table-bordered table-condensed">
 					<tr bgcolor="#f9f9f9"><th colspan="2">{{revCtrl.relationName(relation.relationCode)}}</th></tr>
 						<tr>
 							<td>Year</td>
@@ -519,12 +520,75 @@
 					</tr>
 				</table>
 			</div>
-			<div class="elementHalfWidth relationChartPrint"
-				 style="vertical-align: top; border: 1px dashed gray; display: inline-block; margin-bottom: 10px; height: 302px;">
-				<nvd3 options='relation.chartOptions' data='relation.chartData'></nvd3>
+			<div class="halfWidth inline">
+				<div class="dottedBox relationChart">
+					<nvd3 options='relation.chartOptions' data='relation.chartData'></nvd3>
+				</div>
 			</div>
 
-			<h5 style="margin-top: 5px;">Interpretations</h5>
+			<h5 style="margin-top: 10px;">Interpretations</h5>
+			<textarea class="interpretation"></textarea>
+		</div>
+	</div>
+
+
+	<div class="reportPart">
+		<h3>Consistency of Population Data</h3>
+
+		<div class="noBreak">
+			<em>3a Consistency with UN population projection.</em>
+			<table class="table table-bordered table-condensed ">
+				<tr>
+					<td>Ratio of population projection of live births from the Bureau of Statistics to a UN live births projection</td>
+					<td ng-if="revCtrl.denominators.un">{{revCtrl.denominators.un.boundaryRatio}}</td>
+					<td ng-if="!revCtrl.denominators.un">Unavailable</td>
+				</tr>
+			</table>
+		</div>
+
+
+		<div class="noBreak inline fullWidth"
+			 style="margin-bottom: 10px;"
+			 ng-repeat="denominator in revCtrl.denominators.relations track by $index | orderBy:'name'">
+			<em ng-if="$index === 0" class="inline fullWidth">3b Consistency of denominators</em>
+			<div class="inline relationTable halfWidth">
+				<table class="table table-bordered table-condensed">
+					<tr bgcolor="#f9f9f9"><th colspan="2">{{denominator.meta.name}}</th></tr>
+					<tr>
+						<td>Year</td>
+						<td>{{revCtrl.yearSelected.name}}</td>
+					</tr>
+					<tr>
+						<td>Quality threshold</td>
+						<td>{{denominator.criteria}}</td>
+					</tr>
+					<tr>
+						<td>National score</td>
+						<td>{{denominator.boundaryPercentage}}%</td>
+					</tr>
+					<tr>
+						<td># {{revCtrl.orgunitLevelSelected.name}}s with poor score</td>
+						<td>{{denominator.subunitsOutsideThreshold}}</td>
+					</tr>
+					<tr>
+						<td>% {{revCtrl.orgunitLevelSelected.name}}s with poor score</td>
+						<td>{{denominator.subunitViolationPercentage}}%</td>
+					</tr>
+					<tr ng-if="denominator.subunitViolationNames.length > 0">
+						<td colspan="2">Names:</td>
+					</tr>
+					<tr class="biggerRow" ng-if="denominator.subunitViolationNames.length > 0">
+						<td colspan="2">{{denominator.subunitViolationNames.join(', ')}}</td>
+					</tr>
+				</table>
+			</div>
+			<div class="halfWidth inline">
+				<div class="dottedBox relationChart">
+					<nvd3 options='denominator.chartOptions' data='denominator.chartData'></nvd3>
+				</div>
+			</div>
+
+			<h5 style="margin-top: 10px;">Interpretations</h5>
 			<textarea class="interpretation"></textarea>
 		</div>
 	</div>
@@ -532,7 +596,7 @@
 
 	<div class="reportPart" ng-if="revCtrl.remarks.length > 0">
 		<h3>Remarks</h3>
-		<table class="table table-bordered" style="font-size: 90%; margin-top: 20px;">
+		<table class="table table-bordered" style=" margin-top: 20px;">
 			<tr>
 				<th>Analysis type</th>
 				<th>Item</th>

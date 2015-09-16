@@ -671,7 +671,6 @@
 	    	var chartOptions = {
 	    	   	"chart": {
 	    	        "type": "scatterChart",
-	    	        "height": 300,
 	    	        "margin": {
 	    	          "top": 10,
 	    	          "right": 30,

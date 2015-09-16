@@ -69,7 +69,6 @@
 
 			metaDataService.getMapping(false);
 	    }
-
 	  	
 	  	/** START ANALYSIS*/
 	  	self.doAnalysis = function() {
@@ -144,20 +143,16 @@
 			for (var i = 0; i < denominatorChecks.length; i++) {
 				denominator = denominatorChecks[i];
 
-				dqAnalysisConsistency.analyse(denominator.idA, denominator.idB, period, null, ouBoundary, ouLevel, null, 'data', 'eq', denominator.criteria)
+				var meta = {name: denominator.name};
+
+				dqAnalysisConsistency.analyse(denominator.idA, denominator.idB, period, null, ouBoundary, ouLevel, null, 'data', 'eq', denominator.criteria, meta)
 					.then(function(data) {
 
 						self.outstandingRequests--;
 
 						if (data.errors) self.remarks = self.remarks.concat(data.errors);
 
-						//Check type and format data accordingly for charts
-						if (data.result.type === 'do') {
-							visualisationService.makeDropoutRateChart(null, data.result);
-						}
-						else {
-							visualisationService.makeDataConsistencyChart(null, data.result);
-						}
+						visualisationService.makeDataConsistencyChart(null, data.result);
 
 						if (denominator.type != 'un') {
 							self.denominators.relations.push(data.result);
@@ -223,6 +218,7 @@
   			chartOptions.chart.margin.left = 80;
 			chartOptions.chart.margin.right = 40;
   			chartOptions.chart.margin.bottom = 40;
+			delete chartOptions.chart['height'];
   			
   			
   			self.datasetConsistencyChart.options = chartOptions;
@@ -238,10 +234,11 @@
 	  		};
 	  		chartOptions.chart.margin.left = 60;
   			chartOptions.chart.margin.bottom = 40;
-  			
+			delete chartOptions.chart['height'];
+
 			self.dataConsistencyChart.options = chartOptions;
-			self.dataConsistencyChart.data = chartData; 
-	  		
+			self.dataConsistencyChart.data = chartData;
+
 	  	}
 	  	
 	  	/**CALLBACKS FOR RESULTS*/
@@ -471,19 +468,15 @@
 			angular.element('.bigChart').width('860px');
 			angular.element('.bigChart').height('300px');
 			angular.element('.smallChart').width('422px');
-			angular.element('.relationTableHolderPrint').width('300px');
-			angular.element('.relationChartPrint').width('554px');
+			angular.element('.relationChart').width('552px');
 
-			//Workaround to overwrite bootstrap table styling
-			angular.element('.tablePrint').removeClass('table');
-			angular.element('.tablePrint').removeClass('table-bordered');
 
 			window.dispatchEvent(new Event('resize'));
 
 			interpretationToParagraph();
 
 			//Give charts time to finish animation
-			$timeout(function () { window.print(); }, 500);
+			$timeout(function () { window.print(); }, 1000);
 
 		}
 
@@ -496,7 +489,7 @@
 				for (var j = 0; j < elements.length; j++) {
 					elements[j].style.width = null;
 
-					if (classes[i] = '.bigChart') {
+					if (classes[i] === '.bigChart') {
 						elements[j].style.height = null;
 					}
 				}
@@ -521,11 +514,11 @@
 				//If no text, remove heading
 				if (text === '') {
 					var header = textAreas[i].previousElementSibling;
-					header.classList.add('hiddenHeader');
+					header.classList.add('no-print');
 				}
 				else {
 					var header = textAreas[i].previousElementSibling;
-					header.classList.remove('hiddenHeader');
+					header.classList.remove('no-print');
 				}
 				parent.innerHTML += '<p class="interpretationText">' + text + '</p>';
 			}

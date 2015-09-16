@@ -1,15 +1,4 @@
 @media screen,print {
-
-	/* GENERAL */
-	.hideDiv {
-		display: none;
-	}
-
-	.interpretationText {
-		margin-bottom: 20px;
-	}
-
-
 	/* CHARTS */
 	.chartTitle {
 		margin: 5px;
@@ -19,22 +8,28 @@
 		margin: 3px
 	}
 
-	/* TABLES */
-	.headerCellWide {
-		min-width: 100px;
-		max-width: 200px;
-	}
 
+	/* TABLES */
 	.valueCell {
 		text-align: right;
 		vertical-align: middle;
 	}
 
-	.tableButton {
-		height: 30px;
-		padding: 4px;
-		text-aling:center;
+	.dense {
+		font-size: 85%;
 	}
+
+	.inline {
+		display: inline-block;
+		vertical-align: top;
+	}
+
+	.dottedBox {
+		border: 1px dashed gray;
+	}
+
+
+	/* MISC */
 
 	.interpretation {
 		width: 100%;
@@ -43,10 +38,9 @@
 		margin-bottom: 30px;
 	}
 
-	div.popover {
-		max-width: 330px;
+	.interpretationText {
+		margin-bottom: 20px;
 	}
-
 }
 
 @media screen and (max-width: 768px) {
@@ -72,52 +66,39 @@
 
 @media screen {
 
+	/* MISC */
 	.onlyPrint {
 		display: none !important;
 	}
 
-
 	.mainView {
-
 		width: 100%;
 	}
-	
-	.selector {
-		width: 200px;
-		margin-top: 5px;
-		margin-bottom: 10px;
+
+
+	/* SIZES */
+	.halfWidth {
+		width: 48%;
 	}
+
+	.fullWidth {
+		width: 100%;
+	}
+
 
 	/* CHART */
-	.bigChartBorder {
-		border: 1px solid gray;
-		height: 400px;
-	}
-
 	.bigChart {
 		height: 400px;
-	}
-	
-	.smallChartBorder {
-		border: 1px solid gray;
-		height: 300px;
+		width: 100%;
 	}
 
 	.smallChart {
 		height: 300px;
+		width: 100%;
 	}
-	
-	.smallPie {
-		border: 1px solid gray;
+
+	.relationChart {
 		height: 300px;
-		min-width: 350px;
-	}
-	
-	.elementHalfWidth {
-		width: 48%;
-	}
-	
-	.elementFullWidth {
 		width: 100%;
 	}
 
@@ -131,15 +112,16 @@
 	  cursor: pointer
 	}
 
+	.bigRow {
+		height: 51px;
+	}
+
+	.biggerRow {
+		height: 82px;
+	}
+
 
 	/* GENERAL */
-	.rotate {
-		display: block;
-		  -webkit-transform: rotate(-45deg);
-		  -moz-transform: rotate(-45deg);
-		  filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=2);	
-	}
-	
 	.ui-select-multiple.ui-select-bootstrap {
 	    min-height: 34px;        
 	    height: auto;
@@ -153,24 +135,18 @@
 		font-size: 90%;
 		width: auto !important;
 	}
-
-	.bigRow {
-		height: 69px;
-	}
 }
 
 
-@media print
-{    
-	.no-print, .no-print *
-	{
-		display: none !important;
+@media print {
+	/* GENERAL */
+	.reviewResult { /*Delete?*/
+		width: 860px;
 	}
 
-	.hiddenHeader {
+	.no-print, .no-print * {
 		display: none !important;
 	}
-
 
 	div.reportPart { /* Make it possible to start new "parts" of the report on new page */
 		page-break-after: always;
@@ -180,9 +156,15 @@
 		page-break-inside: avoid;
 	}
 
+	.fullWidth {
+		width: 100%;
+	}
+
+
+	/* CHARTS */
 	.bigChart {
 		width: 860px;
-		height: 400px;
+		height: 300px;
 	}
 
 	.smallChart {
@@ -190,19 +172,16 @@
 		height: 300px;
 	}
 
-	.relationTableHolderPrint {
-		width: 300px;
-	}
-
-	.relationChartPrint {
+	.relationChart {
 		width: 556px;
+		height: 300px;
 	}
 
-	.reviewResult {
-		width: 860px;
-	}
 
-	.tablePrint {
+
+
+	/* TABLES */
+	.table {
 		width: 100%;
 		border: 1px solid darkgray !important;
 		margin-bottom: 20px;
@@ -210,23 +189,29 @@
 		font-size: 11px;
 	}
 
-	.tablePrint th {
+	.table th {
 		background-color: white !important;
 		border: 1px solid darkgray !important;
 		padding: 3px;
 	}
 
-	.tablePrint td {
+	.table td {
 		border: 1px solid darkgray !important;
 		padding: 3px;
 		vertical-align: top;
 	}
 
-	.bigRow {
-		height: 125px;
+	.relationTable {
+		width: 300px;
 	}
 
+	.bigRow {
+		height: 91px;
+	}
 
+	.biggerRow {
+		height: 117px;
+	}
 
 }
 

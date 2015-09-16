@@ -80,7 +80,7 @@
 					ng-repeat="data in dashCtrl.dataConsistencyCharts|orderBy:'name'|limitTo: 100">
 				<h5>{{data.name}} - {{data.period}}</h5>
 				<nvd3
-						class="elementFullWidth"
+						class="fullWidth"
 						style="display: inline-block; border: 1px dotted gray; height: 400px"
 						options='data.chartOptions'
 						data='data.chartData'>
