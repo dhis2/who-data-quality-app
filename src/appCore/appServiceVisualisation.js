@@ -33,7 +33,8 @@
 				if (type === 'dataOverTime') {
 					
 					if (orgunitIDs.length > 1) console.log("Warning: more than one orgunit for dataOverTime chart");
-					
+
+					var yLen = 0, xLen = 0;
 					for (var i = 0; i < dataIDs.length; i++) {
 						var chartSerie = {
 							'key': names[dataIDs[i]],
@@ -42,11 +43,15 @@
 						
 						for (var j = 0; j < periodIDs.length; j++) {
 							var value = dataValue(header, data, dataIDs[i], periodIDs[j], orgunitIDs[0], null);
-							
+							var y = mathService.round(value, 2);
 							chartSerie.values.push({
 								'x': j,
-								'y': mathService.round(value, 2)
+								'y': y
 							});
+
+							//For the first two, check if we have very long x-axis labels that interfere with y axis
+							if (j < 2) xLen = Math.max(xLen, y.toString().length);
+							if (y) yLen = Math.max(yLen, y.toString().length);
 							
 						}
 						
@@ -57,20 +62,24 @@
 					//Get XAxis labels = periods from series[0]
 					var periodNames = [];
 					for (var i = 0; i < periodIDs.length; i++) {
-						periodNames.push(periodService.shortPeriodName(periodIDs[i].toString()));
+						var name = periodService.shortPeriodName(periodIDs[i].toString())
+						periodNames.push(name);
+						xLen = Math.max(xLen, name.length);
 					}
+
+
+					var labelSizes = estimateLabelSize(xLen, yLen, true);
 
 					//Chart options		
 					chartOptions = {
 					   	"chart": {
-					        "type": "lineChart",
-							"height": 400,
-					        "margin": {
-					          "top": 140,
-					          "right": 20,
-					          "bottom": 100,
-					          "left": 100
-					        },
+							"type": "lineChart",
+							"margin": {
+								"top": 25,
+								"right": 25,
+								"bottom": 25 + labelSizes.x,
+								"left": 25 + labelSizes.y
+							},
 					        "xAxis": {
 					          'rotateLabels': -45,
 					          'tickFormat': function(d) {
@@ -83,13 +92,13 @@
 					        'showLegend': true
 					    },
 					    'parameters': {
-					    	'dataIDs': dataIDs, 
+					    	'dataIDs': dataIDs,
 					    	'periods': periodIDs,
 					    	'orgunitIDs': orgunitIDs,
-					    	'type': type					    
+					    	'type': type
 					    }
 					}
-				
+
 				}
 				if (callback) {
 					callback(chartData, chartOptions);
@@ -103,8 +112,8 @@
 			});
 			return deferred.promise;
 		};
-		
-		
+
+
 		/** NG-NVD3 Multibar */
 		/*
 		Takes IDs as parameters, returns chartData and chartOptions for use with angular-nvd3
@@ -115,51 +124,51 @@
 			requestURL += "dimension=dx:" + dataIDs.join(';');
 			requestURL += "&dimension=pe:" + periodIDs.join(";");
 			requestURL += "&dimension=ou:" + orgunitIDs.join(";");
-						
+
 			requestService.getSingle(requestURL).then(function (response) {
-				
+
 				var data = response.data.rows;
 				var header = response.data.headers;
 				var names = response.data.metaData.names;
-				
+
 				orgunitIDs = response.data.metaData.ou; //Replace for "USER ORGUNIT" etc
-				
+
 				var chartData = [];
 				var chartOptions;
 				if (type === 'dataOverTime') {
-					
+
 					if (orgunitIDs.length > 1) console.log("Warning: more than one orgunit for dataOverTime chart");
-					
+
 					for (var i = 0; i < dataIDs.length; i++) {
 						var chartSerie = {
 							'key': names[dataIDs[i]],
 							'values': []
 						};
-						
+
 						for (var j = 0; j < periodIDs.length; j++) {
 							var value = dataValue(header, data, dataIDs[i], periodIDs[j], orgunitIDs[0], null);
-							
+
 							if (isNaN(value)) value = null;
 							else value = mathService.round(value, 2);
-							
+
 							chartSerie.values.push({
 								'x': j,
 								'y': value
 							});
-							
+
 						}
-						
+
 						chartData.push(chartSerie);
 					}
-			
-					
+
+
 					//Get XAxis labels = periods from series[0]
 					var periodNames = [];
 					for (var i = 0; i < periodIDs.length; i++) {
 						periodNames.push(periodService.shortPeriodName(periodIDs[i].toString()));
 					}
 
-					//Chart options		
+					//Chart options
 					chartOptions = {
 					   	"chart": {
 					        "type": "multiBarChart",
@@ -182,13 +191,13 @@
 					        'showLegend': true
 					    },
 					    'parameters': {
-					    	'dataIDs': dataIDs, 
+					    	'dataIDs': dataIDs,
 					    	'periods': periodIDs,
 					    	'orgunitIDs': orgunitIDs,
-					    	'type': type					    
+					    	'type': type
 					    }
 					}
-				
+
 				}
 				if (callback) {
 					callback(chartData, chartOptions);
@@ -202,8 +211,8 @@
 			});
 			return deferred.promise;
 		};
-		
-		
+
+
 		/** NG-NVD3 Bar */
 		/*
 		Takes IDs as parameters, returns chartData and chartOptions for use with angular-nvd3
@@ -219,57 +228,65 @@
 			if (orgunitLevel) {
 				requestURL += ';LEVEL-' + orgunitLevel;
 			}
-						
+
 			requestService.getSingle(requestURL).then(function (response) {
-				
+
 				var data = response.data.rows;
 				var header = response.data.headers;
 				var names = response.data.metaData.names;
-				
+
 				orgunitIDs = response.data.metaData.ou; //Replace for "USER ORGUNIT" etc
-				
+
 				var chartData = [];
 				var chartOptions;
 				if (type === 'ou') {
-					
+
 					if (dataIDs.length > 1) console.log("Warning: more than one data item for ou bar chart");
 					if (periodIDs.length > 1) console.log("Warning: more than one period item for ou bar chart");
-					
+
+
+					var xLen = 0, yLen = 0;
+
 					var dx = dataIDs[0];
 					var pe = periodIDs[0];
-					
+
 					for (var i = 0; i < dataIDs.length; i++) {
 						var chartSerie = {
 							'key': names[dx],
 							'values': []
 						};
-						
+
 						for (var j = 0; j < orgunitIDs.length; j++) {
 							var value = dataValue(header, data, dx, pe, orgunitIDs[j], null);
-							
+
 							if (isNaN(value)) value = null;
 							else value = mathService.round(value, 0);
-							
+
+							var name = names[orgunitIDs[j]];
 							chartSerie.values.push({
-								'label': names[orgunitIDs[j]],
+								'label': name,
 								'value': value
 							});
-							
+
+							if (name) xLen = Math.max(xLen, name.length);
+							if (value) yLen = Math.max(yLen, value.toString().length);
+
 						}
-						
+
 						chartData.push(chartSerie);
 					}
-			
-					//Chart options		
+
+					var labelSizes = estimateLabelSize(xLen, yLen, true);
+
+					//Chart options
 					chartOptions = {
 					   	"chart": {
 					        "type": "discreteBarChart",
-					        "height": 300,
 					        "margin": {
-					          "top": 20,
-					          "right": 20,
-					          "bottom": 60,
-					          "left": 20
+					          "top": 25,
+					          "right": 25,
+					          "bottom": 25 + labelSizes.x,
+					          "left": 25 + labelSizes.y
 					        },
 							'tooltip': {
 								'enabled': true
@@ -283,13 +300,13 @@
 	                        }
 					    },
 					    'parameters': {
-					    	'dataIDs': dataIDs, 
+					    	'dataIDs': dataIDs,
 					    	'periods': periodIDs,
 					    	'orgunitIDs': orgunitIDs,
-					    	'type': type					    
+					    	'type': type
 					    }
 					}
-				
+
 				}
 				deferred.resolve({
 					data: chartData,
@@ -307,8 +324,8 @@
 			});
 			return deferred.promise;;
 		};
-				
-		
+
+
 	  	/** NG-NVD3 YY line chart */
 	  	/*Year over year line chart - parameter-based
 	  	@param elementID	html element to place chart in
@@ -328,96 +345,104 @@
   				requestURL += "&filter=ou:" + ouID;
   				requests.push(requestURL);
 	  		}
-	  		
+
 	  		requestService.getMultiple(requests).then(function (response) {
-	  			var data = [];
+				var yLen = 0, xLen = 0;
+
+				var data = [];
 	  			for (var i = 0; i < response.length; i++) {
 	  				data.push(response[i].data);
 	  			}
-	  			
+
 	  			//Get XAxis labels = periods from series[0]
   				var periodNames = [];
   				for (var i = 0; i < periods[0].length; i++) {
-  					periodNames.push(periodService.shortPeriodName(periods[0][i]).split(' ')[0]);
+					var name = periodService.shortPeriodName(periods[0][i]).split(' ')[0];
+  					periodNames.push(name);
+					xLen = Math.max(xLen, name.length);
   				}
 
 	  			var pe, val;
-	  			for (var i = 0; i < data[0].headers.length; i++) {	
+	  			for (var i = 0; i < data[0].headers.length; i++) {
 	  				if (data[0].headers[i].name === 'pe') pe = i;
 	  				if (data[0].headers[i].name === 'value') val = i;
 	  			}
-	  			
+
 	  			ouID = data[0].metaData.ou;
-	  				
+
+
   				var minRange = 0, maxRange = 0;
   				var chartData = [], chartSeries, values, dataSet;
   				for (var i = data.length-1; i >= 0 ; i--) {
-  					
+
   					values = [];
-  					chartSeries = {};  			  		
+  					chartSeries = {};
   					dataSet = data[i];
-  				
-  				
+
+
   					if (dataSet.metaData.pe[0].substring(0, 4) === dataSet.metaData.pe[dataSet.metaData.pe.length-1].substring(0, 4)) {
   						chartSeries.key = dataSet.metaData.pe[0].substring(0, 4);
   					}
   					else {
   						chartSeries.key = dataSet.metaData.pe[0].substring(0, 4) + ' - ' + dataSet.metaData.pe[dataSet.metaData.pe.length-1].substring(0, 4);
   					}
-  					
+
   					var row, value, values = [];
   					for (var j = 0; j < periods[i].length; j++) {
-  					
+
   						var period = periods[i][j];
   						var rows = dataSet.rows;
-  						
+
   					 	for (var k = 0; k < rows.length; k++) {
-  						 	
+
   						 	row = rows[k];
   							if (row[pe] === period) {
-  							
+
   								value = parseFloat(row[val]);
   								if (isNaN(value)) value = null;
-  								
+
   								values.push({
   									'x': j,
   									'y': value
   								});
-  								
+								if (value) yLen = Math.max(yLen, value.toString().length);
+
   								if (value < minRange) {
   									minRange = value;
   								}
   								if (value > maxRange) {
   									maxRange = value;
   								}
-  								
+
   								k = rows.length;
   							}
   						}
   					}
-  					
+
   					chartSeries.values = values;
   					chartSeries.periods = periods[i];
+
+
   					chartData.push(chartSeries);
   				}
-  				
+
   				var toolTip = function(point) {
   				    return '<h3>' + periodService.shortPeriodName(e.series.periods[point.point.point.x]) + '</h3>' +
   				        '<p>' + point.point.point.y + '</p>';
   				};
-  				
-  				//Chart options		
+
+				var labelSizes = estimateLabelSize(xLen, yLen, true);
+  				//Chart options
   				var chartOptions = {
   				   	"chart": {
   				   		"x": function(d){ return d.x; },
   				   		"y": function(d){ return d.y; },
   				        "type": "lineChart",
-  				        "height": 400,
   				        "margin": {
-  				          "top": 140,
-  				          "right": 20,
-  				          "bottom": 100,
-  				          "left": 100
+  				          "top": 25,
+  				          "right": 25,
+  				          "bottom": 25 + labelSizes.x,
+  				          "left": 25 + labelSizes.y
   				        },
   				        "xAxis": {
   				          'rotateLabels': -45,
@@ -826,12 +851,32 @@
 		}
 
 		self.setChartMargins = function(options, top, right, bottom, left) {
-			options.chart.margin = {
-				"top": top,
-				"right": right,
-				"bottom": bottom,
-				"left": left
-			};
+			if (top) options.chart.margin.top = top;
+			if (right) options.chart.margin.right = right;
+			if (bottom) options.chart.margin.bottom = bottom;
+			if (left) options.chart.margin.left = left;
+		}
+
+
+		/**
+		 * Estimates the required margin for the x and y labels.
+		 * @param x
+		 * @param y
+		 * @param rotated	is y axis rotated?
+		 */
+		function estimateLabelSize(x, y, rotated) {
+
+			//Assume 7 pixels per digit if not rotated, 4 if rotated
+
+			var x = rotated ? parseInt(4.3*x) : 8*x;
+			x = Math.max(x, 16);
+			var y = 8*y;
+			y = Math.max(y, 16);
+
+			return {
+				'x': x,
+				'y': y
+			}
 		}
 
 
@@ -894,6 +939,12 @@
 			return datapoints;
 		}
 
+		/**
+		 * Checks if a ratio is in fact a valid ratio (i.e. is a finite number)
+		 *
+		 * @param ratio
+		 * @returns {boolean}
+		 */
 		function validRatio(ratio) {
 			if (!isNaN(ratio) && isFinite(ratio)) return true;
 			else {

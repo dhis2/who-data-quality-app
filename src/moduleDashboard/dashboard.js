@@ -72,15 +72,15 @@
 						ouChartData: datas[2].data
 					};
 
-					visualisationService.setChartHeight(datasetCompletenessChart.trendChartOptions, 400);
+					//visualisationService.setChartHeight(datasetCompletenessChart.trendChartOptions, 400);
 					visualisationService.setChartLegend(datasetCompletenessChart.trendChartOptions, false);
 					visualisationService.setChartYAxis(datasetCompletenessChart.trendChartOptions, 0, 100);
-					visualisationService.setChartMargins(datasetCompletenessChart.trendChartOptions, 20, 20, 100, 40);
+					//visualisationService.setChartMargins(datasetCompletenessChart.trendChartOptions, 20, 20, 100, 40);
 
-					visualisationService.setChartHeight(datasetCompletenessChart.ouChartOptions, 400);
+					//visualisationService.setChartHeight(datasetCompletenessChart.ouChartOptions, 400);
 					visualisationService.setChartLegend(datasetCompletenessChart.ouChartOptions, false);
 					visualisationService.setChartYAxis(datasetCompletenessChart.ouChartOptions, 0, 100);
-					visualisationService.setChartMargins(datasetCompletenessChart.ouChartOptions, 20, 20, 100, 40);
+					//visualisationService.setChartMargins(datasetCompletenessChart.ouChartOptions, 20, 20, 100, 40);
 
 					self.completenessCharts.push(datasetCompletenessChart);
 
@@ -162,7 +162,7 @@
 					visualisationService.setChartHeight(consistencyChart.yyChartOptions, 400);
 					visualisationService.setChartLegend(consistencyChart.yyChartOptions, false);
 					visualisationService.setChartYAxis(consistencyChart.yyChartOptions, 0, 100);
-					visualisationService.setChartMargins(consistencyChart.yyChartOptions, 20, 20, 100, 50);
+					//visualisationService.setChartMargins(consistencyChart.yyChartOptions, 20, 20, 100, 50);
 
 					visualisationService.setChartHeight(consistencyChart.consistencyChartOptions, 400);
 					visualisationService.setChartLegend(consistencyChart.consistencyChartOptions, true);
