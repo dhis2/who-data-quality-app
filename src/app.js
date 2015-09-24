@@ -43,6 +43,12 @@
 					controller: 'OutlierGapAnalysisController',
 					controllerAs: 'aCtrl'
 				}).
+				when('/about', {
+					templateUrl: 'moduleAbout/about.html',
+					controller: 'AboutController',
+					controllerAs: 'aCtrl'
+
+				}).
 				when('/review', {
 					templateUrl: 'moduleReview/review.html',
 					controller: 'ReviewController',
