@@ -1,0 +1,26 @@
+<ui-select
+		on-select="dCtrl.updateGroups()"
+		ng-model="dCtrl.meta.type">
+	<ui-select-match allow-clear="true" placeholder="Select type...">
+		{{dCtrl.meta.type.name}}
+	</ui-select-match>
+	<ui-select-choices
+			repeat="obj in dCtrl.meta.types | filter: $select.search">
+		<div ng-bind-html="obj.name | highlight: $select.search"></div>
+	</ui-select-choices>
+</ui-select>
+
+
+<ui-select
+		on-select="dCtrl.updateElements(group);"
+		ng-model="dCtrl.meta.group"
+		ng-disabled="!dCtrl.meta.groups"
+		style="margin-top: 10px">
+	<ui-select-match allow-clear="true" placeholder="Select group/data set...">
+		{{dCtrl.meta.group.name}}
+	</ui-select-match>
+	<ui-select-choices
+			repeat="obj in dCtrl.meta.groups | filter: $select.search">
+		<div ng-bind-html="obj.name | highlight: $select.search"></div>
+	</ui-select-choices>
+</ui-select>

@@ -1,0 +1,88 @@
+<h3>Data Dictionary</h3>
+<hr/>
+<div class="mainView inline">
+
+	<div class="inline">
+		<table cellspacing="0" cellpadding="0" border="0" width="325">
+			<tr>
+				<td>
+					<table cellpadding="3" width="325" >
+						<tr>
+							<th>
+								<div ng-include="'moduleDictionary/selection.html'">
+								</div>
+							</th>
+						</tr>
+					</table>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<div class="well well-sm" style="width:325px; height:500px; margin-top: 15px; overflow:auto;">
+						<table cellpadding="5" width="300" >
+							<tr ng-if="dCtrl.meta.elements && dCtrl.meta.elements.length === 0">
+								<td>
+									<div class="btn btn-warning"
+										 ng-disabled="true"
+										 style="white-space: normal; width: 100%; text-align: left; margin-top: 5px">
+										NO DATA
+									</div>
+								</td>
+							</tr>
+							<tr 	ng-if="dCtrl.meta.elements && dCtrl.meta.elements.length > 0"
+									ng-repeat="el in dCtrl.meta.elements"
+									style="height: 40px">
+								<td>
+									<button class="btn btn-default"
+											ng-click="dCtrl.meta.element = el; dCtrl.loadElement();"
+											ng-class="{'active': dCtrl.meta.element === el}"
+											style="white-space: normal; width: 100%; text-align: left; margin-top: 5px">
+										{{el.name}}
+									</button>
+								</td>
+							</tr>
+						</table>
+					</div>
+				</td>
+			</tr>
+		</table>
+
+
+	</div>
+	<div class="inline" style="width: 69%; margin-left: 20px">
+		<h4>{{dCtrl.meta.element.name}}</h4>
+
+
+
+	</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</div>

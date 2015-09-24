@@ -28,6 +28,18 @@
 		border: 1px dashed gray;
 	}
 
+	.fixedHead table {
+		width: 20px;
+		height: 200px;
+		overflow: auto;
+	}
+
+	.fixedHead tbody {
+		width: 20px;
+		height: 200px;
+		overflow: auto;
+	}
+
 
 	/* MISC */
 

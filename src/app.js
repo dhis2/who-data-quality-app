@@ -1,7 +1,7 @@
 
 (function(){
 	var app = angular.module('dataQualityApp',
-	['d2',  'dqAnalysis', 'ngRoute', 'dashboard', 'review', 'consistencyAnalysis', 'outlierGapAnalysis', 'dataExport', 'admin', 'ui.select',
+	['d2',  'dqAnalysis', 'ngRoute', 'dashboard', 'review', 'consistencyAnalysis', 'outlierGapAnalysis', 'about', 'dictionary', 'dataExport', 'admin', 'ui.select',
 		'ngSanitize', 'ui.bootstrap', 'nvd3', 'angularBootstrapNavTree']);
 	
 	/**Bootstrap*/
@@ -43,17 +43,21 @@
 					controller: 'OutlierGapAnalysisController',
 					controllerAs: 'aCtrl'
 				}).
-				when('/about', {
-					templateUrl: 'moduleAbout/about.html',
-					controller: 'AboutController',
-					controllerAs: 'aCtrl'
-
-				}).
 				when('/review', {
 					templateUrl: 'moduleReview/review.html',
 					controller: 'ReviewController',
 					controllerAs: 'revCtrl'
 
+				}).
+				when('/about', {
+					templateUrl: 'moduleAbout/about.html',
+					controller: 'AboutController',
+					controllerAs: 'aCtrl'
+				}).
+				when('/dictionary', {
+					templateUrl: 'moduleDictionary/dictionary.html',
+					controller: 'DictController',
+					controllerAs: 'dCtrl'
 				}).
 				when('/export', {
 					templateUrl: 'moduleExport/export.html',
