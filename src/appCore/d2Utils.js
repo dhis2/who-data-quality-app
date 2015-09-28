@@ -9,7 +9,9 @@
 					isArray: isArray,
 					toArray: toArray,
 					arrayRemoveDuplicates: arrayRemoveDuplicates,
-					arrayMerge: arrayMerge
+					arrayMerge: arrayMerge,
+					arraySortByProperty: arraySortByProperty,
+					idsFromIndicatorFormula: idsFromIndicatorFormula
 				};
 
 
@@ -56,6 +58,35 @@
 					return a;
 				}
 
+				function arraySortByProperty(array, property, numeric) {
+
+					array.sort(function(a, b) {
+						if (numeric) {
+							return b[property] - a[property] ;
+						}
+						else {
+							return a[property] < b[property] ? -1 : 1
+						}
+					});
+
+				}
+
+
+				/** === INDICATORS === */
+				function idsFromIndicatorFormula(numeratorFormula, denominatorFormula, dataElementOnly) {
+
+					var matches = arrayMerge(numeratorFormula.match(/#{(.*?)}/g), denominatorFormula.match(/#{(.*?)}/g));
+					if (!matches) return [];
+
+					for (var i = 0; i < matches.length; i++ ) {
+						matches[i] = matches[i].slice(2, -1);
+						if (dataElementOnly) matches[i] = matches[i].split('.')[0];
+					}
+
+					console.log(matches);
+
+					return arrayRemoveDuplicates(matches);
+				}
 
 				return utils;
 
