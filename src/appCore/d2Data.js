@@ -74,6 +74,7 @@
 				 * @returns float of datavalue, or null if not found
 				 */
 				function dataValue(de, pe, ou, co) {
+					if (co === undefined) co = null;
 
 					//Make it possible to work with both de and co separately, and in . format
 					if (de.length > 11) {
@@ -100,7 +101,7 @@
 							(dxi === undefined || data[dxi] === de) &&
 							(pei === undefined || data[pei] === pe.toString()) &&
 							(oui === undefined || data[oui] === ou) &&
-							(coi === undefined || data[coi] === co)
+							(co === undefined || coi === undefined || data[coi] === co)
 						) return parseFloat(data[vali]);
 					}
 
