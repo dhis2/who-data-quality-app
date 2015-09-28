@@ -1,8 +1,7 @@
-<h3>Data Dictionary</h3>
-<hr/>
 <div class="mainView inline">
 
-	<div class="inline">
+	<div class="inline no-print">
+		<h3>Data Dictionary</h3>
 		<table cellspacing="0" cellpadding="0" border="0" width="325">
 			<tr>
 				<td>
@@ -19,7 +18,7 @@
 			<tr>
 				<td>
 					<div class="well well-sm" style="width:325px; height:500px; margin-top: 15px; overflow:auto;">
-						<table cellpadding="5" width="300" >
+						<table cellpadding="5" width="290" >
 							<tr ng-if="dCtrl.meta.elements && dCtrl.meta.elements.length === 0">
 								<td>
 									<div class="btn btn-warning"
@@ -34,9 +33,9 @@
 									style="height: 40px">
 								<td>
 									<button class="btn btn-default"
-											ng-click="dCtrl.meta.element = el; dCtrl.loadElement();"
+											ng-click="dCtrl.meta.element = el; dCtrl.updateElement();"
 											ng-class="{'active': dCtrl.meta.element === el}"
-											style="white-space: normal; width: 100%; text-align: left; margin-top: 5px">
+											style="white-space: normal; width: 100%; float: left; text-align: left; margin-top: 5px">
 										{{el.name}}
 									</button>
 								</td>
@@ -49,40 +48,160 @@
 
 
 	</div>
-	<div class="inline" style="width: 69%; margin-left: 20px">
-		<h4>{{dCtrl.meta.element.name}}</h4>
+
+	<div class="inline" style="width: 69%; margin-left: 20px; margin-top: 17px" ng-show="dCtrl.result">
 
 
+		<h4>{{dCtrl.result.name}}</h4>
+
+		<table class="table table-bordered table-responsive dense">
+			<tr>
+				<th>Short name</th>
+				<td>{{dCtrl.result.shortName}}</td>
+				<th>Code</th>
+				<td>{{dCtrl.result.code}}</td>
+				<th>UID</th>
+				<td>{{dCtrl.result.uid}}</td>
+			</tr>
+			<tr>
+				<th>Description</th>
+				<td colspan="5">{{dCtrl.result.description}}</td>
+			</tr>
+		</table>
+
+
+		<div ng-if="dCtrl.result.type === 'de'">
+			<h5>Storage and Aggregation</h5>
+			<table class="table table-bordered table-responsive dense">
+				<tr>
+					<th>
+						Domain type
+					</th>
+					<td>
+						{{dCtrl.result.domainType}}
+					</td>
+					<th>
+						Value type
+					</th>
+					<td>
+						{{dCtrl.result.valueType}}
+					</td>
+				</tr>
+				<tr>
+					<th>
+						Aggregation type
+					</th>
+					<td>
+						{{dCtrl.result.aggregationType}}
+					</td>
+					<th>
+						Zero value storage
+					</th>
+					<td>
+						{{dCtrl.result.zeroSignificant}}
+					</td>
+				</tr>
+			</table>
+		</div>
+
+
+		<div ng-if="dCtrl.result.type === 'de' && dCtrl.result.categories && dCtrl.result.categories.length > 0">
+			<h5>Disaggregation</h5>
+			<table class="table table-bordered table-responsive dense">
+				<tr>
+					<th>
+						Category
+					</th>
+					<th>
+						Options
+					</th>
+				</tr>
+				<tr ng-repeat="cat in dCtrl.result.categories">
+					<td>{{cat.name}}</td>
+					<td>{{cat.options.join(', ')}}</td>
+				</tr>
+			</table>
+		</div>
+
+
+		<div ng-if="dCtrl.result.type === 'in'">
+			<h5>Indicator definition</h5>
+			<table class="table table-bordered table-responsive dense">
+				<tr>
+					<th>Type</th>
+					<td>{{dCtrl.result.indicatorType.name}}</td>
+					<th>Factor</th>
+					<td>{{dCtrl.result.indicatorType.factor}}</td>
+				</tr>
+				<tr>
+					<th>Numerator description</th>
+					<td colspan="3">{{dCtrl.result.numeratorDescription}}</td>
+				</tr>
+				<tr>
+					<th>Numerator formula</th>
+					<td colspan="3">{{dCtrl.result.numerator}}</td>
+				</tr>
+				<tr>
+					<th>Denominator description</th>
+					<td colspan="3">{{dCtrl.result.denominatorDescription}}</td>
+				</tr>
+				<tr>
+					<th>Denominator formula</th>
+					<td colspan="3">{{dCtrl.result.denominator}}</td>
+				</tr>
+			</table>
+		</div>
+
+
+		<div ng-if="dCtrl.result.type === 'in' && dCtrl.result.dataElements && dCtrl.result.dataElements.length > 0">
+			<h5>Source data elements</h5>
+			<table class="table table-bordered table-responsive dense">
+				<tr>
+					<th>Name</th>
+				</tr>
+				<tr ng-repeat="de in dCtrl.result.dataElements">
+					<td>{{de.name}}</td>
+				</tr>
+			</table>
+		</div>
+
+
+		<div ng-if="dCtrl.result.datasets && dCtrl.result.datasets.length > 0">
+			<h5>Source data sets</h5>
+			<table class="table table-bordered table-responsive dense">
+				<tr>
+					<th>Name</th>
+					<th>Frequency</th>
+					<th>Expected reports</th>
+				</tr>
+				<tr ng-repeat="ds in dCtrl.result.datasets">
+					<td>{{ds.name}}</td>
+					<td>{{ds.periodType}}</td>
+					<td>{{ds.organisationUnits}}</td>
+				</tr>
+			</table>
+		</div>
+
+
+		<div ng-if="dCtrl.result.data">
+			<h5>Key data ({{dCtrl.result.data.ouName}})</h5>
+			<table class="table table-bordered table-responsive dense">
+				<tr>
+					<th>Name</th>
+					<th>Type</th>
+					<th>{{dCtrl.result.data.pe[0]}}</th>
+					<th>{{dCtrl.result.data.pe[1]}}</th>
+					<th>{{dCtrl.result.data.pe[2]}}</th>
+				</tr>
+				<tr ng-repeat="row in dCtrl.result.data.rows">
+					<td>{{row.name}}</td>
+					<td>{{row.type}}</td>
+					<td>{{row.p1}}</td>
+					<td>{{row.p2}}</td>
+					<td>{{row.p3}}</td>
+				</tr>
+			</table>
+		</div>
 
 	</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 </div>

@@ -4,16 +4,14 @@
 
 	/**Controller: Parameters*/
 	angular.module('dictionary').controller("DictController",
-		['d2Meta', function(d2Meta) {
+		['d2Meta', 'dqAnalysisDictionary', function(d2Meta, dqDict) {
 			var self = this;
 			init();
 
+			//"Public"
 			self.updateGroups = updateGroups;
 			self.updateElements = updateElements;
-
-
-
-
+			self.updateElement = updateElement;
 
 
 			/** USER INTERFACE **/
@@ -49,7 +47,7 @@
 
 			/** USER INTERFACE **/
 			function updateElements() {
-				if (!self.meta.type) return;
+				if (!self.meta.group) return;
 				switch (self.meta.type.id) {
 
 					case 'ds':
@@ -77,27 +75,31 @@
 
 
 			function updateElement() {
-				if (!self.meta.type) return;
+				if (!self.meta.element) return;
+
 				switch (self.meta.type.id) {
 
 					case 'ds':
-						self.meta.elements = null;
-						d2Meta.datasetDataElements(self.meta.group.id).then(function(dataElements) {
-							self.meta.elements = dataElements;
+						self.result = null;
+						dqDict.dataElement(self.meta.element.id).then(function(data) {
+							console.log(data);
+							self.result = data;
 						});
 						break;
 
 					case 'de':
-						self.meta.elements = null;
-						d2Meta.dataElementGroupDataElements(self.meta.group.id).then(function(dataElements) {
-							self.meta.elements = dataElements;
+						self.result = null;
+						dqDict.dataElement(self.meta.element.id).then(function(data) {
+							console.log(data);
+							self.result = data;
 						});
 						break;
 
 					case 'in':
-						self.meta.elements = null;
-						d2Meta.indicatorGroupIndicators(self.meta.group.id).then(function(indicators) {
-							self.meta.elements = indicators;
+						self.result = null;
+						dqDict.indicator(self.meta.element.id).then(function(data) {
+							console.log(data);
+							self.result = data;
 						});
 						break;
 				}
@@ -118,6 +120,9 @@
 					elements: null,
 					element: null
 				};
+
+				self.result;
+
 			}
 
 			return self;
