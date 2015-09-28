@@ -1,13 +1,13 @@
 	<h3>App Administration</h3>
 	<h4 ng-if="!admCtrl.isAdmin">You do not have access to change any settings!</h4>
 	<tabset>
-		<tab heading="Data Mapping" active="admCtrl.activeTab">
+		<tab heading="Numerator mapping" active="admCtrl.activeTab">
 			<br />
-			<p>Please map the reference data to the corresponding data element/indicator in this database.</p>
+			<p>Please map the reference numerators to the corresponding data element/indicator in this database.</p>
 			<table class="table table-bordered table-striped table-condensed table-hover">
 				<tr>
-					<th>Groups</th>
-					<th>Reference data</th>
+					<th>Group</th>
+					<th>Reference numerator</th>
 					<th>Core</th>
 					<th>Data element/indicator</th>
 					<th>Dataset</th>
@@ -27,7 +27,7 @@
 			</table>
 			
 		</tab>
-		<tab heading="Data Groups">
+		<tab heading="Numerator groups">
 			<br />
 			<p>Use this page to add and remove indicators/data to groups, and to add new groups.</p>
 			<div ng-repeat="group in admCtrl.mapping.groups |orderBy: 'name'">
@@ -61,33 +61,7 @@
 			<button ng-disabled="!admCtrl.isAdmin" type="button" class="btn btn-danger" ng-click="admCtrl.deleteIndicatorGroup();" style="margin:5px">Delete Group</button>
 		</tab>
 
-		<tab heading="Denominators">
-			<br />
-			<p>Please map alternative denominators for comparison.</p>
-			<table class="table table-bordered table-striped table-condensed table-hover">
-				<tr>
-					<th>Name</th>
-					<th>Indicator A</th>
-					<th>Indicator B</th>
-					<th>Criteria</th>
-					<th width="100px"></th>
-				</tr>
-				<tr ng-repeat="denominator in admCtrl.mapping.denominators | orderBy:'type'">
-					<td class="vert-align">{{denominator.name}}</td>
-					<td class="vert-align">{{admCtrl.getDataName(denominator.idA)}}</td>
-					<td class="vert-align">{{admCtrl.getDataName(denominator.idB)}}</td>
-					<td class="vert-align">{{denominator.criteria}} %</td>
-					<td class="vert-align" align="center">
-						<button ng-disabled="!admCtrl.isAdmin" ng-click="admCtrl.editDenominator(denominator);" class="btn btn-default btn-xs">Edit</button>
-						<button ng-disabled="!admCtrl.isAdmin || denominator.type === 'un'" ng-click="admCtrl.deleteDenominator(denominator.code);" class="btn btn-danger btn-xs">Delete</button></td>
-					</tr>
-				<tfoot>
-				<tr><td colspan="6"><button ng-disabled="!admCtrl.isAdmin" type="button" class="btn btn-primary pull-right btn-sm" ng-click="admCtrl.addDenominator();" style="width: 90px;">Add</button></td></tr></tfoot>
-			</table>
-
-		</tab>
-
-		<tab heading="Data Relations">
+		<tab heading="Numerator relations">
 		<br />
 					<h4>Internal consistency</h4>
 					<table class="table table-bordered table-striped table-condensed table-hover minimized">
@@ -116,7 +90,35 @@
 						</tfoot>
 					</table>						
 				</tab>
-				
+
+		<tab heading="Denominator relations">
+			<br />
+			<p>Please map alternative denominators for comparison, for example denominiators from the National Bureau of Statistics
+				with denominators used by health programmes.</p>
+			<table class="table table-bordered table-striped table-condensed table-hover">
+				<tr>
+					<th>Name</th>
+					<th>Denominator A</th>
+					<th>Denominator B</th>
+					<th>Criteria</th>
+					<th width="100px"></th>
+				</tr>
+				<tr ng-repeat="denominator in admCtrl.mapping.denominators | orderBy:'type'">
+					<td class="vert-align">{{denominator.name}}</td>
+					<td class="vert-align">{{admCtrl.getDataName(denominator.idA)}}</td>
+					<td class="vert-align">{{admCtrl.getDataName(denominator.idB)}}</td>
+					<td class="vert-align">{{denominator.criteria}} %</td>
+					<td class="vert-align" align="center">
+						<button ng-disabled="!admCtrl.isAdmin" ng-click="admCtrl.editDenominator(denominator);" class="btn btn-default btn-xs">Edit</button>
+						<button ng-disabled="!admCtrl.isAdmin || denominator.type === 'un'" ng-click="admCtrl.deleteDenominator(denominator.code);" class="btn btn-danger btn-xs">Delete</button></td>
+				</tr>
+				<tfoot>
+				<tr><td colspan="6"><button ng-disabled="!admCtrl.isAdmin" type="button" class="btn btn-primary pull-right btn-sm" ng-click="admCtrl.addDenominator();" style="width: 90px;">Add</button></td></tr></tfoot>
+			</table>
+
+		</tab>
+
+
 		<tab heading="Quality Parameters">
 			<h4>Indicator parameters</h4>
 			<p>Modify parameters for each data element/indicator in the table below. Only data elements/indicators mapped to the database are displayed.</p>
