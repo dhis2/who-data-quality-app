@@ -38,10 +38,15 @@
 				}
 
 
-				function arrayRemoveDuplicates(array) {
+				function arrayRemoveDuplicates(array, property) {
 					var seen = {};
 					return array.filter(function(item) {
-						return seen.hasOwnProperty(item) ? false : (seen[item] = true);
+						if (property) {
+							return seen.hasOwnProperty(item[property]) ? false : (seen[item[property]] = true);
+						}
+						else {
+							return seen.hasOwnProperty(item) ? false : (seen[item] = true);
+						}
 					});
 				}
 
@@ -60,7 +65,7 @@
 
 				function arraySortByProperty(array, property, numeric) {
 
-					array.sort(function(a, b) {
+					 return array.sort(function(a, b) {
 						if (numeric) {
 							return b[property] - a[property] ;
 						}
