@@ -4,7 +4,7 @@
 
 	/**Controller: Parameters*/
 	angular.module('dictionary').controller("DictController",
-		['d2Meta', 'dqAnalysisDictionary', function(d2Meta, dqDict) {
+		['d2Meta', 'd2Utils', 'dqAnalysisDictionary', function(d2Meta, d2Utils, dqDict) {
 			var self = this;
 			init();
 
@@ -17,28 +17,32 @@
 			/** USER INTERFACE **/
 			function updateGroups() {
 				if (!self.meta.type) return;
+
+				self.loading = true;
+
+				self.meta.group = null;
+				self.meta.groups = null;
+				self.meta.elements = null;
+
 				switch (self.meta.type.id) {
 
 					case 'ds':
-						self.meta.elements = null;
-						self.meta.groups = null;
-						d2Meta.datasets().then(function(datasets) {
+						d2Meta.objects('dataSets').then(function(datasets) {
+							self.loading = false;
 							self.meta.groups = datasets;
 						});
 						break;
 
 					case 'de':
-						self.meta.elements = null;
-						self.meta.groups = null;
-						d2Meta.dataElementGroups().then(function(datasets) {
+						d2Meta.objects('dataElementGroups').then(function(datasets) {
+							self.loading = false;
 							self.meta.groups = datasets;
 						});
 						break;
 
 					case 'in':
-						self.meta.elements = null;
-						self.meta.groups = null;
-						d2Meta.indicatorGroups().then(function(datasets) {
+						d2Meta.objects('indicatorGroups').then(function(datasets) {
+							self.loading = false;
 							self.meta.groups = datasets;
 						});
 						break;
@@ -48,27 +52,33 @@
 			/** USER INTERFACE **/
 			function updateElements() {
 				if (!self.meta.group) return;
-				switch (self.meta.type.id) {
 
+				self.loading = true;
+				self.meta.elements = null;
+
+				switch (self.meta.type.id) {
 					case 'ds':
-						self.meta.elements = null;
-						d2Meta.datasetDataElements(self.meta.group.id).then(function(dataElements) {
-							self.meta.elements = dataElements;
+						d2Meta.object('dataSets', self.meta.group.id, 'dataElements').then(
+							function(dataSet) {
+								self.loading = false;
+								self.meta.elements = d2Utils.arraySortByProperty(dataSet.dataElements, 'name', false);
 						});
 						break;
 
 					case 'de':
-						self.meta.elements = null;
-						d2Meta.dataElementGroupDataElements(self.meta.group.id).then(function(dataElements) {
-							self.meta.elements = dataElements;
+						d2Meta.object('dataElementGroups', self.meta.group.id, 'dataElements').then(
+							function(dataElementGroup) {
+								self.loading = false;
+								self.meta.elements = d2Utils.arraySortByProperty(dataElementGroup.dataElements, 'name', false);
 						});
 						break;
 
 					case 'in':
-						self.meta.elements = null;
-						d2Meta.indicatorGroupIndicators(self.meta.group.id).then(function(indicators) {
-							self.meta.elements = indicators;
-						});
+						d2Meta.object('indicatorGroups', self.meta.group.id, 'indicators').then(
+							function(indicatorGroup) {
+								self.loading = false;
+								self.meta.elements = d2Utils.arraySortByProperty(indicatorGroup.indicators, 'name', false);
+							});
 						break;
 				}
 			}
@@ -77,28 +87,27 @@
 			function updateElement() {
 				if (!self.meta.element) return;
 
-				switch (self.meta.type.id) {
+				self.result = null;
+				self.loading = true;
 
+				switch (self.meta.type.id) {
 					case 'ds':
-						self.result = null;
 						dqDict.dataElement(self.meta.element.id).then(function(data) {
-							console.log(data);
+							self.loading = false;
 							self.result = data;
 						});
 						break;
 
 					case 'de':
-						self.result = null;
 						dqDict.dataElement(self.meta.element.id).then(function(data) {
-							console.log(data);
+							self.loading = false;
 							self.result = data;
 						});
 						break;
 
 					case 'in':
-						self.result = null;
 						dqDict.indicator(self.meta.element.id).then(function(data) {
-							console.log(data);
+							self.loading = false;
 							self.result = data;
 						});
 						break;
