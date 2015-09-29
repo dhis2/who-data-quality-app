@@ -7,13 +7,37 @@
 				//Define factory API
 				var service = {
 					ready: ready,
-					mapping: mapping,
-					admin: admin
+					load: load,
+					save: save,
+					admin: admin,
+					groups: groups,
+					groupDelete: deleteGroup,
+					groupAdd: addGroup,
+					groupNumerators: groupIndicators,
+					groupAddNumerator: addToGroup,
+					groupRemoveNumerator: removeFromGroup,
+					groupsRemoveNumerator: removeFromGroups,
+					numerators: indicators,
+					numeratorsConfigured: configuredIndicators,
+					numeratorGroups: indicatorGroups,
+					numeratorClear: clearIndicator,
+					numeratorAdd: addIndicator,
+					numeratorDelete: numeratorDelete,
+					numeratorUpdate: updateIndicator,
+					denominators: denominators,
+					denominatorAddEdit: addEditDenominator,
+					denominatorDelete: deleteDenominator,
+					dataSets: dataSets,
+					relations: relations,
+					relationAddEdit: addEditRelation,
+					relationDelete: deleteRelation,
+					d2NameFromID: d2NameFromID
 				};
 
 				var _ready = false;
 				var _map;
-				var _d2Objects;
+				var _d2Objects = {};
+				var _dataIDs;
 
 				/**
 				 * Check if mapping is "ready", e.g. has been downloaded from server
@@ -25,41 +49,18 @@
 				}
 
 
-				function mapping() {
+				function load() {
 					var deferred = $q.defer();
 
 					requestService.getSingleData('/api/systemSettings/DQAmapping').then(
 						function(data) {
 							_map = data;
-
-							var dataIDs;
-							for (var i = 0; i < _map.data.length; i++) {
-								if (_map.data[i].localData && _map.data[i].localData.id) {
-									dataIDs.push(_map.data[i].localData.id);
-								}
-							}
-							for (var i = 0; i < _map.dataSets.length; i++) {
-								dataIDs.push(_map.dataSets[i].id);
-							}
-							for (var i = 0; i < _map.dataSets.length; i++) {
-								dataIDs.push(_map.dataSets[i].id);
-							}
-							var promises = [];
-							promises.push(d2Meta.object('dataElement', dataIDs));
-							promises.push(d2Meta.object('indicator', dataIDs));
-							promises.push(d2Meta.object('dataSet', dataIDs, 'name,id,periodType'));
-							$q.all(promises).then(
-								function(datas) {
-									for (var i = 0; i < datas.length; i++) {
-										for (var j = 0; j < datas[i].length; j++) {
-											_d2Objects[datas[i][j].id] = datas[i][j];
-										}
-									}
+							d2Names().then(
+								function(data) {
 									_ready = true;
 									deferred.resolve(true);
 								}
 							);
-
 						},
 						function(error) {
 							console.log('Error in getMapping()');
@@ -71,108 +72,15 @@
 				}
 
 
-				function group() {
-
-					return _map.groups;
-				}
+				function save() {
 
 
+					//Check if we have new DHIS 2 ids to fetch;
+					var currentIDs = d2IDs().join('');
+					var previousIDs = _dataIDs.join('');
+					if (currentIDs != previousIDs) d2Names();
 
-				function indicator(code) {
-					if (code) {
-						for (var i = 0; i < _map.data.length; i++) {
-							if (data[i].code === dataCode) return data[i];
-						}
-					}
-					else {
-						return _map.data;
-					}
-				}
-
-
-
-				function indicatorDataSet(code) {
-					var indicator = indicator(code);
-					return dataSet(indicator.dataSetID);
-
-				}
-
-
-				function dataSet(id) {
-					if (id) {
-						for (var i = 0; i < _map.dataSets.length; i++) {
-							if (datasets[i].id === id) {
-								return datasets[i];
-							}
-						}
-					}
-					else {
-						return _map.dataSets;
-					}
-				}
-
-
-				function groupData(code) {
-					var dataCodes;
-					if (!code) {
-						return _map.data;
-					}
-					else if (groupCode != 'core') {
-						for (var i = 0; i < _map.groups.length; i++) {
-							if (_map.groups[i].code === groupCode) {
-								dataCodes = groups[i].members;
-								break;
-							}
-						}
-					}
-					else {
-						dataCodes = self.getCoreData();
-					}
-
-					var dataInGroup = [];
-					for (var i = 0; i < dataCodes.length; i++) {
-						for (var j = 0; j < _map.data.length; j++) {
-							if (data[j].localData && (dataCodes[i] === data[j].code)) {
-								dataInGroup.push(data[j]);
-								break;
-							}
-						}
-					}
-
-					return dataInGroup;
-				}
-
-
-
-				function groupDataSet(code) {
-
-					var dataSets = [];
-					var data = groupData(code);
-					for (var i = 0; i < data.length; i++ ) {
-						dataSets.push(dataSet(data[i].dataSetID));
-					}
-
-					d2Utils.arrayRemoveDuplicates(dataSets);
-					return dataSets;
-				}
-
-
-
-				function relations(code) {
-					if (code) {
-						var relations = [];
-						for (var i = 0; i < _map.relations.length; i++) {
-							if (indicatorIsRelevant(_map.relations[i].A, groupCode) ||
-								indicatorIsRelevant(_map.relations[i].B, groupCode)) {
-								relations.push(_map.relations[i]);
-							}
-						}
-					}
-					else {
-						return _map.relations;
-					}
-
-					return relations;
+					return requestService.post('/api/systemSettings/', {'DQAmapping': angular.toJson(_map)});
 				}
 
 
@@ -214,6 +122,496 @@
 				}
 
 
+
+
+
+				/** ===== GROUPS ===== **/
+
+				/**
+				 * Return specified group, or all if no group is specified
+				 *
+				 * @param code
+				 * @returns {*}
+				 */
+				function groups(code) {
+					if (code) {
+						for (var i = 0; i < _map.groups.length; i++) {
+							if (_map.groups[i].code === code) return _map.groups[i];
+						}
+					}
+					else {
+						return _map.groups;
+					}
+
+				}
+
+
+				function deleteGroup(code) {
+					for (var i = 0; i < _map.groups.length; i++) {
+						if (_map.groups[i].code === code) {
+							_map.groups.splice(i, 1);
+							break;
+						}
+					}
+
+					save();
+				}
+
+
+				function addGroup(name) {
+
+					var code = getNewIndicatorGroupCode();
+
+					//Add indicator
+					_map.groups.push({
+						"name": name,
+						"code": code,
+						"members": []
+					});
+
+					//Save
+					save();
+
+				}
+
+
+				function groupIndicators(code) {
+					var data = [], dataCodes = [];
+					if (code != 'core') {
+						for (var i = 0; i < _map.groups.length; i++) {
+							if (_map.groups[i].code === code) {
+								dataCodes = d2Utils.arrayMerge(dataCodes, _map.groups[i].members);
+							}
+						}
+					}
+					else {
+						dataCodes = _map.coreIndicators;
+					}
+
+					for (var i = 0; i < dataCodes.length; i++) {
+						data.push(indicators(dataCodes[i]));
+					}
+
+					return data;
+				}
+
+
+				function groupDataSets(code) {
+
+					var dataSets = [];
+					var data = groupData(code);
+					for (var i = 0; i < data.length; i++ ) {
+						dataSets.push(indicatorDataSet(data[i].code));
+					}
+
+					dataSets = d2Utils.arrayRemoveDuplicates(dataSets, 'id');
+					return dataSets;
+				}
+
+
+				function addToGroup(groupCode, dataCode) {
+					groups(groupCode).members.push(dataCode);
+
+					return save();
+				}
+
+
+				function removeFromGroup(groupCode, dataCode) {
+					var members = groups(groupCode).members;
+					for (var i = 0; i < members.length; i++) {
+						if (members[i] === dataCode) {
+							members.splice(i, 1);
+						}
+					}
+
+					return save();
+				}
+
+
+				function removeFromGroups(code) {
+					for (var i = 0; i < _map.groups.length; i++) {
+						for (var j = 0; j < _map.groups[i].members.length; j++) {
+							if (_map.groups[i].members[j] === code) _map.groups[i].members.splice(j, 1);
+						}
+					}
+
+					return save();
+				}
+
+
+				function getNewIndicatorGroupCode() {
+
+					//Get and return next possible code
+					var current, found;
+					for (var i = 0; i <= _map.groups.length; i++) {
+
+						current = "G" + parseInt(i+1);
+						existing = false;
+
+						for (var j = 0; j < _map.groups.length; j++) {
+							if (_map.groups[j].code === current) existing = true;
+						}
+
+						if (!existing) return current;
+					}
+				}
+
+
+
+
+				/** ===== INDICATORS ===== **/
+
+				function indicators(code) {
+					if (code) {
+						for (var i = 0; i < _map.data.length; i++) {
+							if (_map.data[i].code === code) return _map.data[i];
+						}
+					}
+					else {
+						return _map.data;
+					}
+				}
+
+
+				function addIndicator(name, definition, groupCode) {
+					//Add indicator
+					var code = getNewIndicatorCode();
+					_map.data.push({
+						"name": name,
+						"definition": definition,
+						"code": code,
+						"extremeOutlier": 3,
+						"localData": {},
+						"matched": false,
+						"moderateOutlier": 2,
+						"extremeOutlier": 3,
+						"consistency": 0.33,
+						"custom": true,
+					});
+
+					//Add to group membership
+					addToGroup(groupCode, code);
+
+					//Save
+					save();
+				}
+
+
+				function configuredIndicators(code) {
+					if (code) {
+						for (var i = 0; i < _map.data.length; i++) {
+							if (_map.data[i].code === dataCode) {
+								if (_map.data[i].localData.id) return true;
+								else return false;
+							}
+						}
+						return false;
+					}
+					else {
+						var configured = [];
+						for (var i = 0; i < _map.data.length; i++) {
+							if (_map.data[i].localData.id) {
+								configured.push(indicators(_map.data[i].code));
+							}
+						}
+						return configured;
+					}
+
+
+				}
+
+
+				function clearIndicator(code) {
+
+					var indicator = indicators(code);
+					var dataSetID = indicator.dataSetID;
+
+					indicator.id = null;
+					indicator.dataSetID = null;
+
+					indicator.localData = {};
+					indicator.matched = false;
+
+
+					deleteDataset(dataSetID);
+				}
+
+
+				function numeratorDelete(code) {
+					var dataSetID;
+					for (var i = 0; i < _map.data.length; i++) {
+						if (_map.data[i].code === code) {
+							dataSetID = _map.data[i].dataSetID;
+							_map.data.splice(i, 1);
+						}
+					}
+					removeFromGroups(code);
+					removeFromRelations(code);
+					deleteDataset(dataSetID);
+				}
+
+
+				function updateIndicator(indicator) {
+					var original = indicators(indicator.code);
+					if (original.dataSetID != indicator.dataSetID) {
+						var dataSetID = original.dataSetID;
+						original.dataSetID === null;
+						deleteDataset(dataSetID);
+					}
+					for (var i = 0; i < _map.data.length; i++) {
+						if (_map.data[i].code === indicator.code) {
+							_map.data[i] = indicator;
+							break;
+						}
+					}
+					save();
+				}
+
+
+				function indicatorDataSet(code) {
+					var indicator = indicator(code);
+					return dataSet(indicator.dataSetID);
+
+				}
+
+
+				function indicatorGroups(code) {
+					var groups = [];
+					for (var i = 0; i < _map.groups.length; i++) {
+						for (var j = 0; j < _map.groups[i].members.length; j++) {
+							if (_map.groups[i].members[j] === code) {
+								groups.push(_map.groups[i]);
+								break;
+							}
+						}
+					}
+
+					return groups;
+				}
+
+
+				function getNewIndicatorCode() {
+
+					//Get and return next possible code
+					var current, found;
+					for (var i = 0; i <= _map.data.length; i++) {
+
+						current = "C" + parseInt(i+1);
+						existing = false;
+
+						for (var j = 0; j < _map.data.length; j++) {
+							if (_map.data[j].code === current) existing = true;
+						}
+
+						if (!existing) return current;
+					}
+				}
+
+				
+
+				/** ===== RELATIONS ===== **/
+
+				function relations(code) {
+					if (code) {
+						var relations = [];
+						for (var i = 0; i < _map.relations.length; i++) {
+							if (_map.relations[i].code === code) {
+								if (indicatorIsRelevant(_map.relations[i].A, groupCode) ||
+									indicatorIsRelevant(_map.relations[i].B, groupCode)) {
+									return _map.relations[i];
+								}
+							}
+						}
+					}
+					else {
+						return _map.relations;
+					}
+				}
+
+
+				function configuredRelations(code) {
+					var confRel = []
+					for (var i = 0; i < _map.relations.length; i++) {
+						var rel = _map.relations[i];
+
+						if (code && rel.code === code) {
+							if (rel.A && configuredIndicators(rel.A) && rel.B && configuredIndicators(rel.B)) {
+								return true;
+							}
+						}
+						else {
+							if (rel.A && configuredIndicators(rel.A) && rel.B && configuredIndicators(rel.B)) {
+								confRel.push(rel);
+							}
+						}
+					}
+					if (code) return false;
+					else return confRel;
+				}
+
+
+				function addEditRelation(relation) {
+					if (relation.code != null) {
+						for (var i = 0; i < _map.relations.length; i++) {
+							if (_map.relations[i].code === relation.code) {
+								_map.relations[i] = relation;
+							}
+						}
+					}
+					else {
+						relation.code = relationCode();
+						_map.relations.push(relation);
+					}
+
+					return save();
+				}
+
+
+				function deleteRelation(code) {
+					for (var i = 0; i < _map.relations.length; i++) {
+						if (_map.relations[i].code === code) {
+							_map.relations.splice(i, 1);
+						}
+					}
+
+					return save();
+				}
+
+
+				function removeFromRelations(code) {
+					for (var i = 0; i < _map.relations.length; i++) {
+						if (_map.relations[i].A === code) _map.relations[i].A;
+					 	if (_map.relations[i].B === code) _map.relations[i].B;
+					}
+
+					return save();
+				}
+
+
+				function relationCode() {
+					var current, found;
+					for (var i = 0; i <= _map.relations.length; i++) {
+
+						current = "R" + parseInt(i+1);
+						existing = false;
+
+						for (var j = 0; j < _map.relations.length; j++) {
+							if (_map.relations[j].code === current) existing = true;
+						}
+
+						if (!existing) return current;
+					}
+				}
+
+
+
+				/** ===== DATASETS ===== **/
+				function dataSets(id) {
+					if (id) {
+						for (var i = 0; i < _map.dataSets.length; i++) {
+							if (datasets[i].id === id) {
+								return datasets[i];
+							}
+						}
+					}
+					else {
+						return _map.dataSets;
+					}
+				}
+
+
+				function addDataset(id) {
+
+
+				}
+
+
+				function deleteDataset(id) {
+
+					// 1 check that no remaining indicators still use it
+					for (var i = 0; i < _map.data.length; i++) {
+						if (_map.data[i].localData.id && _map.data[i].localData.id === id) {
+							return;
+						}
+					}
+
+					// 2 if not used by other indicators, remove
+					for (var i = 0; i < _map.dataSets.length; i++) {
+						if (_map.dataSets[i].id === id) {
+							_map.dataSets.slice(i, 1);
+							break;
+						}
+					}
+
+					return save();
+				}
+
+
+
+				/** ====== DENOMINATOR ===== **/
+
+				function denominators(code) {
+					if (code) {
+						var relations = [];
+						for (var i = 0; i < _map.denominators.length; i++) {
+							if (_map.denominators[i].code === code) {
+								return _map.denominators[i];
+							}
+						}
+					}
+					else {
+						return _map.denominators;
+					}
+				}
+
+
+				function addEditDenominator(denominator) {
+					if (denominator.code != null) {
+						for (var i = 0; i < _map.denominators.length; i++) {
+							if (_map.denominators[i].code === denominator.code) {
+								_map.denominators[i] = denominator;
+							}
+						}
+					}
+					else {
+						denominator.code = denominatorCode();
+						_map.denominators.push(denominator);
+					}
+
+					return save();
+				}
+
+
+				function deleteDenominator(code) {
+					for (var i = 0; i < _map.denominators.length; i++) {
+						if (_map.denominators[i].code === code) {
+							_map.denominators.splice(i, 1);
+						}
+					}
+
+					return save();
+				}
+
+
+				function denominatorCode() {
+
+					//Get and return next possible code
+					var current, found;
+					for (var i = 0; i <= _map.denominators.length; i++) {
+
+						current = "R" + parseInt(i + 1);
+						existing = false;
+
+						for (var j = 0; j < _map.denominators.length; j++) {
+							if (_map.denominators[j].code === current) existing = true;
+						}
+
+						if (!existing) return current;
+					}
+				}
+
+
+
 				/** UTILITIES **/
 				function indicatorIsRelevant(dataCode, groupCode) {
 
@@ -227,6 +625,57 @@
 				}
 
 
+				function d2IDs() {
+					var dataIDs = [];
+					for (var i = 0; i < _map.data.length; i++) {
+						if (_map.data[i].localData && _map.data[i].localData.id) {
+							dataIDs.push(_map.data[i].localData.id);
+						}
+					}
+					for (var i = 0; i < _map.dataSets.length; i++) {
+						dataIDs.push(_map.dataSets[i].id);
+					}
+					for (var i = 0; i < _map.denominators.length; i++) {
+						dataIDs.push(_map.denominators[i].idA);
+						dataIDs.push(_map.denominators[i].idB);
+					}
+					return dataIDs.sort();
+				}
+
+
+				function d2Names() {
+					var deferred = $q.defer();
+
+					console.log("Getting names");
+
+					var dataIDs = d2IDs();
+					_dataIDs = dataIDs;
+
+					var promises = [];
+					promises.push(d2Meta.objects('dataElements', dataIDs));
+					promises.push(d2Meta.objects('indicators', dataIDs));
+					promises.push(d2Meta.objects('dataSets', dataIDs, 'name,id,periodType'));
+					promises.push(d2Meta.dataElementOperands(dataIDs));
+					$q.all(promises).then(
+						function(datas) {
+							for (var i = 0; i < datas.length; i++) {
+								for (var j = 0; j < datas[i].length; j++) {
+									_d2Objects[datas[i][j].id] = datas[i][j];
+								}
+							}
+							deferred.resolve(true);
+						}
+					);
+
+					return deferred.promise;
+				}
+
+
+				function d2NameFromID(id) {
+
+					return _d2Objects[id].name;
+
+				}
 
 
 				return service;
