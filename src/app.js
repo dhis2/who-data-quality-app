@@ -11,8 +11,8 @@
 			var $http = initInjector.get('$http');
 
 			$http.get('manifest.webapp').then(
-				function(data) {
-					app.constant("BASE_URL", data.data.activities.dhis.href);
+				function(response) {
+					app.constant("BASE_URL", response.data.activities.dhis.href);
 					angular.bootstrap(document, ['dataQualityApp']);
 				}
 			);
