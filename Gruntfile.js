@@ -80,6 +80,33 @@ module.exports = function(grunt) {
 			cwd: 'src',
 			files: ['src/**'],
 			tasks: ['reload-dev']
+		},
+		cachebreaker: {
+			dev: {
+				options: {
+					match: [
+						{
+							'libs.js': 'build/core/libs.js',
+							'components.js': 'build/core/components.js',
+							'app.js': 'build/core/app.js',
+							'commons.js': 'build/core/commons.js',
+							'services.js': 'build/core/services.js',
+							'about.js': 'build/moduleAbout/about.js',
+							'admin.js': 'build/moduleAdmin/admin.js',
+							'consistency.js': 'build/moduleConsistency/consistency.js',
+							'dictionary.js': 'build/moduleDictionary/dictionary.js',
+							'outlierGap.js': 'build/moduleOutlierGap/outlierGap.js',
+							'dashboard.js': 'build/moduleDashboard/dashboard.js',
+							'export.js': 'build/moduleExport/export.js',
+							'review.js': 'build/moduleReview/review.js'
+						}
+					],
+					replacement: 'md5'
+				},
+				files: {
+					src: ['build/index.html']
+				}
+			}
 		}
 	});
 	
@@ -93,7 +120,8 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-contrib-uglify');
 	grunt.loadNpmTasks('grunt-contrib-cssmin');
 	grunt.loadNpmTasks('grunt-zip');
-	grunt.loadNpmTasks("grunt-rsync")
+	grunt.loadNpmTasks("grunt-rsync");
+	grunt.loadNpmTasks('grunt-cache-breaker');
 
 	grunt.registerTask(
 		'build',
@@ -102,6 +130,7 @@ module.exports = function(grunt) {
 			'clean',
 			'copy-build',
 			'concat-min',
+			'cachebreaker',
 			'zip',
 			'clean:tmp'
 		]
@@ -121,9 +150,7 @@ module.exports = function(grunt) {
 		'build-dev-zip',
 		'Builds app, wihtout minimising js or css',
 		[
-			'clean',
-			'copy-build',
-			'concat-only',
+			'build-dev',
 			'zip',
 		]
 	);
