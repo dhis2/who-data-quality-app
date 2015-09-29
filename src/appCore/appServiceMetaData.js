@@ -1001,7 +1001,7 @@
 		self.getGroups = function() {
 			if (!self.hasMapping()) return null;
 			
-			return mapping.groups
+			return mapping.groups;
 		};
 		
 		self.getCoreData = function() {
@@ -1136,7 +1136,9 @@
 			var relation, relations = [];
 			for (var i = 0; i < mapping.relations.length; i++) {
 				relation = mapping.relations[i];
-				if (indicatorIsRelevant(relation.A, groupCode) || indicatorIsRelevant(relation.B, groupCode)) {
+				var relevant = indicatorIsRelevant(relation.A, groupCode) || indicatorIsRelevant(relation.B, groupCode);
+				var configured = indicatorIsConfigured(relation.A) && indicatorIsConfigured(relation.B);
+				if (relevant && configured) {
 					relations.push(relation);
 				}
 
@@ -1151,6 +1153,17 @@
 
 			for (var i = 0; i < data.length; i++) {
 				if (data[i].code === dataCode) return true
+			}
+
+			return false;
+		}
+
+		function indicatorIsConfigured(dataCode) {
+
+			var data = self.getData();
+
+			for (var i = 0; i < data.length; i++) {
+				if (data[i].code === dataCode && data[i].localData.id) return true
 			}
 
 			return false;

@@ -50,9 +50,10 @@
 							});
 
 							//For the first two, check if we have very long x-axis labels that interfere with y axis
-							if (j < 2) xLen = Math.max(xLen, y.toString().length);
+							if (y && j < 2) xLen = Math.max(xLen, y.toString().length);
 							if (y) yLen = Math.max(yLen, y.toString().length);
-							
+
+
 						}
 						
 						chartData.push(chartSerie);

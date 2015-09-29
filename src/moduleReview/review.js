@@ -62,7 +62,7 @@
 	    		self.map = response.data;
 	    		
 	    		self.groups = response.data.groups;
-	    		self.groups.unshift({'name': '[ Core ]', 'code': 'C'});
+	    		self.groups.unshift({'name': '[ Core ]', 'code': 'core'});
 	    		self.groupSelected = self.groups[0];
 	    	});
 
@@ -126,7 +126,7 @@
 	  		
 	  		
 	  		//3 Indicator relations
-	  		var relations = relationsForAnalysis();
+	  		var relations = metaDataService.getRelations(self.groupSelected.code);
 	  		for (var i = 0; i < relations.length; i++) {
 	  			var relation = relations[i];
 	  			var indicatorA = indicatorFromCode(relation.A);
@@ -352,7 +352,7 @@
 			
 			//First find all that might be relevant
 			var IDs;
-			if (self.groupSelected.code === 'C') {
+			if (self.groupSelected.code === 'core') {
 				IDs = self.map.coreIndicators;
 			}
 			else {
@@ -410,7 +410,7 @@
 	    
 	    self.relationName = function(code) {
 	    
-	    	var relations = relationsForAnalysis();
+	    	var relations = metaDataService.getRelations(self.groupSelected.code);
 	    	for (var i = 0; i < relations.length; i++) {
 	    		if (relations[i].code === code) return relations[i].name;
 	    	}

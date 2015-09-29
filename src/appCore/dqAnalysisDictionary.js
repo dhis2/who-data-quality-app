@@ -46,11 +46,13 @@
 					var fields = 'name,id,shortName,code,description,domainType,type,numberType,aggregationOperator,zeroIsSignificant,';
 					fields += 'dataSets[name,id,periodType,organisationUnits::size],';
 					fields += 'categoryCombo[name,categories[name,categoryOptions[name]]]';
-					d2Meta.dataElement(_id, fields).then(function(meta) {
-						_meta = meta;
-						processDataElementMeta();
-						deferred.resolve(true);
-					});
+					d2Meta.object('dataElements', _id, fields).then(
+						function(meta) {
+							_meta = meta;
+							processDataElementMeta();
+							deferred.resolve(true);
+						}
+					);
 
 					return deferred.promise;
 				}
@@ -210,7 +212,6 @@
 					indicatorMeta().then(function(data) {
 
 						processIndicatorMeta();
-						console.log(_meta);
 						indicatorData().then(function(data) {
 							_deferred.resolve(_result);
 						});
@@ -227,9 +228,9 @@
 
 					var fields = 'name,id,shortName,code,description,indicatorType[name,factor],';
 					fields += 'denominator,denominatorDescription,numerator,numeratorDescription';
-					promises.push(d2Meta.indicator(_id, fields));
+					promises.push(d2Meta.object('indicators', _id, fields));
 					promises.push(d2Meta.indicatorDataElements(_id));
-					promises.push(d2Meta.indicatorDatasets(_id));
+					promises.push(d2Meta.indicatorDataSets(_id));
 
 					$q.all(promises).then(
 						function(datas) {
