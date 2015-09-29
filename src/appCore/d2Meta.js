@@ -6,28 +6,71 @@
 
 				//Define factory API
 				var service = {
+					object: object,
+					objects: objects,
 					orgunitIDs: orgunitIDs,
 					userOrgunit: userOrgunit,
 					userOrgunits: userOrgunits,
 					userOrgunitsHierarchy: userOrgunitsHierarchy,
 					userAnalysisOrgunits: userAnalysisOrgunits,
-					datasets: datasets,
-					datasetDataElements: datasetDataElements,
-					dataElement: dataElement,
-					dataElementGroups: dataElementGroups,
-					dataElementGroupDataElements: dataElementGroupDataElements,
-					indicator: indicator,
 					indicatorDataElements: indicatorDataElements,
-					indicatorDatasets: indicatorDatasets,
-					indicatorFormulaText: indicatorFormulaText,
-					indicatorGroups: indicatorGroups,
-					indicatorGroupIndicators: indicatorGroupIndicators
+					indicatorDataSets: indicatorDataSets,
+					indicatorFormulaText: indicatorFormulaText
 				};
 
 
-				/** ===== GENERAL ===== */
+				/** ===== GENERAL - ANY OBJECT ===== */
+				function object(object, id, fieldString) {
+					var deferred = $q.defer();
+
+					var requestURL = '/api/' + object + '/' + id + '.json?';
+					if (fieldString) requestURL += 'fields=' + fieldString;
+
+					requestService.getSingleData(requestURL).then(
+						function(data) {
+							deferred.resolve(data);
+						},
+						function(error){
+							console.log("d2meta error: object(), type:" + object);
+							console.log(error);
+						}
+					);
+
+					return deferred.promise;
+				}
 
 
+				function objects(object, ids, fieldString, filterString, paging) {
+					paging = paging === null || paging === undefined ? paging = false : paging;
+
+					var deferred = $q.defer();
+
+					var requestURL;
+					if (ids) {
+						requestURL = '/api/' + object + '.json?';
+						requestURL += 'filter=id:in:[' + ids.join(',') + ']&';
+					}
+					else {
+						requestURL = '/api/' + object + '.json?';
+					}
+
+					if (fieldString) requestURL += 'fields=' + fieldString;
+					if (filterString) requestURL += '&filter=' + filterString;
+					requestURL += '&paging=' + paging;
+
+					requestService.getSingleData(requestURL).then(
+						function(data) {
+							deferred.resolve(data[object]);
+
+						},
+						function(error){
+							console.log("d2meta error: objects(), type:" + object);
+							console.log(error);
+						}
+					);
+
+					return deferred.promise;
+				}
 
 
 
@@ -206,144 +249,36 @@
 
 
 
-				/** ===== DATASETS ===== */
-				function datasets() {
-					var deferred = $q.defer();
-
-					var requestURL = '/api/dataSets.json?fields=name,id';
-					requestURL += '&paging=false';
-
-					requestService.getSingleData(requestURL).then(
-						function(data) {
-							d2Utils.arraySortByProperty(data.dataSets, 'name', false);
-							deferred.resolve(data.dataSets);
-						},
-						function(error){
-							console.log("d2meta error: datasets()");
-							console.log(error);
-						}
-					);
-
-					return deferred.promise;
-				}
-
-
-
-				function datasetDataElements(id) {
-					var deferred = $q.defer();
-
-					var requestURL = '/api/dataSets/' + id + '.json?';
-					requestURL += 'fields=dataElements[name,id]';
-					requestURL += '&paging=false';
-
-					requestService.getSingleData(requestURL).then(
-						function(data) {
-							d2Utils.arraySortByProperty(data.dataElements, 'name', false);
-							deferred.resolve(data.dataElements);
-						},
-						function(error){
-							console.log("d2meta error: datasetDataElements()");
-							console.log(error);
-						}
-					);
-
-					return deferred.promise;
-				}
-
-
-
 				/** ===== DATA ELEMENTS ===== */
-				function dataElement(id, fieldString) {
-					var deferred = $q.defer();
-
-					var requestURL = '/api/dataElements/' + id + '.json?';
-					if (fieldString) requestURL += '&fields=' + fieldString;
-					else requestURL += '&fields=name,id';
-
-					requestService.getSingleData(requestURL).then(
-						function(data) {
-							deferred.resolve(data);
-						},
-						function(error){
-							console.log("d2meta error: dataElement(id, fieldString)");
-							console.log(error);
-						}
-					);
-
-					return deferred.promise;
-				}
-
-
-
-				function dataElementsFromIDs(ids) {
-					var deferred = $q.defer();
-
-
-					var requestURL = '/api/dataElements.json?';
-					requestURL += 'fields=name,id';
-					requestURL += '&filter=id:in:[' + ids.join(',') + ']';
-					requestURL += '&paging=false';
-
-					requestService.getSingleData(requestURL).then(
-						function (data) {
-							deferred.resolve(data.dataElements);
-						},
-						function(error){
-							console.log("d2meta error: dataElementsFromIDs(ids)");
-							console.log(error);
-						});
-
-					return deferred.promise;
-				}
-
-
-
 				function dataElementOperandsFromIDs(ids) {
 					var deferred = $q.defer();
 
+					var operandDictionary = {};
 					var categoryOptionCombos = [];
 					var dataElements = [];
 					for (var i = 0; i < ids.length; i++) {
+						operandDictionary[ids[i]] = true;
 						var parts = ids[i].split('.');
 						dataElements.push(parts[0]);
 						categoryOptionCombos.push(parts[1]);
 					}
 
-					var promises = [];
-					promises.push(dataElementsFromIDs(dataElements));
-					promises.push(categoryOptionCombosFromIDs(categoryOptionCombos));
-					$q.all(promises).then(
-						function(datas) {
+					var requestURL = '/api/dataElementOperands.json?';
+					requestURL += 'filter=optionComboId:in:[' + categoryOptionCombos.join(',') + ']';
+					requestURL += '&filter=dataElementId:in:[' + dataElements.join(',') + ']';
+					requestURL += '&paging=false';
+					requestService.getSingleData(requestURL).then(
+						function(data) {
+							var allOperands = data.dataElementOperands;
 							var operands = [];
-							for (var i = 0; i < ids.length; i++) {
-								var parts = ids[i].split('.');
-								var deName;
-								for (var j = 0; j < datas[0].length; j++) {
-									if (parts[0] === datas[0][j].id) {
-										deName = datas[0][j].name;
-										j = datas[0].length
-									}
-								}
-								var comboName;
-								for (var j = 0; j < datas[1].length; j++) {
-									if (parts[1] === datas[1][j].id) {
-										comboName = datas[1][j].name;
-										j = datas[1].length
-									}
-								}
-
-								operands.push({
-									id: ids[i],
-									name: deName + ' ' + comboName
-								});
+							for (var i = 0; i < allOperands.length; i++) {
+								if (operandDictionary[allOperands[i].id]) operands.push(allOperands[i]);
 							}
-
 							deferred.resolve(operands);
-
 						},
-						function(errors) {
-							console.log("d2meta error: dataElementOperandsFromIDs(ids)");
-							console.log(errors);
+						function(error){
+							console.log("d2meta error: dataElementOperandsFromIDs()");
+							console.log(error);
 						}
 					);
 
@@ -356,7 +291,7 @@
 					var deferred = $q.defer();
 
 					var requestURL = '/api/dataElements.json?';
-					requestURL += 'fields=:name,id,dataSets[name,id,periodType,organisationUnits::size]';
+					requestURL += 'fields=name,id,dataSets[name,id,periodType,organisationUnits::size]';
 					requestURL += '&filter=id:in:[' + ids.join(',') + ']';
 					requestURL += '&paging=false';
 
@@ -372,6 +307,7 @@
 								}
 							}
 							d2Utils.arraySortByProperty(datasets, 'name', false);
+							datasets = d2Utils.arrayRemoveDuplicates(datasets, 'id');
 							deferred.resolve(datasets);
 						},
 						function(error){
@@ -384,85 +320,20 @@
 				}
 
 
-				function dataElementGroups() {
-					var deferred = $q.defer();
-
-					var requestURL = '/api/dataElementGroups.json?fields=name,id';
-					requestURL += '&paging=false';
-
-					requestService.getSingleData(requestURL).then(
-						function(data) {
-							d2Utils.arraySortByProperty(data.dataElementGroups, 'name', false);
-							deferred.resolve(data.dataElementGroups);
-						},
-						function(error){
-							console.log("d2meta error: dataElementGroups()");
-							console.log(error);
-						}
-					);
-
-					return deferred.promise;
-				}
-
-				function dataElementGroupDataElements(id) {
-					var deferred = $q.defer();
-
-					var requestURL = '/api/dataElementGroups/' + id + '.json?';
-					requestURL += 'fields=dataElements[name,id]';
-					requestURL += '&paging=false';
-
-					requestService.getSingleData(requestURL).then(
-						function(data) {
-							d2Utils.arraySortByProperty(data.dataElements, 'name', false);
-							deferred.resolve(data.dataElements);
-						},
-						function(error){
-							console.log("d2meta error: dataElementGroupDataElements()");
-							console.log(error);
-						}
-					);
-
-					return deferred.promise;
-				}
-
-
-
 
 				/** ===== INDICATORS ===== */
-				function indicator(id, fieldString) {
-					var deferred = $q.defer();
-
-					var requestURL = '/api/indicators/' + id + '.json?';
-					if (fieldString) requestURL += '&fields=' + fieldString;
-					else requestURL += '&fields=name,id';
-
-					requestService.getSingleData(requestURL).then(
-						function(data) {
-							deferred.resolve(data);
-						},
-						function(error){
-							console.log("d2meta error: indicator(id, fieldString)");
-							console.log(error);
-						}
-					);
-
-					return deferred.promise;
-				}
-
-
-
 				function indicatorDataElements(id) {
 					var deferred = $q.defer();
 
 					var requestURL = '/api/indicators/' + id + '.json?';
-					requestURL += '&fields=name,id,numerator,denominator';
+					requestURL += 'fields=name,id,numerator,denominator';
 
 					requestService.getSingleData(requestURL).then(
 						function(data) {
 							var indicator = data;
 							var dataElementIDs = d2Utils.idsFromIndicatorFormula(indicator.numerator, indicator.denominator, true);
 
-							dataElementsFromIDs(dataElementIDs).then(function (data) {
+							objects('dataElements', dataElementIDs).then(function (data) {
 
 								deferred.resolve(data);
 
@@ -480,7 +351,7 @@
 
 
 
-				function indicatorDatasets(id) {
+				function indicatorDataSets(id) {
 					var deferred = $q.defer();
 
 					indicatorDataElements(id).then(
@@ -496,14 +367,14 @@
 									deferred.resolve(data);
 								},
 								function(error) {
-									console.log("d2meta error: indicatorDatasets(id)");
+									console.log("d2meta error: indicatorDataSets(id)");
 									console.log(error);
 								}
 							);
 
 						},
 						function (error) {
-							console.log("d2meta error: indicatorDatasets(id)");
+							console.log("d2meta error: indicatorDataSets(id)");
 							console.log(error);
 						}
 
@@ -511,6 +382,7 @@
 
 					return deferred.promise;
 				}
+
 
 
 				function indicatorFormulaText(formula) {
@@ -561,9 +433,9 @@
 
 							//GET DATA
 							var promises = [];
-							promises.push(dataElementsFromIDs(dataElements));
+							promises.push(objects('dataElements', dataElements));
 							promises.push(dataElementOperandsFromIDs(dataElementOperands));
-							promises.push(constantsFromIDs(constants));
+							promises.push(objects('constants', constants, 'name,id,value'));
 
 							$q.all(promises).then(
 								function(datas) {
@@ -615,50 +487,6 @@
 
 
 
-				function indicatorGroups() {
-					var deferred = $q.defer();
-
-					var requestURL = '/api/indicatorGroups.json?fields=name,id';
-					requestURL += '&paging=false';
-
-					requestService.getSingleData(requestURL).then(
-						function(data) {
-							d2Utils.arraySortByProperty(data.indicatorGroups, 'name', false);
-							deferred.resolve(data.indicatorGroups);
-						},
-						function(error){
-							console.log("d2meta error: indicatorGroups()");
-							console.log(error);
-						}
-					);
-
-					return deferred.promise;
-
-				}
-
-				function indicatorGroupIndicators(id) {
-					var deferred = $q.defer();
-
-					var requestURL = '/api/indicatorGroups/' + id + '.json?';
-					requestURL += 'fields=indicators[name,id]';
-					requestURL += '&paging=false';
-
-					requestService.getSingleData(requestURL).then(
-						function(data) {
-							d2Utils.arraySortByProperty(data.indicators, 'name', false);
-							deferred.resolve(data.indicators);
-						},
-						function(error){
-							console.log("d2meta error: indicatorGroupIndicators()");
-							console.log(error);
-						}
-					);
-
-					return deferred.promise;
-
-				}
-
-
 				/** ===== CATEGORIES ===== */
 
 				function defaultCategoryOptionCombo() {
@@ -704,26 +532,6 @@
 				}
 
 
-				/** ===== CONSTANTS ===== */
-				function constantsFromIDs(ids) {
-					var deferred = $q.defer();
-
-					var requestURL = '/api/constants.json?';
-					requestURL += 'fields=name,id,value';
-					requestURL += '&filter=id:in:[' + ids.join(',') + ']';
-					requestURL += '&paging=false';
-
-					requestService.getSingleData(requestURL).then(
-						function (data) {
-							deferred.resolve(data.constants);
-						},
-						function(error){
-							console.log("d2meta error: constantsFromIDs(ids)");
-							console.log(error);
-						});
-
-					return deferred.promise;
-				}
 
 				return service;
 
