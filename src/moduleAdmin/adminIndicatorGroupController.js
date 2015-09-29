@@ -1,8 +1,8 @@
 (function(){  
 	/**Controller: Parameters*/
 	angular.module('admin').controller("ModalAddIndicatorGroupController",
-	['$modalInstance', '$scope',
-	function($modalInstance, $scope) {
+	['$modalInstance',
+	function($modalInstance) {
 	    	    
 	    var self = this; 
 	    

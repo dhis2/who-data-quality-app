@@ -13,24 +13,25 @@
 					<th>Dataset</th>
 					<th width="100px"></th>
 				</tr>
-				<tr ng-repeat="indicator in admCtrl.mapping.data | orderBy:admCtrl.sortIndicators">
+				<tr ng-repeat="indicator in admCtrl.numerators| orderBy:admCtrl.numeratorSort">
 					<td class="vert-align">{{admCtrl.dataGroups(indicator.code)}}</td>
 					<td class="vert-align">{{indicator.name}}</td>
 					<td class="vert-align" style="text-align: center;"><span ng-if="admCtrl.isCore(indicator.code)" class="glyphicon glyphicon-ok"></span></td>
 					<td class="vert-align">{{indicator.localData.name}}</td>
-					<td class="vert-align">{{admCtrl.dataSetNameFromID(indicator.dataSetID);}}</td>
+					<td class="vert-align">{{admCtrl.d2NameFromID(indicator.dataSetID)}}</td>
 					<td class="vert-align" align="center">
-						<button ng-disabled="!admCtrl.isAdmin" ng-click="admCtrl.mapIndicator(indicator);" class="btn btn-default btn-xs">Edit</button><button ng-disabled="!admCtrl.isAdmin" ng-if="indicator.custom" style="margin-left: 5px; width: 50px;" ng-click="admCtrl.deleteIndicator(indicator);" class="btn btn-danger btn-xs">Delete</button><button ng-if="!indicator.custom" ng-disabled="!indicator.matched || !admCtrl.isAdmin" style="margin-left: 5px; width: 50px" ng-click="admCtrl.deleteMapping(indicator);" class="btn btn-warning btn-xs">Clear</button></td>
+						<button ng-disabled="!admCtrl.isAdmin" ng-click="admCtrl.numeratorMap(indicator.code);" class="btn btn-default btn-xs">Edit</button><button ng-disabled="!admCtrl.isAdmin" ng-if="indicator.custom" style="margin-left: 5px; width: 50px;" ng-click="admCtrl.numeratorDelete(indicator.code);" class="btn btn-danger btn-xs">Delete</button><button ng-if="!indicator.custom" ng-disabled="!indicator.matched || !admCtrl.isAdmin" style="margin-left: 5px; width: 50px" ng-click="admCtrl.numeratorClear(indicator.code);" class="btn btn-warning btn-xs">Clear</button></td>
 				</tr>
 			<tfoot>
-			<tr><td colspan="6"><button ng-disabled="!admCtrl.isAdmin" type="button" class="btn btn-primary pull-right btn-sm" ng-click="admCtrl.addIndicator();" style="width: 90px;">Add</button></td></tr></tfoot>
+			<tr><td colspan="6"><button ng-disabled="!admCtrl.isAdmin" type="button" class="btn btn-primary pull-right btn-sm" ng-click="admCtrl.numeratorAdd();" style="width: 90px;">Add</button></td></tr></tfoot>
 			</table>
 			
 		</tab>
+
 		<tab heading="Numerator groups">
 			<br />
 			<p>Use this page to add and remove indicators/data to groups, and to add new groups.</p>
-			<div ng-repeat="group in admCtrl.mapping.groups |orderBy: 'name'">
+			<div ng-repeat="group in admCtrl.groups |orderBy: 'name'">
 				<h4>{{group.name}}</h4>
 				<table class="table table-bordered table-striped table-condensed table-hover" style="max-width: 600px;">
 					<tr>
@@ -39,7 +40,7 @@
 					</tr>
 					<tr ng-repeat="indicator in admCtrl.getIndicatorsInGroup(group.code) | orderBy: 'name'">
 						<td class="vert-align">{{indicator.name}}</td>
-						<td class="vert-align" align="middle"><button ng-disabled="!admCtrl.isAdmin" ng-click="admCtrl.ungroupIndicator(group, indicator.code);" class="btn btn-danger btn-xs" style="width: 60px">Remove</button></td>
+						<td class="vert-align" align="middle"><button ng-disabled="!admCtrl.isAdmin" ng-click="admCtrl.groupRemoveNumerators(group.code, indicator.code);" class="btn btn-danger btn-xs" style="width: 60px">Remove</button></td>
 					</tr>
 					<tr ng-if="admCtrl.isAdmin">
 						<td class="vert-align"><ui-select ng-model="admCtrl.groupSelect[group.code]"  style="max-width: 500px;">
@@ -47,18 +48,18 @@
 						  	{{admCtrl.groupSelect[group.code].name}}
 						  </ui-select-match>
 						  <ui-select-choices 
-						  	repeat="obj in admCtrl.mapping.data | filter: $select.search | filter: admCtrl.groupFilter(group.members)">
+						  	repeat="obj in admCtrl.numerators | filter: $select.search | filter: admCtrl.groupFilter(group.members)">
 						   		<div ng-bind-html="obj.name | highlight: $select.search"></div>
 						</ui-select-choices>
 						</ui-select></td>
-						<td class="vert-align"><button style="width: 60px" ng-disabled="!admCtrl.groupSelect[group.code] || !admCtrl.isAdmin" ng-click="admCtrl.groupIndicator(group)" class="btn btn-success">Add</button></td>
+						<td class="vert-align"><button style="width: 60px" ng-disabled="!admCtrl.groupSelect[group.code] || !admCtrl.isAdmin" ng-click="admCtrl.groupAddNumerators(group.code)" class="btn btn-success">Add</button></td>
 					</tr>
 					
 				</table>
 			</div>
 			<hr style="margin: 20px;"/>
-			<button ng-disabled="!admCtrl.isAdmin" type="button" class="btn btn-primary" ng-click="admCtrl.addIndicatorGroup();" style="margin: 5px;">Add Group</button>
-			<button ng-disabled="!admCtrl.isAdmin" type="button" class="btn btn-danger" ng-click="admCtrl.deleteIndicatorGroup();" style="margin:5px">Delete Group</button>
+			<button ng-disabled="!admCtrl.isAdmin" type="button" class="btn btn-primary" ng-click="admCtrl.groupAdd();" style="margin: 5px;">Add Group</button>
+			<button ng-disabled="!admCtrl.isAdmin" type="button" class="btn btn-danger" ng-click="admCtrl.groupDelete();" style="margin:5px">Delete Group</button>
 		</tab>
 
 		<tab heading="Numerator relations">
@@ -67,26 +68,26 @@
 					<table class="table table-bordered table-striped table-condensed table-hover minimized">
 						<tr>
 							<th nowrap>Name</th>
-							<th nowrap>Indicator A</th>
-							<th nowrap>Indicator B</th>
+							<th nowrap>Numerator A</th>
+							<th nowrap>Numerator B</th>
 							<th nowrap>Type</th>
 							<th nowrap>Threshold (%)</th>
 							<th nowrap>Threshold explanation</th>
 							<th nowrap>Description</th>
 							<th></th>
 						</tr>
-						<tr ng-repeat="relation in admCtrl.mapping.relations | orderBy:['A', 'B']:false" ng-if="admCtrl.filterMatchedRelations(relation)">
+						<tr ng-repeat="relation in admCtrl.relations | orderBy:['A', 'B']:false">
 							<td class="vert-align">{{relation.name}}</td>
-							<td class="vert-align">{{admCtrl.dataNameFromCode(relation.A);}}</td>
-							<td class="vert-align">{{admCtrl.dataNameFromCode(relation.B);}}</td>
-							<td class="vert-align">{{admCtrl.relationName(relation.type);}}</td>
+							<td class="vert-align">{{admCtrl.d2NameFromCode(relation.A);}}</td>
+							<td class="vert-align">{{admCtrl.d2NameFromCode(relation.B);}}</td>
+							<td class="vert-align">{{admCtrl.relationType(relation.type);}}</td>
 							<td class="vert-align" align="middle">{{relation.criteria}}</td>
 							<td class="vert-align">{{admCtrl.relationThresholdDescription(relation.type);}}</td>
 							<td class="vert-align">{{admCtrl.relationDescription(relation.type);}}</td>
-							<td nowrap align="middle"><button ng-disabled="!admCtrl.isAdmin" ng-click="admCtrl.editRelation(relation);" class="btn btn-default btn-xs" style="width: 60px;">Edit</button><button style="margin-left: 5px; width: 60px;" ng-disabled="!admCtrl.isAdmin" ng-click="admCtrl.deleteRelation(relation);" class="btn btn-danger btn-xs">Delete</button></td>
+							<td nowrap align="middle"><button ng-disabled="!admCtrl.isAdmin" ng-click="admCtrl.editRelation(relation);" class="btn btn-default btn-xs" style="width: 60px;">Edit</button><button style="margin-left: 5px; width: 60px;" ng-disabled="!admCtrl.isAdmin" ng-click="admCtrl.deleteRelation(relation.code);" class="btn btn-danger btn-xs">Delete</button></td>
 						</tr>
 						<tfoot>
-						<tr><td colspan="8"><button ng-disabled="!admCtrl.isAdmin" style="width: 125px" ng-click="admCtrl.addRelation();" class="btn btn-primary pull-right btn-sm">Add</button></td></tr>
+						<tr><td colspan="8"><button ng-disabled="!admCtrl.isAdmin" style="width: 125px" ng-click="admCtrl.editRelation(null);" class="btn btn-primary pull-right btn-sm">Add</button></td></tr>
 						</tfoot>
 					</table>						
 				</tab>
@@ -103,17 +104,17 @@
 					<th>Criteria</th>
 					<th width="100px"></th>
 				</tr>
-				<tr ng-repeat="denominator in admCtrl.mapping.denominators | orderBy:'type'">
+				<tr ng-repeat="denominator in admCtrl.denominators | orderBy:'type'">
 					<td class="vert-align">{{denominator.name}}</td>
-					<td class="vert-align">{{admCtrl.getDataName(denominator.idA)}}</td>
-					<td class="vert-align">{{admCtrl.getDataName(denominator.idB)}}</td>
+					<td class="vert-align">{{admCtrl.d2NameFromCode(denominator.idA)}}</td>
+					<td class="vert-align">{{admCtrl.d2NameFromCode(denominator.idB)}}</td>
 					<td class="vert-align">{{denominator.criteria}} %</td>
 					<td class="vert-align" align="center">
 						<button ng-disabled="!admCtrl.isAdmin" ng-click="admCtrl.editDenominator(denominator);" class="btn btn-default btn-xs">Edit</button>
 						<button ng-disabled="!admCtrl.isAdmin || denominator.type === 'un'" ng-click="admCtrl.deleteDenominator(denominator.code);" class="btn btn-danger btn-xs">Delete</button></td>
 				</tr>
 				<tfoot>
-				<tr><td colspan="6"><button ng-disabled="!admCtrl.isAdmin" type="button" class="btn btn-primary pull-right btn-sm" ng-click="admCtrl.addDenominator();" style="width: 90px;">Add</button></td></tr></tfoot>
+				<tr><td colspan="6"><button ng-disabled="!admCtrl.isAdmin" type="button" class="btn btn-primary pull-right btn-sm" ng-click="admCtrl.editDenominator(null);" style="width: 90px;">Add</button></td></tr></tfoot>
 			</table>
 
 		</tab>
@@ -143,7 +144,7 @@
 					<th>Expected trend</th>
 					<th>Missing/zero values (%)</th>
 				</tr>
-				<tr ng-repeat="indicator in admCtrl.mapping.data | filter: {matched: true} | orderBy:admCtrl.sortIndicators">
+				<tr ng-repeat="indicator in admCtrl.numerators| filter: {matched: true} | orderBy:admCtrl.numeratorSort">
 					<td class="vert-align">{{admCtrl.dataGroups(indicator.code)}}</td>
 					<td class="vert-align">{{indicator.name}}</td>
 					<td class="vert-align">{{indicator.localData.name}}</td>
@@ -180,7 +181,7 @@
 					<th>Consistency (%)</th>
 					<th>Expected trend</th>
 				</tr>
-				<tr ng-class="{danger: !dataSet.threshold}" ng-repeat="dataSet in admCtrl.mapping.dataSets  | orderBy:['name']:false">
+				<tr ng-class="{danger: !dataSet.threshold}" ng-repeat="dataSet in admCtrl.dataSets  | orderBy:['name']:false">
 					<td class="vert-align">{{dataSet.name}}</td>
 					<td align="middle" class="vert-align"><input ng-disabled="!admCtrl.isAdmin" style="text-align: right;" type="number" ng-model="dataSet.threshold" min="0" max="100"/></td>
 					<td align="middle" class="vert-align"><input ng-disabled="!admCtrl.isAdmin" style="text-align: right;" type="number" ng-model="dataSet.consistencyThreshold" min="0" max="100"/></td>

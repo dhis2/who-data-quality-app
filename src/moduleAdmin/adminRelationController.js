@@ -1,8 +1,8 @@
 (function(){  
 	/**Controller: Parameters*/
 	angular.module('admin').controller("ModalAddEditRelationController",
-	['$modalInstance', '$scope', 'indicators', 'relation',
-	function($modalInstance, $scope, indicators, relation) {
+	['$modalInstance', 'indicators', 'relation',
+	function($modalInstance, indicators, relation) {
 	    	    
 	    var self = this; 
 	    self.indicators = indicators;
@@ -53,7 +53,6 @@
 				if (self.types[i].code === typeCode) return self.types[i];
 			}
 		}
-
 	   	
 	   	
 	    self.cancel = function () {

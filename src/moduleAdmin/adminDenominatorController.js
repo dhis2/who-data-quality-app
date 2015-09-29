@@ -1,15 +1,14 @@
 (function(){
 	/**Controller: Parameters*/
 	angular.module('admin').controller("ModalAddEditDenominatorController",
-		['$modalInstance', '$scope', 'metaDataService', 'requestService', 'denominator',
-			function($modalInstance, $scope, metaDataService, requestService, denominator) {
+		['$modalInstance', 'metaDataService', 'requestService', 'denominator',
+			function($modalInstance, metaDataService, requestService, denominator) {
 
 				var self = this;
 				self.aSelected = null;
 				self.bSelected = null;
 
 				self.types = [
-					{'name': 'UN population consistency', 'code': 'un'},
 					{'name': 'Total Population', 'code': 'total'},
 					{'name': 'Live births', 'code': 'lb'},
 					{'name': 'Children < 1 year', 'code': 'lt1'},
