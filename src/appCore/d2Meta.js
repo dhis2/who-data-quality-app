@@ -15,7 +15,8 @@
 					userAnalysisOrgunits: userAnalysisOrgunits,
 					indicatorDataElements: indicatorDataElements,
 					indicatorDataSets: indicatorDataSets,
-					indicatorFormulaText: indicatorFormulaText
+					indicatorFormulaText: indicatorFormulaText,
+					dataElementOperands: dataElementOperandsFromIDs
 				};
 
 
