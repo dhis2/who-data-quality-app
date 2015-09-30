@@ -6,12 +6,10 @@
 
 	//Define DashboardController
 	angular.module('dashboard').controller("DashboardController",
-	['metaDataService', 'periodService', 'visualisationService', 'dataAnalysisService', '$window', '$q', '$scope',
-	function(metaDataService, periodService, visualisationService, dataAnalysisService, $window, $q, $scope) {
+	['periodService', 'visualisationService', 'dataAnalysisService', '$q', '$scope', 'd2Map', 'd2Meta',
+	function(periodService, visualisationService, dataAnalysisService, $q, $scope, d2Map, d2Meta) {
 
 	    var self = this;
-
-		self.test = '600px';
 
 		self.cmpLoading = false;
 		self.tcLoading = false;
@@ -27,7 +25,7 @@
 		self.orgunitLevels = [];
 
 
-        /** -- ANALYSIS -- */
+        /** ===== ANALYSIS ===== */
         
         /** COMPLETENESS */
         self.makeCompletenessCharts = function() {
@@ -40,7 +38,7 @@
 				self.widthChanged[0] = false;
 			}
 
-			var datasets = metaDataService.getDatasetsInGroup(self.group.code);
+			var datasets = d2Map.groupDataSets(self.group.code);
 			self.completenessCharts = [];
 			self.expectedCompletenessCharts = datasets.length;
 			self.cmpLoading = true;
@@ -72,15 +70,11 @@
 						ouChartData: datas[2].data
 					};
 
-					//visualisationService.setChartHeight(datasetCompletenessChart.trendChartOptions, 400);
 					visualisationService.setChartLegend(datasetCompletenessChart.trendChartOptions, false);
 					visualisationService.setChartYAxis(datasetCompletenessChart.trendChartOptions, 0, 100);
-					//visualisationService.setChartMargins(datasetCompletenessChart.trendChartOptions, 20, 20, 100, 40);
 
-					//visualisationService.setChartHeight(datasetCompletenessChart.ouChartOptions, 400);
 					visualisationService.setChartLegend(datasetCompletenessChart.ouChartOptions, false);
 					visualisationService.setChartYAxis(datasetCompletenessChart.ouChartOptions, 0, 100);
-					//visualisationService.setChartMargins(datasetCompletenessChart.ouChartOptions, 20, 20, 100, 40);
 
 					self.completenessCharts.push(datasetCompletenessChart);
 
@@ -112,14 +106,14 @@
 			var ouLevel;
 			if (self.orgunitLevelSelected) ouLevel = self.orgunitLevelSelected.level;
       		var data, endDate, startDate, periodType, yyPeriods, period, refPeriods; 	
-   			var datas = metaDataService.getDataInGroup(self.group.code);
+   			var datas = d2Map.groupNumerators(self.group.code);
 			self.expectedConsistencyCharts = datas.length;
 			self.tcLoading = true;
 			var consistencyChart;
 			for (var i = 0; i < datas.length; i++) {
       			
       			data = datas[i];
-      			periodType = metaDataService.getDataPeriodType(data.code);
+      			periodType = d2Map.dataSets(data.dataSetID).periodType;
 
       			refPeriods = periodService.getISOPeriods(self.startDate, self.endDate, periodType);
 				period = refPeriods.pop();
@@ -210,13 +204,13 @@
 			}
 
 
-			var relations = metaDataService.getRelations(self.group.code);
+			var relations = d2Map.groupRelations(self.group.code, false);
 			self.expectedDataConsistencyCharts = relations.length;
 			self.dcLoading = true;
 			for (var i = 0; i < relations.length; i++) {
 				var relation = relations[i];
-				var indicatorA = metaDataService.getDataWithCode(relation.A);
-				var indicatorB = metaDataService.getDataWithCode(relation.B);
+				var indicatorA = d2Map.numerators(relation.A);
+				var indicatorB = d2Map.numerators(relation.B);
 
 				var promises = [];
 				promises.push(relation);
@@ -256,8 +250,7 @@
 
 
 
-    	/** -- OUTLIERS -- */
-
+    	/** ===== OUTLIERS ===== */
 		self.resultControl = {};
 		function receiveResult(result) {
 			self.outLoading = false;
@@ -266,6 +259,7 @@
 			};
 			self.resultControl.receiveResult(result);
 		}
+
 
 		self.makeOutlierTable = function() {
 			if (!self.ready) return;
@@ -286,7 +280,7 @@
 
 
 			//Get data IDs
-			var data = metaDataService.getDataInGroup(self.group.code);
+			var data = d2Map.groupNumerators(self.group.code);
 			var dataIDs = [];
 			for (var i = 0; i < data.length; i++) {
 				dataIDs.push(data[i].localData.id);
@@ -299,7 +293,7 @@
 
 
       	
-      	/** -- UTILITIES -- */
+      	/** ===== UTILITIES ===== */
 
 		function promiseObject(object) {
 			var deferred = $q.defer();
@@ -320,9 +314,9 @@
       		}
       		
       	}
-      	
-      	self.setWindowWidth = function() {
 
+
+      	self.setWindowWidth = function() {
 
 			var contentWidth = angular.element('.mainView').width();
 			//TODO: For now, assume there is a scrollbar - which on Win Chrome is 17 px
@@ -359,34 +353,14 @@
 			self.widthChanged[self.selectedTab] = false;
 
 		}
-      	
-      	function ouChildrenIDs() {
-      		var IDs = [];
-      		
-      		if (!self.ouChildren) return [];
-      		for (var i = 0; i < self.ouChildren.length; i++) {
-      			IDs.push(self.ouChildren[i].id)
-      		}
-      		return IDs;
-      	}
-      	
-      	function ouGrandChildrenIDs() {
-  			var IDs = [];
-  			
-  			if (!self.ouGrandChildren) return [];
-  			for (var i = 0; i < self.ouGrandChildren.length; i++) {
-  				IDs.push(self.ouGrandChildren[i].id)
-  			}
-  			
-      		return IDs;
-  		}
+
 
 		function sortName(a, b) {
 			return a.name > b.name ? 1 : -1;
 		}
 
 
-		/** -- OU TREE -- */
+		/** ===== OU TREE ===== */
 
 		self.update = function() {
 			self.completeness = false;
@@ -413,6 +387,7 @@
 			}
 		}
 
+
 		self.updateCurrent = function() {
 			switch (self.selectedTab) {
 				case 0:
@@ -430,6 +405,7 @@
 			}
 		}
 
+
 		self.ouTreeInit = function () {
 
 			if (self.ouTreeData) return;
@@ -438,7 +414,7 @@
 			self.ouTreeControl = {};
 
 			//Get initial batch of orgunits and populate
-			metaDataService.getAnalysisOrgunits().then(function (data) {
+			d2Meta.userAnalysisOrgunits().then(function (data) {
 
 				//Iterate in case of multiple roots
 				for (var i = 0; i < data.length; i++) {
@@ -479,20 +455,23 @@
 			if (orgunit.noLeaf && orgunit.children.length < 1 && orgunit.expanded) {
 
 				//Get children
-				metaDataService.orgunitChildrenFromParentID(orgunit.data.ou.id).then(function (data) {
-					for (var i = 0; i < data.length; i++) {
-						var child = data[i];
-						if (!orgunit.children) orgunit.children = [];
-						orgunit.children.push({
-							label: child.name,
-							data: {
-								ou: child
-							},
-							noLeaf: child.children
-						});
+				d2Meta.object('organisationUnits', orgunit.data.ou.id, 'children[name,id,children::isNotEmpty]').then(
+					function (data) {
+						var children = data.children;
+						for (var i = 0; i < children.length; i++) {
+							var child = children[i];
+							if (!orgunit.children) orgunit.children = [];
+							orgunit.children.push({
+								label: child.name,
+								data: {
+									ou: child
+								},
+								noLeaf: child.children
+							});
 
+						}
 					}
-				});
+				);
 			}
 			self.currentSelection = orgunit;
 			self.ouBoundary = orgunit.data.ou;
@@ -500,6 +479,7 @@
 			self.orgunitUserDefaultLevel();
 			self.update();
 		}
+
 
 		self.filterLevels = function () {
 			self.filteredOrgunitLevels = [];
@@ -523,6 +503,7 @@
 				}
 			}
 		};
+
 
 		self.orgunitUserDefaultLevel = function () {
 
@@ -548,10 +529,12 @@
 
 		};
 
-      	/** -- INIT -- */		
+
+		
+      	/** ===== INIT ===== */		
       	
       	function init() {
-
+			self.ready = true;
 			if (angular.element('.mainView').width() > 1280) {
 				self.showParameters = true;
 			}
@@ -573,14 +556,14 @@
 			self.ouTreeInit();
       		
       		self.group = {name: 'Core', code: 'core'};
-			self.groups = metaDataService.getGroups();
+			self.groups = d2Map.groups();
 			self.groups.unshift(self.group);
 
 			self.selectedTab = 0;
 
 			var promises = [];
-			promises.push(metaDataService.getUserOrgunit());
-			promises.push(metaDataService.getOrgunitLevels());
+			promises.push(d2Meta.userOrgunit());
+			promises.push(d2Meta.objects('organisationUnitLevels', null, 'name,id,level'));
 			$q.all(promises).then(function(datas) {
 				self.ouBoundary = datas[0];
 				self.orgunitLevels = datas[1];
@@ -603,17 +586,19 @@
 			self.endDate = moment().subtract(new Date().getDate(), 'days');
 			self.startDate = moment(self.endDate).subtract(12, 'months').add(1, 'day');
       	}
-      	
-		//Make sure mapping is available, then intialise
-		if (metaDataService.hasMapping()) {
-			self.ready = true;
+
+		if (d2Map.ready()) {
 			init();
 		}
 		else {
-			metaDataService.getMapping().then(function (data) {
-				self.ready = true;
-				init();
-			});
+			d2Map.load().then(
+				function(data) {
+					init();
+				},
+				function (error) {
+					console.log("Failed to load metadata for dashboard");
+				}
+			);
 		}
 
 		self.partialGroupUrl='moduleDashboard/selectGroup.html';

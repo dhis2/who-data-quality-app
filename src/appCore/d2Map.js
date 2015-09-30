@@ -13,7 +13,9 @@
 					groups: groups,
 					groupDelete: deleteGroup,
 					groupAdd: addGroup,
+					groupDataSets: groupDataSets,
 					groupNumerators: groupIndicators,
+					groupRelations: groupRelations,
 					groupAddNumerator: addToGroup,
 					groupRemoveNumerator: removeFromGroup,
 					groupsRemoveNumerator: removeFromGroups,
@@ -28,6 +30,7 @@
 					denominatorAddEdit: addEditDenominator,
 					denominatorDelete: deleteDenominator,
 					dataSets: dataSets,
+					dataSetPeriodType: dataSetPeriodType,
 					relations: relations,
 					relationAddEdit: addEditRelation,
 					relationDelete: deleteRelation,
@@ -55,7 +58,7 @@
 					requestService.getSingleData('/api/systemSettings/DQAmapping').then(
 						function(data) {
 							_map = data;
-							d2Names().then(
+							d2CoreMeta().then(
 								function(data) {
 									_ready = true;
 									deferred.resolve(true);
@@ -78,7 +81,7 @@
 					//Check if we have new DHIS 2 ids to fetch;
 					var currentIDs = d2IDs().join('');
 					var previousIDs = _dataIDs.join('');
-					if (currentIDs != previousIDs) d2Names();
+					if (currentIDs != previousIDs) d2CoreMeta();
 
 					return requestService.post('/api/systemSettings/', {'DQAmapping': angular.toJson(_map)});
 				}
@@ -199,13 +202,37 @@
 				function groupDataSets(code) {
 
 					var dataSets = [];
-					var data = groupData(code);
+					var data = groupIndicators(code);
 					for (var i = 0; i < data.length; i++ ) {
 						dataSets.push(indicatorDataSet(data[i].code));
 					}
 
 					dataSets = d2Utils.arrayRemoveDuplicates(dataSets, 'id');
 					return dataSets;
+				}
+
+				function groupRelations(code, both) {
+					var relevantRelations = [];
+					var indicators = groupIndicators(code);
+					var relations = configuredRelations();
+					for (var i = 0; i < relations.length; i++) {
+						var aFound = false, bFound = false;
+						for (var j = 0; j < indicators.length; j++) {
+							if (relations[i].A === indicators[j].code) aFound = true;
+							if (relations[i].B === indicators[j].code) bFound = true;
+						}
+
+						if (both && (aFound && bFound)) {
+							relevantRelations.push(relations[i]);
+						}
+						else if (!both && (aFound || bFound)) {
+							relevantRelations.push(relations[i]);
+						}
+					}
+
+					return relevantRelations;
+
+
 				}
 
 
@@ -300,7 +327,7 @@
 				function configuredIndicators(code) {
 					if (code) {
 						for (var i = 0; i < _map.data.length; i++) {
-							if (_map.data[i].code === dataCode) {
+							if (_map.data[i].code === code) {
 								if (_map.data[i].localData.id) return true;
 								else return false;
 							}
@@ -353,24 +380,33 @@
 
 				function updateIndicator(indicator) {
 					var original = indicators(indicator.code);
-					if (original.dataSetID != indicator.dataSetID) {
+
+					//Check if we need to add or update the related dataset
+					if (original.dataSetID && original.dataSetID != indicator.dataSetID) {
 						var dataSetID = original.dataSetID;
 						original.dataSetID === null;
 						deleteDataset(dataSetID);
 					}
+					else {
+						addDataset(indicator.dataSetID);
+					}
+
+
 					for (var i = 0; i < _map.data.length; i++) {
 						if (_map.data[i].code === indicator.code) {
 							_map.data[i] = indicator;
 							break;
 						}
 					}
+
+
 					save();
 				}
 
 
 				function indicatorDataSet(code) {
-					var indicator = indicator(code);
-					return dataSet(indicator.dataSetID);
+					var indicator = indicators(code);
+					return dataSets(indicator.dataSetID);
 
 				}
 
@@ -509,8 +545,8 @@
 				function dataSets(id) {
 					if (id) {
 						for (var i = 0; i < _map.dataSets.length; i++) {
-							if (datasets[i].id === id) {
-								return datasets[i];
+							if (_map.dataSets[i].id === id) {
+								return _map.dataSets[i];
 							}
 						}
 					}
@@ -519,10 +555,31 @@
 					}
 				}
 
+				function dataSetPeriodType(id) {
+					return dataSets(id).periodType;
+				}
+
 
 				function addDataset(id) {
+					//Check if it exists
+					for (var i = 0; i < _map.dataSets.length; i++) {
 
+						if (_map.dataSets[i].id === id) return;
 
+					}
+
+					d2Meta.object('dataSets', id, 'name,id,periodType').then(
+						function(data) {
+							var ds = data;
+
+							//Add default parameters
+							ds.threshold =  90;
+							ds.consistencyThreshold = 33;
+							ds.trend = "constant";
+							_map.dataSets.push(ds);
+							save();
+						}
+					);
 				}
 
 
@@ -615,8 +672,7 @@
 				/** UTILITIES **/
 				function indicatorIsRelevant(dataCode, groupCode) {
 
-					var data = indicator(groupCode);
-
+					var data = indicators(groupCode);
 					for (var i = 0; i < data.length; i++) {
 						if (data[i].code === dataCode) return true
 					}
@@ -643,7 +699,7 @@
 				}
 
 
-				function d2Names() {
+				function d2CoreMeta() {
 					var deferred = $q.defer();
 
 					console.log("Getting names");
@@ -658,6 +714,7 @@
 					promises.push(d2Meta.dataElementOperands(dataIDs));
 					$q.all(promises).then(
 						function(datas) {
+							_d2Objects = {};
 							for (var i = 0; i < datas.length; i++) {
 								for (var j = 0; j < datas[i].length; j++) {
 									_d2Objects[datas[i][j].id] = datas[i][j];
