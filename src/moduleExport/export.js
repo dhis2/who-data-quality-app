@@ -5,8 +5,8 @@
 	
 	/**Controller: Parameters*/
 	angular.module('dataExport').controller("ExportController",
-	['d2Meta', 'periodService', 'requestService', 'BASE_URL',
-	function(d2Meta, periodService, requestService, BASE_URL) {
+	['d2Meta', 'd2Utils', 'periodService', 'BASE_URL',
+	function(d2Meta, d2Utils, periodService, BASE_URL) {
 	    	    
 	    var self = this;
 	    
@@ -27,7 +27,7 @@
 	    	self.yearSelected = undefined;
 
 
-			d2Meta.objects('organisationUnitLevels').then(function(data) {
+			d2Meta.objects('organisationUnitLevels', null, 'name,id,level').then(function(data) {
 	    		self.orgunitLevels = data;
 	    	});
 	    }
@@ -35,79 +35,68 @@
 
 		self.indicatorSearch = function(searchString){
 			if (searchString.length >= 2) {
-				var requestURL = "/api/indicators.json?filter=name:like:" + searchString + "&paging=false&fields=name,id";
-				requestService.getSingle(requestURL).then(function (response) {
 
-					//will do with API filter once API-filter is stable
-					self.indicatorSearchResult = response.data.indicators;
-					self.indicatorSearchResult.sort(function(a,b) {
-						return (a.name < b.name) ? -1 : 1;
-					});
+				d2Meta.objects('indicators', null, 'name,id', 'name:like:' + searchString).then(
+					function (data) {
+						self.indicatorSearchResult = data;
+						d2Utils.arraySortByProperty(self.indicatorSearchResult, 'name', false);
+					}
+				);
 
-				});
 			}
 		};
 
+
 		self.dataElementSearch = function(searchString){
 			if (searchString.length >= 2) {
-				var requestURL = "/api/dataElements.json?filter=name:like:" + searchString + "&paging=false&fields=name,id";
-				requestService.getSingle(requestURL).then(function (response) {
 
-					//will do with API filter once API-filter is stable
-					self.dataElementSearchResult = response.data.dataElements;
-					self.dataElementSearchResult.sort(function(a,b) {
-						return (a.name < b.name) ? -1 : 1;
-					});
-
-				});
+				d2Meta.objects('dataElements', null, 'name,id', 'name:like:' + searchString).then(
+					function (data) {
+						self.dataElementSearchResult = data;
+						d2Utils.arraySortByProperty(self.dataElementSearchResult, 'name', false);
+					}
+				);
 			}
 		};
 
 
 		self.doOuExport = function() {
-	    	
-	    	
-	    	var requestURL = '/api/organisationUnits.json?fields=name,parent[name,parent[name,parent[name]]]&paging=false&filter=level:eq:' + self.orgunitLevelSelected.level;
-	    	
-	    	//Get data
-	    	requestService.getSingle(requestURL).then(function(response) {
-	    		
-	    		var ouData = response.data.organisationUnits;
-	    		
-	    		var data = [];	    		
-	    		var parent, row;
-	    		for (var i = 0; i < ouData.length; i++) {
-	    			row = [];
-	    			row.push((i+1));
-	    			row.push(ouData[i].name);
-	    			
-	    			parent = ouData[i].parent;
-	    			while (parent) {
-	    				row.push(parent.name);
-	    				parent = parent.parent;
-	    			}
-	    			
-	    			data.push(row);
+			d2Meta.objects('organisationUnits', null, 'name,parent[name,parent[name,parent[name]]]', 'level:eq:' + self.orgunitLevelSelected.level).then(
+				function(ouData) {
+
+					var data = [];
+					var parent, row;
+					for (var i = 0; i < ouData.length; i++) {
+						row = [];
+						row.push((i+1));
+						row.push(ouData[i].name);
+
+						parent = ouData[i].parent;
+						while (parent) {
+							row.push(parent.name);
+							parent = parent.parent;
+						}
+
+						data.push(row);
+					}
+
+
+					var csvContent = "data:text/csv;charset=utf-8,";
+					data.forEach(function(infoArray, index){
+
+					   dataString = infoArray.join(";");
+					   csvContent += index < data.length ? dataString+ "\n" : dataString;
+
+					});
+
+					var encodedUri = encodeURI(csvContent);
+					window.open(encodedUri);
 	    		}
-	    		
-	    		
-	    		var csvContent = "data:text/csv;charset=utf-8,";
-	    		data.forEach(function(infoArray, index){
-	    		
-	    		   dataString = infoArray.join(";");
-	    		   csvContent += index < data.length ? dataString+ "\n" : dataString;
-	    		
-	    		});
-	    		
-	    		var encodedUri = encodeURI(csvContent);
-	    		window.open(encodedUri);
-	    		
-	    	});	
-	    	
+			);
 	    };
-	    
+
+
 	    self.doTrendExport = function() {
-	    	
 	    	var dx;
 	    	if (self.dataElementSelected) {
 	    		dx = self.dataElementSelected.id
