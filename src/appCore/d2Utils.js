@@ -11,6 +11,7 @@
 					arrayRemoveDuplicates: arrayRemoveDuplicates,
 					arrayMerge: arrayMerge,
 					arraySortByProperty: arraySortByProperty,
+					arrayFromKeys: arrayFromKeys,
 					idsFromIndicatorFormula: idsFromIndicatorFormula
 				};
 
@@ -76,6 +77,17 @@
 
 				}
 
+				function arrayFromKeys(obj) {
+					var array = [];
+					for (var key in obj) {
+						if (obj.hasOwnProperty(key)) {
+							array.push(key);
+						}
+					}
+					return array;
+
+				}
+
 
 				/** === INDICATORS === */
 				function idsFromIndicatorFormula(numeratorFormula, denominatorFormula, dataElementOnly) {
@@ -87,8 +99,6 @@
 						matches[i] = matches[i].slice(2, -1);
 						if (dataElementOnly) matches[i] = matches[i].split('.')[0];
 					}
-
-					console.log(matches);
 
 					return arrayRemoveDuplicates(matches);
 				}

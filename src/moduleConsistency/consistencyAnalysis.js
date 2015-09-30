@@ -12,9 +12,9 @@
 	});
 
 	angular.module('consistencyAnalysis').controller("ConsistencyAnalysisController",
-	['metaDataService', 'periodService', 'requestService', 'dataAnalysisService', 'visualisationService', 'mathService',
+	['d2Meta', 'd2Utils', 'periodService', 'requestService', 'dataAnalysisService', 'visualisationService', 'mathService',
 		'$modal', '$timeout', '$scope',
-	function(metaDataService, periodService, requestService, dataAnalysisService, visualisationService, mathService,
+	function(d2Meta, d2Utils, periodService, requestService, dataAnalysisService, visualisationService, mathService,
 			 $modal, $timeout, $scope) {
 		var self = this;
 
@@ -64,11 +64,12 @@
 					periodType: undefined
 	    		}
 			};
-	    	
-	    	metaDataService.getDataElementGroups().then(function(data) { 
+
+
+			d2Meta.objects('dataElementGroups').then(function(data) {
 	    		self.dataSelection.deGroups = data;
 	    	});
-			metaDataService.getIndicatorGroups().then(function(data) { 
+			d2Meta.objects('indicatorGroups').then(function(data) {
 				self.dataSelection.inGroups = data;
 			});
 			
@@ -81,34 +82,38 @@
 	    	self.ouSelected = null;
 	    	self.ouSearchResult = [];
 	    		    	
-	    	metaDataService.getUserOrgunits().then(function(data) { 
-	    		self.userOrgunits = data;
-	    		self.boundarySelectionType = 0;
-	    		self.boundaryOrgunitSelected = self.userOrgunits[0];
-	    		self.filterLevels();
-	    		self.orgunitUserDefaultLevel();
-	    	});
+	    	d2Meta.userOrgunits().then(
+				function(data) {
+					self.userOrgunits = data;
+					self.boundarySelectionType = 0;
+					self.boundaryOrgunitSelected = self.userOrgunits[0];
+					self.filterLevels();
+					self.orgunitUserDefaultLevel();
+	    		}
+			);
 	    	
 	    	self.orgunitLevels = [];
 	    	self.filteredOrgunitLevels = [];
 	    	self.orgunitLevelSelected = undefined;
-	    	metaDataService.getOrgunitLevels().then(function(data) { 
-	    		self.orgunitLevels = data;
-	    		
-	    		self.lowestLevel = 0; 
-	    		for (var i = 0; i < self.orgunitLevels.length; i++) {
-	    			var level = self.orgunitLevels[i].level;
-	    			if (level > self.lowestLevel) self.lowestLevel = level;
+			d2Meta.objects('organisationUnitLevels', null, 'name,id,level').then(
+				function(data) {
+					self.orgunitLevels = data;
+
+					self.lowestLevel = 0;
+					for (var i = 0; i < self.orgunitLevels.length; i++) {
+						var level = self.orgunitLevels[i].level;
+						if (level > self.lowestLevel) self.lowestLevel = level;
+					}
+
+					self.filterLevels();
+					self.orgunitUserDefaultLevel();
 	    		}
-	    		
-	    		self.filterLevels();
-	    		self.orgunitUserDefaultLevel();
-	    	});
+			);
 	    	
 	    	
 	    	self.orgunitGroups = [];
 	    	self.orgunitGroupSelected = undefined;
-	    	metaDataService.getOrgunitGroups().then(function(data) { 
+			d2Meta.objects('organisationUnitGroups').then(function(data) {
 	    		self.orgunitGroups = data;
 	    	});
 	    	
@@ -156,7 +161,8 @@
 			self.ouTreeControl = {};
 
 			//Get initial batch of orgunits and populate
-			metaDataService.getAnalysisOrgunits().then(function(data) {
+
+			d2Meta.userAnalysisOrgunits().then(function(data) {
 
 				//Iterate in case of multiple roots
 				for (var i = 0; i < data.length; i++) {
@@ -198,22 +204,23 @@
 			if (orgunit.noLeaf && orgunit.children.length < 1) {
 
 				//Get children
-				metaDataService.orgunitChildrenFromParentID(orgunit.data.ou.id).then(function(data) {
-					console.log(data);
-					for (var i = 0; i < data.length; i++) {
-						var child = data[i];
+				d2Meta.object('organisationUnits', orgunit.data.ou.id, 'children[name,id,children::isNotEmpty]').then(
+					function (data) {
+						var children = data.children;
+						for (var i = 0; i < children.length; i++) {
+							var child = children[i];
+							if (!orgunit.children) orgunit.children = [];
+							orgunit.children.push({
+								label: child.name,
+								data: {
+									ou: child
+								},
+								noLeaf: child.children
+							});
 
-						if (!orgunit.children) orgunit.children = [];
-						orgunit.children.push({
-							label: child.name,
-							data: {
-								ou: child
-							},
-							noLeaf: child.children
-						});
-
+						}
 					}
-				});
+				);
 			}
 			//Cannot use leaf for consistency analysis, so use level above if selecting leaf
 			if (!orgunit.noLeaf) {
@@ -344,25 +351,31 @@
 			self.dataSelection[code].itemDescription = 'Loading...';
 
 			if (self.dataSelection[code].type === 'de') {
-				metaDataService.getDataElementGroupMembers(self.dataSelection[code].group.id)
-					.then(function(data) {
+				d2Meta.object('dataElementGroups', self.dataSelection[code].group.id, 'name,id,dataElements[name,id]').then(
+					function(data) {
 						self.dataSelection[code].itemDescription  = 'Select data element...';
-						self.dataSelection[code].items = data;
-					});
+						self.dataSelection[code].items = data.dataElements;
+						d2Utils.arraySortByProperty(self.dataSelection[code].items, 'name', false);
+					}
+				);
 			}
 			else if (self.dataSelection[code].type === 'dc') {
-				metaDataService.getDataElementGroupMemberOperands(self.dataSelection[code].group.id)
-					.then(function(data) {
+				var filter = 'dataElement.dataElementGroups.id:eq:' + self.dataSelection[code].group.id;
+				var fields = 'name,id,dataElementId,optionComboId';
+				d2Meta.objects('dataElementOperands', null, fields, filter).then(function(data) {
 						self.dataSelection[code].itemDescription  = "Select data element...";
 						self.dataSelection[code].items = data;
+						d2Utils.arraySortByProperty(self.dataSelection[code].items, 'name', false);
 					});
 			}
 			else {
-				metaDataService.getIndicatorGroupMembers(self.dataSelection[code].group.id)
-					.then(function(data) {
+				d2Meta.object('indicatorGroups', self.dataSelection[code].group.id, 'name,id,indicators[name,id]').then(
+					function(data) {
 						self.dataSelection[code].itemDescription  = "Select indicator...";
-						self.dataSelection[code].items = data;
-					});
+						self.dataSelection[code].items = data.indicators;
+						d2Utils.arraySortByProperty(self.dataSelection[code].items, 'name', false);
+					}
+				);
 			}
 	    };
 
@@ -400,21 +413,23 @@
 			else if (dataType === 'de' || dataType === 'dc') {
 
 				var dataElementID = dataElementIDForCode(code);
-				metaDataService.getDataElementPeriodType(dataElementID).then(function (periodType) {
 
-					self.dataSelection[code].periodType = periodType;
-					updatePeriodParameters();
-
-				});
+				d2Meta.object('dataElements', dataElementID, 'dataSets[periodType]').then(
+					function (data) {
+						if (!data.dataSets && data.dataSets.length > 1) return;
+						self.dataSelection[code].periodType = data.dataSets[0].periodType;
+						updatePeriodParameters();
+					}
+				);
 			}
 			else {
-				var indicatorID = self.dataItemForCode(itemCode).id;
-				metaDataService.getIndicatorPeriodTypes(indicatorID).then(function (periodTypeObject) {
-
-					self.dataSelection[code].periodType = periodTypeObject.longest;
-					updatePeriodParameters();
-
-				});
+				var indicatorID = self.dataItemForCode(code).id;
+				d2Meta.indicatorPeriodType(indicatorID).then(
+					function (data) {
+						self.dataSelection[code].periodType = data;
+						updatePeriodParameters();
+					}
+				);
 			}
 		};
 		

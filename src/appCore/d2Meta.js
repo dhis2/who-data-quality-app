@@ -1,8 +1,8 @@
 (function(){
 
 	angular.module('d2').factory('d2Meta',
-		['requestService', 'd2Utils', '$q',
-			function (requestService, d2Utils, $q) {
+		['requestService', 'periodService', 'd2Utils', '$q',
+			function (requestService, periodService, d2Utils, $q) {
 
 				//Define factory API
 				var service = {
@@ -15,6 +15,7 @@
 					userAnalysisOrgunits: userAnalysisOrgunits,
 					indicatorDataElements: indicatorDataElements,
 					indicatorDataSets: indicatorDataSets,
+					indicatorPeriodType: indicatorPeriodType,
 					indicatorFormulaText: indicatorFormulaText,
 					dataElementOperands: dataElementOperandsFromIDs
 				};
@@ -72,8 +73,6 @@
 
 					return deferred.promise;
 				}
-
-
 
 
 
@@ -287,8 +286,7 @@
 				}
 
 
-
-				function dataElementDatasets(ids) {
+				function dataElementDataSets(ids) {
 					var deferred = $q.defer();
 
 					var requestURL = '/api/dataElements.json?';
@@ -312,7 +310,7 @@
 							deferred.resolve(datasets);
 						},
 						function(error){
-							console.log("d2meta error: dataElementDatasets(ids)");
+							console.log("d2meta error: dataElementDataSets(ids)");
 							console.log(error);
 						}
 					);
@@ -351,7 +349,6 @@
 				}
 
 
-
 				function indicatorDataSets(id) {
 					var deferred = $q.defer();
 
@@ -363,7 +360,7 @@
 								ids.push(data[i].id);
 							}
 
-							dataElementDatasets(ids).then(
+							dataElementDataSets(ids).then(
 								function(data) {
 									deferred.resolve(data);
 								},
@@ -383,7 +380,6 @@
 
 					return deferred.promise;
 				}
-
 
 
 				function indicatorFormulaText(formula) {
@@ -486,6 +482,25 @@
 					return deferred.promise;
 				}
 
+
+				function indicatorPeriodType(id) {
+					var deferred = $q.defer();
+
+					indicatorDataSets(id).then(
+						function(dataSets) {
+							var periodTypes = {};
+							for (var i = 0; i < dataSets.length; i++) {
+								periodTypes[dataSets[i].periodType] = true;
+							}
+							periodTypes = d2Utils.arrayFromKeys(periodTypes);
+
+							deferred.resolve(periodService.shortestPeriod(periodTypes));
+						}
+					)
+
+
+					return deferred.promise;
+				}
 
 
 				/** ===== CATEGORIES ===== */
