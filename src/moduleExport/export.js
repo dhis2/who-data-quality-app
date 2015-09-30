@@ -5,8 +5,8 @@
 	
 	/**Controller: Parameters*/
 	angular.module('dataExport').controller("ExportController",
-	['metaDataService', 'periodService', 'requestService', 'BASE_URL',
-	function(metaDataService, periodService, requestService, BASE_URL) {
+	['d2Meta', 'periodService', 'requestService', 'BASE_URL',
+	function(d2Meta, periodService, requestService, BASE_URL) {
 	    	    
 	    var self = this;
 	    
@@ -16,7 +16,7 @@
 			self.href = undefined;	
 	    	self.dataElements = [];
 	    	self.dataElementSelected = undefined;
-	    		    
+
 	    	self.indicators = [];
 	    	self.indicatorSelected = undefined;
 	    	
@@ -25,19 +25,11 @@
 	    	
 	    	self.years = periodService.getYears();
 	    	self.yearSelected = undefined;
-	    	
-	    	
-	    	metaDataService.getDataElements().then(function(data) { 
-	    		self.dataElements = data;
-	    	});
-	    	
-	    	metaDataService.getIndicators().then(function(data) { 
-	    		self.indicators = data;
-	    	});
-	    	
-	    	metaDataService.getOrgunitLevels().then(function(data) { 
+
+
+			d2Meta.objects('organisationUnitLevels').then(function(data) {
 	    		self.orgunitLevels = data;
-	    	});		    	
+	    	});
 	    }
 
 
