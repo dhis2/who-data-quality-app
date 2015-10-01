@@ -1,8 +1,8 @@
 (function () {
 	/**Service: Completeness*/
 	angular.module('dataQualityApp').service('dataAnalysisService',
-	['$q', 'requestService', 'mathService', 'metaDataService',
-	function ($q, requestService, mathService, metaDataService) {
+	['$q', 'requestService', 'mathService', 'd2Meta',
+	function ($q, requestService, mathService, d2Meta) {
 
 		var self = this;
 
@@ -507,7 +507,7 @@
 			}
 
 
-			metaDataService.getOrgunitLevels().then(function(levels) {
+			d2Meta.objects('organisationUnitLevels', null, 'name,id,level').then(function(levels) {
 
 				var levels = levels;
 				levels.sort(function(a, b) { return a.level - b.level});
