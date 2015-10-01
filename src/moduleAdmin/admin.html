@@ -106,8 +106,8 @@
 				</tr>
 				<tr ng-repeat="denominator in admCtrl.denominators | orderBy:'type'">
 					<td class="vert-align">{{denominator.name}}</td>
-					<td class="vert-align">{{admCtrl.d2NameFromCode(denominator.idA)}}</td>
-					<td class="vert-align">{{admCtrl.d2NameFromCode(denominator.idB)}}</td>
+					<td class="vert-align">{{admCtrl.d2NameFromID(denominator.idA)}}</td>
+					<td class="vert-align">{{admCtrl.d2NameFromID(denominator.idB)}}</td>
 					<td class="vert-align">{{denominator.criteria}} %</td>
 					<td class="vert-align" align="center">
 						<button ng-disabled="!admCtrl.isAdmin" ng-click="admCtrl.editDenominator(denominator);" class="btn btn-default btn-xs">Edit</button>
