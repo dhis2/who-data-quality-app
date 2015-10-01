@@ -27,6 +27,7 @@
 					numeratorDelete: numeratorDelete,
 					numeratorUpdate: updateIndicator,
 					denominators: denominators,
+					denominatorsConfigured: denominatorsConfigured,
 					denominatorAddEdit: addEditDenominator,
 					denominatorDelete: deleteDenominator,
 					dataSets: dataSets,
@@ -460,10 +461,7 @@
 						var relations = [];
 						for (var i = 0; i < _map.relations.length; i++) {
 							if (_map.relations[i].code === code) {
-								if (indicatorIsRelevant(_map.relations[i].A, groupCode) ||
-									indicatorIsRelevant(_map.relations[i].B, groupCode)) {
-									return _map.relations[i];
-								}
+								return _map.relations[i];
 							}
 						}
 					}
@@ -630,6 +628,28 @@
 				}
 
 
+				function denominatorsConfigured(code) {
+					if (code) {
+						for (var i = 0; i < _map.denominators.length; i++) {
+							if (_map.denominators[i].code === code) {
+								if (_map.denominators[i].idA && _map.denominators[i].idB) return true;
+								else return false;
+							}
+						}
+						return false;
+					}
+					else {
+						var configured = [];
+						for (var i = 0; i < _map.denominators.length; i++) {
+							if (_map.denominators[i].idA && _map.denominators[i].idB) {
+								configured.push(_map.denominators[i]);
+							}
+						}
+						return configured;
+					}
+				}
+
+
 				function addEditDenominator(denominator) {
 					if (denominator.code != null) {
 						for (var i = 0; i < _map.denominators.length; i++) {
@@ -680,7 +700,7 @@
 				/** UTILITIES **/
 				function indicatorIsRelevant(dataCode, groupCode) {
 
-					var data = indicators(groupCode);
+					var data = groupIndicators(groupCode);
 					for (var i = 0; i < data.length; i++) {
 						if (data[i].code === dataCode) return true
 					}
