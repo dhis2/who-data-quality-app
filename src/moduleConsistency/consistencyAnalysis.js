@@ -204,7 +204,7 @@
 			if (orgunit.noLeaf && orgunit.children.length < 1) {
 
 				//Get children
-				d2Meta.object('organisationUnits', orgunit.data.ou.id, 'children[name,id,children::isNotEmpty]').then(
+				d2Meta.object('organisationUnits', orgunit.data.ou.id, 'children[name,id,children,level::isNotEmpty]').then(
 					function (data) {
 						var children = data.children;
 						for (var i = 0; i < children.length; i++) {
