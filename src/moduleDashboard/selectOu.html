@@ -1,11 +1,11 @@
 <div style="display: inline-block; width: 300px; margin-right: 10px; vertical-align: top">
 	<abn-tree class="well well-sm" style="width: 300px; min-height: 54px; max-height: 300px; overflow: scroll" ng-if="dashCtrl.ouTreeData"
-			tree-data="aCtrl.ouTreeData"
-			tree-control="aCtrl.ouTreeControl"
-			on-select="aCtrl.ouTreeSelect(branch)">
+			tree-data="dashCtrl.ouTreeData"
+			tree-control="dashCtrl.ouTreeControl"
+			on-select="dashCtrl.ouTreeSelect(branch)">
 	</abn-tree>
 </div>
-<div style="display: inline-block; width: 300px; margin-right: 10px; vertical-align: top"">
+<div style="display: inline-block; width: 300px; margin-right: 10px; vertical-align: top">
 <label>Organisation unit level</label><br/>
 <span>Completeness and consistency</span>
 <ui-select on-select="dashCtrl.update();" ng-model="dashCtrl.orgunitLevelSelected" theme="bootstrap" style="width: 100%; display: inline-block;">
