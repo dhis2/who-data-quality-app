@@ -1,8 +1,8 @@
 (function(){
 	/**Controller: Parameters*/
 	angular.module('admin').controller("ModalAddEditDenominatorController",
-		['$modalInstance', 'metaDataService', 'requestService', 'denominator',
-			function($modalInstance, metaDataService, requestService, denominator) {
+		['$modalInstance', 'd2Meta', 'requestService', 'denominator',
+			function($modalInstance, d2Meta, requestService, denominator) {
 
 				var self = this;
 				self.aSelected = null;
@@ -33,7 +33,7 @@
 
 				self.levels = [];
 				self.lowLevel;
-				metaDataService.getOrgunitLevels().then(
+				d2Meta.objects('organisationUnitLevels', null, 'name,id,level').then(
 					function(levels) {
 						self.levels = levels;
 
@@ -60,10 +60,11 @@
 				else {
 					self.title = "Edit denominator";
 					self.name = denominator.name;
-					metaDataService.getD2Data(denominator.idA).then(function(data) {
+
+					d2Meta.dataElementOrIndicator(denominator.idA).then(function(data) {
 						self.dataA = data;
 					});
-					metaDataService.getD2Data(denominator.idB).then(function(data) {
+					d2Meta.dataElementOrIndicator(denominator.idB).then(function(data) {
 						self.dataB = data;
 					});
 					self.typeSelected = getType(denominator.type);

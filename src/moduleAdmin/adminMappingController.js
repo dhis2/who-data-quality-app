@@ -1,8 +1,8 @@
 (function(){  
 	/**Controller: Parameters*/
 	angular.module('admin').controller("ModalMappingController",
-	['$modalInstance', '$scope', 'requestService', 'metaDataService', 'indicator', 'groups',
-	function($modalInstance, $scope, requestService, metaDataService, indicator, groups) {
+	['$modalInstance', '$scope', 'requestService', 'd2Meta', 'indicator', 'groups',
+	function($modalInstance, $scope, requestService, d2Meta, indicator, groups) {
 	    	    
 	    var self = this; 
 	    self.indicator = indicator;
@@ -27,12 +27,13 @@
 	    
 	    self.dataSets = [];
 	    self.dataSetsSelected = undefined;
-	    
-	    metaDataService.getDataElementGroups().then(function(data) { 
+
+
+		d2Meta.objects('dataElementGroups').then(function(data) {
 	    	self.dataElementGroups = data;
 	    });
-	    
-	    metaDataService.getIndicatorGroups().then(function(data) { 
+
+		d2Meta.objects('indicatorGroups').then(function(data) {
 	    	self.indicatorGroups = data;
 	    });
 	    
@@ -41,14 +42,16 @@
 	    function updateDataElementList() {	    	
 	    	if (self.dataDetails === 0) {	    	
 
-		    	metaDataService.getDataElementGroupMembers(self.dataElementGroupsSelected.id)
+				d2Meta.object('dataElementGroups', self.dataElementGroupsSelected.id, 'dataElements[name,id]')
 		    	 	.then(function(data) { 
-		    	       	self.dataElements = data;
+		    	       	self.dataElements = data.dataElements;
 		    	     });
 	    	}
 	    	else {
-	    		metaDataService.getDataElementGroupMemberOperands(self.dataElementGroupsSelected.id)
-	    		 	.then(function(data) { 
+				var filter = 'dataElement.dataElementGroups.id:eq:' + self.dataElementGroupsSelected.id;
+				var fields = 'name,id,dataElementId,optionComboId';
+				d2Meta.objects('dataElementOperands', null, fields, filter)
+	    			.then(function(data) {
 	    		       	self.dataElements = data;
 	    		     });
 	    	}
@@ -57,9 +60,9 @@
 	    
   	    function updateIndicatorList() {
 
-  	    	metaDataService.getIndicatorGroupMembers(self.indicatorGroupsSelected.id)
+			d2Meta.object('indicatorGroups', self.indicatorGroupsSelected.id, 'indicators[name,id]')
   	    		.then(function(data) { 
-  	    		   	self.indicators = data;
+  	    		   	self.indicators = data.indicators;
   	    		});
   	    }
   	    
@@ -68,29 +71,25 @@
   	    	self.dataSetsSelected = undefined;
   	    	
   	    	if (self.dataDisaggregation === 0) {
-		    	metaDataService.getDataElementDataSets([self.dataElementsSelected.id])
+
+				var id;
+				if (self.dataDetails === 0) {
+					id = self.dataElementsSelected.id
+				}
+				else {
+					id = self.dataElementsSelected.dataElementId;
+				}
+				d2Meta.object('dataElements', id, 'dataSets[name,id,periodType]')
 		    		.then(function(data) {
 		    			 
-	    			   	self.dataSets = data;
+	    			   	self.dataSets = data.dataSets;
 	    			});
 	    	}
 	    	else {
-	    		metaDataService.getIndicatorDataElements([self.indicatorsSelected.id])
+
+				d2Meta.indicatorDataSets(self.indicatorsSelected.id)
 	    			.then(function(data) {
-	    				 
-	    			   	var dataIDs = [];
-	    			   	for (var i = 0; i < data.length; i++) {
-	    			   		dataIDs.push(data[i].id);
-	    			   	}
-
-						if (dataIDs.length > 0) {
-							metaDataService.getDataElementDataSets(dataIDs)
-							.then(function(data) {
-
-								self.dataSets = data;
-							});
-						}
-	    			   	
+						self.dataSets = data;
 	    			});
 	    	}
   	    }
