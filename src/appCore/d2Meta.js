@@ -17,7 +17,8 @@
 					indicatorDataSets: indicatorDataSets,
 					indicatorPeriodType: indicatorPeriodType,
 					indicatorFormulaText: indicatorFormulaText,
-					dataElementOperands: dataElementOperandsFromIDs
+					dataElementOperands: dataElementOperandsFromIDs,
+					dataElementOrIndicator: dataElementOrIndicator
 				};
 
 
@@ -319,6 +320,36 @@
 				}
 
 
+				function dataElementOrIndicator(id) {
+					var deferred = $q.defer();
+
+					requestService.getSingleData('/api/dataElements.json?fields=name,id&filter=id:eq:' + id).then(
+						function(data) { //success
+							data = data.dataElements;
+							if (data && data.length === 1) {
+								deferred.resolve(data[0]);
+							}
+							else {
+
+								requestService.getSingleData('/api/indicators.json?fields=name,id&filter=id:eq:' + id)
+									.then(function(data) {
+										data = data.indicators;
+										if (data && data.length === 1) {
+											deferred.resolve(data[0]);
+										}
+										else {
+											return null;
+										}
+									});
+
+							}
+						}
+					);
+
+					return deferred.promise;
+				}
+
+
 
 				/** ===== INDICATORS ===== */
 				function indicatorDataElements(id) {
@@ -525,27 +556,6 @@
 					return deferred.promise;
 				}
 
-
-
-				function categoryOptionCombosFromIDs(ids) {
-					var deferred = $q.defer();
-
-					var requestURL = '/api/categoryOptionCombos.json?';
-					requestURL += 'fields=name,id';
-					requestURL += '&filter=id:in:[' + ids.join(',') + ']';
-					requestURL += '&paging=false';
-
-					requestService.getSingleData(requestURL).then(
-						function (data) {
-							deferred.resolve(data.categoryOptionCombos);
-						},
-						function(error){
-							console.log("d2meta error: categoryOptionCombos(ids)");
-							console.log(error);
-						});
-
-					return deferred.promise;
-				}
 
 
 
