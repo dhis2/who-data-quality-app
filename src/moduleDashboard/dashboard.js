@@ -360,8 +360,6 @@
 		}
 
 
-		/** ===== OU TREE ===== */
-
 		self.update = function() {
 			self.completeness = false;
 			self.consistency = false;
@@ -403,83 +401,6 @@
 					self.makeDataConsistencyCharts();
 					break;
 			}
-		}
-
-
-		function ouTreeInit() {
-
-			self.ouTreeData = [];
-			self.ouTreeControl = {};
-
-			//Get initial batch of orgunits and populate
-			d2Meta.userAnalysisOrgunits().then(function(data) {
-
-				//Iterate in case of multiple roots
-				for (var i = 0; i < data.length; i++) {
-					var ou = data[i];
-					var root = {
-						label: ou.name,
-						data: {
-							ou: ou
-						},
-						children: []
-					}
-
-					ou.children.sort(sortName);
-
-					for (var j = 0; ou.children && j < ou.children.length; j++) {
-
-						var child = ou.children[j];
-
-						root.children.push({
-							label: child.name,
-							data: {
-								ou: child
-							},
-							noLeaf: child.children
-						});
-					}
-
-					self.ouTreeData.push(root);
-					self.ouTreeControl.select_first_branch();
-					self.ouTreeControl.expand_branch(self.ouTreeControl.get_selected_branch());
-
-				}
-			});
-
-		}
-
-
-		self.ouTreeSelect = function (orgunit) {
-
-			console.log(orgunit);
-
-			if (orgunit.noLeaf && orgunit.children.length < 1) {
-
-				//Get children
-				d2Meta.object('organisationUnits', orgunit.data.ou.id, 'children[name,id,level,children::isNotEmpty]').then(
-					function (data) {
-						var children = data.children;
-						for (var i = 0; i < children.length; i++) {
-							var child = children[i];
-							if (!orgunit.children) orgunit.children = [];
-							orgunit.children.push({
-								label: child.name,
-								data: {
-									ou: child
-								},
-								noLeaf: child.children
-							});
-
-						}
-					}
-				);
-			}
-			self.currentSelection = orgunit;
-			self.ouBoundary = orgunit.data.ou;
-			self.filterLevels();
-			self.orgunitUserDefaultLevel();
-			self.update();
 		}
 
 
@@ -555,7 +476,6 @@
 				$scope.$apply();
       		});
 
-			ouTreeInit();
       		
       		self.group = {name: 'Core', code: 'core'};
 			self.groups = d2Map.groups();
@@ -606,7 +526,14 @@
 		self.partialGroupUrl='moduleDashboard/selectGroup.html';
 		self.partialDateUrl='moduleDashboard/selectPeriod.html';
 		self.partialOuUrl='moduleDashboard/selectOu.html';
-			
+
+
+		self.boundarySelected = function(orgunit) {
+			self.ouBoundary = orgunit;
+			self.filterLevels();
+			self.orgunitUserDefaultLevel();
+			self.update();
+		}
 			
 			
 		return self;

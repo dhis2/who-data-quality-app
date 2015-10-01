@@ -1,9 +1,6 @@
-<div style="display: inline-block; width: 300px; margin-right: 10px; vertical-align: top">
-	<abn-tree class="well well-sm" style="width: 300px; min-height: 54px; max-height: 300px; overflow: scroll" ng-if="dashCtrl.ouTreeData"
-			tree-data="dashCtrl.ouTreeData"
-			tree-control="dashCtrl.ouTreeControl"
-			on-select="dashCtrl.ouTreeSelect(branch)">
-	</abn-tree>
+<div style="display: inline-block; width: 300px; max-height: 400px; margin-right: 10px; vertical-align: top; overflow: scroll"
+	 class="well well-sm">
+	<ou-tree on-select="dashCtrl.boundarySelected(orgunit)"></ou-tree>
 </div>
 <div style="display: inline-block; width: 300px; margin-right: 10px; vertical-align: top">
 <label>Organisation unit level</label><br/>
