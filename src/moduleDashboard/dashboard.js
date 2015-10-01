@@ -406,15 +406,13 @@
 		}
 
 
-		self.ouTreeInit = function () {
-
-			if (self.ouTreeData) return;
+		function ouTreeInit() {
 
 			self.ouTreeData = [];
 			self.ouTreeControl = {};
 
 			//Get initial batch of orgunits and populate
-			d2Meta.userAnalysisOrgunits().then(function (data) {
+			d2Meta.userAnalysisOrgunits().then(function(data) {
 
 				//Iterate in case of multiple roots
 				for (var i = 0; i < data.length; i++) {
@@ -430,6 +428,7 @@
 					ou.children.sort(sortName);
 
 					for (var j = 0; ou.children && j < ou.children.length; j++) {
+
 						var child = ou.children[j];
 
 						root.children.push({
@@ -452,10 +451,13 @@
 
 
 		self.ouTreeSelect = function (orgunit) {
-			if (orgunit.noLeaf && orgunit.children.length < 1 && orgunit.expanded) {
+
+			console.log(orgunit);
+
+			if (orgunit.noLeaf && orgunit.children.length < 1) {
 
 				//Get children
-				d2Meta.object('organisationUnits', orgunit.data.ou.id, 'children[name,id,children::isNotEmpty]').then(
+				d2Meta.object('organisationUnits', orgunit.data.ou.id, 'children[name,id,level,children::isNotEmpty]').then(
 					function (data) {
 						var children = data.children;
 						for (var i = 0; i < children.length; i++) {
@@ -553,7 +555,7 @@
 				$scope.$apply();
       		});
 
-			self.ouTreeInit();
+			ouTreeInit();
       		
       		self.group = {name: 'Core', code: 'core'};
 			self.groups = d2Map.groups();
