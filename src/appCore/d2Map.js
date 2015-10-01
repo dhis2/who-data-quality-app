@@ -178,7 +178,9 @@
 				}
 
 
-				function groupIndicators(code) {
+				function groupIndicators(code, configuredOnly) {
+					configuredOnly = configuredOnly || false;
+
 					var data = [], dataCodes = [];
 					if (code != 'core') {
 						for (var i = 0; i < _map.groups.length; i++) {
@@ -192,7 +194,13 @@
 					}
 
 					for (var i = 0; i < dataCodes.length; i++) {
-						data.push(indicators(dataCodes[i]));
+
+						if (configuredOnly && configuredIndicators(dataCodes[i])) {
+							data.push(indicators(dataCodes[i]));
+						}
+						else {
+							data.push(indicators(dataCodes[i]));
+						}
 					}
 
 					return data;
@@ -202,7 +210,7 @@
 				function groupDataSets(code) {
 
 					var dataSets = [];
-					var data = groupIndicators(code);
+					var data = groupIndicators(code, false);
 					for (var i = 0; i < data.length; i++ ) {
 						dataSets.push(indicatorDataSet(data[i].code));
 					}
@@ -213,7 +221,7 @@
 
 				function groupRelations(code, both) {
 					var relevantRelations = [];
-					var indicators = groupIndicators(code);
+					var indicators = groupIndicators(code, false);
 					var relations = configuredRelations();
 					for (var i = 0; i < relations.length; i++) {
 						var aFound = false, bFound = false;
