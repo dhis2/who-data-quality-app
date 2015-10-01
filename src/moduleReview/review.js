@@ -3,14 +3,21 @@
 	angular.module('review', []);
 
 	angular.module('review').controller("ReviewController",
-	['metaDataService', 'periodService', 'mathService', 'requestService', 'dataAnalysisService', 'visualisationService',
-		'dqAnalysisConsistency', '$timeout',
-	function(metaDataService, periodService, mathService, requestService, dataAnalysisService, visualisationService,
-			 dqAnalysisConsistency, $timeout) {
+	['d2Meta','d2Map', 'periodService', 'dataAnalysisService', 'visualisationService', 'dqAnalysisConsistency', '$timeout',
+	function(d2Meta, d2Map, periodService, dataAnalysisService, visualisationService, dqAnalysisConsistency, $timeout) {
 		var self = this;    
-		
-	    init();
 
+		//Check if map is loaded, if not, do that before initialising
+		if (!d2Map.ready()) {
+			d2Map.load().then(
+				function(data) {
+					init();
+				}
+			);
+		}
+		else {
+			init();
+		}
 	    function init() {
 
 			initPrint();
@@ -33,12 +40,11 @@
 	    	self.groups = [];
 	    	self.groupSelected = undefined;
 	    	
-	    	
-	    	
-	    	metaDataService.getUserOrgunit().then(function(data) { 
+
+			d2Meta.userOrgunit().then(function(data) {
 	    		self.userOrgunit = data;
-	    		
-	    		metaDataService.getOrgunitLevels().then(function(data) { 
+
+				d2Meta.objects('organisationUnitLevels', null, 'name,id,level').then(function(data) {
 	    			var validLevels = [];
 	    			
 	    			for (var i = 0; i < data.length; i++) {
@@ -55,30 +61,25 @@
 	    		
 	    	});
 
-
-	    	//Get mapped data
-	    	requestService.getSingle('/api/systemSettings/DQAmapping').then(function(response) {
-	    		
-	    		self.map = response.data;
-	    		
-	    		self.groups = response.data.groups;
-	    		self.groups.unshift({'name': '[ Core ]', 'code': 'core'});
-	    		self.groupSelected = self.groups[0];
-	    	});
+			groups = d2Map.groups();
+			self.groups.unshift({'name': '[ Core ]', 'code': 'core'});
+			self.groupSelected = self.groups[0];
+		}
 
 
-			metaDataService.getMapping(false);
-	    }
-	  	
+
 	  	/** START ANALYSIS*/
 	  	self.doAnalysis = function() {
 	  		
 	  		clearResults();
 	  		self.outstandingRequests = 0;
 
+			var groupCode = self.groupSelected.code;
+
 	  		//Metadata for queries
-	  		var datasets = datasetsForAnalysis();
-	  		var indicators = indicatorsForAnalysis();
+	  		var datasets = d2Map.groupDataSets(groupCode);
+	  		var indicators = d2Map.groupNumerators(groupCode, true);
+
 	  		
 	  		var period = self.yearSelected.id;
 	  		var refPeriods = precedingYears(self.yearSelected.id, 3);
@@ -106,7 +107,7 @@
 	  		for (var i = 0; i < indicators.length; i++) {
 	  		
 	  			var indicator = indicators[i];
-	  			var periodType = periodTypeFromIndicator(indicator.code);
+	  			var periodType = d2Map.dataSetPeriodType(indicator.dataSetID);
 	  			
 	  			//periods for data completeness
 	  			var startDate = self.yearSelected.id.toString() + "-01-01";
@@ -123,14 +124,13 @@
 				indicatorIDsForConsistencyChart.push(indicator.localData.id);
 				self.outstandingRequests += 3;
 	  		}
-	  		
-	  		
+
 	  		//3 Indicator relations
-	  		var relations = metaDataService.getRelations(self.groupSelected.code);
+	  		var relations = d2Map.groupRelations(self.groupSelected.code, false);
 	  		for (var i = 0; i < relations.length; i++) {
 	  			var relation = relations[i];
-	  			var indicatorA = indicatorFromCode(relation.A);
-	  			var indicatorB = indicatorFromCode(relation.B);
+	  			var indicatorA = d2Map.numerators(relation.A);
+	  			var indicatorB = d2Map.numerators(relation.B);
 	  			
 	  			dataAnalysisService.dataConsistency(receiveDataConsistency, relation.type, relation.criteria, relation.code, indicatorA.localData.id, indicatorB.localData.id, period, ouBoundary, ouLevel, null);
 	  			
@@ -138,8 +138,9 @@
 	  		}
 
 
+
 			//4 Denominator consistency
-			var denominator, denominatorChecks = metaDataService.denominatorRelations();
+			var denominator, denominatorChecks = d2Map.denominatorsConfigured();
 			for (var i = 0; i < denominatorChecks.length; i++) {
 				denominator = denominatorChecks[i];
 
@@ -181,7 +182,8 @@
 			
 			
 	  	};
-	  	
+
+
 	  	function clearResults() {
 	  		//Structure for storing data
   			self.completeness = {
@@ -225,7 +227,8 @@
   			self.datasetConsistencyChart.data = chartData; 	
   			  			
   		}
-	  	
+
+
 	  	function receiveDataTimeConsistencyChart(chartData, chartOptions) {
 	  		
 	  		chartOptions.chart.title = {
@@ -240,7 +243,9 @@
 			self.dataConsistencyChart.data = chartData;
 
 	  	}
-	  	
+
+
+
 	  	/**CALLBACKS FOR RESULTS*/
 	  	
 	  	function receiveDatasetCompleteness(result, errors) { 
@@ -296,7 +301,8 @@
   			self.consistency.relations.push(result);
 	  		self.outstandingRequests--;
 	  	}
-	  	
+
+
 	  	
 	  	/** PERIODS */	  	
 	  	function precedingYears(year, numberOfYears) {
@@ -310,93 +316,7 @@
 	  		return years.sort(function(a, b){return a-b});
 	  	
 	  	}
-		
-		function periodTypeFromDataSet(dataSetID) {
-			for (var i = 0; i < self.map.dataSets.length; i++) {
-				if (dataSetID === self.map.dataSets[i].id) return self.map.dataSets[i].periodType;
-			}
-		}
-		
-		function periodTypeFromIndicator(code) {
-		
-			return periodTypeFromDataSet(indicatorFromCode(code).dataSetID);
 
-		}
-
-	  	/** DATASETS */		
-		function datasetsForAnalysis() {
-			
-			var datasetIDs = {};
-			var indicators = indicatorsForAnalysis();
-			for (var i = 0; i < indicators.length; i++) {
-			
-				var indicator = indicators[i];
-				if (indicator.matched) datasetIDs[indicator.dataSetID] = true;
-			}
-			
-			var datasets = [];
-			for (key in datasetIDs) {
-				for (var i = 0; i < self.map.dataSets.length; i++) {
-					if (self.map.dataSets[i].id === key) {
-						datasets.push(self.map.dataSets[i]);
-					}
-				}
-			}
-			
-			return datasets;
-		}
-		
-		
-	  	/** INDICATORS */	  	
-		function indicatorsForAnalysis() {
-			
-			//First find all that might be relevant
-			var IDs;
-			if (self.groupSelected.code === 'core') {
-				IDs = self.map.coreIndicators;
-			}
-			else {
-				for (var i = 0; i < self.map.groups.length; i++) {
-					if (self.map.groups[i].code === self.groupSelected.code) {
-						IDs = self.map.groups[i].members;
-					}
-				}
-			}
-			
-			//Then filter out the ones matched to local data
-			var indicator, matchedIndicators = [];
-			for (var i = 0; i < IDs.length; i++) {
-				indicator = indicatorFromCode(IDs[i]);
-				if (indicator.matched) matchedIndicators.push(indicator);
-			}
-			
-			return matchedIndicators;
-			
-			
-		}
-		
-		
-		function indicatorFromCode(code) {
-			for (var i = 0; i < self.map.data.length; i++) {
-				if (self.map.data[i].code === code) return self.map.data[i];
-			}
-		}
-		
-		
-		//Returns true/false depending on whether indicator is in selected group
-		function indicatorIsRelevant(code) {
-		
-			var indicators = indicatorsForAnalysis();
-		
-			for (var i = 0; i < indicators.length; i++) {				
-				if (indicators[i].code === code) return true
-			}
-
-			return false;
-		}
-		
-		
-	    
 	    
    	  	/** RELATIONS */
 	    self.relationTypeName = function(code) {
@@ -409,43 +329,21 @@
 	    
 	    
 	    self.relationName = function(code) {
-	    
-	    	var relations = metaDataService.getRelations(self.groupSelected.code);
-	    	for (var i = 0; i < relations.length; i++) {
-	    		if (relations[i].code === code) return relations[i].name;
-	    	}
-	    	
+
+			return d2Map.relations(code).name;
+
 	    };
-	    
-	    //Returns relations relevant for the selected group (i.e. both indicators are in the group)
-	    function relationsForAnalysis() {
-	    	
-	    	var relation, relations = [];
-	    	for (var i = 0; i < self.map.relations.length; i++) {
-	    		relation = self.map.relations[i];
-	    		
-	    		if (indicatorIsRelevant(relation.A) || indicatorIsRelevant(relation.B)) {
-	    			relations.push(relation);
-	    		}
-	    	}
-	    	return relations;	
-	    }
-	    
-	    
+
+
 	    
   	  	/** UTILITIES */
-
-
-	    self.updateCharts = function() {
-			$timeout(function () { window.dispatchEvent(new Event('resize')); }, 100);
-		};
-
-
 		self.progress = function() {
 
 			return Math.round(100-100*self.outstandingRequests/self.totalRequests);
 
 		};
+
+
 
 		/** PRINT */
 		function initPrint() {
@@ -461,6 +359,7 @@
 
 			window.onafterprint = printDone;
 		}
+
 
 		self.doPrint = function () {
 
@@ -479,6 +378,7 @@
 			$timeout(function () { window.print(); }, 1000);
 
 		}
+
 
 		function printDone() {
 
