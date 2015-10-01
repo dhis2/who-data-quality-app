@@ -1,8 +1,8 @@
 (function() {
 
 	angular.module('outlierGapAnalysis').controller("OutlierGapAnalysisController",
-	['metaDataService', 'periodService', 'requestService', 'dataAnalysisService', 'mathService', '$scope', '$modal',
-	function(metaDataService, periodService, requestService, dataAnalysisService, mathService, $scope, $modal) {
+	['d2Meta', 'd2Utils', 'periodService', 'requestService', 'dataAnalysisService', '$scope', '$modal',
+	function(d2Meta, d2Utils, periodService, requestService, dataAnalysisService, $scope, $modal) {
 
 		var self = this;
 
@@ -25,13 +25,13 @@
 			self.datasets = [];
 			self.datasetDataelements = undefined;
 			self.datasetSelected = undefined;
-			metaDataService.getDataSets().then(function (data) {
+			d2Meta.objects('dataSets').then(function (data) {
 				self.datasets = data;
 			});
 
 			self.dataElementGroups = [];
 			self.dataElementGroupsSelected = undefined;
-			metaDataService.getDataElementGroups().then(function (data) {
+			d2Meta.objects('dataElementGroups').then(function (data) {
 				self.dataElementGroups = data;
 			});
 
@@ -42,7 +42,7 @@
 
 			self.indicatorGroups = [];
 			self.indicatorGroupsSelected = undefined;
-			metaDataService.getIndicatorGroups().then(function (data) {
+			d2Meta.objects('indicatorGroups').then(function (data) {
 				self.indicatorGroups = data;
 			});
 
@@ -58,7 +58,7 @@
 			self.ouSelected = null;
 			self.ouSearchResult = [];
 
-			metaDataService.getUserOrgunits().then(function (data) {
+			d2Meta.userOrgunits().then(function (data) {
 				self.userOrgunits = data;
 				self.boundarySelectionType = 0;
 				self.boundaryOrgunitSelected = self.userOrgunits[0];
@@ -70,7 +70,7 @@
 			self.orgunitLevels = [];
 			self.filteredOrgunitLevels = [];
 			self.orgunitLevelSelected = undefined;
-			metaDataService.getOrgunitLevels().then(function (data) {
+			d2Meta.objects('organisationUnitLevels', null, 'name,id,level').then(function (data) {
 				self.orgunitLevels = data;
 
 				self.lowestLevel = 0;
@@ -86,7 +86,7 @@
 
 			self.orgunitGroups = [];
 			self.orgunitGroupSelected = undefined;
-			metaDataService.getOrgunitGroups().then(function (data) {
+			d2Meta.objects('organisationUnitGroups').then(function (data) {
 				self.orgunitGroups = data;
 			});
 
@@ -169,7 +169,7 @@
 			self.ouTreeControl = {};
 
 			//Get initial batch of orgunits and populate
-			metaDataService.getAnalysisOrgunits().then(function (data) {
+			d2Meta.userAnalysisOrgunits().then(function(data) {
 
 				//Iterate in case of multiple roots
 				for (var i = 0; i < data.length; i++) {
@@ -185,7 +185,9 @@
 					ou.children.sort(sortName);
 
 					for (var j = 0; ou.children && j < ou.children.length; j++) {
+
 						var child = ou.children[j];
+
 						root.children.push({
 							label: child.name,
 							data: {
@@ -206,24 +208,29 @@
 
 
 		self.ouTreeSelect = function (orgunit) {
+
+			console.log(orgunit);
+
 			if (orgunit.noLeaf && orgunit.children.length < 1) {
 
 				//Get children
-				metaDataService.orgunitChildrenFromParentID(orgunit.data.ou.id).then(function (data) {
-					console.log(data);
-					for (var i = 0; i < data.length; i++) {
-						var child = data[i];
-						if (!orgunit.children) orgunit.children = [];
-						orgunit.children.push({
-							label: child.name,
-							data: {
-								ou: child
-							},
-							noLeaf: child.children
-						});
+				d2Meta.object('organisationUnits', orgunit.data.ou.id, 'children[name,id,level,children::isNotEmpty]').then(
+					function (data) {
+						var children = data.children;
+						for (var i = 0; i < children.length; i++) {
+							var child = children[i];
+							if (!orgunit.children) orgunit.children = [];
+							orgunit.children.push({
+								label: child.name,
+								data: {
+									ou: child
+								},
+								noLeaf: child.children
+							});
 
+						}
 					}
-				});
+				);
 			}
 
 			self.boundaryOrgunitSelected = orgunit.data.ou;
@@ -238,22 +245,26 @@
 			self.dataElementsSelected = [];
 			if (self.dataDisaggregation === 0) {
 				self.dataElementPlaceholder = "Loading...";
-				metaDataService.getDataElementGroupMembers(self.dataElementGroupsSelected.id)
+				d2Meta.object('dataElementGroups', self.dataElementGroupsSelected.id, 'name,id,dataElements[name,id]')
 					.then(function (data) {
-
+						data = data.dataElements;
 						if (data.length === 0) self.dataElementPlaceholder = "No valid data elements in " + self.dataElementGroupsSelected.name;
 						else self.dataElementPlaceholder = "All data elements (totals) in " + self.dataElementGroupsSelected.name;
 						self.dataElements = data;
+						d2Utils.arraySortByProperty(self.dataElements, 'name', false);
 					});
 			}
 			else {
 				self.dataElementPlaceholder = "Loading...";
-				metaDataService.getDataElementGroupMemberOperands(self.dataElementGroupsSelected.id)
+				var filter = 'dataElement.dataElementGroups.id:eq:' + self.dataElementGroupsSelected.id;
+				var fields = 'name,id,dataElementId,optionComboId';
+				d2Meta.objects('dataElementOperands', null, fields, filter)
 					.then(function (data) {
 						if (data.length === 0) self.dataElementPlaceholder = "No valid data elements in " + self.dataElementGroupsSelected.name;
 						else self.dataElementPlaceholder = "All data elements (details) in " + self.dataElementGroupsSelected.name;
 
 						self.dataElements = data;
+						d2Utils.arraySortByProperty(self.dataElements, 'name', false);
 					});
 			}
 
@@ -264,11 +275,13 @@
 			self.indicators = [];
 			self.indicatorsSelected = [];
 			self.indicatorPlaceholder = "Loading...";
-			metaDataService.getIndicatorGroupMembers(self.indicatorGroupsSelected.id)
+			d2Meta.object('indicatorGroups', self.indicatorGroupsSelected.id, 'name,id,indicators[name,id]')
 				.then(function (data) {
+					data = data.indicators;
 					if (data.length === 0) self.indicatorPlaceholder = "No indicators in " + self.indicatorGroupsSelected.name;
 					else self.indicatorPlaceholder = "All indicators in " + self.indicatorGroupsSelected.name;
 					self.indicators = data;
+					d2Utils.arraySortByProperty(self.indicators, 'name', false);
 				});
 		}
 
@@ -522,6 +535,7 @@
 			modalInstance.result.then(function (result) {
 			});
 		}
+
 
 
 		//Directive will add its function here:
