@@ -1,0 +1,26 @@
+<div id="frame">
+	<div style="display: inline-block;" ng-style="{width: d2sCtrl.frameWidth() - 136}">
+		<label>Data elements</label><br />
+
+		<d2-select
+				ng-model="d2sCtrl.group"
+				options="d2sCtrl.groups"
+				placeholder="Data element group..."
+				on-select="d2sCtrl.getElements()">
+		</d2-select>
+	</div>
+	<div class="btn-group btn-group-justified" style="width: 120px; display: inline-block;">
+		<label class="btn btn-default" ng-model="d2sCtrl.disaggregation" btn-radio="0">Totals</label>
+		<label class="btn btn-default" ng-model="d2sCtrl.disaggregation" btn-radio="1">Details</label>
+	</div>
+
+	<d2-select
+			ng-disabled="!d2sCtrl.elements || d2sCtrl.elements.length === 0"
+			multiple="d2sCtrl.multiple"
+			ng-model="d2sCtrl.element"
+			options="d2sCtrl.elements"
+			placeholder="{{d2sCtrl.placeholder}}"
+			on-select="d2sCtrl.selectElement()">
+	</d2-select>
+
+</div>

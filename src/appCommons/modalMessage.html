@@ -17,26 +17,21 @@
 		<div ng-if="mmCtrl.message">
 		
 			<label style="float: left;">Recipients</label><br/>
-						
-			<ui-select ng-model="mmCtrl.selectedRecipient" theme="bootstrap" style="margin-bottom: 10px; min-width: 250px; max-width: 400px;">
-			  <ui-select-match placeholder="Select organisation unit...">
-			  	{{mmCtrl.selectedRecipient.orgunit}}
-			  </ui-select-match>
-			  <ui-select-choices
-			  	repeat="recipient in mmCtrl.recipients | filter: $select.search">
-			   		<div ng-bind-html="recipient.orgunit | highlight: $select.search"></div>
-			  </ui-select-choices>
-			</ui-select>
-			<ui-select multiple ng-if="mmCtrl.selectedRecipient" ng-model="mmCtrl.selectedUsers" theme="bootstrap" style="margin-bottom: 10px; min-width: 250px; max-width: 400px;">
-			  <ui-select-match placeholder="[All users]">
-			  	{{$item.name}}
-			  </ui-select-match>
-			  <ui-select-choices
-			  	repeat="user.id as user in mmCtrl.selectedRecipient.users | filter: $select.search">
-			   		<div ng-bind-html="user.name | highlight: $select.search"></div>
-			  </ui-select-choices>
-			</ui-select>
-			
+			<d2-select
+					clear="true"
+					ng-model="mmCtrl.selectedRecipient"
+					placeholder="Select organisation unit..."
+					options="mmCtrl.recipients">
+			</d2-select>
+			<div style="margin-top: 10px"></div>
+			<d2-select
+					ng-if="mmCtrl.selectedRecipient"
+					multiple="true"
+					clear="true"
+					ng-model="mmCtrl.selectedUsers"
+					placeholder="[All users]"
+					options="mmCtrl.selectedRecipient.users">
+			</d2-select>
 				  
 			<textarea style="margin-top: 10px; margin-bottom: 10px; width: 100%; height: 100px;" ng-model="mmCtrl.text"></textarea>
 			<div style="clear: both;">

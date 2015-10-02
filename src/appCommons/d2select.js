@@ -8,7 +8,6 @@
 				'ngModel': '=',
 				'options': '=',
 				'multiple': '=',
-				'clear': '=',
 				'placeholder': '@',
 				'onSelect': '&'
 			},
