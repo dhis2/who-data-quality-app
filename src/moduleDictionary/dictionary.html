@@ -33,6 +33,7 @@
 									style="height: 40px">
 								<td>
 									<button class="btn btn-default"
+											ng-disabled="!dCtrl.meta.type"
 											ng-click="dCtrl.meta.element = el; dCtrl.updateElement();"
 											ng-class="{'active': dCtrl.meta.element === el}"
 											style="white-space: normal; width: 100%; float: left; text-align: left; margin-top: 5px">

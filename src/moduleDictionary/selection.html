@@ -1,26 +1,14 @@
-<ui-select
-		on-select="dCtrl.updateGroups()"
-		ng-model="dCtrl.meta.type">
-	<ui-select-match allow-clear="true" placeholder="Select type...">
-		{{dCtrl.meta.type.name}}
-	</ui-select-match>
-	<ui-select-choices
-			repeat="obj in dCtrl.meta.types | filter: $select.search">
-		<div ng-bind-html="obj.name | highlight: $select.search"></div>
-	</ui-select-choices>
-</ui-select>
+<d2-select
+		on-select="dCtrl.updateGroups(object)"
+		ng-model="dCtrl.meta.type"
+		placeholder="Select type..."
+		options="dCtrl.meta.types">
+</d2-select>
 
-
-<ui-select
-		on-select="dCtrl.updateElements();"
-		ng-model="dCtrl.meta.group"
+<d2-select
 		ng-disabled="!dCtrl.meta.groups"
-		style="margin-top: 10px">
-	<ui-select-match allow-clear="true" placeholder="Select group/data set...">
-		{{dCtrl.meta.group.name}}
-	</ui-select-match>
-	<ui-select-choices
-			repeat="obj in dCtrl.meta.groups | filter: $select.search">
-		<div ng-bind-html="obj.name | highlight: $select.search"></div>
-	</ui-select-choices>
-</ui-select>
+		on-select="dCtrl.updateElements(object);"
+		ng-model="dCtrl.meta.group"
+		placeholder="Select group/data set..."
+		options="dCtrl.meta.groups">
+</d2-select>
