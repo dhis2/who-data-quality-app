@@ -523,9 +523,7 @@
 			);
 		}
 
-		self.partialGroupUrl='moduleDashboard/selectGroup.html';
-		self.partialDateUrl='moduleDashboard/selectPeriod.html';
-		self.partialOuUrl='moduleDashboard/selectOu.html';
+		self.selectionURL='moduleDashboard/selection.html';
 
 
 		self.boundarySelected = function(orgunit) {

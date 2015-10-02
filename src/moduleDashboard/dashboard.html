@@ -21,20 +21,11 @@
 </table>
 
 <div style="width: 100%; display: inline-block;">
-	<div ng-show="dashCtrl.innerWidth <= 600" collapse="!dashCtrl.showParameters" class="well well-sm no-print" style="vertical-align: top; height: auto; width: 320px; clear: right">
-		<div style="height: auto;">
-			<label>Data</label>
-			<div ng-include="dashCtrl.partialGroupUrl">
-			</div>
-			<hr/>
-			<label>Period</label>
-			<div ng-include="dashCtrl.partialDateUrl">
-			</div>
-			<hr/>
-			<label>Orgunit</label>
-			<div ng-include="dashCtrl.partialOuUrl">
-			</div>
-		</div>
+	<div ng-include="dashCtrl.selectionURL"
+		 ng-show="dashCtrl.innerWidth <= 600"
+		 collapse="!dashCtrl.showParameters"
+		 class="well well-sm no-print"
+		 style="vertical-align: top; height: auto; width: 320px; clear: right">
 	</div>
 	<tabset justified="true" ng-style="{width: dashCtrl.contentWidth, 'display': 'inline-block', 'vertical-align': 'top', 'float': 'left'}">
 		<tab heading="Completeness" select="dashCtrl.selectedTab = 0; dashCtrl.makeCompletenessCharts();">
@@ -92,19 +83,10 @@
 			<outlier-result  result-control="dashCtrl.resultControl"></outlier-result>
 		</tab>
 	</tabset>
-	<div ng-show="dashCtrl.innerWidth > 600" collapse="!dashCtrl.showParameters" class="well well-sm no-print" style="vertical-align: top; height: auto; margin-left: 10px; width: 320px; margin-top: 42px; float:right">
-		<div style="height: auto;">
-			<label>Data</label>
-			<div ng-include="dashCtrl.partialGroupUrl">
-			</div>
-			<hr/>
-			<label>Period</label>
-			<div ng-include="dashCtrl.partialDateUrl">
-			</div>
-			<hr/>
-			<label>Orgunit</label>
-			<div ng-include="dashCtrl.partialOuUrl">
-			</div>
-		</div>
+	<div ng-show="dashCtrl.innerWidth > 600"
+		 collapse="!dashCtrl.showParameters"
+		 class="well well-sm no-print"
+		 style="vertical-align: top; height: auto; margin-left: 10px; width: 320px; margin-top: 42px; float:right">
+		<div ng-include="dashCtrl.selectionURL"></div>
 	</div>
 </div>

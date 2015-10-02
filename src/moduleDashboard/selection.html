@@ -1,0 +1,50 @@
+	<div style="height: auto;">
+		<label>Data</label>
+		<d2-select on-select="dashCtrl.update(object);"
+				   ng-model="dashCtrl.group"
+				   options="dashCtrl.groups">
+		</d2-select>
+	</div>
+
+	<hr/>
+
+	<label>Period</label>
+	<div style="width: 290px">
+		<datepicker ng-change="dashCtrl.update();"
+					class="well well-sm"
+					ng-model="dashCtrl.endDate"
+					datepicker-mode="'month'"
+					max-date="dashCtrl.currentDate"
+					starting-day="1"
+					min-mode="month">
+		</datepicker>
+		<span>Data for the 12 preceding months will be used</span>
+	</div>
+
+	<hr/>
+
+	<label>Orgunit</label>
+	<div style="display: inline-block; width: 300px; max-height: 400px; margin-right: 10px; vertical-align: top; overflow: scroll"
+		 class="well well-sm">
+		<ou-tree on-select="dashCtrl.boundarySelected(orgunit)"></ou-tree>
+	</div>
+
+	<div style="display: inline-block; width: 300px; margin-right: 10px; vertical-align: top">
+		<label>Organisation unit level</label><br/>
+		<span>Completeness and consistency</span>
+		<d2-select
+				on-select="dashCtrl.update(object);"
+				ng-model="dashCtrl.orgunitLevelSelected"
+				options="dashCtrl.filteredOrgunitLevels"
+				placeholder="Select level...">
+		</d2-select>
+
+		<div style="margin-top: 10px">Outliers</div>
+		<d2-select
+				on-select="dashCtrl.update(object);"
+				ng-model="dashCtrl.orgunitLevelSelectedOutliers"
+				options="dashCtrl.filteredOrgunitLevels"
+				placeholder="Select level...">
+		</d2-select>
+	</div>
+
