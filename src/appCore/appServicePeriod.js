@@ -21,8 +21,9 @@
 			var periodsInYear;
 						
 			while (current <=  endYear && periodType != "Yearly") {
-							
-				periodsInYear = periodTool.get(periodType).generatePeriods({'offset': current - thisYear, 'filterFuturePeriods': true, 'reversePeriods': false});
+
+				var pTypeTool = periodTool.get(periodType);
+				periodsInYear = pTypeTool.generatePeriods({'offset': current - thisYear, 'filterFuturePeriods': true, 'reversePeriods': false});
 								  			
 				for (var i = 0; i < periodsInYear.length; i++) {
 					if (periodsInYear[i].endDate >= startDate && periodsInYear[i].endDate <= endDate) {

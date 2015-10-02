@@ -196,8 +196,10 @@
 
 					for (var i = 0; i < dataCodes.length; i++) {
 
-						if (configuredOnly && configuredIndicators(dataCodes[i])) {
-							data.push(indicators(dataCodes[i]));
+						if (configuredOnly) {
+							if (configuredIndicators(dataCodes[i])) {
+								data.push(indicators(dataCodes[i]));
+							}
 						}
 						else {
 							data.push(indicators(dataCodes[i]));
@@ -211,7 +213,7 @@
 				function groupDataSets(code) {
 
 					var dataSets = [];
-					var data = groupIndicators(code, false);
+					var data = groupIndicators(code, true);
 					for (var i = 0; i < data.length; i++ ) {
 						dataSets.push(indicatorDataSet(data[i].code));
 					}
@@ -337,7 +339,9 @@
 					if (code) {
 						for (var i = 0; i < _map.data.length; i++) {
 							if (_map.data[i].code === code) {
-								if (_map.data[i].localData.id) return true;
+								if (_map.data[i].localData.id) {
+									return true;
+								}
 								else return false;
 							}
 						}
