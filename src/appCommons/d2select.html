@@ -1,0 +1,40 @@
+<ui-select ng-if="d2sCtrl.multiple"
+		   ng-disabled="!d2sCtrl.options || d2sCtrl.options.length === 0"
+		   multiple
+		   on-select="d2sCtrl.onSelect({'object': d2sCtrl.ngModel})"
+		   ng-model="d2sCtrl.ngModel"
+		   theme="bootstrap">
+
+	<ui-select-match
+			allow-clear="d2sCtrl.clear"
+			placeholder="{{d2sCtrl.placeholder}}">
+		{{$item.name}}
+	</ui-select-match>
+
+	<ui-select-choices
+			repeat="obj in d2sCtrl.options | filter: $select.search">
+		<div ng-bind-html="obj.name | highlight: $select.search">
+		</div>
+	</ui-select-choices>
+
+</ui-select>
+
+<ui-select ng-if="!d2sCtrl.multiple"
+		   on-select="d2sCtrl.onSelect({'object': d2sCtrl.ngModel})"
+		   ng-disabled="!d2sCtrl.options || d2sCtrl.options.length === 0"
+		   ng-model="d2sCtrl.ngModel"
+		   theme="bootstrap">
+
+	<ui-select-match
+			allow-clear="d2sCtrl.clear"
+			placeholder="{{d2sCtrl.placeholder}}">
+		{{d2sCtrl.ngModel.name}}
+	</ui-select-match>
+
+	<ui-select-choices
+			repeat="obj in d2sCtrl.options | filter: $select.search">
+		<div ng-bind-html="obj.name | highlight: $select.search">
+		</div>
+	</ui-select-choices>
+
+</ui-select>
