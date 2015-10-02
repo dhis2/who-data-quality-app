@@ -24,6 +24,8 @@
 		self.orgunitLevelSelected;
 		self.orgunitLevels = [];
 
+		self.test = [];
+
 
         /** ===== ANALYSIS ===== */
         
@@ -507,6 +509,7 @@
 
 			self.endDate = moment().subtract(new Date().getDate(), 'days');
 			self.startDate = moment(self.endDate).subtract(12, 'months').add(1, 'day');
+			self.maxDate = self.endDate;
       	}
 
 		if (d2Map.ready()) {
