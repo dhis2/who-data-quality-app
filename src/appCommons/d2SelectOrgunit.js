@@ -84,6 +84,9 @@
 
 
 				function defaultLevel() {
+					//If we have a group, don't set level
+					if (self.selectedGroup) return;
+
 					var selectedLevel = self.selectedOrgunit.level;
 					var defaultLevel = self.defaultLevel ? selectedLevel + self.defaultLevel : null;
 

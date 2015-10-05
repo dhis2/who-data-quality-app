@@ -47,9 +47,9 @@
 <label for="orgunitSelected">Selected </label>
 <div id="orgunitSelected">
 	<p>
-		<span style="font-size: 100%;" class="label label-primary">{{d2sCtrl.boundaryOrgunitSelected.name}}</span>
-		<span ng-if="d2sCtrl.orgunitLevelSelected"><span class="glyphicon glyphicon-chevron-right"></span><span style="font-size: 100%;" class="label label-primary">{{d2sCtrl.orgunitLevelSelected.name}}</span></span>
-		<span ng-if="d2sCtrl.orgunitGroupSelected"><span class="glyphicon glyphicon-chevron-right"></span><span style="font-size: 100%;" class="label label-primary">{{d2sCtrl.orgunitGroupSelected.name}}</span></span>
+		<span style="font-size: 100%;" class="label label-primary">{{d2sCtrl.selectedOrgunit.name}}</span>
+		<span ng-if="d2sCtrl.selectedLevel"><span class="glyphicon glyphicon-chevron-right" style="margin-left: 5px; margin-right: 8px"></span><span style="font-size: 100%;" class="label label-primary">{{d2sCtrl.selectedLevel.name}}</span></span>
+		<span ng-if="d2sCtrl.selectedGroup"><span class="glyphicon glyphicon-chevron-right" style="margin-left: 5px; margin-right: 8px"></span><span style="font-size: 100%;" class="label label-primary">{{d2sCtrl.selectedGroup.name}}</span></span>
 	</p>
 	<br />
 </div>
