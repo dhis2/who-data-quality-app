@@ -18,78 +18,14 @@
 		init();
 
 		function init() {
-			self.dataDisaggregation = 0;
-
 			self.showFilter = false;
 
-			self.datasets = [];
-			self.datasetDataelements = undefined;
-			self.datasetSelected = undefined;
-			d2Meta.objects('dataSets').then(function (data) {
-				self.datasets = data;
-			});
-
-			self.dataElementGroups = [];
-			self.dataElementGroupsSelected = undefined;
-			d2Meta.objects('dataElementGroups').then(function (data) {
-				self.dataElementGroups = data;
-			});
-
-			self.dataElements = [];
-			self.dataElementPlaceholder = "";
-			self.dataElementsSelected = [];
-
-
-			self.indicatorGroups = [];
-			self.indicatorGroupsSelected = undefined;
-			d2Meta.objects('indicatorGroups').then(function (data) {
-				self.indicatorGroups = data;
-			});
-
-			self.indicators = [];
-			self.indicatorPlaceholder = "";
-			self.indicatorsSelected = [];
-
-
-			self.analysisOrgunits = [];
-			self.userOrgunits = [];
-			self.boundaryOrgunitSelected = undefined;
-
-			self.ouSelected = null;
-			self.ouSearchResult = [];
-
-			d2Meta.userOrgunits().then(function (data) {
-				self.userOrgunits = data;
-				self.boundarySelectionType = 0;
-				self.boundaryOrgunitSelected = self.userOrgunits[0];
-				self.filterLevels();
-				self.orgunitUserDefaultLevel();
-			});
-
-
-			self.orgunitLevels = [];
-			self.filteredOrgunitLevels = [];
-			self.orgunitLevelSelected = undefined;
-			d2Meta.objects('organisationUnitLevels', null, 'name,id,level').then(function (data) {
-				self.orgunitLevels = data;
-
-				self.lowestLevel = 0;
-				for (var i = 0; i < self.orgunitLevels.length; i++) {
-					var level = self.orgunitLevels[i].level;
-					if (level > self.lowestLevel) self.lowestLevel = level;
-				}
-
-				self.filterLevels();
-				self.orgunitUserDefaultLevel();
-			});
-
-
-			self.orgunitGroups = [];
-			self.orgunitGroupSelected = undefined;
-			d2Meta.objects('organisationUnitGroups').then(function (data) {
-				self.orgunitGroups = data;
-			});
-
+			self.selectedData = {
+				ds: [],
+				deg: [],
+				ig: []
+			};
+			self.selectedOrgunit;
 
 			self.periodTypes = [];
 			self.periodTypes = periodService.getPeriodTypes();
@@ -113,7 +49,6 @@
 			self.periodOption = "last";
 
 			self.onlyNumbers = /^\d+$/;
-			self.userOrgunitLabel = "";
 
 			//Accordion settings
 			self.oneAtATime = true;
@@ -125,114 +60,7 @@
 		/** -- PARAMETER SELECTION -- */
 
 		/** Orgunits */
-		self.orgunitSearchModeSelected = function () {
-			self.boundaryOrgunitSelected = undefined;
-			self.orgunitLevelSelected = undefined;
-		};
 
-
-		self.orgunitUserModeSelected = function () {
-			self.boundaryOrgunitSelected = self.userOrgunits[0];
-			self.orgunitUserDefaultLevel();
-		};
-
-
-		self.getLevelPlaceholder = function () {
-			if (!self.filteredOrgunitLevels || self.filteredOrgunitLevels.length === 0) {
-				if (self.boundaryOrgunitSelected && self.boundaryOrgunitSelected.level === self.lowestLevel) return "N/A";
-				else return "Loading...";
-
-			}
-			else return "Select level";
-		};
-
-		self.orgunitUserDefaultLevel = function () {
-
-			if (!self.boundaryOrgunitSelected || !self.filteredOrgunitLevels) return;
-
-			var level = self.boundaryOrgunitSelected.level;
-			for (var i = 0; i < self.filteredOrgunitLevels.length; i++) {
-				if (self.filteredOrgunitLevels[i].level === (level + 1)) {
-					self.orgunitLevelSelected = self.filteredOrgunitLevels[i];
-				}
-			}
-
-			if (self.filteredOrgunitLevels.length === 0) self.orgunitLevelSelected = undefined;
-
-		};
-
-
-		self.boundarySelected = function(orgunit) {
-			self.boundaryOrgunitSelected = orgunit;
-			self.filterLevels();
-			self.orgunitUserDefaultLevel();
-		}
-
-
-		self.updateDataElementList = function () {
-			if (!self.dataElementGroupsSelected) return;
-			self.dataElements = [];
-			self.dataElementsSelected = [];
-			if (self.dataDisaggregation === 0) {
-				self.dataElementPlaceholder = "Loading...";
-				d2Meta.object('dataElementGroups', self.dataElementGroupsSelected.id, 'name,id,dataElements[name,id]')
-					.then(function (data) {
-						data = data.dataElements;
-						if (data.length === 0) self.dataElementPlaceholder = "No valid data elements in " + self.dataElementGroupsSelected.name;
-						else self.dataElementPlaceholder = "All data elements (totals) in " + self.dataElementGroupsSelected.name;
-						self.dataElements = data;
-						d2Utils.arraySortByProperty(self.dataElements, 'name', false);
-					});
-			}
-			else {
-				self.dataElementPlaceholder = "Loading...";
-				var filter = 'dataElement.dataElementGroups.id:eq:' + self.dataElementGroupsSelected.id;
-				var fields = 'name,id,dataElementId,optionComboId';
-				d2Meta.objects('dataElementOperands', null, fields, filter)
-					.then(function (data) {
-						if (data.length === 0) self.dataElementPlaceholder = "No valid data elements in " + self.dataElementGroupsSelected.name;
-						else self.dataElementPlaceholder = "All data elements (details) in " + self.dataElementGroupsSelected.name;
-
-						self.dataElements = data;
-						d2Utils.arraySortByProperty(self.dataElements, 'name', false);
-					});
-			}
-
-		}
-
-		self.updateIndicatorList = function () {
-			if (!self.indicatorGroupsSelected) return;
-			self.indicators = [];
-			self.indicatorsSelected = [];
-			self.indicatorPlaceholder = "Loading...";
-			d2Meta.object('indicatorGroups', self.indicatorGroupsSelected.id, 'name,id,indicators[name,id]')
-				.then(function (data) {
-					data = data.indicators;
-					if (data.length === 0) self.indicatorPlaceholder = "No indicators in " + self.indicatorGroupsSelected.name;
-					else self.indicatorPlaceholder = "All indicators in " + self.indicatorGroupsSelected.name;
-					self.indicators = data;
-					d2Utils.arraySortByProperty(self.indicators, 'name', false);
-				});
-		}
-
-
-		self.filterLevels = function () {
-			self.filteredOrgunitLevels = [];
-
-			if (!self.orgunitLevels || !self.boundaryOrgunitSelected) return;
-			for (var i = 0; i < self.orgunitLevels.length; i++) {
-				if (self.orgunitLevels[i].level > self.boundaryOrgunitSelected.level) {
-					self.filteredOrgunitLevels.push(self.orgunitLevels[i]);
-				}
-			}
-		};
-
-		function getLevelByLevel(level) {
-
-			for (var i = 0; i < self.orgunitLevels.length; i++) {
-				if (self.orgunitLevels[i].level === level) return self.orgunitLevels[i];
-			}
-		}
 
 
 		function getPeriods() {
@@ -359,31 +187,21 @@
 		}
 
 
-		function getDatasetDataelements() {
-
-			var requestURL = '/api/dataSets/' + self.datasetSelected.id + '.json?fields=dataElements[id]';
-			requestService.getSingle(requestURL).then(function (response) {
-				self.datasetDataelements = response.data.dataElements;
-				self.doAnalysis();
-			});
-
-		}
-
-
 		self.doAnalysis = function () {
 
 			//Collapse open panels
 			angular.element('.panel-collapse').removeClass('in');
 			angular.element('.panel-collapse').addClass('collapse');
 
-			if (self.datasetSelected && !self.datasetDataelements) {
-				getDatasetDataelements();
-				return;
-			}
 
 			//Clear previous result
 			self.result = undefined;
 			if (self.results.length > 1) self.results.move(self.currentResult, 0);
+
+
+			console.log(self.selectedOrgunit);
+			console.log(self.selectedData);
+			return;
 
 			var data = getDataForAnalysis();
 			var variables = data.dataIDs;
@@ -442,31 +260,6 @@
 
 
 		/** UTILITIES */
-		function sortName(a, b) {
-			return a.name > b.name ? 1 : -1;
-		}
-
-
-		function notification(title, message) {
-			var modalInstance = $modal.open({
-				templateUrl: "appCommons/modalNotification.html",
-				controller: "ModalNotificationController",
-				controllerAs: 'nCtrl',
-				resolve: {
-					title: function () {
-						return title;
-					},
-					message: function () {
-						return message;
-					}
-				}
-			});
-
-			modalInstance.result.then(function (result) {
-			});
-		}
-
-
 
 		//Directive will add its function here:
 		self.resultControl = {};
