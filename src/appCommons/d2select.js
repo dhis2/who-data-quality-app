@@ -8,6 +8,7 @@
 				'ngModel': '=',
 				'options': '=',
 				'multiple': '=',
+				'ngDisabled': '=',
 				'placeholder': '@',
 				'onSelect': '&'
 			},

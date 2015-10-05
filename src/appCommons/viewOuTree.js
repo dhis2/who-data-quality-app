@@ -5,7 +5,8 @@
 	app.directive('ouTree', function () {
 		return {
 			scope: {
-				'onSelect': '&'
+				'onSelect': '&',
+				'ngModel': '='
 			},
 			bindToController: true,
 			controller: "ouTreeController",
@@ -89,6 +90,7 @@
 					}
 
 					self.onSelect({orgunit: orgunit.data.ou});
+					self.ngModel = orgunit.data.ou;
 				}
 
 				ouTreeInit();

@@ -106,6 +106,10 @@
 					if (data.length === 0) self.placeholder = "No data elements in " + self.group.name;
 					else self.placeholder = "Select data element...";
 
+
+					if (self.multiple) filterElements(data);
+					d2Utils.arraySortByProperty(data, 'name', false);
+
 					data.unshift({
 						name: '[All data elements]',
 						id: 'all',
@@ -113,8 +117,6 @@
 						elements: angular.copy(data)
 					});
 
-					if (self.multiple) filterElements(data);
-					d2Utils.arraySortByProperty(data, 'name', false);
 					self.elements = data;
 				}
 
