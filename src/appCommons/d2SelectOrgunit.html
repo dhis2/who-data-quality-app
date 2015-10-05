@@ -1,0 +1,55 @@
+<label>Boundary</label><br />
+<div class="btn-group" style="max-width: 800px;" ng-click="d2sCtrl.orgunitSelect();">
+	<label
+			ng-repeat="orgunit in d2sCtrl.userOrgunits track by $index"
+			class="btn btn-default"
+			ng-model="d2sCtrl.selectionType"
+			btn-radio="$index">
+		{{orgunit.name}}
+	</label>
+	<label
+			class="btn btn-default"
+			ng-model="d2sCtrl.selectionType"
+			btn-radio="d2sCtrl.userOrgunits.length">
+		Other
+	</label>
+</div>
+
+<br />
+
+<div ng-show="d2sCtrl.userOrgunits.length === d2sCtrl.selectionType" style="margin-bottom: 10px; margin-top: 10px;">
+	<div style="width:400px; height: 400px; overflow: scroll; border:1px solid lightgray; border-radius:5px;">
+		<ou-tree on-select="d2sCtrl.orgunitSelect(orgunit)" ng-model="d2sCtrl.treeSelection"></ou-tree>
+	</div>
+</div>
+
+<!-- DISAGGREGATION -->
+<label style="margin-top: 10px;" for="orgunitSelect">Disaggregation</label>
+<div style="width: 600px">
+
+	<d2-select
+			ng-disabled="d2sCtrl.selectedGroup"
+			ng-model="d2sCtrl.selectedLevel"
+			options="d2sCtrl.filteredLevels"
+			placeholder="Organisation unit level">
+	</d2-select>
+
+	<d2-select
+			ng-disabled="d2sCtrl.selectedLevel"
+			ng-model="d2sCtrl.selectedGroup"
+			options="d2sCtrl.orgunitGroups"
+			placeholder="Organisation unit group">
+	</d2-select>
+</div>
+
+
+<!-- CURRENT SELECTION -->
+<label for="orgunitSelected">Selected </label>
+<div id="orgunitSelected">
+	<p>
+		<span style="font-size: 100%;" class="label label-primary">{{d2sCtrl.boundaryOrgunitSelected.name}}</span>
+		<span ng-if="d2sCtrl.orgunitLevelSelected"><span class="glyphicon glyphicon-chevron-right"></span><span style="font-size: 100%;" class="label label-primary">{{d2sCtrl.orgunitLevelSelected.name}}</span></span>
+		<span ng-if="d2sCtrl.orgunitGroupSelected"><span class="glyphicon glyphicon-chevron-right"></span><span style="font-size: 100%;" class="label label-primary">{{d2sCtrl.orgunitGroupSelected.name}}</span></span>
+	</p>
+	<br />
+</div>
