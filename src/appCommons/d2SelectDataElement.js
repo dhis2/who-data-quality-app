@@ -6,6 +6,7 @@
 		return {
 			scope: {
 				'ngModel': '=',
+				'dataset': '=',
 				'multiple': '=',
 				'onSelect': '&'
 			},
@@ -36,11 +37,13 @@
 				function init() {
 
 					//Get groups
-					d2Meta.objects('dataElementGroups').then(
+					var object = self.dataset ? 'dataSets' : 'dataElementGroups';
+					d2Meta.objects(object).then(
 						function(data) {
 							self.groups = data;
 						}
-					)
+					);
+
 
 					//Start looking for changes in selected elements
 					$scope.$watchCollection(watchElement, function (newVal, oldVal) {
@@ -58,67 +61,97 @@
 								}
 							}
 							currentModel = d2Utils.arrayRemoveDuplicates(currentModel, 'id');
-							self.ngModel = {
-								'object': currentModel
-							};
+							self.ngModel = currentModel;
 						}
 						else {
-							self.ngModel = {
-								'object': self.element
-							};
+							self.ngModel = self.element;
 						}
+
+						self.onSelect({'object': self.ngModel});
+
 					});
 
-				}
 
+
+				}
 
 
 				function getElements() {
+					if (!self.group) return;
+
 					self.placeholder = "Loading...";
+
+
 					if (self.disaggregation === 0) {
-
-						d2Meta.object('dataElementGroups', self.group.id, 'dataElements[name,id]').then(
-
-							function (data) {
-								data = data.dataElements;
-								if (data.length === 0) self.placeholder = "No data elements in " + self.group.name;
-								else self.placeholder = "Select data element...";
-								self.elements = data;
-								self.elements.unshift({
-									name: '[All data elements]',
-									id: 'all',
-									elements: angular.copy(data)
-								});
-							}
-
-						);
+						var fields = 'dataElements[name,id]';
+						var object = self.dataset ? 'dataSets' : 'dataElementGroups';
+						d2Meta.object(object, self.group.id, fields).then(function(data) {saveElements(data.dataElements);});
 
 					}
 					else {
-						var filter = 'dataElement.dataElementGroups.id:eq:' + self.group.id;
+						var filter;
+						if (self.dataset) {
+							filter = 'dataElement.dataSets.id:eq:' + self.group.id;
+						}
+						else {
+							filter = 'dataElement.dataElementGroups.id:eq:' + self.group.id;
+						}
 						var fields = 'name,id,dataElementId,optionComboId';
-						d2Meta.objects('dataElementOperands', null, fields, filter).then(
-							function (data) {
-								if (data.length === 0) self.placeholder = "No data elements in " + self.group.name;
-								else self.placeholder = "Select data element...";
-								self.elements = data;
-								self.elements.unshift({
-									name: '[All data elements]',
-									id: 'all',
-									elements: angular.copy(data)
-								});
-							}
-						);
+						d2Meta.objects('dataElementOperands', null, fields, filter).then(function(data) {saveElements(data);});
 					}
 				}
 
+
+				function saveElements(data) {
+					if (data.length === 0) self.placeholder = "No data elements in " + self.group.name;
+					else self.placeholder = "Select data element...";
+
+					data.unshift({
+						name: '[All data elements]',
+						id: 'all',
+						group: self.group.id,
+						elements: angular.copy(data)
+					});
+
+					if (self.multiple) filterElements(data);
+					d2Utils.arraySortByProperty(data, 'name', false);
+					self.elements = data;
+				}
+
+
+				function filterElements(data) {
+					for (var i = 0; i < data.length; i++) {
+						for (var j = 0; self.element && j < self.element.length; j++) {
+
+							var remove = false;
+							if (data[i].id === self.element[j].id) {
+								if (data[i].id === 'all') {
+									if (data.group === self.element[j].group) {
+										remove = true;
+									}
+								}
+								else {
+									remove = true;
+								}
+							}
+							if (remove) data.splice(i, 1);
+						}
+
+					}
+				}
+
+
 				function watchElement() {
 					if (self.multiple) {
-						if (!self.element) self.element = [];
+						if (!self.element) {
+							return null;
+						}
 						return self.element.length;
 					}
 					else {
-						if (!self.element) self.element = {};
+						if (!self.element) {
+							return null;
+						}
 						return self.element.id;
 					}
 				}
@@ -127,7 +160,6 @@
 				function frameWidth() {
 					return angular.element('#frame').width();
 				}
-
 
 
 				init();

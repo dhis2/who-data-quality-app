@@ -24,8 +24,6 @@
 		self.orgunitLevelSelected;
 		self.orgunitLevels = [];
 
-		self.test = [];
-
 
         /** ===== ANALYSIS ===== */
         
