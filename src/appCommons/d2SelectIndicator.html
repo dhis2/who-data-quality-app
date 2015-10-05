@@ -1,0 +1,18 @@
+<div>
+	<d2-select
+			ng-model="d2sCtrl.group"
+			options="d2sCtrl.groups"
+			placeholder="Indicator group..."
+			on-select="d2sCtrl.getElements();">
+	</d2-select>
+</div>
+<div style="margin-top: 10px;">
+	<d2-select
+			ng-disabled="!d2sCtrl.elements || d2sCtrl.elements.length === 0"
+			multiple="d2sCtrl.multiple"
+			ng-model="d2sCtrl.element"
+			options="d2sCtrl.elements"
+			placeholder="{{d2sCtrl.placeholder}}"
+			on-select="d2sCtrl.selectElement()">
+	</d2-select>
+</div>
