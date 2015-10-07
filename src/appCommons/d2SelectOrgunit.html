@@ -31,14 +31,16 @@
 			ng-disabled="d2sCtrl.selectedGroup"
 			ng-model="d2sCtrl.selectedLevel"
 			options="d2sCtrl.filteredLevels"
-			placeholder="Organisation unit level">
+			placeholder="Organisation unit level"
+			on-select="d2sCtrl.selectLevel(object)">
 	</d2-select>
 
 	<d2-select
 			ng-disabled="d2sCtrl.selectedLevel"
 			ng-model="d2sCtrl.selectedGroup"
 			options="d2sCtrl.orgunitGroups"
-			placeholder="Organisation unit group">
+			placeholder="Organisation unit group"
+			on-select="d2sCtrl.selectGroup(object)">
 	</d2-select>
 </div>
 

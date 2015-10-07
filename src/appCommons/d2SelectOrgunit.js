@@ -23,9 +23,12 @@
 				var self = this;
 
 				self.orgunitSelect = orgunitSelect;
+				self.selectLevel = selectLevel;
+				self.selectGroup = selectGroup;
 
 				self.levelPlaceholder = "Select level...";
 				self.groupPlaceholder = "Select group...";
+				self.selectionType = 0;
 
 				self.ngModel = {};
 
@@ -42,8 +45,8 @@
 					$q.all(promises).then(
 						function(data) {
 							self.userOrgunits = data[0];
-							self.orgunitLevels = data[1];
-							self.orgunitGroups = data[2];
+							self.orgunitLevels = d2Utils.arraySortByProperty(data[1], 'level', true, true);
+							self.orgunitGroups = d2Utils.arraySortByProperty(data[2], 'name', false);
 
 							self.selectionType = 0;
 							self.selectedOrgunit = self.userOrgunits[0];
@@ -78,6 +81,7 @@
 					var invalidMax = self.selectedLevel && maxLevel && self.selectedLevel.level > maxLevel ? true : false;
 					if (invalidMin || invalidMax) {
 						self.selectedLevel = null;
+						self.ngModel.level = self.selectedLevel;
 					}
 
 				}
@@ -86,6 +90,8 @@
 				function defaultLevel() {
 					//If we have a group, don't set level
 					if (self.selectedGroup) return;
+					//If we don't have an orgunit, don't set level
+					if (!self.selectedOrgunit) return;
 
 					var selectedLevel = self.selectedOrgunit.level;
 					var defaultLevel = self.defaultLevel ? selectedLevel + self.defaultLevel : null;
@@ -96,11 +102,12 @@
 							break;
 						}
 					}
+					self.ngModel.level = self.selectedLevel;
 				}
 
 
 				function orgunitSelect(orgunit) {
-					if (self.selectionType === self.userOrgunits.length) {
+					if (self.userOrgunits && self.selectionType === self.userOrgunits.length) {
 						if (!orgunit) orgunit = self.treeSelection;
 						self.selectedOrgunit = orgunit;
 					}
@@ -119,6 +126,16 @@
 
 					if (self.selectedOrgunit) self.onSelect({orgunit: self.ngModel});
 
+				}
+
+				function selectLevel(object) {
+					self.selectedLevel = object;
+					self.ngModel.level = self.selectedLevel;
+				}
+
+				function selectGroup(object) {
+					self.selectedGroup = object;
+					self.ngModel.group = self.selectedGroup;
 				}
 
 
