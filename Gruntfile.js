@@ -142,7 +142,8 @@ module.exports = function(grunt) {
 		[
 			'clean',
 			'copy-build',
-			'concat-only'
+			'concat-only',
+			'cachebreaker'
 		]
 	);
 

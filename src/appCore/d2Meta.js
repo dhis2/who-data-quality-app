@@ -9,6 +9,7 @@
 					object: object,
 					objects: objects,
 					orgunitIDs: orgunitIDs,
+					orgunitCountEstimate: orgunitCountEstimate,
 					userOrgunit: userOrgunit,
 					userOrgunits: userOrgunits,
 					userOrgunitsHierarchy: userOrgunitsHierarchy,
@@ -63,7 +64,8 @@
 
 					requestService.getSingleData(requestURL).then(
 						function(data) {
-							deferred.resolve(data[object]);
+							if (paging) deferred.resolve(data);
+							else deferred.resolve(data[object]);
 
 						},
 						function(error){
@@ -90,6 +92,10 @@
 				function orgunitIDs(ouBoundary, ouLevel, ouGroup) {
 					var deferred = $q.defer();
 
+					ouBoundary = d2Utils.toArray(ouBoundary);
+
+					//TODO: split if estimate is > ???
+
 					//Find orgunit disaggregation
 					var ouDisaggregation = '';
 					if (ouLevel) ouDisaggregation += ';LEVEL-' + ouLevel;
@@ -109,14 +115,14 @@
 						var ou, boundary;
 						for (var i = 0; i < orgunits.length; i++) {
 							ou = orgunits[i];
-							boundary = false;
-							for (var j = 0; !boundary && j < ouBoundary.length; j++) {
+							isBoundary = false;
+							for (var j = 0; !isBoundary && j < ouBoundary.length; j++) {
 
-								if (ou == ouBoundary[j]) boundary = true;
+								if (ou == ouBoundary[j]) isBoundary = true;
 
 							}
 
-							boundary ? boundary.push(ou) : subunits.push(ou);
+							isBoundary ? boundary.push(ou) : subunits.push(ou);
 						}
 
 						deferred.resolve({
@@ -125,6 +131,49 @@
 							'subunits': subunits
 						});
 					});
+
+					return deferred.promise;
+				}
+
+
+
+				function orgunitCountEstimate(ouBoundary, ouLevel, ouGroup) {
+					var deferred = $q.defer();
+					ouBoundary = d2Utils.toArray(ouBoundary);
+
+					if (!ouLevel && !ouGroup) deferred.resolve(ouBoundary.length);
+					else {
+
+						var promises = [];
+						promises.push(objects('organisationUnits', ouBoundary, 'name,id,level'));
+						promises.push(objects('organisationUnits', null, null, null, true));
+						promises.push(objects('organisationUnitLevels'));
+						if (ouGroup) {
+							promises.push(object('organisationUnitGroups', ouGroup, 'name,id,organisationUnits::size'));
+						}
+						$q.all(promises).then(
+							function(datas) {
+								var boundary = datas[0];
+								var total = datas[1].pager.total;
+								var levels = datas[2].length;
+								if (ouGroup) var group = datas[3].organisationUnits;
+
+								var minBoundary = 99;
+								for (var i = 0; i < boundary.length; i++) {
+									minBoundary = Math.min(minBoundary, boundary[i].level);
+								}
+
+								var levelFactor = Math.pow(total, 1/levels);
+								var boundaryLevel = minBoundary === 1 ? 1 : Math.pow(levelFactor, minBoundary)/ouBoundary.length;
+								if (ouLevel) {
+									deferred.resolve(total/boundaryLevel)
+								}
+								else if (ouGroup) {
+									deferred.resolve(group/boundaryLevel)
+								}
+							}
+						);
+					}
 
 					return deferred.promise;
 				}

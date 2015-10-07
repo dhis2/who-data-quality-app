@@ -12,6 +12,7 @@
 					arrayMerge: arrayMerge,
 					arraySortByProperty: arraySortByProperty,
 					arrayFromKeys: arrayFromKeys,
+					arrayProperties: arrayProperties,
 					idsFromIndicatorFormula: idsFromIndicatorFormula
 				};
 
@@ -64,15 +65,18 @@
 					return a;
 				}
 
-				function arraySortByProperty(array, property, numeric) {
+				function arraySortByProperty(array, property, numeric, reverse) {
 
 					 return array.sort(function(a, b) {
+						 var res;
 						if (numeric) {
-							return b[property] - a[property] ;
+							res = b[property] - a[property] ;
 						}
 						else {
-							return a[property] < b[property] ? -1 : 1
+							res = a[property] < b[property] ? -1 : 1
 						}
+						 if (reverse) return -res;
+						 else return res;
 					});
 
 				}
@@ -86,6 +90,14 @@
 					}
 					return array;
 
+				}
+
+				function arrayProperties(array, property) {
+					var properties = [];
+					for (var i = 0; i < array.length; i++) {
+						properties.push(array[i][property]);
+					}
+					return properties;
 				}
 
 
