@@ -1,8 +1,8 @@
 (function () {
 	/**Service: Completeness*/
 	angular.module('dataQualityApp').service('dataAnalysisService',
-	['$q', 'requestService', 'mathService', 'd2Meta',
-	function ($q, requestService, mathService, d2Meta) {
+	['$q', 'requestService', 'mathService', 'd2Meta', 'd2Utils',
+	function ($q, requestService, mathService, d2Meta, d2Utils) {
 
 		var self = this;
 
@@ -159,70 +159,118 @@
 				"metaData": {}
 			};
 
-			//Make a guess on how many data elements we can include in each query (2 minimum) if we want to stay within roughly 50000 rows (we ignore limit in case some go slightly higher)
-			var maxValues = 50000;
-			var ouPerLevel = 15; //assume this number children on average, and two levels
-			if (!self.og.ouLevel && !self.og.ouGroup) ouPerLevel = 1;
-			var peCount = self.og.periods.length;
-			var avgCatCombo = 1;
-			if (self.og.coAll || self.og.coIDs) avgCatCombo = 4;
-			var numDEs = Math.max(Math.ceil(maxValues / (peCount * ouPerLevel * ouPerLevel * avgCatCombo)), 2);//TODO: should take number of orgunits into account
-			var numOUs = (self.og.ouLevel || self.og.ouGroup) ? 1 : 50;
-			var ouIDs;
-			for (var i = 0; i < self.og.ouBoundary.length; i += numOUs) {
-				//make requests
-				var baseRequest;
-				baseRequest = '/api/analytics.json?';
-				baseRequest += 'hideEmptyRows=true&ignoreLimit=true&hierarchyMeta=true';
-				baseRequest += '&tableLayout=true';
-				baseRequest += '&dimension=pe:' + self.og.periods.join(';');
-
-				var start = i;
-				var end = (i + numOUs) > self.og.ouBoundary.length ? self.og.ouBoundary.length : (i + numOUs);
-				ouIDs = self.og.ouBoundary.slice(start, end);
-				baseRequest += '&dimension=ou:' + ouIDs.join(';');
-				if (self.og.ouLevel) baseRequest += ';LEVEL-' + self.og.ouLevel;
-				else if (self.og.ouGroup) baseRequest += ';OU_GROUP-' + self.og.ouGroup;
+			console.time("PREPARING");
+			self.og.boundaryPartitioned = [];
+			outlierGapPartition();
+		}
 
 
+		function outlierGapPartition() {
 
-				//check whether to get categoryoptions or not
-				if (self.og.coAll || self.og.coIDs) {
-					baseRequest += '&dimension=co';
-					baseRequest += '&columns=pe&rows=ou;dx;co';
-				}
-				else {
-					baseRequest += '&columns=pe&rows=ou;dx';
-				}
-
-				//add data ids
-				var dxIDs, request, requests = [];
-				for (var j = 0; j < self.og.dataIDs.length; j = j + numDEs) {
-
-					var start = j;
-					var end = (j + numDEs) > self.og.dataIDs.length ? self.og.dataIDs.length : (j + numDEs);
-
-					dxIDs = self.og.dataIDs.slice(start, end);
-
-					self.requests.queue.push({
-						"type": 'outlierGap',
-						"url": baseRequest + '&dimension=dx:' + dxIDs.join(';'),
-						"pending": false,
-						"done": false,
-						"attempts": 0
-					});
-				}
+			//If no group or level, everything is okay
+			if (!self.og.ouLevel && !self.og.ouGroup) {
+				self.og.ouCount = self.og.ouBoundary.length;
+				outlierGapRequest();
 			}
-
-			console.log(self.requests.queue.length + " requests in queue for outlier and gap analysis");
-
-			if (self.requests.queue.length === 0) {
-				self.inProgress = false;
-				reset(true);
+			//If level < 3, we assume things are okay
+			else if (self.og.ouLevel && self.og.ouLevel <= 2) {
+				self.og.ouCount = Math.pow(20, self.og.ouLevel-1);
+				outlierGapRequest();
 			}
 			else {
-				requestData();
+				console.log("Checking if requests needs to be partitioned");
+
+				d2Meta.orgunitCountEstimate(self.og.ouBoundary, self.og.ouLevel ? self.og.ouLevel : null, self.og.ouGroup ? self.og.ouGroup : null).then(
+					function(ouCount) {
+
+						var maxValues = 50000;
+						var peCount = self.og.periods.length;
+						self.og.ouCount = ouCount;
+
+						//Check if orgunits need to be split
+						if ((ouCount * peCount) > maxValues) {
+
+							console.log("Request too large (estimated " + parseInt(ouCount*self.og.ouBoundary.length) +
+								" units and " + peCount + " periods), partitioning");
+
+							d2Meta.objects('organisationUnits', self.og.ouBoundary, 'children[name,id,level]').then(
+								function(data) {
+
+									var done = (peCount * ouCount * self.og.ouBoundary.length)/data.length < maxValues;
+
+									self.og.ouBoundary = [];
+									for (var i = 0; i < data.length; i++) {
+										for (var j = 0; j < data[i].children.length; j++) {
+											self.og.ouBoundary.push(data[i].children[j].id);
+										}
+									}
+
+									if (done) {
+										outlierGapRequest();
+									}
+									else {
+										outlierGapPartition();
+									}
+								}
+							)
+						}
+						else {
+							console.log("Estimated " + ouCount + " orgunits");
+							outlierGapRequest();
+						}
+					}
+				);
 			}
+		}
+
+
+		function outlierGapRequest() {
+			var noDisaggregation = !self.og.ouLevel && !self.og.ouGroup;
+			var boundary = noDisaggregation ? self.og.ouBoundary.splice(0, self.og.ouBoundary.length) : self.og.ouBoundary.splice(0, 1);
+			if (boundary.length === 0) {
+				console.log(self.requests.queue.length + " requests in queue for outlier and gap analysis");
+
+				if (self.requests.queue.length === 0) {
+					self.inProgress = false;
+					reset(true);
+				}
+				else {
+					requestData();
+				}
+				console.timeEnd("PREPARING");
+				return;
+			}
+
+			var maxValues = 50000;
+			var peCount = self.og.periods.length;
+			var ouCount = self.og.ouCount;
+			var dxPerRequest = Math.min(Math.max(Math.floor(maxValues/(ouCount * peCount)), 1), 20);
+
+			var baseRequest;
+			baseRequest = '/api/analytics.json?';
+			baseRequest += 'hideEmptyRows=true&ignoreLimit=true&hierarchyMeta=true';
+			baseRequest += '&tableLayout=true&columns=pe&rows=dx;ou'
+			baseRequest += '&dimension=pe:' + self.og.periods.join(';');
+			baseRequest += '&dimension=ou:' + boundary.join(',');
+			if (self.og.ouLevel) baseRequest += ';LEVEL-' + self.og.ouLevel;
+			else if (self.og.ouGroup) baseRequest += ';OU_GROUP-' + self.og.ouGroup;
+
+			var dx = angular.copy(self.og.dataIDs);
+			while (dx.length > 0) {
+
+				var items = Math.min(dxPerRequest, dx.length);
+				var request = baseRequest + '&dimension=dx:' + dx.splice(0, items).join(';');
+
+				self.requests.queue.push({
+					"type": 'outlierGap',
+					"url": request,
+					"pending": false,
+					"done": false,
+					"attempts": 0
+				});
+			}
+
+			outlierGapRequest();
 		}
 
 
@@ -233,9 +281,6 @@
 			var names = metaData.names;
 			var rows = data.data.rows;
 			var periods = self.og.periods;
-
-			var coAll = self.og.coAll;
-			var coIDs = self.og.coIDs;
 
 			var sScoreCriteria = self.og.sScoreCriteria;
 			var zScoreCriteria = self.og.zScoreCriteria;
@@ -253,9 +298,6 @@
 					case 'dataid':
 						dx = i;
 						break;
-					case 'categoryoptioncomboid':
-						co = i;
-						break;
 				}
 
 				if (!headers[i].meta) {
@@ -269,23 +311,13 @@
 			for (var i = 0; i < rows.length; i++) {
 				row = rows[i];
 
-				var dxID;
-				if (!coAll && coIDs) {
-					dxID = row[dx] + '.' + row[co];
-					if (!coIDs[dxID]) continue;
-				}
-				else {
-					dxID = row[dx];
-				}
 
 				var ouID = row[ou];
 				var ouName = names[ouID];
 				var ouHierarchy = makeOuHierarchy(ouID, metaData);
-				var dxName = co != undefined ? names[row[dx]] + ' ' + names[row[co]] : names[row[dx]];
+				var dxID = row[dx];
+				var dxName = names[row[dx]];
 				newRow = outlierGapNewRow(ouID, ouName, ouHierarchy, dxID, dxName);
-
-
-
 
 				//Iterate to get all values, and look for gaps at the same time
 				var value, valueSet = [], gaps = 0;
