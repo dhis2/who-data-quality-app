@@ -110,80 +110,13 @@
 		}
 
 
-		function getDataForAnalysis() {
-
-			var details = (self.dataDisaggregation != 0);
-
-			var dataIDs = [];
-			if (!details && self.indicatorGroupsSelected) {
-				if (self.indicatorsSelected.length > 0) {
-					for (var i = 0; i < self.indicatorsSelected.length; i++) {
-						dataIDs.push(self.indicatorsSelected[i].id);
-					}
-				}
-				else { //Selected group but did not specify = all
-					for (var i = 0; i < self.indicators.length; i++) {
-						dataIDs.push(self.indicators[i].id);
-					}
-				}
-			}
-
-			var coFilter = {};
-			if (self.dataElementGroupsSelected) {
-				if (details) {
-					if (self.dataElementsSelected.length > 0) {
-						for (var i = 0; i < self.dataElementsSelected.length; i++) {
-							coFilter[self.dataElementsSelected[i].id] = true;
-							dataIDs.push(self.dataElementsSelected[i].dataElementId);
-						}
-					}
-					else { //Selected group but did not specify = all
-						for (var i = 0; i < self.dataElements.length; i++) {
-							coFilter[self.dataElements[i].id] = true;
-							dataIDs.push(self.dataElements[i].dataElementId);
-						}
-					}
-				}
-				else {
-					if (self.dataElementsSelected.length > 0) {
-						for (var i = 0; i < self.dataElementsSelected.length; i++) {
-							dataIDs.push(self.dataElementsSelected[i].id);
-						}
-					}
-					else { //Selected group but did not specify = all
-						for (var i = 0; i < self.dataElements.length; i++) {
-							dataIDs.push(self.dataElements[i].id);
-						}
-					}
-				}
-
-			}
-
-
-			if (self.datasetSelected) {
-				dataIDs = [];
-
-				for (var i = 0; i < self.datasetDataelements.length; i++) {
-					dataIDs.push(self.datasetDataelements[i].id);
-				}
-
-			}
-
-			return {
-				'dataIDs': uniqueArray(dataIDs),
-				'details': details,
-				'coFilter': details ? coFilter : null
-			};
-
-
-		}
-
-
-		function uniqueArray(array) {
-			var seen = {};
-			return array.filter(function (item) {
-				return seen.hasOwnProperty(item) ? false : (seen[item] = true);
-			});
+		function getData() {
+			var dx = [];
+			d2Utils.arrayMerge(dx, self.selectedData.ds);
+			d2Utils.arrayMerge(dx, self.selectedData.deg);
+			d2Utils.arrayMerge(dx, self.selectedData.ig);
+			d2Utils.arrayRemoveDuplicates(dx, 'id');
+			return dx;
 		}
 
 
@@ -198,64 +131,17 @@
 			self.result = undefined;
 			if (self.results.length > 1) self.results.move(self.currentResult, 0);
 
+			var dx = getData();
+			var ouBoundary = self.selectedOrgunit.boundary;
+			var ouLevel = self.selectedOrgunit.level;
+			var ouGroup = self.selectedOrgunit.group;
 
-			console.log(self.selectedOrgunit);
-			console.log(self.selectedData);
-			return;
-
-			var data = getDataForAnalysis();
-			var variables = data.dataIDs;
+			var dxIDs = d2Utils.arrayProperties(dx, 'id');
 			var periods = getPeriods();
 
-			//If dataset, include all optioncombos
-			var coAll = false;
-			if (self.datasetSelected) coAll = true;
+			dataAnalysisService.outlierGap(receiveResult, dxIDs, null, null, periods, [ouBoundary.id],
+				ouLevel ? ouLevel.level : null, ouGroup ? ouGroup.id : null, 2, 3.5, 1);
 
-			var ouGroup = null;
-			if (self.orgunitGroupSelected) ouGroup = self.orgunitGroupSelected.id;
-
-			var ouLevel = null;
-			if (self.orgunitLevelSelected) {
-				ouLevel = self.orgunitLevelSelected.level;
-				var depth = (ouLevel - self.boundaryOrgunitSelected.level);
-				if (depth > 2) {
-
-					//Split queries by grandchildren of selected ou
-					var requestURL = '/api/organisationUnits.json';
-					if (depth === 3) {
-						requestURL += '?filter=parent.id:eq:' + self.boundaryOrgunitSelected.id;
-					}
-					else if (depth === 4) {
-						requestURL += '?filter=parent.parent.id:eq:' + self.boundaryOrgunitSelected.id;
-					}
-					else if (depth === 5) {
-						requestURL += '?filter=parent.parent.parent.id:eq:' + self.boundaryOrgunitSelected.id;
-					}
-
-					requestURL += '&filter=children:ne:0';
-					requestURL += '&fields=id&paging=false';
-
-					requestService.getSingle(requestURL).then(function (response) {
-						console.log(response);
-						var orgunits = response.data.organisationUnits;
-						var ouIDs = [];
-						for (var i = 0; i < orgunits.length; i++) {
-							ouIDs.push(orgunits[i].id);
-						}
-						dataAnalysisService.outlierGap(receiveResult, variables, coAll, data.coFilter, periods, ouIDs, ouLevel, ouGroup, 2, 3.5, 1);
-
-					});
-				}
-				else {
-					dataAnalysisService.outlierGap(receiveResult, variables, coAll, data.coFilter, periods, [self.boundaryOrgunitSelected.id], ouLevel, ouGroup, 2, 3.5, 1);
-				}
-			}
-			else {
-				dataAnalysisService.outlierGap(receiveResult, variables, coAll, data.coFilter, periods, [self.boundaryOrgunitSelected.id], ouLevel, ouGroup, 2, 3.5, 1);
-			}
-
-
-			self.datasetDataelements = null;
 		};
 
 
