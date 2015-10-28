@@ -492,7 +492,7 @@
 		self.makeTimeConsistencyChart = function (callback, result, includeTitle) {
 	    	var datapoints = result.subunitDatapoints;
 	    	var boundaryRatio = result.boundaryRatio;
-	    	var consistency = result.threshold; 
+	    	var consistency = result.criteria;
 	    		    	
 	    	var toolTip = function(point) {
 
@@ -500,7 +500,7 @@
 	    		
 	    		var toolTipHTML = '<h3>' + data[point.pointIndex].name + '</h3>';
     			toolTipHTML += '<p style="margin-bottom: 0px">' + periodService.shortPeriodName(result.pe) + ': ' + point.point.y + '</p>';
-	    		if (result.type === 'constant') {
+	    		if (result.subType === 'constant') {
 	    			toolTipHTML += '<p>Average: ' + point.point.x + '</p>';
 	    		}
 	    		else {
@@ -566,7 +566,7 @@
 	    	);
 	    		    	
 			var xAxisLabel;
-			if (result.type === "constant") xAxisLabel = "Average of previous periods";
+			if (result.subType === "constant") xAxisLabel = "Average of previous periods";
 			else xAxisLabel = "Forecasted value";
 			
 	    	var chartOptions = {
