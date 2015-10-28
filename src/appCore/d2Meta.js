@@ -163,13 +163,16 @@
 									minBoundary = Math.min(minBoundary, boundary[i].level);
 								}
 
-								var levelFactor = Math.pow(total, 1/levels);
-								var boundaryLevel = minBoundary === 1 ? 1 : Math.pow(levelFactor, minBoundary)/ouBoundary.length;
 								if (ouLevel) {
-									deferred.resolve(total/boundaryLevel)
+									var levelFactor = Math.pow(total, 1/levels);
+									var boundaryFactor = minBoundary === 1 ? 1 : Math.pow(levelFactor, minBoundary);
+									var subunitFactor = Math.pow(levelFactor, ouLevel);
+									deferred.resolve(subunitFactor/boundaryFactor);
 								}
 								else if (ouGroup) {
-									deferred.resolve(group/boundaryLevel)
+									var levelFactor = Math.pow(group, 1/levels);
+									var boundaryFactor = minBoundary === 1 ? 1 : Math.pow(levelFactor, minBoundary);
+									deferred.resolve(group/boundaryFactor);
 								}
 							}
 						);
@@ -310,12 +313,12 @@
 						operandDictionary[ids[i]] = true;
 						var parts = ids[i].split('.');
 						dataElements.push(parts[0]);
-						categoryOptionCombos.push(parts[1]);
+						if (parts.length > 1) categoryOptionCombos.push(parts[1]);
 					}
 
 					var requestURL = '/api/dataElementOperands.json?';
-					requestURL += 'filter=optionComboId:in:[' + categoryOptionCombos.join(',') + ']';
-					requestURL += '&filter=dataElementId:in:[' + dataElements.join(',') + ']';
+					requestURL += 'filter=dataElementId:in:[' + dataElements.join(',') + ']';
+					if (categoryOptionCombos.length > 0) requestURL += '&filter=optionComboId:in:[' + categoryOptionCombos.join(',') + ']';
 					requestURL += '&paging=false';
 					requestService.getSingleData(requestURL).then(
 						function(data) {
