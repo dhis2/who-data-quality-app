@@ -185,7 +185,7 @@
 
 						var maxValues = 50000;
 						var peCount = self.og.periods.length;
-						self.og.ouCount = ouCount;
+						self.og.ouCount = parseInt(ouCount);
 
 						//Check if orgunits need to be split
 						if ((ouCount * peCount) > maxValues) {
@@ -196,14 +196,19 @@
 							d2Meta.objects('organisationUnits', self.og.ouBoundary, 'children[name,id,level]').then(
 								function(data) {
 
-									var done = (peCount * ouCount * self.og.ouBoundary.length)/data.length < maxValues;
-
-									self.og.ouBoundary = [];
+									var children = [];
 									for (var i = 0; i < data.length; i++) {
 										for (var j = 0; j < data[i].children.length; j++) {
-											self.og.ouBoundary.push(data[i].children[j].id);
+											children.push(data[i].children[j].id);
 										}
 									}
+									var diff = self.og.ouBoundary.length/children.length;
+									var done = (ouCount*peCount*diff) < maxValues;
+
+									self.og.ouCount = parseInt(self.og.ouCount * diff);
+
+									self.og.ouBoundary = children;
+
 
 									if (done) {
 										outlierGapRequest();
@@ -251,7 +256,7 @@
 			baseRequest += 'hideEmptyRows=true&ignoreLimit=true&hierarchyMeta=true';
 			baseRequest += '&tableLayout=true&columns=pe&rows=dx;ou'
 			baseRequest += '&dimension=pe:' + self.og.periods.join(';');
-			baseRequest += '&dimension=ou:' + boundary.join(',');
+			baseRequest += '&dimension=ou:' + boundary.join(';');
 			if (self.og.ouLevel) baseRequest += ';LEVEL-' + self.og.ouLevel;
 			else if (self.og.ouGroup) baseRequest += ';OU_GROUP-' + self.og.ouGroup;
 
