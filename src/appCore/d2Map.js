@@ -59,12 +59,30 @@
 					requestService.getSingleData('/api/systemSettings/DQAmapping').then(
 						function(data) {
 							_map = data;
-							d2CoreMeta().then(
-								function(data) {
-									_ready = true;
-									deferred.resolve(true);
-								}
-							);
+							if (_map) {
+								d2CoreMeta();
+								_ready = true;
+								deferred.resolve(true);
+							}
+							else {
+								console.log("No map exists");
+
+								//Try to load template
+								template().then(
+									function (result) {
+										if (result) {
+											deferred.resolve(false);
+											_ready = false;
+										}
+										else {
+											deferred.resolve(true);
+											_ready = true;
+										}
+
+									}
+								);
+
+							}
 						},
 						function(error) {
 							console.log('Error in getMapping()');
@@ -116,9 +134,6 @@
 
 									deferred.resolve(authorized);
 								});
-
-
-
 						}
 					);
 
@@ -126,6 +141,39 @@
 				}
 
 
+				function template() {
+					var deferred = $q.defer();
+
+					//Check if user is authorized
+					admin().then(
+						function (authorized) {
+							if (authorized) {
+
+								//If authorized, get json tempalte
+								requestService.getSingleLocal('data/metaData.json').then(function(response) {
+
+									_map = response.data;
+
+									//Save template to systemSettings
+									requestService.post('/api/systemSettings/', {'DQAmapping': angular.toJson(_map)}).then(
+										function (data) {
+
+											_ready = true;
+											deferred.resolve(true);
+										},
+										function (data) {
+											_ready = false;
+											deferred.resolve(false);
+										}
+									);
+								});
+							}
+							deferred.resolve(false);
+						}
+					);
+
+					return deferred.promise;
+				}
 
 
 
@@ -322,9 +370,11 @@
 						"localData": {},
 						"matched": false,
 						"moderateOutlier": 2,
-						"extremeOutlier": 3,
 						"consistency": 0.33,
 						"custom": true,
+						"trend": "constant",
+						"missing": 90,
+						"dataSetID": ''
 					});
 
 					//Add to group membership
@@ -724,8 +774,8 @@
 						dataIDs.push(_map.dataSets[i].id);
 					}
 					for (var i = 0; i < _map.denominators.length; i++) {
-						dataIDs.push(_map.denominators[i].idA);
-						dataIDs.push(_map.denominators[i].idB);
+						if (_map.denominators[i].idA != '') dataIDs.push(_map.denominators[i].idA);
+						if (_map.denominators[i].idB != '') dataIDs.push(_map.denominators[i].idB);
 					}
 					return dataIDs.sort();
 				}
@@ -740,7 +790,7 @@
 					_dataIDs = dataIDs;
 
 					var promises = [];
-					promises.push(d2Meta.objects('dataElements', dataIDs));
+					//promises.push(d2Meta.objects('dataElements', dataIDs));
 					promises.push(d2Meta.objects('indicators', dataIDs));
 					promises.push(d2Meta.objects('dataSets', dataIDs, 'name,id,periodType'));
 					promises.push(d2Meta.dataElementOperands(dataIDs));
@@ -761,9 +811,8 @@
 
 
 				function d2NameFromID(id) {
-
+					if (!_d2Objects.hasOwnProperty(id)) return '';
 					return _d2Objects[id].name;
-
 				}
 
 
