@@ -9,6 +9,7 @@
 					addRequest: addRequest,
 					fetch: fetch,
 					value: dataValue,
+					values: dataValues,
 					name: name
 				};
 
@@ -110,6 +111,50 @@
 
 
 				/**
+				 * Look up data values from the current result.
+				 *
+				 * @param de, pe, ou, co	IDs
+				 * @returns float of datavalue, or null if not found
+				 */
+				function dataValues(de, pe, ou, co) {
+					var value, values = [];
+
+					de = d2Utils.toArray(de);
+					pe = d2Utils.toArray(pe);
+					ou = d2Utils.toArray(ou);
+					co = co === undefined ? null : d2Utils.toArray(co);
+
+					for (var i = 0; i < de.length; i++) {
+
+						for (var j = 0; j < pe.length; j++) {
+
+							for (var k = 0; k < ou.length; k++) {
+
+								if (co && co.length > 0) {
+									for (var l = 0; l < co.length; l++) {
+
+										value = dataValue(de[i], pe[j], ou[k], co[l]);
+									}
+								}
+								else {
+									value = dataValue(de[i], pe[j], ou[k]);
+								}
+
+								if (value) values.push(value);
+							}
+
+						}
+
+					}
+
+
+					return values;
+				}
+
+
+
+
+				/**
 				 * Look up names based on ID.
 				 */
 				function name(id) {
@@ -148,8 +193,12 @@
 					var dx = [];
 					var dxCo = [];
 					for (var i = 0; i < dxAll.length; i++) {
+
 						var dataID = dxAll[i];
-						if (dataID.length != 11) {
+						if (!dataID) {
+							continue;
+						}
+						else if (dataID.length != 11) {
 							dxCo.push(dataID.substr(0, 11));
 						}
 						else {
