@@ -12,9 +12,9 @@
 	});
 
 	angular.module('consistencyAnalysis').controller("ConsistencyAnalysisController",
-	['d2Meta', 'd2Utils', 'periodService', 'requestService', 'dataAnalysisService', 'visualisationService', 'mathService',
+	['d2Meta', 'd2Utils', 'dqAnalysisConsistency', 'periodService', 'visualisationService', 'mathService',
 		'$modal', '$timeout', '$scope',
-	function(d2Meta, d2Utils, periodService, requestService, dataAnalysisService, visualisationService, mathService,
+	function(d2Meta, d2Utils, dqAnalysisConsistency, periodService, visualisationService, mathService,
 			 $modal, $timeout, $scope) {
 		var self = this;
 
@@ -27,8 +27,7 @@
 	    self.itemsPerPage = 25;
 	    self.hasVisual = false;
 	    self.req = false;
-	    
-	    self.processStatus = dataAnalysisService.status;
+
 	         	    
 		function init() {		
 			self.alerts = [];
@@ -37,8 +36,8 @@
 			
 			self.selectedObject = {};
 			
-			self.consistencyType = 'relation'; 
-			self.relationshipType = 'level';
+			self.type = 'data'; 
+			self.subType = 'level';
 			self.trendType = 'constant';
 			self.consistencyCriteria = 20;
 			
@@ -72,52 +71,9 @@
 			d2Meta.objects('indicatorGroups').then(function(data) {
 				self.dataSelection.inGroups = data;
 			});
-			
-	    	
-	    	//ORGUNITS
-	    	self.analysisOrgunits = [];
-	    	self.userOrgunits = [];
-	    	self.boundaryOrgunitSelected = undefined;
-	    	
-	    	self.ouSelected = null;
-	    	self.ouSearchResult = [];
-	    		    	
-	    	d2Meta.userOrgunits().then(
-				function(data) {
-					self.userOrgunits = data;
-					self.boundarySelectionType = 0;
-					self.boundaryOrgunitSelected = self.userOrgunits[0];
-					self.filterLevels();
-					self.orgunitUserDefaultLevel();
-	    		}
-			);
-	    	
-	    	self.orgunitLevels = [];
-	    	self.filteredOrgunitLevels = [];
-	    	self.orgunitLevelSelected = undefined;
-			d2Meta.objects('organisationUnitLevels', null, 'name,id,level').then(
-				function(data) {
-					self.orgunitLevels = data;
 
-					self.lowestLevel = 0;
-					for (var i = 0; i < self.orgunitLevels.length; i++) {
-						var level = self.orgunitLevels[i].level;
-						if (level > self.lowestLevel) self.lowestLevel = level;
-					}
+			self.selectedOrgunit = {};
 
-					self.filterLevels();
-					self.orgunitUserDefaultLevel();
-	    		}
-			);
-	    	
-	    	
-	    	self.orgunitGroups = [];
-	    	self.orgunitGroupSelected = undefined;
-			d2Meta.objects('organisationUnitGroups').then(function(data) {
-	    		self.orgunitGroups = data;
-	    	});
-	    	
-	    	
 	    	//PERIODS
 	    	self.periodTypes = [];
 	    	self.periodTypes = periodService.getPeriodTypes();
@@ -155,14 +111,6 @@
 			initWathcers();
 	    }
 
-		self.boundarySelected = function(orgunit) {
-			self.boundaryOrgunitSelected = orgunit;
-			self.filterLevels();
-			self.orgunitUserDefaultLevel();
-		}
-
-
-
 		function initWathcers() {
 			//Watch for changes in data selection type, clear selection if changing from data element to indicator etc
 			$scope.$watchCollection(function() { return self.dataSelection.a.type; },
@@ -186,78 +134,8 @@
 		}
 
 	
-		/** -- PARAMETER SELECTION -- */
+		/** PARAMETER SELECTION **/
 
-		/** Orgunits */
-		self.orgunitSearchModeSelected = function() {
-			self.boundaryOrgunitSelected = undefined;
-			self.orgunitLevelSelected = undefined;
-		};
-		
-		
-		self.orgunitUserModeSelected = function() {
-			self.boundaryOrgunitSelected = self.userOrgunits[0];
-			self.orgunitUserDefaultLevel();
-		};
-		
-		
-		self.orgunitUserDefaultLevel = function() {
-			
-			if (!self.boundaryOrgunitSelected || !self.filteredOrgunitLevels) return;
-		
-			var level = self.boundaryOrgunitSelected.level;
-			for (var i = 0; i < self.filteredOrgunitLevels.length; i++) {
-				if (self.filteredOrgunitLevels[i].level === (level+1)) {
-					self.orgunitLevelSelected = self.filteredOrgunitLevels[i];
-				}
-			}
-			
-			if (self.filteredOrgunitLevels.length === 0) self.orgunitLevelSelected = undefined;
-		
-		};
-
-
-		function lowestLevel() {
-		
-			var lowest = 1;
-			for (var i = 0; i < self.orgunitLevels.length; i++) {
-				if (self.orgunitLevels[i].level > lowest) {
-					lowest = self.orgunitLevels[i].level;
-				}
-			}
-			
-			return lowest;
-		}
-				
-		
-		//Lower than selected orgunit, but max two levels (until analysis can handle more)
-		self.filterLevels = function() {
-			self.filteredOrgunitLevels = [];
-			
-			if (!self.orgunitLevels || !self.boundaryOrgunitSelected) return;
-			for (var i = 0; i < self.orgunitLevels.length; i++) {
-			
-				var belowSelectedUnit = self.orgunitLevels[i].level > self.boundaryOrgunitSelected.level;
-				var belowMaxDepth = self.orgunitLevels[i].level > (self.boundaryOrgunitSelected.level + 2);
-			
-				if (belowSelectedUnit && !belowMaxDepth) {
-					self.filteredOrgunitLevels.push(self.orgunitLevels[i]);
-				}
-			}			
-		};
-
-				
-		self.getLevelPlaceholder = function() {
-			if (!self.filteredOrgunitLevels || self.filteredOrgunitLevels.length === 0) {
-				if (self.boundaryOrgunitSelected && self.boundaryOrgunitSelected.level === self.lowestLevel) return "N/A";
-				else return "Loading...";
-			
-			}
-			else return "Select level";
-		};
-		
-
-		
 		/** Data */
 		self.getGroupForCode = function(code) {
 			if (self.dataSelection[code].type === 'ind') {
@@ -309,7 +187,6 @@
 			}
 	    };
 
-		
 
 		/**
 		 * Get data element id for the selection box with the given code
@@ -364,7 +241,6 @@
 		};
 		
 
-
     	self.getPeriodsInYear = function() {
     		self.periodsInYear = [];
     		var isoPeriods = periodService.getISOPeriods(self.yearSelected.name.toString() + '-01-01', self.yearSelected.name.toString() + '-12-31', self.periodTypeSelected.id);
@@ -390,7 +266,7 @@
 			var periodsForRelation = self.dataSelection['a'].periodType && self.dataSelection['b'].periodType;
 			var periodsForTime = self.dataSelection['a'].periodType;
 
-			if ((self.consistencyType === 'relation' && !periodsForRelation) || (self.consistencyType && !periodsForTime)) {
+			if ((self.type === 'data' && !periodsForRelation) || (self.type && !periodsForTime)) {
 				self.filteredPeriodTypes = self.periodTypes;
 				return;
 			}
@@ -417,7 +293,7 @@
 	    function defaultPeriodType() {
 			
 			//For drop out rate we want yearly by default
-			if (self.relationshipType === 'do') {
+			if (self.subType === 'do') {
 			    self.periodTypeSelected = self.filteredPeriodTypes[0];
 			}
 			//Otherwise we go for shortest
@@ -433,7 +309,7 @@
 
 	    	var periods = [];
 	    	if (self.dataSelection['a'].periodType) periods.push(self.dataSelection['a'].periodType);
-	    	if (self.consistencyType === 'relation' && self.dataSelection['b'].periodType) periods.push(self.dataSelection['b'].periodType);
+	    	if (self.type === 'data' && self.dataSelection['b'].periodType) periods.push(self.dataSelection['b'].periodType);
 
 	    	return periodService.longestPeriod(periods);
 	    }
@@ -445,50 +321,70 @@
   	    };
   	    
 
-		/** REQUEST DATA */		
-		self.doAnalysis = function(ouBoundary, level) {
+
+
+		/** REQUEST DATA **/
+
+		self.doAnalysis = function(boundary, level) {
 			
 			//Collapse open panels
 			angular.element('.panel-collapse').removeClass('in');
 			angular.element('.panel-collapse').addClass('collapse');
 
+
+			self.selectedObject = {};
 			self.result = undefined;
 			if (self.results.length > 1) self.results.move(self.currentResult, 0);
 
 			self.chartSelected = {};
 			self.chart = {};
 			
-			var analysisType = self.consistencyType;
-			var relationType = self.relationshipType;
+			var analysisType = self.type;
+			var relationType = self.subType;
 			var trendType = self.trendType;
 			var criteria = self.consistencyCriteria;
 
 
 			var period = selectedPeriod().id;
 			var dxA = self.dataItemForCode('a').id;
-			var ouBoundary = ouBoundary ? ouBoundary : self.boundaryOrgunitSelected.id;
-			var ouLevel = level ? level : (self.orgunitLevelSelected ? self.orgunitLevelSelected.level : null);
-			var ouGroup = ouLevel ? null : self.orgunitGroupSelected.id; //if we have level, ignore group
-			
-			if (!level && self.orgunitLevelSelected) {
-				ouLevel = self.orgunitLevelSelected.level;
-				console.log("Depth: " + (ouLevel-self.boundaryOrgunitSelected.level));
+
+			var ouBoundary = self.selectedOrgunit.boundary.id;
+			var ouLevel = self.selectedOrgunit.level;
+			var ouGroup = self.selectedOrgunit.group;
+
+			ouLevel = ouLevel ? ouLevel.level : null;
+			ouGroup = ouGroup ? ouGroup.id : null;
+
+			if (boundary) {
+				ouBoundary = boundary;
 			}
+			if (level) {
+				ouLevel = level;
+				ouGroup = null;
+			}
+
+
 			self.req = true;
 			
 			//1 Relation
-			if (analysisType === 'relation') {	
+			if (analysisType === 'data') {	
 				var dxB = self.dataItemForCode('b').id;
-				dataAnalysisService.dataConsistency(receiveRelationResult, relationType, criteria, null, dxA, dxB, period, ouBoundary, ouLevel, ouGroup);
+				dqAnalysisConsistency.analyse(dxA, dxB, period, null, ouBoundary, ouLevel, ouGroup, 'data', relationType, criteria, null).then(
+					function (data) {
+						receiveResult(data.result, data.errors);
+					}
+				);
 			}
 			//2 Over time
 			else {
 				var refPeriods = periodService.precedingPeriods(period, self.periodCountSelected.value);
 				
-				dataAnalysisService.timeConsistency(receiveTimeResult, self.trendType, criteria, null, dxA, null, period, refPeriods, ouBoundary, ouLevel, ouGroup);
-				
+				dqAnalysisConsistency.analyse(dxA, null, period, refPeriods, ouBoundary, ouLevel, ouGroup, 'time', self.trendType, criteria, null).then(
+					function (data) {
+						receiveResult(data.result, data.errors);
+					}
+				);
 			}
-			
 		};
 		
 		
@@ -496,7 +392,7 @@
 					
 			var periodType = longestPeriodInSelection();
 
-			if (self.consistencyType === 'relation') {
+			if (self.result.type === 'data') {
 				var periods = [self.result.pe.toString()];
 				var dxA = self.result.dxIDa;
 				var dxB = self.result.dxIDb;
@@ -505,9 +401,9 @@
 				
 			}
 			else {
-				var periods = self.result.refPe.slice();
+				var periods = self.result.peRef.slice();
 				periods.push(self.result.pe.toString());
-				var dx = self.result.dxID;
+				var dx = self.result.dxIDa;
 				
 				visualisationService.multiBarChart(receiveDetailChart, [dx], periods, [ouID], 'dataOverTime');
 				
@@ -518,46 +414,12 @@
 		}
 
 
-		var receiveDetailChart = function(chartData, chartOptions) {		
-			chartOptions.chart.title = {
-				'enable': true,
-				'text': 'Reporting over time'
-			};
-			chartOptions.chart.margin.left = 60;
-			chartOptions.chart.margin.bottom = 40;
-				
-			self.chartSelected.options = chartOptions;
-			self.chartSelected.data = chartData; 
-				
-		};
-				
 
-		/**
-		RESULTS
-		*/
+
+		/** RECEIVE AND PROCESS ANALYSIS RESULT **/
 		
-		function receiveRelationResult(result, errors) {
-
-			result.consistencyType = 'relation';
-
+		function receiveResult(result, errors) {
 			//Save result
-			self.currentResult = 0;
-			self.results.unshift(result);
-
-			//Only keep 5
-			if (self.results.length > 5) self.results.pop();
-
-			prepareResult();
-		};
-
-		
-		function receiveTimeResult(result, errors) {
-			
-			self.req = false;
-
-			self.result = result;
-			self.result.consistencyType = 'time';
-
 			self.currentResult = 0;
 			self.results.unshift(result);
 
@@ -571,9 +433,6 @@
 		function prepareResult() {
 			self.result = self.results[self.currentResult];
 			self.req = false;
-
-			//self.chart.data = null;
-			//self.chart.options = null;
 
 
 			self.tableData = [];
@@ -589,10 +448,8 @@
 			self.sortByColumn('weight');
 			self.reverse = true;
 
-
-
-			if (self.result.consistencyType === 'relation') {
-				if (self.result.type === 'do')
+			if (self.result.type === 'data') {
+				if (self.result.subType === 'do')
 					visualisationService.makeDropoutRateChart(null, self.result);
 				else {
 					visualisationService.makeDataConsistencyChart(null, self.result);
@@ -616,7 +473,7 @@
 
 						//TODO: Workaround for tooltip getting re-created rather than re-used
 						var elements = angular.element('.nvtooltip');
-						for (var i = 0; i < elements.length - 1; i++) {
+						for (var i = 0; i < elements.length; i++) {
 							elements[i].remove(); //Keep under 2 - rest is old
 						}
 					}
@@ -626,45 +483,52 @@
 		}
 
 
-		self.previousResult = function() {
-			self.currentResult++;
-			prepareResult();
+		var receiveDetailChart = function(chartData, chartOptions) {
+			chartOptions.chart.title = {
+				'enable': true,
+				'text': 'Reporting over time'
+			};
+			chartOptions.chart.margin.left = 60;
+			chartOptions.chart.margin.bottom = 40;
+
+			self.chartSelected.options = chartOptions;
+			self.chartSelected.data = chartData;
+
 		};
-		
-	
+
+
+
+	   	
+	   	/** PRESENTATION AND TABLE LAYOUT */
 		self.title = function () {
 			var title = "";
-			if (self.result.consistencyType === 'relation') {
-				if (self.result.type === 'level') {
+			if (self.result.type === 'data') {
+				if (self.result.subType === 'level') {
 					title += self.result.dxNameA + " to " + self.result.dxNameB + " ratio. " +
 						self.resultPeriodName() + '.';
 				}
-				if (self.result.type === 'eq') {
+				if (self.result.subType === 'eq') {
 					title += self.result.dxNameA + " ≈ " + self.result.dxNameB + ". " +
 						self.resultPeriodName() + '.';
 				}
-				if (self.result.type === 'aGTb') {
+				if (self.result.subType === 'aGTb') {
 					title += self.result.dxNameA + " > " + self.result.dxNameB + ". " +
 						self.resultPeriodName() + '.';
 				}
-				if (self.result.type === 'do') {
+				if (self.result.subType === 'do') {
 					title += self.result.dxNameA + " to " + self.result.dxNameB + " dropout. " +
 						self.resultPeriodName() + '.';
 				}
 			}
 			else {
-				title += self.result.dxName + ' consistency over time. ' +
+				title += self.result.dxNameA + ' consistency over time. ' +
 					self.resultPeriodName() + ' against ' + self.resultReferencePeriodNames().length + ' preceding periods.';
 			}
-			
+
 			return title;
 		};
 
 
-
-       	
-	   	
-	   	/** TABLE LAYOUT */
 	   	self.sortByColumn = function (columnKey) {
 	   		self.currentPage = 1;
 	   		if (self.sortCol === columnKey) {
@@ -676,10 +540,11 @@
 	   		}
 	   	};
 
+
 		self.ratioDescription = function() {
 			var description = "";
-			if (self.result.consistencyType === 'relation') {
-				if (self.result.type === 'do') {
+			if (self.result.type === 'data') {
+				if (self.result.subType === 'do') {
 					description += "Dropout rate from " + self.result.dxNameA + " to " + self.result.dxNameB + ".";
 				}
 				else {
@@ -693,15 +558,17 @@
 			return description;
 		}
 
+
 		self.resultPeriodName = function() {
 			return periodService.shortPeriodName(self.result.pe);
 
 		}
 
+
 		self.resultReferencePeriodNames = function() {
 			var periodNames = [];
-			for (var i = 0; i < self.result.refPe.length; i++) {
-				periodNames.push(periodService.shortPeriodName(self.result.refPe[i]));
+			for (var i = 0; i < self.result.peRef.length; i++) {
+				periodNames.push(periodService.shortPeriodName(self.result.peRef[i]));
 			}
 
 			return periodNames;
@@ -711,6 +578,12 @@
 
 
 		/**INTERACTIVE FUNCTIONS*/
+		self.previousResult = function() {
+			self.currentResult++;
+			prepareResult();
+		};
+
+
 		function itemClicked(seriesIndex, pointIndex) {
 	   		var orgunitID = self.chart.data[seriesIndex].values[pointIndex].z;
 	   		
@@ -726,7 +599,7 @@
 	   	self.selectOrgunit = function(item) {
 	   	
 	   		//Remove previous chart highlight
-	   		if (self.relationshipType != 'do') {
+	   		if (self.subType != 'do') {
    				var data = self.chart.data[0].values;
    				for (var i = 0; i < data.length; i++) {
    					if (data[i].z === self.selectedObject.id) {
@@ -742,7 +615,7 @@
 	   		self.selectedObject.ratio = item.ratio;
 	   			   		
 	   		//Add new chart highlight
-	   		if (self.relationshipType != 'do') {
+	   		if (self.subType != 'do') {
 	   			var data = self.chart.data[0].values;
 	   			for (var i = 0; i < data.length; i++) {
 	   				if (data[i].z === item.id) {
@@ -754,60 +627,38 @@
 	   		dataForSelectedUnit(item.id);
 
 	   	};
-	   	
-	   	function highlightPoint() {}
-	   	
-        
-        self.sendMessage = function(row) {
-        	        	
-        	var modalInstance = $modal.open({
-	            templateUrl: "appCommons/modalMessage.html",
-	            controller: "ModalMessageController",
-	            controllerAs: 'mmCtrl',
-	            resolve: {
-	    	        orgunitID: function () {
-	    	            return row.id;
-	    	        },
-	    	        orgunitName: function () {
-	    	            return row.name;
-	    	        }
-	            }
-	        });
-	
-	        modalInstance.result.then(function (result) {
-	        });
-        };
-        
-        
+
+
         self.drillDown = function (item) {
-        	
-        	var requestURL = "/api/organisationUnits/" + item.id + ".json?fields=level";
-        	requestService.getSingle(requestURL).then(function (response) {
 
-        		var level = response.data.level;
-        		if (level === lowestLevel()) {
-					var modalInstance = $modal.open({
-						templateUrl: "appCommons/modalNotification.html",
-						controller: "ModalNotificationController",
-						controllerAs: 'nCtrl',
-						resolve: {
-							title: function () {
-								return "Warning";
-							},
-							message: function () {
-								return "Not possible to drill down, " + self.selectedObject.name + " has no children.";
+			d2Meta.object('organisationUnits', item.id, 'level,children::isNotEmpty').then(
+				function (orgunit) {
+
+					var hasChildren = orgunit.children;
+					if (!hasChildren) {
+						var modalInstance = $modal.open({
+							templateUrl: "appCommons/modalNotification.html",
+							controller: "ModalNotificationController",
+							controllerAs: 'nCtrl',
+							resolve: {
+								title: function () {
+									return "Warning";
+								},
+								message: function () {
+									return "Not possible to drill down, " + self.selectedObject.name + " has no children.";
+								}
 							}
-						}
-					});
+						});
 
-					modalInstance.result.then(function (result) {
-					});
-        			return;
-        		}
-        		self.selectedObject = {};
-        		self.doAnalysis(item.id, (1 + level));
+						modalInstance.result.then(function (result) {
+						});
+						return;
+					}
+					self.selectedObject = {};
+					self.doAnalysis(item.id, (1 + orgunit.level));
 
-          	});
+				}
+			);
         };
 
 
@@ -834,7 +685,7 @@
 		}
 
 
-		self.sendMessage = function(metaData) {
+		self.sendMessage = function(item) {
 
 			var modalInstance = $modal.open({
 				templateUrl: "appCommons/modalMessage.html",
@@ -855,7 +706,7 @@
 		};
 
 
-        	   	
+
 	   	
 	   	/** UTILITIES */
 		function getFileContent() {
@@ -864,8 +715,8 @@
 
 			headers = headers.concat(["Orgunit"]);
 
-			if (self.result.consistencyType === 'relation') {
-				if (self.result.type != 'do') {
+			if (self.result.type === 'data') {
+				if (self.result.subType != 'do') {
 					headers = headers.concat([self.result.dxNameA, self.result.dxNameB, 'Ratio']);
 				}
 				else {
@@ -875,7 +726,7 @@
 			else {
 				headers = headers.concat([
 					self.result.dxName + ' - ' + self.resultPeriodName(),
-					self.result.dxName + (self.result.type === 'constant'
+					self.result.dxName + (self.result.subType === 'constant'
 						? ' - average of ' + self.resultReferencePeriodNames().join(' ,')
 						: ' - forecast from ' + self.resultReferencePeriodNames().join(' ,')),
 					'Ratio']);
@@ -894,7 +745,7 @@
 				row.push(value.value);
 				row.push(value.refValue);
 
-				if (self.result.type === 'do') {
+				if (self.result.subType === 'do') {
 					row.push(self.dropoutRate(value.value, value.refValue));
 				}
 				else {
@@ -911,7 +762,7 @@
 
 			//Add boundary to top of export
 			var boundaryRow = [self.result.boundaryName + ' (boundary)', self.result.boundaryValue, self.result.boundaryRefValue];
-			if (self.result.type === 'do') {
+			if (self.result.subType === 'do') {
 				boundaryRow.push(self.dropoutRate(self.result.boundaryValue, self.result.boundaryRefValue));
 			}
 			else {
@@ -927,14 +778,7 @@
 		};
 
 
-	   	function uniqueArray(array) {
-	   	    var seen = {};
-	   	    return array.filter(function(item) {
-	   	        return seen.hasOwnProperty(item) ? false : (seen[item] = true);
-	   	    });
-	   	}
-
-
+		//TODO: Move to d2?
 	   	self.validRatio = function(ratio) {
 	   		if (!isNaN(ratio) && isFinite(ratio)) return true;
 	   		else return false;
@@ -948,10 +792,6 @@
 	   		
 	   	};
 
-
-		function sortName(a, b) {
-			return a.name > b.name ? 1 : -1;
-		}
 
 		init();
     	

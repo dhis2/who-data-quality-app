@@ -7,21 +7,21 @@
 	<accordion-group heading="Analysis Type" is-open="aCtrl.status.isFirstOpen">
 		<label>Consistency analysis type</label><br />
 		<div class="btn-group btn-group-justified" style="width: 330px; margin-bottom: 10px;">
-				<label class="btn btn-default" ng-model="aCtrl.consistencyType" btn-radio="'relation'">Between Indicators</label>
-		  		<label class="btn btn-default" ng-model="aCtrl.consistencyType" btn-radio="'time'">Over Time</label>
+				<label class="btn btn-default" ng-model="aCtrl.type" btn-radio="'data'">Between Indicators</label>
+		  		<label class="btn btn-default" ng-model="aCtrl.type" btn-radio="'time'">Over Time</label>
 		</div>
 		
-		<div ng-if="aCtrl.consistencyType === 'relation'">		
+		<div ng-if="aCtrl.type === 'data'">		
 		<label>Expected relationship</label><br />
 		<div class="btn-group btn-group-justified" style="width: 330px; margin-bottom: 10px;">
-				<label class="btn btn-default" ng-model="aCtrl.relationshipType" btn-radio="'level'">None</label>
-				<label class="btn btn-default" ng-model="aCtrl.relationshipType" btn-radio="'eq'">A ≈ B</label>
-		  		<label class="btn btn-default" ng-model="aCtrl.relationshipType" btn-radio="'aGTb'">A > B</label>
-		  		<label class="btn btn-default" ng-model="aCtrl.relationshipType" btn-radio="'do'">Dropout</label>
+				<label class="btn btn-default" ng-model="aCtrl.subType" btn-radio="'level'">None</label>
+				<label class="btn btn-default" ng-model="aCtrl.subType" btn-radio="'eq'">A ≈ B</label>
+		  		<label class="btn btn-default" ng-model="aCtrl.subType" btn-radio="'aGTb'">A > B</label>
+		  		<label class="btn btn-default" ng-model="aCtrl.subType" btn-radio="'do'">Dropout</label>
 		</div>
 		</div>
 		
-		<div ng-if="aCtrl.consistencyType === 'time'">		
+		<div ng-if="aCtrl.type === 'time'">		
 		<label>Expected trend</label><br />
 		<div class="btn-group btn-group-justified" style="width: 330px; margin-bottom: 10px;">
 				<label class="btn btn-default" ng-model="aCtrl.trendType" btn-radio="'constant'">Constant</label>
@@ -29,7 +29,7 @@
 		</div>
 		</div>
 		
-		<div style="margin-bottom: 10px;" ng-if="aCtrl.relationshipType != 'do' || aCtrl.consistencyType === 'time'">		
+		<div style="margin-bottom: 10px;" ng-if="aCtrl.subType != 'do' || aCtrl.type === 'time'">		
 		<label>Criteria</label><br />
 		<input class="form-control" type="number" style="text-align: right; width: 150px; display: inline-block;" ng-model="aCtrl.consistencyCriteria" min="0" max="50"> <span style="display: inline-block;">%</span>
 		</div>
@@ -39,8 +39,8 @@
 	<!-- DATA -->
     <accordion-group heading="Data">
 
-		<div ng-repeat="code in ['a', 'b']" ng-show="!(code === 'b' && aCtrl.consistencyType === 'time')">
-			<h4 ng-if="aCtrl.consistencyType === 'relation'">Indicator/Data element {{code}}</h4>
+		<div ng-repeat="code in ['a', 'b']" ng-show="!(code === 'b' && aCtrl.type === 'time')">
+			<h4 ng-if="aCtrl.type === 'data'">Indicator/Data element {{code}}</h4>
 			<div class="btn-group btn-group-justified" ng-click="alert(123);" style="max-width: 470px; margin-bottom: 10px;">
 				<label class="btn btn-default" ng-model="aCtrl.dataSelection[code].type" btn-radio="'de'">Data element (totals)</label>
 				<label class="btn btn-default" ng-model="aCtrl.dataSelection[code].type" btn-radio="'dc'">Data element (details)</label>
@@ -81,7 +81,7 @@
     <!-- PERIOD -->
     <accordion-group heading="Period">
     	
-    	<h4 ng-if="aCtrl.consistencyType === 'time'">Period</h4>
+    	<h4 ng-if="aCtrl.type === 'time'">Period</h4>
     	<div style="display: inline-block;">
     		<label>Period type</label><br />
     		<div style="display: inline-block;">
@@ -129,7 +129,7 @@
     	
     	</div>
     	
-    	<div ng-if="aCtrl.consistencyType === 'time'">
+    	<div ng-if="aCtrl.type === 'time'">
     		
     			<h4>Reference periods</h4>
     		<label>No. of Preceding periods</label><br />
@@ -150,61 +150,13 @@
     
     <!-- ORGUNIT -->
     <accordion-group heading="Orgunit" is-open="status.open">
-    	<label>Boundary</label><br />
-    	<div class="btn-group btn-group-justified" style="max-width: 400px;">
-    	  	<label ng-repeat="orgunit in aCtrl.userOrgunits track by $index" class="btn btn-default" ng-model="aCtrl.boundarySelectionType" ng-change="aCtrl.orgunitUserModeSelected();" btn-radio="$index">{{orgunit.name}}</label>
-    	  	<label class="btn btn-default" ng-model="aCtrl.boundarySelectionType" btn-radio="aCtrl.userOrgunits.length">All</label>
-    	</div>
-		<br />	  
-		<div ng-show="aCtrl.userOrgunits.length === aCtrl.boundarySelectionType" style="margin-bottom: 10px;">
-			<div style="width:400px; height: 400px; overflow: scroll; border:1px solid lightgray; border-radius:5px;">
-				<ou-tree on-select="aCtrl.boundarySelected(orgunit)"></ou-tree>
-			</div>
-		</div>  		    	
-		
-	<!-- DISAGGREGATION -->
-       <label for="orgunitSelect">Disaggregation</label>
-		<div id="orgunitSelect">
-			<ui-select ng-disabled="aCtrl.orgunitGroupSelected || aCtrl.filteredOrgunitLevels.length === 0" ng-model="aCtrl.orgunitLevelSelected"  style="margin-bottom: 10px; max-width: 400px;">
-			  <ui-select-match allow-clear="true" placeholder="{{aCtrl.getLevelPlaceholder();}}">
-			  	{{aCtrl.orgunitLevelSelected.name}}
-			  </ui-select-match>
-			  <ui-select-choices 
-			  	repeat="obj in aCtrl.filteredOrgunitLevels | filter: $select.search">
-			   		<div ng-bind-html="obj.name | highlight: $select.search"></div>
-			  </ui-select-choices>
-			</ui-select>
-			
-			<ui-select ng-disabled="aCtrl.orgunitLevelSelected || aCtrl.filteredOrgunitLevels.length === 0" ng-model="aCtrl.orgunitGroupSelected"  style="margin-bottom: 10px; max-width: 400px;">
-				  <ui-select-match allow-clear="true" placeholder="Select organisation unit group">
-				  	{{aCtrl.orgunitGroupSelected.name}}
-				  </ui-select-match>
-				  <ui-select-choices 
-				  	repeat="obj in aCtrl.orgunitGroups | filter: $select.search">
-				   		<div ng-bind-html="obj.name | highlight: $select.search"></div>
-				  </ui-select-choices>
-			</ui-select>
-		</div>
-		
-		
-		<!-- CURRENT SELECTION -->
-		<label for="orgunitSelected">Selected </label>
-		<div id="orgunitSelected">
-			<p>
-				<span style="font-size: 100%;" class="label label-primary">{{aCtrl.boundaryOrgunitSelected.name}}</span>
-				<span ng-if="aCtrl.orgunitLevelSelected"><span class="glyphicon glyphicon-chevron-right"></span><span style="font-size: 100%;" class="label label-primary">{{aCtrl.orgunitLevelSelected.name}}</span></span>
-				<span ng-if="aCtrl.orgunitGroupSelected"><span class="glyphicon glyphicon-chevron-right"></span><span style="font-size: 100%;" class="label label-primary">{{aCtrl.orgunitGroupSelected.name}}</span></span>
-			</p>
-			<br />
-		</div>
-		<label>NOTE</label>
-		<p>Consistency analysis is always done for multiple organisation units. It is therefore not possible to search for and select individual facilities. To analyse facilities, chose a district or other organisation unit above the facilities, and instead use the disaggregation by level/group (for example the <em>{{aCtrl.filteredOrgunitLevels[aCtrl.filteredOrgunitLevels.length-1].name}}</em>-level).</p>
+		<d2-select-orgunit default-level="1" max-level="2" ng-model="aCtrl.selectedOrgunit"></d2-select-orgunit>
     </accordion-group>
   </accordion>  	
   
 <button type="button" class="btn btn-primary pull-right" ng-click="aCtrl.doAnalysis(null, null); aCtrl.updateCharts();" 
 	ng-disabled="(!aCtrl.periodSelected && aCtrl.periodTypeSelected.id != 'Yearly') || !aCtrl.dataSelection.a.item ||
-		(aCtrl.consistencyType === 'relation' && !aCtrl.dataSelection.b.item)" style="margin-bottom:20px">Analyze</button>
+		(aCtrl.type === 'data' && !aCtrl.dataSelection.b.item)" style="margin-bottom:20px">Analyze</button>
 
 <hr / style="clear: both;">
 
@@ -245,24 +197,24 @@
 					<span ng-if="aCtrl.sortCol === 'name'" class="glyphicon glyphicon-sort-by-attributes"></span>
 				</th>
 		    	<th ng-click="aCtrl.sortByColumn('value')">
-		    		<span ng-if="aCtrl.result.consistencyType === 'relation'">
+		    		<span ng-if="aCtrl.result.type === 'data'">
 		    			{{aCtrl.result.dxNameA}}
 		    		</span>
-		    		<span ng-if="aCtrl.result.consistencyType === 'time'">
+		    		<span ng-if="aCtrl.result.type === 'time'">
 						Current Period
 					</span>
 					<span ng-if="aCtrl.sortCol === 'value'" class="glyphicon glyphicon-sort-by-attributes"></span>
 		    	</th>
 		    	<th ng-click="aCtrl.sortByColumn('refValue')">
-			    	<span ng-if="aCtrl.result.consistencyType === 'relation'">{{aCtrl.result.dxNameB}}</span>
-			    	<span ng-if="aCtrl.result.consistencyType === 'time' && aCtrl.result.type === 'constant'">Average</span>
-			    	<span ng-if="aCtrl.result.consistencyType === 'time' && aCtrl.result.type != 'constant'">Forecast</span>
+			    	<span ng-if="aCtrl.result.type === 'data'">{{aCtrl.result.dxNameB}}</span>
+			    	<span ng-if="aCtrl.result.type === 'time' && aCtrl.result.subType === 'constant'">Average</span>
+			    	<span ng-if="aCtrl.result.type === 'time' && aCtrl.result.subType != 'constant'">Forecast</span>
 					<span ng-if="aCtrl.sortCol === 'refValue'" class="glyphicon glyphicon-sort-by-attributes"></span>
 		    	</th>
 		    	<th style="white-space:nowrap;" ng-click="aCtrl.sortByColumn('ratio')">
-			    	<span ng-if="aCtrl.result.consistencyType === 'relation' && aCtrl.result.type === 'do'">Dropout rate (%)</span>
-			    	<span ng-if="aCtrl.result.consistencyType === 'relation' && aCtrl.result.type != 'do'">Ratio</span>
-			    	<span ng-if="aCtrl.result.consistencyType === 'time'">Ratio</span>
+			    	<span ng-if="aCtrl.result.type === 'data' && aCtrl.result.subType === 'do'">Dropout rate (%)</span>
+			    	<span ng-if="aCtrl.result.type === 'data' && aCtrl.result.subType != 'do'">Ratio</span>
+			    	<span ng-if="aCtrl.result.type === 'time'">Ratio</span>
 					<span class="glyphicon glyphicon-info-sign"
 						  style="color: black"
 						  aria-hidden="true"
@@ -295,10 +247,10 @@
 				<td class="valueCell">{{aCtrl.result.boundaryValue}}</td>
 				<td class="valueCell">{{aCtrl.result.boundaryRefValue}}</td>
 				<td class="valueCell">
-	            	<span ng-if="aCtrl.result.consistencyType === 'relation' && aCtrl.result.type === 'do'">
+	            	<span ng-if="aCtrl.result.type === 'data' && aCtrl.result.subType === 'do'">
 	            		{{aCtrl.dropoutRate(aCtrl.result.boundaryValue, aCtrl.result.boundaryRefValue)}}%
 	            	</span>
-	            	<span ng-if="aCtrl.result.type != 'do' && aCtrl.validRatio(aCtrl.result.boundaryRatio)">
+	            	<span ng-if="aCtrl.result.subType != 'do' && aCtrl.validRatio(aCtrl.result.boundaryRatio)">
 	            		{{aCtrl.result.boundaryRatio}}
 	            	</span>
 				</td>
@@ -313,10 +265,10 @@
 	            <td class="valueCell">{{row.value}}</td>
 	            <td class="valueCell">{{row.refValue}}</td>
 	            <td class="valueCell" ng-class="{danger: row.violation}">
-	            	<span ng-if="aCtrl.result.consistencyType === 'relation' && aCtrl.result.type === 'do'">
+	            	<span ng-if="aCtrl.result.type === 'data' && aCtrl.result.subType === 'do'">
 	            		{{aCtrl.dropoutRate(row.value, row.refValue)}}%
 	            	</span>
-	            	<span ng-if="aCtrl.result.type != 'do' && aCtrl.validRatio(row.ratio)">
+	            	<span ng-if="aCtrl.result.subType != 'do' && aCtrl.validRatio(row.ratio)">
 	            		{{row.ratio}}
 	            	</span>
 	            </td>
@@ -334,17 +286,17 @@
 	    <tr>	
 	    	<th nowrap>Unit</th>
 	    	<th>
-	    		<span ng-if="aCtrl.result.consistencyType === 'relation'">{{aCtrl.result.dxNameA}}</span>
-	    		<span ng-if="aCtrl.result.consistencyType === 'time'">Current Period</span></th>
+	    		<span ng-if="aCtrl.result.type === 'data'">{{aCtrl.result.dxNameA}}</span>
+	    		<span ng-if="aCtrl.result.type === 'time'">Current Period</span></th>
 	    	<th>
-	    		<span ng-if="aCtrl.result.consistencyType === 'relation'">{{aCtrl.result.dxNameB}}</span>
-	    		<span ng-if="aCtrl.result.consistencyType === 'time' && aCtrl.result.type === 'constant'">Average</span>
-	    		<span ng-if="aCtrl.result.consistencyType === 'time' && aCtrl.result.type != 'constant'">Forecast</span>
+	    		<span ng-if="aCtrl.result.type === 'data'">{{aCtrl.result.dxNameB}}</span>
+	    		<span ng-if="aCtrl.result.type === 'time' && aCtrl.result.subType === 'constant'">Average</span>
+	    		<span ng-if="aCtrl.result.type === 'time' && aCtrl.result.subType != 'constant'">Forecast</span>
 	    	</th>
 	    	<th>
-	    		<span ng-if="aCtrl.result.consistencyType === 'relation' && aCtrl.result.type === 'do'">Dropout rate (%)</span>
-	    		<span ng-if="aCtrl.result.consistencyType === 'relation' && aCtrl.result.type != 'do'">Ratio</span>
-	    		<span ng-if="aCtrl.result.consistencyType === 'time'">Ratio</span>
+	    		<span ng-if="aCtrl.result.type === 'data' && aCtrl.result.subType === 'do'">Dropout rate (%)</span>
+	    		<span ng-if="aCtrl.result.type === 'data' && aCtrl.result.subType != 'do'">Ratio</span>
+	    		<span ng-if="aCtrl.result.type === 'time'">Ratio</span>
 	    	</th>
 	    	<th></th>
 	    </tr>
@@ -356,10 +308,10 @@
             <td class="valueCell">{{aCtrl.selectedObject.value}}</td>
             <td class="valueCell">{{aCtrl.selectedObject.refValue}}</td>
             <td class="valueCell">
-	            <span ng-if="aCtrl.result.consistencyType === 'relation' && aCtrl.result.type === 'do'">
+	            <span ng-if="aCtrl.result.type === 'data' && aCtrl.result.subType === 'do'">
 	            	{{aCtrl.dropoutRate(aCtrl.selectedObject.value, aCtrl.selectedObject.refValue)}}%
 	            </span>
-	            <span ng-if="aCtrl.result.type != 'do'">
+	            <span ng-if="aCtrl.result.subType != 'do'">
 	            	{{aCtrl.selectedObject.ratio}}
 	            </span>
 	        </td>
