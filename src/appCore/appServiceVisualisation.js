@@ -511,59 +511,63 @@
 	    	
 	    	
 	    	var chartSeries = [];
-	    	var chartSerie = {
-	    		'key': "Orgunits",
-	    		'values': []
-	    	};
 
-			datapoints = sortScatterData(datapoints);
-	    	for (var i = 0; i < datapoints.length; i++) {
-	    		chartSerie.values.push({
-	    			'x': datapoints[i].refValue,
-	    			'y': datapoints[i].value,
-	    			'z': datapoints[i].id
-	    		});
-	    	}
+			//Only relevant if there is subunit data
+			if (datapoints.length > 0) {
+				var chartSerie = {
+					'key': "Orgunits",
+					'values': []
+				};
 
-	    	chartSeries.push(chartSerie);
-	    	chartSeries.push(
-	    		{
-	    			'key': "Overall",
-	    			'color': '#ffff',
-	    			'values': [{
-	    			'x': 0,
-	    			'y': 0,
-	    			'size': 0
-	    			}
-	    			],
-	    			'slope': boundaryRatio,
-	    			'intercept': 0.001
-	    		},
-	    		{
-	    			'key': "+ " + consistency + "%",
-	    			'color': '#F00',
-	    			'values': [{
-	    			'x': 0,
-	    			'y': 0,
-	    			'size': 0
-	    			}
-	    			],
-	    			'slope': boundaryRatio*(1 + (consistency/100)),
-	    			'intercept': 0.001
-	    		},
-	    		{
-	    			'key': "- " + consistency + "%",
-	    			'color': '#F00',
-	    			'values': [{
-	    			'x': 0,
-	    			'y': 0,
-	    			'size': 0
-	    			}
-	    			],
-	    			'slope': boundaryRatio*(1 - (consistency/100)),
-	    			'intercept': 0.001
-	    		}
-	    	);
+				datapoints = sortScatterData(datapoints);
+				for (var i = 0; i < datapoints.length; i++) {
+					chartSerie.values.push({
+						'x': datapoints[i].refValue,
+						'y': datapoints[i].value,
+						'z': datapoints[i].id
+					});
+				}
+
+				chartSeries.push(chartSerie);
+				chartSeries.push(
+					{
+						'key': "Overall",
+						'color': '#ffff',
+						'values': [{
+							'x': 0,
+							'y': 0,
+							'size': 0
+						}
+						],
+						'slope': boundaryRatio,
+						'intercept': 0.001
+					},
+					{
+						'key': "+ " + consistency + "%",
+						'color': '#F00',
+						'values': [{
+							'x': 0,
+							'y': 0,
+							'size': 0
+						}
+						],
+						'slope': boundaryRatio * (1 + (consistency / 100)),
+						'intercept': 0.001
+					},
+					{
+						'key': "- " + consistency + "%",
+						'color': '#F00',
+						'values': [{
+							'x': 0,
+							'y': 0,
+							'size': 0
+						}
+						],
+						'slope': boundaryRatio * (1 - (consistency / 100)),
+						'intercept': 0.001
+					}
+				);
+			}
 	    		    	
 			var xAxisLabel;
 			if (result.subType === "constant") xAxisLabel = "Average of previous periods";
@@ -641,59 +645,61 @@
 	    	
 	    	
 	    	var chartSeries = [];
-	    	var chartSerie = {
-	    		'key': "Orgunits",
-	    		'values': []
-	    	};
+			if (datapoints.length > 0) {
+				var chartSerie = {
+					'key': "Orgunits",
+					'values': []
+				};
 
-			datapoints = sortScatterData(datapoints);
-	    	for (var i = 0; i < Math.min(datapoints.length, maxScatterPoints); i++) {
-	    		chartSerie.values.push({
-	    			'x': datapoints[i].refValue,
-	    			'y': datapoints[i].value,
-	    			'z': datapoints[i].id
-	    		});
-	    	}
+				datapoints = sortScatterData(datapoints);
+				for (var i = 0; i < Math.min(datapoints.length, maxScatterPoints); i++) {
+					chartSerie.values.push({
+						'x': datapoints[i].refValue,
+						'y': datapoints[i].value,
+						'z': datapoints[i].id
+					});
+				}
 
-	    	chartSeries.push(chartSerie);
-	    	chartSeries.push(
-	    		{
-	    			'key': "Overall",
-	    			'color': '#ffff',
-	    			'values': [{
-	    			'x': 0,
-	    			'y': 0,
-	    			'size': 0
-	    			}
-	    			],
-	    			'slope': boundaryRatio,
-	    			'intercept': 0.001
-	    		},
-	    		{
-	    			'key': "+ " + consistency + "%",
-	    			'color': '#F00',
-	    			'values': [{
-	    			'x': 0,
-	    			'y': 0,
-	    			'size': 0
-	    			}
-	    			],
-	    			'slope': boundaryRatio*(1 + (consistency/100)),
-	    			'intercept': 0.001
-	    		},
-	    		{
-	    			'key': "- " + consistency + "%",
-	    			'color': '#F00',
-	    			'values': [{
-	    			'x': 0,
-	    			'y': 0,
-	    			'size': 0
-	    			}
-	    			],
-	    			'slope': boundaryRatio*(1 - (consistency/100)),
-	    			'intercept': 0.001
-	    		}
-	    	);
+				chartSeries.push(chartSerie);
+				chartSeries.push(
+					{
+						'key': "Overall",
+						'color': '#ffff',
+						'values': [{
+							'x': 0,
+							'y': 0,
+							'size': 0
+						}
+						],
+						'slope': boundaryRatio,
+						'intercept': 0.001
+					},
+					{
+						'key': "+ " + consistency + "%",
+						'color': '#F00',
+						'values': [{
+							'x': 0,
+							'y': 0,
+							'size': 0
+						}
+						],
+						'slope': boundaryRatio * (1 + (consistency / 100)),
+						'intercept': 0.001
+					},
+					{
+						'key': "- " + consistency + "%",
+						'color': '#F00',
+						'values': [{
+							'x': 0,
+							'y': 0,
+							'size': 0
+						}
+						],
+						'slope': boundaryRatio * (1 - (consistency / 100)),
+						'intercept': 0.001
+					}
+				);
+			}
 	    	var chartOptions = {
 	    	   	"chart": {
 	    	        "type": "scatterChart",
@@ -741,11 +747,7 @@
 
 	    /** Dropout */
 	    self.makeDropoutRateChart = function(callback, result) {	    		    	
-	    	var chartSeries = [];
-	    	var chartSerie = {
-	    		'key': "Orgunits",
-	    		'values': []
-	    	};
+
 
 	    	var toolTip = function(point) {
 				var data = result.subunitDatapoints;
@@ -761,27 +763,34 @@
 						'<p>Full negative dropout.</p>';
 				}
 	    	};
-	    	
-	    	var minVal = 0.9;
-	    	var maxVal = 2;
-	    	var point, value;
-	    	for (var i = 0; i < result.subunitDatapoints.length; i++) {
-	    		point = result.subunitDatapoints[i];
-	    		value = point.value/point.refValue;
-				if (point.value === point.refValue) value = 1; //Deal with cases where both are 0
+
+			var chartSeries = [];
+			if (result.subunitDatapoints.length > 0) {
+				var chartSerie = {
+					'key': "Orgunits",
+					'values': []
+				};
+				var minVal = 0.9;
+				var maxVal = 2;
+				var point, value;
+				for (var i = 0; i < result.subunitDatapoints.length; i++) {
+					point = result.subunitDatapoints[i];
+					value = point.value / point.refValue;
+					if (point.value === point.refValue) value = 1; //Deal with cases where both are 0
 
 
-	    		if (value > maxVal) maxVal = value;
-	    		else if (value < minVal) minVal = value;
-	    		
-	    		chartSerie.values.push({
-	    			'x': i,
-	    			'y': mathService.round(value, 2),
-	    			'z': point.id
-	    		});
-	    	}
+					if (value > maxVal) maxVal = value;
+					else if (value < minVal) minVal = value;
 
-	    	chartSeries.push(chartSerie);
+					chartSerie.values.push({
+						'x': i,
+						'y': mathService.round(value, 2),
+						'z': point.id
+					});
+				}
+
+				chartSeries.push(chartSerie);
+			}
 
 			//Keep max chart y axis to less than 10
 			maxVal = Math.ceil(Math.min(maxVal, 10), 1);
@@ -839,17 +848,21 @@
 			}
 		}
 
+
 		self.setChartHeight = function(options, height) {
 			options.chart.height = height;
 		}
+
 
 		self.setChartYAxis = function(options, start, end) {
 			options.chart.forceY = [start, end];
 		}
 
+
 		self.setChartLegend = function(options, showLegend) {
 			options.chart.showLegend = showLegend;
 		}
+
 
 		self.setChartMargins = function(options, top, right, bottom, left) {
 			if (top) options.chart.margin.top = top;
@@ -879,8 +892,6 @@
 				'y': y
 			}
 		}
-
-
 
 
 
