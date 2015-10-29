@@ -29,8 +29,16 @@
         
         /** COMPLETENESS */
         self.makeCompletenessCharts = function() {
-        	if (!self.ready) return;
-			if (self.completeness && !self.widthChanged[0]) {
+
+			console.log("completeness charts");
+
+        	if (!self.ready) {
+				return;
+			}
+			else if (self.cmpLoading) {
+				return;
+			}
+			else if (self.completeness && !self.widthChanged[0]) {
 				return;
 			}
 			else {
@@ -90,8 +98,13 @@
     	
     	/** CONSISTENCY OVER TIME */
     	self.makeTimeConsistencyCharts = function() {
-			if (!self.ready) return;
-			if (self.consistency  && !self.widthChanged[1]) {
+			if (!self.ready) {
+				return;
+			}
+			else if (self.tcLoading) {
+				return;
+			}
+			else if (self.consistency  && !self.widthChanged[1]) {
 				return;
 			}
 			else {
@@ -177,9 +190,13 @@
 
 		/** CONSISTENCY OVER TIME */
 		self.makeDataConsistencyCharts = function() {
-			if (!self.ready) return;
-
-			if (self.consistencyData && !self.widthChanged[2]) {
+			if (!self.ready) {
+				return;
+			}
+			else if (self.dcLoading) {
+				return;
+			}
+			else if (self.consistencyData && !self.widthChanged[2]) {
 				return;
 			}
 			else {
@@ -262,9 +279,13 @@
 
 
 		self.makeOutlierTable = function() {
-			if (!self.ready) return;
-
-			if (self.outliers) {
+			if (!self.ready) {
+				return;
+			}
+			else if (self.outLoading) {
+				return;
+			}
+			else if (self.outliers) {
 				return;
 			}
 			else {
