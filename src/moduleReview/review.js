@@ -61,7 +61,7 @@
 	    		
 	    	});
 
-			groups = d2Map.groups();
+			self.groups = d2Map.configuredGroups();
 			self.groups.unshift({'name': '[ Core ]', 'code': 'core'});
 			self.groupSelected = self.groups[0];
 		}
@@ -325,7 +325,7 @@
 	    
    	  	/** RELATIONS */
 	    self.relationType = function(typeCode) {
-	    	return d2Map.relationType(typeCode);
+	    	return d2Map.dataRelationType(typeCode);
 	    };
 
 
@@ -374,7 +374,7 @@
 			interpretationToParagraph();
 
 			//Give charts time to finish animation
-			$timeout(function () { window.print(); }, 1000);
+			$timeout(function () { window.print(); }, 3000);
 
 		}
 
