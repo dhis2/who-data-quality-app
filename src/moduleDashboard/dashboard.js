@@ -30,8 +30,6 @@
         /** COMPLETENESS */
         self.makeCompletenessCharts = function() {
 
-			console.log("completeness charts");
-
         	if (!self.ready) {
 				return;
 			}
@@ -476,7 +474,7 @@
       	/** ===== INIT ===== */		
       	
       	function init() {
-			self.ready = true;
+
 			if (angular.element('.mainView').width() > 1280) {
 				self.showParameters = true;
 			}
@@ -496,18 +494,14 @@
       		});
 
       		
-      		self.group = {name: 'Core', code: 'core'};
-			self.groups = d2Map.groups();
+      		self.group = {name: '[ Core ]', code: 'core'};
+			self.groups = d2Map.configuredGroups();
 			self.groups.unshift(self.group);
 
 			self.selectedTab = 0;
 
-			var promises = [];
-			promises.push(d2Meta.userOrgunit());
-			promises.push(d2Meta.objects('organisationUnitLevels', null, 'name,id,level'));
-			$q.all(promises).then(function(datas) {
-				self.ouBoundary = datas[0];
-				self.orgunitLevels = datas[1];
+			d2Meta.objects('organisationUnitLevels', null, 'name,id,level').then(function(data) {
+				self.orgunitLevels = data;
 
 				self.lowestLevel = 0;
 				for (var i = 0; i < self.orgunitLevels.length; i++) {
@@ -518,8 +512,10 @@
 				self.filterLevels();
 				self.orgunitUserDefaultLevel();
 
+				self.ready = true;
+
 				//Completeness is the default tab
-				self.makeCompletenessCharts();
+				if (self.ouBoundary) self.makeCompletenessCharts();
 			});
 
 
@@ -545,12 +541,14 @@
 
 		self.selectionURL='moduleDashboard/selection.html';
 
-
 		self.boundarySelected = function(orgunit) {
+			if (self.ouBoundary && self.ouBoundary.id === orgunit.id) return;
+
 			self.ouBoundary = orgunit;
 			self.filterLevels();
 			self.orgunitUserDefaultLevel();
-			self.update();
+
+			if (self.orgunitLevels) self.update();
 		}
 			
 			
