@@ -360,7 +360,7 @@
 						var subunit = subunits[j];
 
 						var valueA = d2Data.value(_dxA, _pe, subunit, null);
-						var valueB = referenceValue(d2Data.values(_dxA, _peRef, subunit, null), _subType, null);
+						var valueB = mathService.round(referenceValue(d2Data.values(_dxA, _peRef, subunit, null), _subType, null), 1);
 
 						//If we miss data for one of the two indicators, ignore the orgunit
 						if (!d2Utils.isNumber(valueA) || !d2Utils.isNumber(valueB)) {
