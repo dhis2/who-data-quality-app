@@ -17,6 +17,7 @@
 				var _newRequests = [];		//Store new requests
 				var _requestBatches = [];	//Batches of requests are queued here
 				var _currentBatch;			//Batch currently being fetched
+				var _currentBatchMeta;
 
 				var receivedData = [];
 				var mergedData;
@@ -262,6 +263,7 @@
 
 						//Current batch is done - merge the data we have so far, and fulfill the promise
 						if (_currentBatch.done()) {
+							mergeBatchMetaData();
 							mergeAnalyticsResults();
 							resolveCurrentBatch();
 						}
@@ -275,9 +277,53 @@
 
 
 				/**
-				 * Merges the data from the one or more request results into one result set.  In case where the format
-				 * is different (e.g. one request is disaggergated and the other not),the "maximum" will be used and
-				 * the missing fields will be empty.
+				 * Merges the metadata from one or more request results into one result set.
+				 */
+				function mergeBatchMetaData() {
+					//Create "skeleton" if it does not exist
+					var meta = {
+								co: [],
+								dx: [],
+								names: {},
+								ou: [],
+								pe: []
+							};
+
+					for (var i = 0; i < receivedData.length; i++) {
+						var metaData = receivedData[i].metaData;
+
+						//Transfer metadata
+						meta.co.push.apply(meta.co, metaData.co);
+						meta.dx.push.apply(meta.dx, metaData.dx);
+						meta.ou.push.apply(meta.ou, metaData.ou);
+						meta.pe.push.apply(meta.pe, metaData.pe);
+
+						for (key in metaData.names) {
+							if (metaData.names.hasOwnProperty(key)) {
+								meta.names[key] = metaData.names[key];
+							}
+
+						}
+					}
+
+					//Remove duplicates in metaData
+					meta.co = d2Utils.arrayRemoveDuplicates(meta.co);
+					meta.dx = d2Utils.arrayRemoveDuplicates(meta.dx);
+					meta.ou = d2Utils.arrayRemoveDuplicates(meta.ou);
+					meta.pe = d2Utils.arrayRemoveDuplicates(meta.pe);
+
+					//Clear the data we have now merged
+					_currentBatchMeta = meta;
+				}
+
+
+
+				/**
+				 * Merges the data from the one or more request results into one global result set, which will be used
+				 * for any subsequent requests for additional data.
+				 *
+				 * In cases where the format is different (e.g. one request is disaggergated and the other not),
+				 * the "maximum" will be used and the missing fields will be empty.
 				 */
 				function mergeAnalyticsResults() {
 
@@ -359,7 +405,7 @@
 				 * Resolves the data promise, clears the current batch, and calls for more data
 				 */
 				function resolveCurrentBatch() {
-					_currentBatch.resolve(mergedData);
+					_currentBatch.resolve(_currentBatchMeta);
 					_currentBatch = null;
 					fetchNextRequest();
 				}
