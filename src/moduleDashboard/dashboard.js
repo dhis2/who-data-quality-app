@@ -6,8 +6,8 @@
 
 	//Define DashboardController
 	angular.module('dashboard').controller("DashboardController",
-	['periodService', 'visualisationService', 'dataAnalysisService', '$q', '$scope', 'd2Map', 'd2Meta',
-	function(periodService, visualisationService, dataAnalysisService, $q, $scope, d2Map, d2Meta) {
+	['periodService', 'visualisationService', 'dataAnalysisService', '$q', '$scope', 'd2Map', 'd2Meta', 'dqAnalysisConsistency',
+	function(periodService, visualisationService, dataAnalysisService, $q, $scope, d2Map, d2Meta, dqAnalysisConsistency) {
 
 	    var self = this;
 
@@ -49,10 +49,10 @@
 			var datasets = d2Map.groupDataSets(self.group.code);
 			self.completenessCharts = [];
 			self.expectedCompletenessCharts = datasets.length;
-			self.cmpLoading = true;
 			var ouBoundaryID = self.ouBoundary.id;
 
         	var dataset, periods, ouPeriod;
+			if (datasets.length > 0) self.cmpLoading = true;
         	for (var i = 0; i < datasets.length; i++) {
                	dataset = datasets[i];
 
@@ -121,8 +121,8 @@
       		var data, endDate, startDate, periodType, yyPeriods, period, refPeriods; 	
    			var datas = d2Map.groupNumerators(self.group.code);
 			self.expectedConsistencyCharts = datas.length;
-			self.tcLoading = true;
 			var consistencyChart;
+			if (datas.length > 0) self.tcLoading = true;
 			for (var i = 0; i < datas.length; i++) {
       			
       			data = datas[i];
@@ -144,8 +144,7 @@
 				var promises = [];
 				promises.push(promiseObject(data));
 				promises.push(visualisationService.yyLineChart(null, yyPeriods, data.localData.id, ouBoundaryID));
-				promises.push(dataAnalysisService.timeConsistency(null, data.trend, data.consistency, null, data.localData.id, null, period, refPeriods, ouBoundaryID, ouLevel, null));
-
+				promises.push(dqAnalysisConsistency.analyse(data.localData.id, null, period, refPeriods, ouBoundaryID, ouLevel, null, 'time', data.trend, data.consistency, null));
 				$q.all(promises).then(function(datas) {
 
 					var data = datas[0];
@@ -220,10 +219,9 @@
 				period = endDate.year();
 			}
 
-
 			var relations = d2Map.groupRelations(self.group.code, false);
 			self.expectedDataConsistencyCharts = relations.length;
-			self.dcLoading = true;
+			if (relations.length > 0) self.dcLoading = true;
 			for (var i = 0; i < relations.length; i++) {
 				var relation = relations[i];
 				var indicatorA = d2Map.numerators(relation.A);
@@ -231,11 +229,11 @@
 
 				var promises = [];
 				promises.push(relation);
-				promises.push(dataAnalysisService.dataConsistency(null, relation.type, relation.criteria, relation.code, indicatorA.localData.id, indicatorB.localData.id, period, ouBoundaryID, ouLevel, null));
+				promises.push(dqAnalysisConsistency.analyse(indicatorA.localData.id, indicatorB.localData.id, period, null, ouBoundaryID, ouLevel, null, 'data', relation.type, relation.criteria, null));
 				$q.all(promises).then(function(datas) {
 					var data = datas[0]
 					var result = datas[1];
-					if (result.result.type != 'do') {
+					if (result.result.subType != 'do') {
 						visualisationService.makeDataConsistencyChart(null, result.result, null);
 					}
 					else {
