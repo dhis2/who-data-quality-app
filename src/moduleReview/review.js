@@ -95,7 +95,13 @@
 	  			dataAnalysisService.datasetCompleteness(receiveDatasetCompleteness, datasets[i].threshold, datasets[i].id, period, ouBoundary, ouLevel);
 	  			
 	  			//consistency
-	  			dataAnalysisService.timeConsistency(receiveDatasetTimeConsistency, datasets[i].trend, datasets[i].consistencyThreshold, 100, datasets[i].id, null, period, refPeriods, ouBoundary, ouLevel, null);
+				dqAnalysisConsistency.analyse(datasets[i].id, null, period, refPeriods, ouBoundary, ouLevel, null, 'time', datasets[i].trend, datasets[i].consistencyThreshold, null).then(
+					function (data) {
+						self.completeness.consistency.push(data.result);
+						if (data.errors) self.remarks = self.remarks.concat(data.errors);
+						self.outstandingRequests--;
+					}
+				);
 	  			
 	  			datasetIDsForConsistencyChart.push(datasets[i].id);
 	  			self.outstandingRequests += 2;
@@ -286,14 +292,7 @@
 	  			if (errors) self.remarks = self.remarks.concat(errors);
 		  		self.outstandingRequests--;
 	  	}
-	  	
-	  	
-	  	function receiveDatasetTimeConsistency(result, errors) { 
-	  			self.completeness.consistency.push(result);
-	  			if (errors) self.remarks = self.remarks.concat(errors);
-	  			self.outstandingRequests--;
-	  	}
-	  	
+
 	  	
 	  	function receiveDataCompleteness(result, errors) { 
 	  			self.completeness.indicators.push(result);

@@ -131,8 +131,8 @@
 							<th width="175"># {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
 							<th width="175">% {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
 						</tr>
-						<tr ng-repeat="dataset in revCtrl.completeness.consistency | orderBy:'dxName'">
-							<td>{{dataset.dxName}}</td>
+						<tr ng-repeat="dataset in revCtrl.completeness.consistency | orderBy:'dxNameA'">
+							<td>{{dataset.dxNameA}}</td>
 							<td class="valueCell">{{dataset.boundaryPercentage}}%</td>
 							<td class="valueCell">{{dataset.subunitsOutsideThreshold}}</td>
 							<td class="valueCell">{{dataset.subunitViolationPercentage}}%</td>
@@ -213,7 +213,7 @@
 							<th width="175">% {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
 						</tr>
 						<tr ng-repeat="indicator in revCtrl.consistency.data | orderBy:'dxName'">
-							<td>{{indicator.dxName}}</td>
+							<td>{{indicator.dxNameA}}</td>
 							<td class="valueCell">{{indicator.boundaryPercentage}}%</td>
 							<td class="valueCell">{{indicator.subunitsOutsideThreshold}}</td>
 							<td class="valueCell">{{indicator.subunitViolationPercentage}}%</td>
@@ -358,9 +358,9 @@
 					<th>Names</th>
 				</tr>
 				<tr ng-repeat="dataset in revCtrl.completeness.consistency| orderBy:'dxName':false">
-					<td>{{dataset.dxName}}</td>
-					<td>{{dataset.type}}</td>
-					<td class="valueCell">{{dataset.threshold}}%</td>
+					<td>{{dataset.dxNameA}}</td>
+					<td>{{dataset.subType}}</td>
+					<td class="valueCell">{{dataset.criteria}}%</td>
 					<td class="valueCell">{{dataset.boundaryPercentage}}%</td>
 					<td class="valueCell">{{dataset.subunitsOutsideThreshold}}</td>
 					<td class="valueCell">{{dataset.subunitViolationPercentage}}%</td>

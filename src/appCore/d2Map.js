@@ -830,7 +830,7 @@
 					_dataIDs = dataIDs;
 
 					var promises = [];
-					//promises.push(d2Meta.objects('dataElements', dataIDs));
+					promises.push(d2Meta.objects('dataElements', dataIDs));
 					promises.push(d2Meta.objects('indicators', dataIDs));
 					promises.push(d2Meta.objects('dataSets', dataIDs, 'name,id,periodType'));
 					promises.push(d2Meta.dataElementOperands(dataIDs));

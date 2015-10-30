@@ -1289,13 +1289,6 @@
 
 		}
 
-		function uniqueArray(array) {
-			var seen = {};
-			return array.filter(function(item) {
-				return seen.hasOwnProperty(item) ? false : (seen[item] = true);
-			});
-		}
-
 
 	}]);
 
