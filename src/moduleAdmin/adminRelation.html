@@ -4,42 +4,37 @@
 <div class="modal-body">
 
 <table class="table table-bordered">
-	<tr><th>Name</th><td><input type="text" style="width: 100%;" ng-model="addCtrl.relation.name"/></td></tr>
-	<tr><th>Type</th><td>
-	<ui-select ng-model="addCtrl.typeSelected" theme="bootstrap" style="width: 100%;">
-	  <ui-select-match placeholder="Select type...">
-	  	{{addCtrl.typeSelected.name}}
-	  </ui-select-match>
-	  <ui-select-choices 
-	  	repeat="obj in addCtrl.types | filter: $select.search">
-	   		<div ng-bind-html="obj.name | highlight: $select.search"></div>
-	</ui-select-choices>
-	</ui-select>
-	</td>
-	<tr><th>Indicator A</th><td>
-	<ui-select ng-model="addCtrl.aSelected" theme="bootstrap" style="width: 100%;">
-	  <ui-select-match placeholder="Select indicator...">
-	  	{{addCtrl.aSelected.name}}
-	  </ui-select-match>
-	  <ui-select-choices 
-	  	repeat="obj in addCtrl.indicators | filter: $select.search">
-	   		<div ng-bind-html="obj.name | highlight: $select.search"></div>
-	</ui-select-choices>
-	</ui-select>
-	</td>
-	<tr><th>Indicator B</th><td>
-	<ui-select ng-model="addCtrl.bSelected" theme="bootstrap" style="width: 100%;">
-	  <ui-select-match placeholder="Select indicator...">
-	  	{{addCtrl.bSelected.name}}
-	  </ui-select-match>
-	  <ui-select-choices 
-	  	repeat="obj in addCtrl.indicators | filter: $select.search">
-	   		<div ng-bind-html="obj.name | highlight: $select.search"></div>
-	</ui-select-choices>
-	</ui-select>
-	</td></tr>
-	<tr ng-if="addCtrl.typeSelected.code != 'do'"><th>Threshold (+/-)</th><td><input type="number" style="width: 100px;" ng-model="addCtrl.relation.criteria"/> %</td></tr>
+	<tr>
+		<th>Name</th>
+		<td>
+			<input type="text" style="width: 100%;" ng-model="addCtrl.relation.name"/>
+		</td>
+	</tr>
+	<tr>
+		<th>Type</th>
+		<td>
+			<d2-select ng-model="addCtrl.typeSelected" options="addCtrl.types" placeholder="Select type"></d2-select>
+		</td>
+	<tr>
+		<th>Indicator A</th>
+		<td>
+			<d2-select ng-model="addCtrl.aSelected" options="addCtrl.numeratorList" placeholder="Select numerator"></d2-select>
+		</td>
+	</tr>
+	<tr>
+		<th>Indicator B</th>
+		<td>
+			<d2-select ng-model="addCtrl.bSelected" options="addCtrl.numeratorList" placeholder="Select numerator"></d2-select>
+		</td>
+	</tr>
+	<tr ng-if="addCtrl.typeSelected.code != 'do'">
+		<th>Threshold (+/-)</th>
+		<td>
+			<input type="number" style="width: 100px;" ng-model="addCtrl.relation.criteria"/> %
+		</td>
+	</tr>
 </table>
+
 <div ng-if="addCtrl.typeSelected.code != 'do'" style="margin-bottom: 10px;">
 <strong>Threshold</strong> denotes the % difference from national figure that is accepted for a sub-national unit.
 </div>
