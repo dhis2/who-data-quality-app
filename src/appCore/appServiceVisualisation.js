@@ -827,6 +827,11 @@
 	    	var toolTip = function(point) {
 				var data = result.subunitDatapoints;
 
+				if (!point.point.hasOwnProperty('z')) {
+					return '<h3>Threshold</h3>' +
+						'<p>0 % dropout</p>';
+				}
+
 				var rate = mathService.round(100*(data[point.point.x].value-data[point.point.x].refValue)/data[point.point.x].value,1);
 				if (data[point.point.x].value === data[point.point.x].refValue) rate = 0; //Deal with cases where both are 0
 				if (isFinite(rate)) {
@@ -865,6 +870,21 @@
 				}
 
 				chartSeries.push(chartSerie);
+				chartSeries.push({
+					'key': "Threshold (0% dropout)",
+					'color': '#B0B0B0',
+					'values': [
+						{
+						'x': 0,
+						'y': 1,
+						'size': 0
+						},{
+							'x': i-1,
+							'y': 1,
+							'size': 0
+						}
+						]
+				});
 			}
 
 			//Keep max chart y axis to less than 10
