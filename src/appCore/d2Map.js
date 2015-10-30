@@ -11,6 +11,7 @@
 					save: save,
 					admin: admin,
 					groups: groups,
+					configuredGroups: configuredGroups,
 					groupDelete: deleteGroup,
 					groupAdd: addGroup,
 					groupDataSets: groupDataSets,
@@ -200,6 +201,16 @@
 				}
 
 
+				function configuredGroups() {
+					var groups = [];
+					for (var i = 0; i < _map.groups.length; i++) {
+						var indicators = groupIndicators(_map.groups[i].code, true);
+						if (indicators.length > 0) groups.push(_map.groups[i]);
+					}
+					return groups;
+				}
+
+
 				function deleteGroup(code) {
 					for (var i = 0; i < _map.groups.length; i++) {
 						if (_map.groups[i].code === code) {
@@ -372,7 +383,7 @@
 						"localData": {},
 						"matched": false,
 						"moderateOutlier": 2,
-						"consistency": 0.33,
+						"consistency": 33,
 						"custom": true,
 						"trend": "constant",
 						"missing": 90,
