@@ -469,7 +469,7 @@
 				var item = e.target.__data__;
 				if( Object.prototype.toString.call(item) === '[object Object]' ) {
 					if (item.hasOwnProperty('series') && item.hasOwnProperty('point')) {
-						itemClicked(item.series, item.point);
+						itemClicked(item.data.point[4].z);
 
 						//TODO: Workaround for tooltip getting re-created rather than re-used
 						var elements = angular.element('.nvtooltip');
@@ -584,9 +584,7 @@
 		};
 
 
-		function itemClicked(seriesIndex, pointIndex) {
-	   		var orgunitID = self.chart.data[seriesIndex].values[pointIndex].z;
-	   		
+		function itemClicked(orgunitID) {
 	   		for (var i = 0; i < self.tableData.length; i++) {
 	   			if (self.tableData[i].id === orgunitID) {
 	   				self.selectOrgunit(self.tableData[i]);
@@ -597,15 +595,20 @@
 	   	
 	   	
 	   	self.selectOrgunit = function(item) {
-	   	
+
 	   		//Remove previous chart highlight
 	   		if (self.subType != 'do') {
-   				var data = self.chart.data[0].values;
-   				for (var i = 0; i < data.length; i++) {
-   					if (data[i].z === self.selectedObject.id) {
-   						data[i].size = 1;
-   					}
-   				}
+   				for (var j = 0; j < self.chart.data.length; j++) {
+					var data = self.chart.data[j].values;
+					for (var i = 0; i < data.length; i++) {
+						if (data[i].z === self.selectedObject.id) {
+							data[i].size = 1;
+							i = data.length;
+							j = self.chart.data.length;
+						}
+					}
+				}
+
    			}
 	   	
 	   		self.selectedObject.name = item.name;
@@ -615,17 +618,21 @@
 	   		self.selectedObject.ratio = item.ratio;
 	   			   		
 	   		//Add new chart highlight
-	   		if (self.subType != 'do') {
-	   			var data = self.chart.data[0].values;
-	   			for (var i = 0; i < data.length; i++) {
-	   				if (data[i].z === item.id) {
-	   					data[i].size = 5;
-	   				}
-	   			}
-	   		}
+			if (self.subType != 'do') {
+				for (var j = 0; j < self.chart.data.length; j++) {
+					var data = self.chart.data[j].values;
+					for (var i = 0; i < data.length; i++) {
+						if (data[i].z === self.selectedObject.id) {
+							data[i].size = 5;
+							i = data.length;
+							j = self.chart.data.length;
+						}
+					}
+				}
+
+			}
 	   		
 	   		dataForSelectedUnit(item.id);
-
 	   	};
 
 
