@@ -505,10 +505,10 @@
 
 		<div style="width: 100%; margin-top: 30px; margin-bottom: 30px; display: inline-block;">
 			<div class="noBreak chartHolder halfWidth"
-				ng-repeat="indicator in revCtrl.consistency.data | orderBy:'dxName'"
+				ng-repeat="indicator in revCtrl.consistency.data | orderBy:'dxNameA'"
 				style="border: 1px dashed gray; display: inline-block;">
 
-				<h5 class="chartTitle">{{indicator.dxName}}</h5>
+				<h5 class="chartTitle">{{indicator.dxNameA}}</h5>
 				<div class="smallChart">
 					<nvd3 options='indicator.chartOptions' data='indicator.chartData'></nvd3>
 				</div>

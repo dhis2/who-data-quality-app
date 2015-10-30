@@ -116,8 +116,22 @@
 	  			
 	  			
 				dataAnalysisService.dataCompleteness(receiveDataCompleteness, indicator.missing, indicator.localData.id, null, periods, ouBoundary, ouLevel);
-				
-				dataAnalysisService.timeConsistency(receiveDataTimeConsistency, indicator.trend, indicator.consistency, null, indicator.localData.id, null, period, refPeriods, ouBoundary, ouLevel, null);
+
+				dqAnalysisConsistency.analyse(indicator.localData.id, null, period, refPeriods, ouBoundary, ouLevel, null, 'time', indicator.trend, indicator.consistency, null).then(
+					function (data) {
+						var errors = data.errors;
+						var result = data.result;
+
+						if (result) {
+							visualisationService.makeTimeConsistencyChart(null, result, null);
+							self.consistency.data.push(result);
+						}
+						if (errors) {
+							self.remarks = self.remarks.concat(errors);
+						}
+						self.outstandingRequests--;
+					}
+				)
 				
 				dataAnalysisService.indicatorOutlier(receiveDataOutliers, indicator, periods, ouBoundary, ouLevel);
 				
@@ -131,10 +145,29 @@
 	  			var relation = relations[i];
 	  			var indicatorA = d2Map.numerators(relation.A);
 	  			var indicatorB = d2Map.numerators(relation.B);
-	  			
-	  			dataAnalysisService.dataConsistency(receiveDataConsistency, relation.type, relation.criteria, relation.code, indicatorA.localData.id, indicatorB.localData.id, period, ouBoundary, ouLevel, null);
-	  			
-	  			self.outstandingRequests++;
+
+				dqAnalysisConsistency.analyse(indicatorA.localData.id, indicatorB.localData.id, period, null, ouBoundary, ouLevel, null, 'data', relation.type, relation.criteria, relation).then(
+					function(data) {
+						var errors = data.errors;
+						var result = data.result;
+						if (errors) self.remarks = self.remarks.concat(errors);
+
+						//Check type and format data accordingly for charts
+						if (result.type === 'do') {
+							visualisationService.makeDropoutRateChart(null, result);
+						}
+						else {
+							visualisationService.makeDataConsistencyChart(null, result);
+						}
+
+						result.relationCode = result.meta.code;
+
+						self.consistency.relations.push(result);
+						self.outstandingRequests--;
+					}
+				)
+				self.outstandingRequests++;
+
 	  		}
 
 
@@ -269,39 +302,12 @@
 		  		self.outstandingRequests--;
 	  	}
 	  	
-	  		
-	  	function receiveDataTimeConsistency(result, errors) {
-  			if (result) {
-	  			visualisationService.makeTimeConsistencyChart(null, result, null);
-  				self.consistency.data.push(result);
-  			}  				
-  			if (errors) {
-  				self.remarks = self.remarks.concat(errors);
-  			}
-	  		self.outstandingRequests--;
-  		}
-	  	
+
 	  	
 	  	function receiveDataOutliers(result) {
 	  		self.outliers.push(result);
 	  		self.outstandingRequests--;
 	  	}
-	  	
-	  	
-	  	function receiveDataConsistency(result, errors) {
-	  		if (errors) self.remarks = self.remarks.concat(errors);
-	  			
-  			//Check type and format data accordingly for charts
-  			if (result.type === 'do') {
-  				visualisationService.makeDropoutRateChart(null, result);
-  			}
-  			else {
-	  			visualisationService.makeDataConsistencyChart(null, result);
-  			}
-  			self.consistency.relations.push(result);
-	  		self.outstandingRequests--;
-	  	}
-
 
 	  	
 	  	/** PERIODS */	  	
