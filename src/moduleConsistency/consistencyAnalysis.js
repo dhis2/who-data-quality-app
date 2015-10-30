@@ -363,13 +363,17 @@
 				ouGroup = null;
 			}
 
+			var maxPeriodType = {
+				periodType: longestPeriodInSelection()
+			}
+
 
 			self.req = true;
 			
 			//1 Relation
 			if (analysisType === 'data') {	
 				var dxB = self.dataItemForCode('b').id;
-				dqAnalysisConsistency.analyse(dxA, dxB, period, null, ouBoundary, ouLevel, ouGroup, 'data', relationType, criteria, null).then(
+				dqAnalysisConsistency.analyse(dxA, dxB, period, null, ouBoundary, ouLevel, ouGroup, 'data', relationType, criteria, maxPeriodType).then(
 					function (data) {
 						receiveResult(data.result, data.errors);
 					}
@@ -389,27 +393,35 @@
 		
 		
 		function dataForSelectedUnit(ouID) {
-					
-			var periodType = longestPeriodInSelection();
 
+
+			var periods, dx = [];
 			if (self.result.type === 'data') {
-				var periods = [self.result.pe.toString()];
-				var dxA = self.result.dxIDa;
-				var dxB = self.result.dxIDb;
-				
-				visualisationService.multiBarChart(receiveDetailChart, [dxA, dxB], periods, [ouID], 'dataOverTime');
-				
+
+				var minPeriodType = self.result.meta.periodType;
+				periods = periodService.getSubPeriods(self.result.pe.toString(), minPeriodType);
+
+				dx.push(self.result.dxIDa);
+				dx.push(self.result.dxIDb);
+
 			}
 			else {
-				var periods = self.result.peRef.slice();
+				periods = self.result.peRef.slice();
 				periods.push(self.result.pe.toString());
-				var dx = self.result.dxIDa;
+				dx.push(self.result.dxIDa);
 				
-				visualisationService.multiBarChart(receiveDetailChart, [dx], periods, [ouID], 'dataOverTime');
-				
-				self.chartSelected.options = null;
-				self.chartSelected.data = null;
+
+
 			}
+			visualisationService.multiBarChart(null, dx, periods, [ouID], 'dataOverTime').then(
+				function (result) {
+					self.chartSelected.options = result.opts;
+					self.chartSelected.data = result.data;
+				}
+
+
+			);
+
 			
 		}
 
@@ -481,21 +493,6 @@
 			});
 
 		}
-
-
-		var receiveDetailChart = function(chartData, chartOptions) {
-			chartOptions.chart.title = {
-				'enable': true,
-				'text': 'Reporting over time'
-			};
-			chartOptions.chart.margin.left = 60;
-			chartOptions.chart.margin.bottom = 40;
-
-			self.chartSelected.options = chartOptions;
-			self.chartSelected.data = chartData;
-
-		};
-
 
 
 	   	
