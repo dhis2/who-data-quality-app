@@ -1,116 +1,109 @@
 (function(){  
 	/**Service: Completeness*/
 	angular.module('dataQualityApp').service('visualisationService',
-	['periodService', 'requestService', 'mathService', '$q',
-	function (periodService, requestService, mathService, $q) {
+	['periodService', 'requestService', 'mathService', '$q', 'd2Data', 'd2Utils', 'd2Meta',
+	function (periodService, requestService, mathService, $q, d2Data, d2Utils, d2Meta) {
 	
 	  	
 	  	var self = this;
-		var maxScatterPoints = 150;
+		var maxScatterPoints = 500;
 		
 		/** NG-NVD3 Line */
 		/*
 		Takes IDs as parameters, returns chartData and chartOptions for use with angular-nvd3
 		*/
 		self.lineChart = function (callback, dataIDs, periodIDs, orgunitIDs, type) {
-
 			var deferred = $q.defer();
-			var requestURL = '/api/analytics.json?';
-			requestURL += "dimension=dx:" + dataIDs.join(';');
-			requestURL += "&dimension=pe:" + periodIDs.join(";");
-			requestURL += "&dimension=ou:" + orgunitIDs.join(";");
-						
-			requestService.getSingle(requestURL).then(function (response) {
+			d2Data.addRequest(dataIDs, periodIDs, orgunitIDs);
+			d2Data.fetch().then(
+				function (metadata) {
+
+					orgunitIDs = metadata.ou;
 				
-				var data = response.data.rows;
-				var header = response.data.headers;
-				var names = response.data.metaData.names;
-				
-				orgunitIDs = response.data.metaData.ou; //Replace for "USER ORGUNIT" etc
-				
-				var chartData = [];
-				var chartOptions;
-				if (type === 'dataOverTime') {
-					
-					if (orgunitIDs.length > 1) console.log("Warning: more than one orgunit for dataOverTime chart");
+					var chartData = [];
+					var chartOptions;
+					if (type === 'dataOverTime') {
 
-					var yLen = 0, xLen = 0;
-					for (var i = 0; i < dataIDs.length; i++) {
-						var chartSerie = {
-							'key': names[dataIDs[i]],
-							'values': []
-						};
-						
-						for (var j = 0; j < periodIDs.length; j++) {
-							var value = dataValue(header, data, dataIDs[i], periodIDs[j], orgunitIDs[0], null);
-							var y = mathService.round(value, 2);
-							chartSerie.values.push({
-								'x': j,
-								'y': y
-							});
+						if (orgunitIDs.length > 1) console.log("Warning: more than one orgunit for dataOverTime chart");
 
-							//For the first two, check if we have very long x-axis labels that interfere with y axis
-							if (y && j < 2) xLen = Math.max(xLen, y.toString().length);
-							if (y) yLen = Math.max(yLen, y.toString().length);
+						var yLen = 0, xLen = 0;
+						for (var i = 0; i < dataIDs.length; i++) {
+							var chartSerie = {
+								'key': d2Data.name(dataIDs[i]),
+								'values': []
+							};
+
+							for (var j = 0; j < periodIDs.length; j++) {
+								var value = d2Data.value(dataIDs[i], periodIDs[j], orgunitIDs[0], null);
+								var y = mathService.round(value, 2);
+								chartSerie.values.push({
+									'x': j,
+									'y': y
+								});
+
+								//For the first two, check if we have very long x-axis labels that interfere with y axis
+								if (y && j < 2) xLen = Math.max(xLen, y.toString().length);
+								if (y) yLen = Math.max(yLen, y.toString().length);
 
 
+							}
+
+							chartData.push(chartSerie);
 						}
-						
-						chartData.push(chartSerie);
-					}
-			
-					
-					//Get XAxis labels = periods from series[0]
-					var periodNames = [];
-					for (var i = 0; i < periodIDs.length; i++) {
-						var name = periodService.shortPeriodName(periodIDs[i].toString())
-						periodNames.push(name);
-						xLen = Math.max(xLen, name.length);
-					}
 
 
-					var labelSizes = estimateLabelSize(xLen, yLen, true);
+						//Get XAxis labels = periods from series[0]
+						var periodNames = [];
+						for (var i = 0; i < periodIDs.length; i++) {
+							var name = periodService.shortPeriodName(periodIDs[i].toString())
+							periodNames.push(name);
+							xLen = Math.max(xLen, name.length);
+						}
 
-					//Chart options		
-					chartOptions = {
-					   	"chart": {
-							"type": "lineChart",
-							"margin": {
-								"top": 25,
-								"right": 25,
-								"bottom": 25 + labelSizes.x,
-								"left": 25 + labelSizes.y
+
+						var labelSizes = estimateLabelSize(xLen, yLen, true);
+
+						//Chart options
+						chartOptions = {
+							"chart": {
+								"type": "lineChart",
+								"margin": {
+									"top": 25,
+									"right": 25,
+									"bottom": 25 + labelSizes.x,
+									"left": 25 + labelSizes.y
+								},
+								"xAxis": {
+								  'rotateLabels': -45,
+								  'tickFormat': function(d) {
+									return periodNames[d];
+								  }
+								},
+								'tooltip': {
+									'enabled': true
+								},
+								'showLegend': true
 							},
-					        "xAxis": {
-					          'rotateLabels': -45,
-					          'tickFormat': function(d) {
-					          	return periodNames[d];
-					          }
-					        },
-					        'tooltip': {
-								'enabled': true
-							},
-					        'showLegend': true
-					    },
-					    'parameters': {
-					    	'dataIDs': dataIDs,
-					    	'periods': periodIDs,
-					    	'orgunitIDs': orgunitIDs,
-					    	'type': type
-					    }
-					}
+							'parameters': {
+								'dataIDs': dataIDs,
+								'periods': periodIDs,
+								'orgunitIDs': orgunitIDs,
+								'type': type
+							}
+						}
 
+					}
+					if (callback) {
+						callback(chartData, chartOptions);
+					}
+					else {
+						deferred.resolve({
+							data: chartData,
+							opts: chartOptions
+						});
+					}
 				}
-				if (callback) {
-					callback(chartData, chartOptions);
-				}
-				else {
-					deferred.resolve({
-						data: chartData,
-						opts: chartOptions
-					});
-				}
-			});
+			);
 			return deferred.promise;
 		};
 
@@ -221,109 +214,99 @@
 		self.barChart = function (callback, dataIDs, periodIDs, orgunitIDs, type, orgunitLevel) {
 			var deferred = $q.defer();
 
-			var requestURL = '/api/analytics.json?';
-			requestURL += "dimension=dx:" + dataIDs.join(';');
-			requestURL += "&dimension=pe:" + periodIDs.join(";");
-			requestURL += "&dimension=ou:" + orgunitIDs.join(";");
+			d2Data.addRequest(dataIDs, periodIDs, orgunitIDs, orgunitLevel, null);
+			d2Data.fetch().then(
+				function (metadata) {
 
-			if (orgunitLevel) {
-				requestURL += ';LEVEL-' + orgunitLevel;
-			}
+					orgunitIDs = metadata.ou;
 
-			requestService.getSingle(requestURL).then(function (response) {
+					var chartData = [];
+					var chartOptions;
+					if (type === 'ou') {
 
-				var data = response.data.rows;
-				var header = response.data.headers;
-				var names = response.data.metaData.names;
-
-				orgunitIDs = response.data.metaData.ou; //Replace for "USER ORGUNIT" etc
-
-				var chartData = [];
-				var chartOptions;
-				if (type === 'ou') {
-
-					if (dataIDs.length > 1) console.log("Warning: more than one data item for ou bar chart");
-					if (periodIDs.length > 1) console.log("Warning: more than one period item for ou bar chart");
+						if (dataIDs.length > 1) console.log("Warning: more than one data item for ou bar chart");
+						if (periodIDs.length > 1) console.log("Warning: more than one period item for ou bar chart");
 
 
-					var xLen = 0, yLen = 0;
+						var xLen = 0, yLen = 0;
 
-					var dx = dataIDs[0];
-					var pe = periodIDs[0];
+						var dx = dataIDs[0];
+						var pe = periodIDs[0];
 
-					for (var i = 0; i < dataIDs.length; i++) {
-						var chartSerie = {
-							'key': names[dx],
-							'values': []
-						};
+						for (var i = 0; i < dataIDs.length; i++) {
+							var chartSerie = {
+								'key': d2Data.name(dx),
+								'values': []
+							};
 
-						for (var j = 0; j < orgunitIDs.length; j++) {
-							var value = dataValue(header, data, dx, pe, orgunitIDs[j], null);
+							for (var j = 0; j < orgunitIDs.length; j++) {
+								var value = d2Data.value(dx, pe, orgunitIDs[j], null);
 
-							if (isNaN(value)) value = null;
-							else value = mathService.round(value, 0);
+								if (isNaN(value)) value = null;
+								else value = mathService.round(value, 0);
 
-							var name = names[orgunitIDs[j]];
-							chartSerie.values.push({
-								'label': name,
-								'value': value
-							});
+								var name = d2Data.name(orgunitIDs[j]);
+								chartSerie.values.push({
+									'label': name,
+									'value': value
+								});
 
-							if (name) xLen = Math.max(xLen, name.length);
-							if (value) yLen = Math.max(yLen, value.toString().length);
+								if (name) xLen = Math.max(xLen, name.length);
+								if (value) yLen = Math.max(yLen, value.toString().length);
 
+							}
+
+							chartData.push(chartSerie);
 						}
 
-						chartData.push(chartSerie);
-					}
+						var labelSizes = estimateLabelSize(xLen, yLen, true);
 
-					var labelSizes = estimateLabelSize(xLen, yLen, true);
-
-					//Chart options
-					chartOptions = {
-					   	"chart": {
-					        "type": "discreteBarChart",
-					        "margin": {
-					          "top": 25,
-					          "right": 25,
-					          "bottom": 25 + labelSizes.x,
-					          "left": 25 + labelSizes.y
-					        },
-							'tooltip': {
-								'enabled': true
+						//Chart options
+						chartOptions = {
+							"chart": {
+								"type": "discreteBarChart",
+								"margin": {
+								  "top": 25,
+								  "right": 25,
+								  "bottom": 25 + labelSizes.x,
+								  "left": 25 + labelSizes.y
+								},
+								'tooltip': {
+									'enabled': true
+								},
+								'showLegend': true,
+								'x': function(d){return d.label;},
+								'y': function(d){return d.value;},
+								'transitionDuration': 50,
+								'xAxis': {
+									'rotateLabels': -45
+								}
 							},
-					        'showLegend': true,
-	                        'x': function(d){return d.label;},
-	                        'y': function(d){return d.value;},
-	                        'transitionDuration': 50,
-	                        'xAxis': {
-	                            'rotateLabels': -45
-	                        }
-					    },
-					    'parameters': {
-					    	'dataIDs': dataIDs,
-					    	'periods': periodIDs,
-					    	'orgunitIDs': orgunitIDs,
-					    	'type': type
-					    }
-					}
+							'parameters': {
+								'dataIDs': dataIDs,
+								'periods': periodIDs,
+								'orgunitIDs': orgunitIDs,
+								'type': type
+							}
+						}
 
-				}
-				deferred.resolve({
-					data: chartData,
-					opts: chartOptions
-				});
-				if (callback) {
-					callback(chartData, chartOptions);
-				}
-				else {
+					}
 					deferred.resolve({
 						data: chartData,
 						opts: chartOptions
 					});
+					if (callback) {
+						callback(chartData, chartOptions);
+					}
+					else {
+						deferred.resolve({
+							data: chartData,
+							opts: chartOptions
+						});
+					}
 				}
-			});
-			return deferred.promise;;
+			);
+			return deferred.promise;
 		};
 
 
@@ -338,22 +321,14 @@
 
 			var deferred = $q.defer();
 
-	  		var requestURL, requests = [];
+	  		var allPeriods = [];
 	  		for (var i = 0; i < periods.length; i++) {
-	  			requestURL = '/api/analytics.json?';
-  				requestURL += "dimension=dx:" + dataID;
-  				requestURL += "&dimension=pe:" + periods[i].join(';');
-  				requestURL += "&filter=ou:" + ouID;
-  				requests.push(requestURL);
+				allPeriods = d2Utils.arrayMerge(allPeriods, periods[i]);
 	  		}
+			d2Data.addRequest(dataID, allPeriods, ouID, null, null);
 
-	  		requestService.getMultiple(requests).then(function (response) {
+			d2Data.fetch().then(function (data) {
 				var yLen = 0, xLen = 0;
-
-				var data = [];
-	  			for (var i = 0; i < response.length; i++) {
-	  				data.push(response[i].data);
-	  			}
 
 	  			//Get XAxis labels = periods from series[0]
   				var periodNames = [];
@@ -363,61 +338,39 @@
 					xLen = Math.max(xLen, name.length);
   				}
 
-	  			var pe, val;
-	  			for (var i = 0; i < data[0].headers.length; i++) {
-	  				if (data[0].headers[i].name === 'pe') pe = i;
-	  				if (data[0].headers[i].name === 'value') val = i;
-	  			}
-
-	  			ouID = data[0].metaData.ou;
-
-
   				var minRange = 0, maxRange = 0;
   				var chartData = [], chartSeries, values, dataSet;
-  				for (var i = data.length-1; i >= 0 ; i--) {
+  				for (var i = 0; i < periods.length; i++) {
 
   					values = [];
   					chartSeries = {};
-  					dataSet = data[i];
 
-
-  					if (dataSet.metaData.pe[0].substring(0, 4) === dataSet.metaData.pe[dataSet.metaData.pe.length-1].substring(0, 4)) {
-  						chartSeries.key = dataSet.metaData.pe[0].substring(0, 4);
+  					if (periods[i][0].substring(0, 4) === periods[i][periods[i].length-1].substring(0, 4)) {
+  						chartSeries.key = periods[i][0].substring(0, 4);
   					}
   					else {
-  						chartSeries.key = dataSet.metaData.pe[0].substring(0, 4) + ' - ' + dataSet.metaData.pe[dataSet.metaData.pe.length-1].substring(0, 4);
+  						chartSeries.key = periods[i][0].substring(0, 4) + ' - ' + periods[i][periods[i].length-1].substring(0, 4);
   					}
 
   					var row, value, values = [];
   					for (var j = 0; j < periods[i].length; j++) {
+						var pe = periods[i][j];
+						value = parseFloat(d2Data.value(dataID, pe, ouID, null));
+						if (isNaN(value)) value = null;
 
-  						var period = periods[i][j];
-  						var rows = dataSet.rows;
+						values.push({
+							'x': j,
+							'y': value
+						});
 
-  					 	for (var k = 0; k < rows.length; k++) {
+						if (value) yLen = Math.max(yLen, value.toString().length);
 
-  						 	row = rows[k];
-  							if (row[pe] === period) {
-
-  								value = parseFloat(row[val]);
-  								if (isNaN(value)) value = null;
-
-  								values.push({
-  									'x': j,
-  									'y': value
-  								});
-								if (value) yLen = Math.max(yLen, value.toString().length);
-
-  								if (value < minRange) {
-  									minRange = value;
-  								}
-  								if (value > maxRange) {
-  									maxRange = value;
-  								}
-
-  								k = rows.length;
-  							}
-  						}
+						if (value < minRange) {
+							minRange = value;
+						}
+						if (value > maxRange) {
+							maxRange = value;
+						}
   					}
 
   					chartSeries.values = values;
@@ -497,8 +450,16 @@
 	    	var toolTip = function(point) {
 
 	    		var data = result.subunitDatapoints;
-	    		
-	    		var toolTipHTML = '<h3>' + data[point.pointIndex].name + '</h3>';
+				var ouID = point.point.z;
+				var ouName;
+				for (var i = 0; i < data.length; i++) {
+					if (data[i].id === ouID) {
+						ouName = data[i].name;
+						break;
+					}
+				}
+
+	    		var toolTipHTML = '<h3>' + ouName + '</h3>';
     			toolTipHTML += '<p style="margin-bottom: 0px">' + periodService.shortPeriodName(result.pe) + ': ' + point.point.y + '</p>';
 	    		if (result.subType === 'constant') {
 	    			toolTipHTML += '<p>Average: ' + point.point.x + '</p>';
@@ -514,24 +475,48 @@
 
 			//Only relevant if there is subunit data
 			if (datapoints.length > 0) {
-				var chartSerie = {
-					'key': "Orgunits",
-					'values': []
-				};
-
 				datapoints = sortScatterData(datapoints);
-				for (var i = 0; i < datapoints.length; i++) {
-					chartSerie.values.push({
-						'x': datapoints[i].refValue,
-						'y': datapoints[i].value,
-						'z': datapoints[i].id
-					});
+				if (consistency > 0) {
+					var chartSerie = {
+						'key': "Orgunits within threshold",
+						'values': []
+					};
+					var chartSerieOutliers = {
+						'key': "Orgunits outside threshold",
+						'color': '#FF8300',
+						'values': []
+					};
+					for (var i = 0; i < Math.min(datapoints.length, maxScatterPoints); i++) {
+						var datapoint = {
+							'x': datapoints[i].refValue,
+							'y': datapoints[i].value,
+							'z': datapoints[i].id
+						};
+						if (datapoints[i].violation) chartSerieOutliers.values.push(datapoint);
+						else chartSerie.values.push(datapoint)
+					}
+					if (chartSerie.values.length > 0) chartSeries.push(chartSerie);
+					if (chartSerieOutliers.values.length > 0) chartSeries.push(chartSerieOutliers);
+				}
+				else {
+					var chartSerie = {
+						'key': "Orgunits",
+						'values': []
+					};
+					for (var i = 0; i < Math.min(datapoints.length, maxScatterPoints); i++) {
+						var datapoint = {
+							'x': datapoints[i].refValue,
+							'y': datapoints[i].value,
+							'z': datapoints[i].id
+						};
+						chartSerie.values.push(datapoint)
+					}
+					chartSeries.push(chartSerie);
 				}
 
-				chartSeries.push(chartSerie);
 				chartSeries.push(
 					{
-						'key': "Overall",
+						'key': result.boundaryName,
 						'color': '#ffff',
 						'values': [{
 							'x': 0,
@@ -541,32 +526,34 @@
 						],
 						'slope': boundaryRatio,
 						'intercept': 0.001
-					},
-					{
-						'key': "+ " + consistency + "%",
-						'color': '#F00',
-						'values': [{
-							'x': 0,
-							'y': 0,
-							'size': 0
+					});
+				if (consistency > 0) {
+					chartSeries.push( {
+							'key': "+ " + consistency + "%",
+							'color': '#B0B0B0',
+							'values': [{
+								'x': 0,
+								'y': 0,
+								'size': 0
+							}
+							],
+							'slope': boundaryRatio * (1 + (consistency / 100)),
+							'intercept': 0.001
+						},
+						{
+							'key': "- " + consistency + "%",
+							'color': '#B0B0B0',
+							'values': [{
+								'x': 0,
+								'y': 0,
+								'size': 0
+							}
+							],
+							'slope': boundaryRatio * (1 - (consistency / 100)),
+							'intercept': 0.001
 						}
-						],
-						'slope': boundaryRatio * (1 + (consistency / 100)),
-						'intercept': 0.001
-					},
-					{
-						'key': "- " + consistency + "%",
-						'color': '#F00',
-						'values': [{
-							'x': 0,
-							'y': 0,
-							'size': 0
-						}
-						],
-						'slope': boundaryRatio * (1 - (consistency / 100)),
-						'intercept': 0.001
-					}
-				);
+					);
+				}
 			}
 	    		    	
 			var xAxisLabel;
@@ -638,7 +625,15 @@
 	    	var toolTip = function(point) {
 
 	    		var data = result.subunitDatapoints;
-	    	    return '<h3>' + data[point.pointIndex].name + '</h3>' +
+				var ouID = point.point.z;
+				var ouName;
+				for (var i = 0; i < data.length; i++) {
+					if (data[i].id === ouID) {
+						ouName = data[i].name;
+						break;
+					}
+				}
+	    	    return '<h3>' + ouName + '</h3>' +
 	    	        '<p style="margin-bottom: 0px">' + result.dxNameA + ': ' + point.point.y + '</p>' +
 	    	        '<p>' + result.dxNameB + ': ' + point.point.x + '</p>';
 	    	};
@@ -646,59 +641,139 @@
 	    	
 	    	var chartSeries = [];
 			if (datapoints.length > 0) {
-				var chartSerie = {
-					'key': "Orgunits",
-					'values': []
-				};
 
 				datapoints = sortScatterData(datapoints);
-				for (var i = 0; i < Math.min(datapoints.length, maxScatterPoints); i++) {
-					chartSerie.values.push({
-						'x': datapoints[i].refValue,
-						'y': datapoints[i].value,
-						'z': datapoints[i].id
-					});
+				if (consistency > 0) {
+					var chartSerie = {
+						'key': "Orgunits within threshold",
+						'values': []
+					};
+					var chartSerieOutliers = {
+						'key': "Orgunits outside threshold",
+						'color': '#FF8300',
+						'values': []
+					};
+					for (var i = 0; i < Math.min(datapoints.length, maxScatterPoints); i++) {
+						var datapoint = {
+							'x': datapoints[i].refValue,
+							'y': datapoints[i].value,
+							'z': datapoints[i].id
+						};
+						if (datapoints[i].violation) chartSerieOutliers.values.push(datapoint);
+						else chartSerie.values.push(datapoint)
+					}
+					if (chartSerie.values.length > 0) chartSeries.push(chartSerie);
+					if (chartSerieOutliers.values.length > 0) chartSeries.push(chartSerieOutliers);
+				}
+				else {
+					var chartSerie = {
+						'key': "Orgunits",
+						'values': []
+					};
+					for (var i = 0; i < Math.min(datapoints.length, maxScatterPoints); i++) {
+						var datapoint = {
+							'x': datapoints[i].refValue,
+							'y': datapoints[i].value,
+							'z': datapoints[i].id
+						};
+						chartSerie.values.push(datapoint)
+					}
+					chartSeries.push(chartSerie);
 				}
 
-				chartSeries.push(chartSerie);
-				chartSeries.push(
-					{
-						'key': "Overall",
-						'color': '#ffff',
-						'values': [{
-							'x': 0,
-							'y': 0,
-							'size': 0
-						}
-						],
-						'slope': boundaryRatio,
-						'intercept': 0.001
-					},
-					{
-						'key': "+ " + consistency + "%",
-						'color': '#F00',
-						'values': [{
-							'x': 0,
-							'y': 0,
-							'size': 0
-						}
-						],
-						'slope': boundaryRatio * (1 + (consistency / 100)),
-						'intercept': 0.001
-					},
-					{
-						'key': "- " + consistency + "%",
-						'color': '#F00',
-						'values': [{
-							'x': 0,
-							'y': 0,
-							'size': 0
-						}
-						],
-						'slope': boundaryRatio * (1 - (consistency / 100)),
-						'intercept': 0.001
+				//If we are comparing consistency across orgunits only, add line for "parent"
+				if (result.subType === 'level') {
+					chartSeries.push(
+						{
+							'key': result.boundaryName,
+							'color': '#ffff',
+							'values': [{
+								'x': 0,
+								'y': 0,
+								'size': 0
+							}
+							],
+							'slope': boundaryRatio,
+							'intercept': 0.001
+						});
+					if (consistency > 0) {
+						chartSeries.push({
+							'key': "+ " + consistency + "%",
+							'color': '#B0B0B0',
+							'values': [{
+								'x': 0,
+								'y': 0,
+								'size': 0
+							}
+							],
+							'slope': boundaryRatio * (1 + (consistency / 100)),
+							'intercept': 0.001
+						});
+						chartSeries.push({
+								'key': "- " + consistency + "%",
+								'color': '#B0B0B0',
+								'values': [{
+									'x': 0,
+									'y': 0,
+									'size': 0
+								}
+								],
+								'slope': boundaryRatio * (1 - (consistency / 100)),
+								'intercept': 0.001
+							}
+						);
 					}
-				);
+				}
+				else {
+
+					//If comparison is A ≈ B or A > B, add A=B and "minimum" line
+					chartSeries.push(
+						{
+							'key': result.dxNameA + ' = ' + result.dxNameB,
+							'color': '#ffff',
+							'values': [{
+								'x': 0,
+								'y': 0,
+								'size': 0
+							}
+							],
+							'slope': 1,
+							'intercept': 0.001
+						});
+					if (consistency > 0) {
+						chartSeries.push({
+								'key': "- " + consistency + "%",
+								'color': '#B0B0B0',
+								'values': [{
+									'x': 0,
+									'y': 0,
+									'size': 0
+								}
+								],
+								'slope': 1 * (1 - (consistency / 100)),
+								'intercept': 0.001
+							}
+						);
+					}
+
+					//If comparison is A ≈ B, also add "maximum" line
+					if (consistency > 0) {
+						if (result.subType == 'eq') {
+							chartSeries.push({
+								'key': "+ " + consistency + "%",
+								'color': '#B0B0B0',
+								'values': [{
+									'x': 0,
+									'y': 0,
+									'size': 0
+								}
+								],
+								'slope': 1 * (1 + (consistency / 100)),
+								'intercept': 0.001
+							});
+						}
+					}
+				}
 			}
 	    	var chartOptions = {
 	    	   	"chart": {
