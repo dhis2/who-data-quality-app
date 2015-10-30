@@ -458,17 +458,24 @@
 				 */
 				function isOutlier(boundaryRatio, subunitRatio) {
 
-					switch (_subType) {
-						case 'do':
-							return subunitRatio < 0 ? true : false;
-						case 'aGTb':
-							return subunitRatio < (1.0 - _criteria * 0.01) ? true : false;
-						case 'eq':
-							return subunitRatio > (1.0 + _criteria * 0.01) || subunitRatio < (1.0 - _criteria * 0.01) ? true : false;
-						case 'level':
-							var ratioOfRatios = subunitRatio/boundaryRatio;
-							return ratioOfRatios > (1.0 + _criteria * 0.01) || ratioOfRatios < (1.0 - _criteria * 0.01) ? true : false;
+					if (_type === 'data') {
+						switch (_subType) {
+							case 'do':
+								return subunitRatio < 0 ? true : false;
+							case 'aGTb':
+								return subunitRatio < (1.0 - _criteria * 0.01) ? true : false;
+							case 'eq':
+								return subunitRatio > (1.0 + _criteria * 0.01) || subunitRatio < (1.0 - _criteria * 0.01) ? true : false;
+							case 'level':
+								var ratioOfRatios = subunitRatio/boundaryRatio;
+								return ratioOfRatios > (1.0 + _criteria * 0.01) || ratioOfRatios < (1.0 - _criteria * 0.01) ? true : false;
+						}
 					}
+					else {
+						var ratioOfRatios = subunitRatio/boundaryRatio;
+						return ratioOfRatios > (1.0 + _criteria * 0.01) || ratioOfRatios < (1.0 - _criteria * 0.01) ? true : false;
+					}
+
 				}
 
 
@@ -484,11 +491,19 @@
 
 					var weight = 0;
 					if (_subType === 'level') {
-						mathService.round(Math.abs(valueB*boundaryRatio - valueA), 0);
+
+						if (valueA/valueB > boundaryRatio) {
+							weight = valueB*boundaryRatio - valueA;
+						}
+						else {
+							weight = valueA*boundaryRatio - valueB;
+						}
 					}
 					else {
 						weight = Math.abs(valueA - valueB);
 					}
+					weight = Math.abs(weight);
+					weight = mathService.round(weight, 0);
 
 					return weight;
 				}
@@ -508,7 +523,7 @@
 					error.severity = "warning";
 					error.item = d2Data.name[dx];
 
-					if (_subType === 'data') {
+					if (_type === 'data') {
 						error.type = "Consistency betweeen indicators";
 						error.msg = "Missing data: consistency analysis " + d2Data.name(_dxA) + "/" + d2Data.name(_dxB) +
 							" in " + pe + " skipped for " + d2Data.name(ou) + " due to missing data for " + d2Data.name(dx) + ".";
@@ -533,12 +548,22 @@
 
 					var error;
 					if (orunits.length > 0) {
-						error = {
-							'severity': "warning",
-							'type': "Consistency betweeen indicators",
-							'item': d2Data.name(_dxA) + " - " + d2Data.name(_dxB),
-							'msg': "Skipped for the following units due to missing data: " + orunits.join(', ')
-						};
+						if (_type === 'data') {
+							error = {
+								'severity': "warning",
+								'type': "Consistency betweeen indicators",
+								'item': d2Data.name(_dxA) + " - " + d2Data.name(_dxB),
+								'msg': "Skipped for the following units due to missing data: " + orunits.join(', ')
+							};
+						}
+						else {
+							error = {
+								'severity': "warning",
+								'type': "Consistency over time",
+								'item': d2Data.name(_dxA),
+								'msg': "Skipped for the following units due to missing data: " + orunits.join(', ')
+							};
+						}
 					}
 
 					return error;
