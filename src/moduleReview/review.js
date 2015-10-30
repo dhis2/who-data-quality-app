@@ -159,12 +159,13 @@
 						if (errors) self.remarks = self.remarks.concat(errors);
 
 						//Check type and format data accordingly for charts
-						if (result.type === 'do') {
+						if (result.subType === 'do') {
 							visualisationService.makeDropoutRateChart(null, result);
 						}
 						else {
 							visualisationService.makeDataConsistencyChart(null, result);
 						}
+
 
 						result.relationCode = result.meta.code;
 

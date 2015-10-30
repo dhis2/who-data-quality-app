@@ -482,9 +482,9 @@
 					<th>Names</th>
 				</tr>
 				<tr ng-repeat="indicator in revCtrl.consistency.data | orderBy:'dxName'">
-					<td>{{indicator.dxName}}</td>
-					<td>{{indicator.type}}</td>
-					<td class="valueCell">{{indicator.threshold}}%</td>
+					<td>{{indicator.dxNameA}}</td>
+					<td>{{indicator.subType}}</td>
+					<td class="valueCell">{{indicator.criteria}}%</td>
 					<td class="valueCell">{{indicator.boundaryPercentage}}%</td>
 					<td class="valueCell">{{indicator.subunitsOutsideThreshold}}</td>
 					<td class="valueCell">{{indicator.subunitViolationPercentage}}%</td>
@@ -531,12 +531,12 @@
 					</tr>
 					<tr>
 						<td>Expected relationship</td>
-						<td>{{revCtrl.relationType(relation.type).name}}</td>
+						<td>{{revCtrl.relationType(relation.subType).name}}</td>
 					</tr>
 					<tr>
 						<td>Quality threshold</td>
-						<td ng-if="relation.type != 'do'">{{relation.criteria}}</td>
-						<td ng-if="relation.type === 'do'">Not negative</td>
+						<td ng-if="relation.subType != 'do'">{{relation.criteria}}</td>
+						<td ng-if="relation.subType === 'do'">Not negative</td>
 					</tr>
 					<tr>
 						<td>National score</td>
