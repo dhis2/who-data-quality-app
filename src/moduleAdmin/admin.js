@@ -213,28 +213,7 @@
 
 
 		self.relationType = function (typeCode) {
-
-			if (typeCode === 'eq') return "Equal";
-			if (typeCode === 'aGTb') return "A > B";
-			if (typeCode === 'do') return "Dropout";
-
-		};
-
-
-		self.relationDescription = function(typeCode) {
-
-			if (typeCode === 'eq') return "A and B should be roughly equal.";
-			if (typeCode === 'aGTb') return "Comparison. A should be greater than B.";
-			if (typeCode === 'do') return "Droupout rate. A should be greater than B.";
-
-		};
-
-
-		self.relationThresholdDescription = function(typeCode) {
-
-			if (typeCode === 'eq' || typeCode === 'aGTb') return "% difference from national figure that is accepted for a sub-national unit.";
-			if (typeCode === 'do') return "Should not be negative.";
-
+			return d2Map.dataRelationType(typeCode);
 		};
 
 

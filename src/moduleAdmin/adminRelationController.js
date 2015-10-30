@@ -1,16 +1,31 @@
 (function(){  
 	/**Controller: Parameters*/
 	angular.module('admin').controller("ModalAddEditRelationController",
-	['$modalInstance', 'indicators', 'relation',
-	function($modalInstance, indicators, relation) {
+	['$modalInstance', 'indicators', 'relation', 'd2Map', 'd2Utils',
+	function($modalInstance, indicators, relation, d2Map, d2Utils) {
 	    	    
-	    var self = this; 
-	    self.indicators = indicators;
+	    var self = this;
     	self.aSelected = null;
     	self.bSelected = null;
     	
-    	self.types = [{'name': 'A ≈ B', 'code': 'eq'},{'name': 'A > B', 'code': 'aGTb'},{'name': 'Dropout from A to B', 'code': 'do'}];
+    	self.types = d2Map.dataRelationTypes();
     	self.typeSelected = null;
+
+		//Make a dropdown list with numerator codes and DHIS names
+		self.numeratorList = [];
+		for (var i = 0; i < indicators.length; i++) {
+			if (indicators[i].localData.hasOwnProperty('id')) {
+				self.numeratorList.push(
+					{
+						'name': d2Map.d2NameFromID(indicators[i].localData.id),
+						'id': indicators[i].localData.id,
+						'code': indicators[i].code
+					}
+				);
+			}
+		}
+		d2Utils.arraySortByProperty(self.numeratorList, 'name', false);
+
     	    	
 	    //Add
 	    if (relation === null) {
@@ -43,15 +58,13 @@
 		}
 	   	
 		function getData(dataCode) {
-			for (var i = 0; i < self.indicators.length; i++) {
-				if (self.indicators[i].code === dataCode) return self.indicators[i];
+			for (var i = 0; i < self.numeratorList.length; i++) {
+				if (self.numeratorList[i].code === dataCode) return self.numeratorList[i];
 			}
 		}
 		
 		function getType(typeCode) {
-			for (var i = 0; i < self.types.length; i++) {
-				if (self.types[i].code === typeCode) return self.types[i];
-			}
+			d2Map.dataRelationType(typeCode);
 		}
 	   	
 	   	

@@ -325,19 +325,13 @@
 
 	    
    	  	/** RELATIONS */
-	    self.relationTypeName = function(code) {
-	    
-	    	if (code === 'eq') return "Equal";
-	    	if (code === 'aGTb') return "A > B";
-	    	if (code === 'do') return "Dropout";
-	    	
+	    self.relationType = function(typeCode) {
+	    	return d2Map.relationType(typeCode);
 	    };
-	    
-	    
+
+
 	    self.relationName = function(code) {
-
 			return d2Map.relations(code).name;
-
 	    };
 
 

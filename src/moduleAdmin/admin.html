@@ -80,10 +80,10 @@
 							<td class="vert-align">{{relation.name}}</td>
 							<td class="vert-align">{{admCtrl.d2NameFromCode(relation.A);}}</td>
 							<td class="vert-align">{{admCtrl.d2NameFromCode(relation.B);}}</td>
-							<td class="vert-align">{{admCtrl.relationType(relation.type);}}</td>
+							<td class="vert-align">{{admCtrl.relationType(relation.type).name}}</td>
 							<td class="vert-align" align="middle">{{relation.criteria}}</td>
-							<td class="vert-align">{{admCtrl.relationThresholdDescription(relation.type);}}</td>
-							<td class="vert-align">{{admCtrl.relationDescription(relation.type);}}</td>
+							<td class="vert-align">{{admCtrl.relationType(relation.type).thresholdDescription;}}</td>
+							<td class="vert-align">{{admCtrl.relationType(relation.type).description;}}</td>
 							<td nowrap align="middle"><button ng-disabled="!admCtrl.isAdmin" ng-click="admCtrl.editRelation(relation);" class="btn btn-default btn-xs" style="width: 60px;">Edit</button><button style="margin-left: 5px; width: 60px;" ng-disabled="!admCtrl.isAdmin" ng-click="admCtrl.deleteRelation(relation.code);" class="btn btn-danger btn-xs">Delete</button></td>
 						</tr>
 						<tfoot>

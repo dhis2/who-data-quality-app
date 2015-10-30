@@ -35,6 +35,8 @@
 					relations: relations,
 					relationAddEdit: addEditRelation,
 					relationDelete: deleteRelation,
+					dataRelationTypes: dataRelationTypes,
+					dataRelationType: dataRelationType,
 					d2NameFromID: d2NameFromID
 				};
 
@@ -749,6 +751,44 @@
 					}
 				}
 
+
+				/** ANALYSIS TYPES **/
+				function dataRelationTypes() {
+					return [
+						{
+							'name': 'A ≈ B',
+							'code': 'eq',
+							'description':  "A and B should be roughly equal.",
+							'thresholdDescription': '% difference between A and B.'
+						},
+						{
+							'name': 'A > B',
+							'code': 'aGTb',
+							'description':  "A should be greater than B.",
+							'thresholdDescription': '% that B can be greater than A.'
+						},
+						{
+							'name': 'Dropout from A to B',
+							'code': 'do',
+							'description':  "Dropout rate. A should be greater than B.",
+							'thresholdDescription': 'Should not be negative'
+						},
+						{
+							'name': 'Equal across orgunits',
+							'code': 'level',
+							'description':  "Ratio between indicators should be similar between parent orgunit and sub-orgunits.",
+							'thresholdDescription': '% difference of subunits to the parent orgunit that is accepted.'
+						}
+					];
+				}
+
+
+				function dataRelationType(code) {
+					var types = dataRelationTypes();
+					for (var i = 0; i < types.length; i++) {
+						if (types[i].code === code) return types[i];
+					}
+				}
 
 
 				/** UTILITIES **/
