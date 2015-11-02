@@ -117,7 +117,7 @@
 			var ouLevel;
 			if (self.orgunitLevelSelected) ouLevel = self.orgunitLevelSelected.level;
       		var data, endDate, startDate, periodType, yyPeriods, period, refPeriods; 	
-   			var datas = d2Map.groupNumerators(self.group.code);
+   			var datas = d2Map.groupNumerators(self.group.code, true);
 			self.expectedConsistencyCharts = datas.length;
 			var consistencyChart;
 			if (datas.length > 0) self.tcLoading = true;
