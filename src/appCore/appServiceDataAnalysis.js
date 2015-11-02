@@ -1086,13 +1086,11 @@
 						requestService.validResponse(response);
 						self.requests.pending--;
 						storeResponse(response);
-						self.status.done++;
 						self.status.progress = mathService.round(100 * self.status.done / self.status.total, 0);
 					},
 					//error
 					function (response) {
 						self.requests.pending--;
-						self.status.done++;
 						console.log("Error getting request");
 						storeResponse(response); //TODO: Why?
 						self.status.progress = mathService.round(100 * self.status.done / self.status.total, 0);
@@ -1195,6 +1193,8 @@
 			}
 
 			else {
+				
+				self.status.done++;
 
 				//Mark item in queue as downloaded
 				var requestType = requestSucceeded(requestURL);
