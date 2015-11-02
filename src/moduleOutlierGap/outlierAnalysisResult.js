@@ -312,7 +312,7 @@
 			headers = headers.concat(self.result.metaData.hierarchy);
 			headers = headers.concat(["Orgunit name", "Data"]);
 			headers = headers.concat(self.periods);
-			headers = headers.concat(["Max SD score", "Max Z score", "Gap weight", "Outlier weight", "Total weight"]);
+			headers = headers.concat(["Max Z score", "Max modified Z score", "Gap weight", "Outlier weight", "Total weight"]);
 
 			var data = self.result.rows;
 			for (var i = 0; i < data.length; i++) {

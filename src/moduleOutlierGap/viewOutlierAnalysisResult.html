@@ -58,7 +58,7 @@
 				<th rowspan="2" ng-repeat="period in resultCtrl.periods" nowrap>{{period}}</th>
 				<th style="white-space:nowrap;" colspan="2"
 					ng-if="resultCtrl.typeFilter != 1">
-					Score
+					Z-score
 									<span class="glyphicon glyphicon-info-sign"
 										  style="color: black"
 										  aria-hidden="true"
@@ -82,11 +82,11 @@
 					<span ng-if='resultCtrl.sortCol === "metaData.ou.hierarchy[" + $index + "]"' class="glyphicon glyphicon-sort-by-attributes"></span>
 				</th>
 				<th style="white-space:nowrap;" ng-if="resultCtrl.typeFilter != 1" ng-click="resultCtrl.sortByColumn('result.maxSscore')">
-					SD
+					Standard
 					<span ng-if="resultCtrl.sortCol === 'result.maxSscore'" class="glyphicon glyphicon-sort-by-attributes"></span>
 				</th>
 				<th style="white-space:nowrap;" ng-if="resultCtrl.typeFilter != 1" ng-click="resultCtrl.sortByColumn('result.maxZscore')">
-					Z
+					Modified
 					<span ng-if="resultCtrl.sortCol === 'result.maxZscore'" class="glyphicon glyphicon-sort-by-attributes"></span>
 				</th>
 				<th style="white-space:nowrap;" ng-if="resultCtrl.typeFilter != 2" ng-click="resultCtrl.sortByColumn('result.gapWeight')">
