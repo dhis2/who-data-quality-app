@@ -33,7 +33,7 @@
 	 </ui-select-choices>
 	</ui-select></span>
 	<div class="inline pull-right">
-		<button ng-disabled="!self.userOrgunit && !revCtrl.orgunitLevelSelected && !revCtrl.groupSelected"class="btn btn-primary inline" ng-click="revCtrl.doAnalysis();">Generate</button>
+		<button ng-disabled="(!self.userOrgunit && !revCtrl.orgunitLevelSelected && !revCtrl.groupSelected) || revCtrl.outstandingRequests > 0" class="btn btn-primary inline" ng-click="revCtrl.doAnalysis();">Generate</button>
 		<button ng-disabled="!(revCtrl.outstandingRequests === 0 && revCtrl.totalRequests != 0)" class="btn btn-primary inline" ng-click="revCtrl.doPrint();">Print</button>
 	</div>
 
