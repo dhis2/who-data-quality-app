@@ -77,7 +77,7 @@
 					}
 
 					//Remove currently selected level if not among the valid (filtered) ones
-					var invalidMin = self.selectedLevel && self.selectedLevel.level < minLevel ? true: false;
+					var invalidMin = self.selectedLevel && self.selectedLevel.level <= minLevel ? true: false;
 					var invalidMax = self.selectedLevel && maxLevel && self.selectedLevel.level > maxLevel ? true : false;
 					if (invalidMin || invalidMax) {
 						self.selectedLevel = null;
