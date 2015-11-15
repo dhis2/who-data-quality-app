@@ -10,6 +10,7 @@
 					load: load,
 					save: save,
 					admin: admin,
+					versionUpgrade: versionUpgrade,
 					groups: groups,
 					configuredGroups: configuredGroups,
 					groupDelete: deleteGroup,
@@ -63,9 +64,12 @@
 						function(data) {
 							_map = data;
 							if (_map) {
-								d2CoreMeta();
-								_ready = true;
-								deferred.resolve(true);
+								d2CoreMeta().then(
+									function (data) {
+										_ready = true;
+										deferred.resolve(true);
+									}
+								);
 							}
 							else {
 								console.log("No map exists");
@@ -141,6 +145,34 @@
 					);
 
 					return deferred.promise;
+				}
+
+				/**
+				 * Upgrade metadata version
+				 */
+				function versionUpgrade() {
+					var currentVersion = 0.5;
+					if (_map.metaDataVersion != currentVersion) {
+
+						//Do whatever upgrades are needed here
+						for (var i = 0; i < _map.data.length; i++) {
+
+							//Simplify the "localdata" object
+							if (_map.data[i].localData.hasOwnProperty('id')) {
+								var id = _map.data[i].localData.id;
+								_map.data[i].dataID = id;
+							}
+							else {
+								_map.data[i].dataID = null;
+							}
+							delete _map.data[i].localData;
+							delete _map.data[i].id;
+						}
+
+						_map.metaDataVersion = currentVersion;
+						return save();
+					}
+
 				}
 
 
@@ -402,7 +434,7 @@
 					if (code) {
 						for (var i = 0; i < _map.data.length; i++) {
 							if (_map.data[i].code === code) {
-								if (_map.data[i].localData.id) {
+								if (_map.data[i].dataID) {
 									return true;
 								}
 								else return false;
@@ -413,7 +445,7 @@
 					else {
 						var configured = [];
 						for (var i = 0; i < _map.data.length; i++) {
-							if (_map.data[i].localData.id) {
+							if (_map.data[i].dataID) {
 								configured.push(indicators(_map.data[i].code));
 							}
 						}
@@ -429,10 +461,8 @@
 					var indicator = indicators(code);
 					var dataSetID = indicator.dataSetID;
 
-					indicator.id = null;
 					indicator.dataSetID = null;
-
-					indicator.localData = {};
+					indicator.dataID = null;
 					indicator.matched = false;
 
 
@@ -660,7 +690,7 @@
 
 					// 1 check that no remaining indicators still use it
 					for (var i = 0; i < _map.data.length; i++) {
-						if (_map.data[i].localData.id && _map.data[i].localData.id === id) {
+						if (_map.data[i].dataID && _map.data[i].dataID === id) {
 							return;
 						}
 					}
@@ -817,8 +847,8 @@
 				function d2IDs() {
 					var dataIDs = [];
 					for (var i = 0; i < _map.data.length; i++) {
-						if (_map.data[i].localData && _map.data[i].localData.id) {
-							dataIDs.push(_map.data[i].localData.id);
+						if (_map.data[i].dataID) {
+							dataIDs.push(_map.data[i].dataID);
 						}
 					}
 					for (var i = 0; i < _map.dataSets.length; i++) {

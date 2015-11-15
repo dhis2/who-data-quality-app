@@ -1,5 +1,5 @@
 {
-	"metaDataVersion": 0.3,
+	"metaDataVersion": 0.5,
 	"coreIndicators": ["D1", "D3", "D27", "D5", "D8"],
 	"groups": [
 	{
@@ -37,10 +37,11 @@
 	{
 		"definition": "Total number of outpatient visits", 
 		"extremeOutlier": 3,
-		"localData": {},
+		"dataID": null,
 		"matched": false, 
 		"moderateOutlier": 2, 
 		"consistency": 33,
+	    "custom": false,
 		"name": "OPD visits",
 		"trend": "constant",
 		"missing": 90,
@@ -49,7 +50,7 @@
 	{
 		"definition": "First antenatal care visit", 
 		"extremeOutlier": 3, 
-		"localData": {}, 
+		"dataID": null, 
 		"matched": false, 
 		"moderateOutlier": 2, 
 		"consistency": 33,
@@ -62,7 +63,7 @@
 	{
 		"definition": "Fourth antenatal care visit", 
 		"extremeOutlier": 3, 
-		"localData": {}, 
+		"dataID": null, 
 		"matched": false, 
 		"moderateOutlier": 2, 
 		"consistency": 33,
@@ -75,7 +76,7 @@
 	{
 		"definition": "Institutional deliveries", 
 		"extremeOutlier": 3, 
-		"localData": {}, 
+		"dataID": null, 
 		"matched": false, 
 		"moderateOutlier": 2, 
 		"consistency": 33,
@@ -88,7 +89,7 @@
 	{
 		"definition": "3rd dose IPTp", 
 		"extremeOutlier": 3, 
-		"localData": {}, 
+		"dataID": null, 
 		"matched": false, 
 		"moderateOutlier": 2, 
 		"consistency": 33,
@@ -101,7 +102,7 @@
 	{
 		"definition": "Children receiving 3rd dose of Penta-vaccine", 
 		"extremeOutlier": 3, 
-		"localData": {}, 
+		"dataID": null, 
 		"matched": false, 
 		"moderateOutlier": 2, 
 		"consistency": 33,
@@ -114,7 +115,7 @@
 	{
 		"definition": "Children receiving 1st dose of measles vaccine.", 
 		"extremeOutlier": 3, 
-		"localData": {}, 
+		"dataID": null, 
 		"matched": false, 
 		"moderateOutlier": 2, 
 		"consistency": 33,
@@ -127,7 +128,7 @@
 	{
 		"definition": "TB cases (all forms) that have been notified.", 
 		"extremeOutlier": 3, 
-		"localData": {}, 
+		"dataID": null, 
 		"matched": false, 
 		"moderateOutlier": 2, 
 		"consistency": 33,
@@ -140,7 +141,7 @@
 	{
 		"definition": "TB cases successfylly treated (all forms).", 
 		"extremeOutlier": 3, 
-		"localData": {}, 
+		"dataID": null, 
 		"matched": false, 
 		"moderateOutlier": 2, 
 		"consistency": 33,
@@ -153,7 +154,7 @@
 	{
 		"definition": "TB cases tested for HIV.", 
 		"extremeOutlier": 3, 
-		"localData": {}, 
+		"dataID": null, 
 		"matched": false, 
 		"moderateOutlier": 2, 
 		"consistency": 33,
@@ -166,7 +167,7 @@
 	{
 		"definition": "HIV+ TB cases initiating ART.", 
 		"extremeOutlier": 3, 
-		"localData": {}, 
+		"dataID": null, 
 		"matched": false, 
 		"moderateOutlier": 2, 
 		"consistency": 33,
@@ -179,7 +180,7 @@
 	{
 		"definition": "MDR-TB cases successfully treated", 
 		"extremeOutlier": 3, 
-		"localData": {}, 
+		"dataID": null, 
 		"matched": false, 
 		"moderateOutlier": 2, 
 		"consistency": 33,
@@ -192,7 +193,7 @@
 	{
 		"definition": "Confirmed malaria cases reported.", 
 		"extremeOutlier": 3, 
-		"localData": {}, 
+		"dataID": null, 
 		"matched": false, 
 		"moderateOutlier": 2,
 		"consistency": 33,
@@ -205,7 +206,7 @@
 	{
 		"definition": "Confirmed malaria cases treated.", 
 		"extremeOutlier": 3, 
-		"localData": {}, 
+		"dataID": null, 
 		"matched": false, 
 		"moderateOutlier": 2,
 		"consistency": 33,
@@ -218,7 +219,7 @@
 	{
 		"definition": "Malaria cases treated.", 
 		"extremeOutlier": 3, 
-		"localData": {}, 
+		"dataID": null, 
 		"matched": false, 
 		"moderateOutlier": 2,
 		"consistency": 33, 
@@ -231,7 +232,7 @@
 	{
 		"definition": "Suspected malaria cases tested.", 
 		"extremeOutlier": 3, 
-		"localData": {}, 
+		"dataID": null, 
 		"matched": false, 
 		"moderateOutlier": 2,
 		"consistency": 33, 
@@ -244,7 +245,7 @@
 	{
 		"definition": "Children receiving 1st dose of Penta-vaccine", 
 		"extremeOutlier": 3, 
-		"localData": {}, 
+		"dataID": null, 
 		"matched": false, 
 		"moderateOutlier": 2, 
 		"consistency": 33,
@@ -257,7 +258,7 @@
 	{
 		"definition": "Children receiving 2nd dose of Penta-vaccine", 
 		"extremeOutlier": 3, 
-		"localData": {}, 
+		"dataID": null, 
 		"matched": false, 
 		"moderateOutlier": 2, 
 		"consistency": 33,
@@ -270,7 +271,7 @@
 	{
 		"definition": "Children receiving 1st dose of PCV", 
 		"extremeOutlier": 3, 
-		"localData": {}, 
+		"dataID": null, 
 		"matched": false, 
 		"moderateOutlier": 2,
 		"consistency": 33,
@@ -283,7 +284,7 @@
 		
 		"definition": "Children receiving 2nd dose of PCV", 
 		"extremeOutlier": 3, 
-		"localData": {}, 
+		"dataID": null, 
 		"matched": false, 
 		"moderateOutlier": 2,
 		"consistency": 33,
@@ -296,7 +297,7 @@
 	{
 		"definition": "Children receiving 3rd dose of PCV", 
 		"extremeOutlier": 3, 
-		"localData": {}, 
+		"dataID": null, 
 		"matched": false, 
 		"moderateOutlier": 2, 
 		"consistency": 33,
@@ -309,7 +310,7 @@
 	{
 		"definition": "Pregnant women on HIV prophylaxis (PMTCT)", 
 		"extremeOutlier": 3, 
-		"localData": {}, 
+		"dataID": null, 
 		"matched": false, 
 		"moderateOutlier": 2, 
 		"consistency": 33,
@@ -322,7 +323,7 @@
 	{
 		"definition": "PLHIV on ART who are virally supressed", 
 		"extremeOutlier": 3, 
-		"localData": {}, 
+		"dataID": null, 
 		"matched": false, 
 		"moderateOutlier": 2, 
 		"consistency": 33,
@@ -335,7 +336,7 @@
 	{
 		"definition": "HIV+ persons still on ART after 12 months (retention)", 
 		"extremeOutlier": 3, 
-		"localData": {}, 
+		"dataID": null, 
 		"matched": false, 
 		"moderateOutlier": 2,
 		"consistency": 33, 
@@ -348,7 +349,7 @@
 	{
 		"definition": "Persons receiving HIV care (pre-ART and ART)", 
 		"extremeOutlier": 3, 
-		"localData": {}, 
+		"dataID": null, 
 		"matched": false, 
 		"moderateOutlier": 2,
 		"consistency": 33, 
@@ -361,7 +362,7 @@
 	{
 		"definition": "PLHIV on ART)", 
 		"extremeOutlier": 3, 
-		"localData": {}, 
+		"dataID": null, 
 		"matched": false, 
 		"moderateOutlier": 2,
 		"consistency": 33, 
@@ -374,7 +375,7 @@
 	{
 		"definition": "First postnatal care visit", 
 		"extremeOutlier": 3, 
-		"localData": {},
+		"dataID": null,
 		"matched": false, 
 		"moderateOutlier": 2, 
 		"consistency": 33,
@@ -387,7 +388,7 @@
 	{
 		"definition": "First dose of tetanus toxoid", 
 		"extremeOutlier": 3, 
-		"localData": {}, 
+		"dataID": null, 
 		"matched": false, 
 		"moderateOutlier": 2, 
 		"consistency": 33,

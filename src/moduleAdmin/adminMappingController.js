@@ -154,18 +154,15 @@
 	    };
 	    
 	    self.save = function () {
-	    	
+
+			var id;
 	    	if (self.dataDisaggregation === 0) {
-	    		self.indicator.localData = self.dataElementsSelected;
-	    		self.indicator.localData.type = "dataElement";
-	    		if (self.dataDetails === 1) self.indicator.localData.co = true;
-	    		else self.indicator.localData.co = false;
+	    		id = self.dataElementsSelected.id;
 	    	}
 	    	else {
-	    		self.indicator.localData = self.indicatorsSelected;
-	    		self.indicator.localData.type = "indicator";
-	    		self.indicator.localData.co = false;
+	    		id = self.indicatorsSelected.id;
 	    	}
+			self.indicator.dataID = id;
 	    	self.indicator.dataSetID = self.dataSetsSelected.id;
 	    	self.indicator.matched = true;
 	    	

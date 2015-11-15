@@ -14,11 +14,11 @@
 		//Make a dropdown list with numerator codes and DHIS names
 		self.numeratorList = [];
 		for (var i = 0; i < indicators.length; i++) {
-			if (indicators[i].localData.hasOwnProperty('id')) {
+			if (indicators[i].dataID) {
 				self.numeratorList.push(
 					{
-						'name': d2Map.d2NameFromID(indicators[i].localData.id),
-						'id': indicators[i].localData.id,
+						'name': d2Map.d2NameFromID(indicators[i].dataID),
+						'id': indicators[i].dataID,
 						'code': indicators[i].code
 					}
 				);

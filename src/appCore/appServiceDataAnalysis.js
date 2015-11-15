@@ -891,7 +891,7 @@
 		function indicatorOutlierAnalysis(parameters) {
 			self.io = parameters;
 
-			var requestURL = '/api/analytics.json?dimension=dx:' + self.io.indicator.localData.id + '&dimension=ou:' + self.io.boundaryOrgunit + ';LEVEL-' + self.io.level + '&dimension=pe:' + self.io.periods.join(';') + '&displayProperty=NAME';
+			var requestURL = '/api/analytics.json?dimension=dx:' + self.io.indicator.dataID + '&dimension=ou:' + self.io.boundaryOrgunit + ';LEVEL-' + self.io.level + '&dimension=pe:' + self.io.periods.join(';') + '&displayProperty=NAME';
 
 			requestService.getSingle(requestURL).then(
 				//success
@@ -930,7 +930,7 @@
 			var subunitZscoreNames = [];
 
 
-			var de = self.io.indicator.localData.id;
+			var de = self.io.indicator.dataID;
 			var extremeLimit = self.io.indicator.extremeOutlier;
 			var moderateLimit = self.io.indicator.moderateOutlier;
 
@@ -1193,7 +1193,7 @@
 			}
 
 			else {
-				
+
 				self.status.done++;
 
 				//Mark item in queue as downloaded

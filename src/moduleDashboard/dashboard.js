@@ -68,7 +68,7 @@
 				$q.all(promises).then(function(datas) {
 
 					var datasetCompletenessChart = {
-						name: datas[0].name,
+						name: d2Map.d2NameFromID(datas[0].id),
 						id: datas[0].id,
 						trendChartOptions: datas[1].opts,
 						trendChartData: datas[1].data,
@@ -141,8 +141,8 @@
 
 				var promises = [];
 				promises.push(promiseObject(data));
-				promises.push(visualisationService.yyLineChart(null, yyPeriods, data.localData.id, ouBoundaryID));
-				promises.push(dqAnalysisConsistency.analyse(data.localData.id, null, period, refPeriods, ouBoundaryID, ouLevel, null, 'time', data.trend, data.consistency, null));
+				promises.push(visualisationService.yyLineChart(null, yyPeriods, data.dataID, ouBoundaryID));
+				promises.push(dqAnalysisConsistency.analyse(data.dataID, null, period, refPeriods, ouBoundaryID, ouLevel, null, 'time', data.trend, data.consistency, null));
 				$q.all(promises).then(function(datas) {
 
 					var data = datas[0];
@@ -154,7 +154,7 @@
 
 
 					var consistencyChart = {
-						name: data.name,
+						name: d2Map.d2NameFromID(data.dataID),
 						id: data.id,
 						yyChartOptions: yyLine.opts,
 						yyChartData: yyLine.data,
@@ -227,7 +227,7 @@
 
 				var promises = [];
 				promises.push(relation);
-				promises.push(dqAnalysisConsistency.analyse(indicatorA.localData.id, indicatorB.localData.id, period, null, ouBoundaryID, ouLevel, null, 'data', relation.type, relation.criteria, null));
+				promises.push(dqAnalysisConsistency.analyse(indicatorA.dataID, indicatorB.dataID, period, null, ouBoundaryID, ouLevel, null, 'data', relation.type, relation.criteria, null));
 				$q.all(promises).then(function(datas) {
 					var data = datas[0]
 					var result = datas[1];
@@ -300,7 +300,7 @@
 			var data = d2Map.groupNumerators(self.group.code);
 			var dataIDs = [];
 			for (var i = 0; i < data.length; i++) {
-				dataIDs.push(data[i].localData.id);
+				dataIDs.push(data[i].dataID);
 			}
 
 			self.outLoading = true;

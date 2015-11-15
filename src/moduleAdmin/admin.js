@@ -33,6 +33,9 @@
 						"configuration of the Data Quality Tool. However, you can use this module to look at " +
 						"the existing data quality parameters.");
 				}
+				else {
+					d2Map.versionUpgrade();
+				}
 			});
 
 			self.numerators = d2Map.numerators();
@@ -283,7 +286,7 @@
 			if (!code) return '';
 
 			var data = d2Map.numerators(code);
-			if (data && data.localData.id) return d2Map.d2NameFromID(data.localData.id);
+			if (data && data.dataID) return d2Map.d2NameFromID(data.dataID);
 			else return '';
 		};
 

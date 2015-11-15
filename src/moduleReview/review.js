@@ -121,9 +121,9 @@
 	  			var periods = periodService.getISOPeriods(startDate, endDate, periodType);	  			
 	  			
 	  			
-				dataAnalysisService.dataCompleteness(receiveDataCompleteness, indicator.missing, indicator.localData.id, null, periods, ouBoundary, ouLevel);
+				dataAnalysisService.dataCompleteness(receiveDataCompleteness, indicator.missing, indicator.dataID, null, periods, ouBoundary, ouLevel);
 
-				dqAnalysisConsistency.analyse(indicator.localData.id, null, period, refPeriods, ouBoundary, ouLevel, null, 'time', indicator.trend, indicator.consistency, null).then(
+				dqAnalysisConsistency.analyse(indicator.dataID, null, period, refPeriods, ouBoundary, ouLevel, null, 'time', indicator.trend, indicator.consistency, null).then(
 					function (data) {
 						var errors = data.errors;
 						var result = data.result;
@@ -141,7 +141,7 @@
 				
 				dataAnalysisService.indicatorOutlier(receiveDataOutliers, indicator, periods, ouBoundary, ouLevel);
 				
-				indicatorIDsForConsistencyChart.push(indicator.localData.id);
+				indicatorIDsForConsistencyChart.push(indicator.dataID);
 				self.outstandingRequests += 3;
 	  		}
 
@@ -152,7 +152,7 @@
 	  			var indicatorA = d2Map.numerators(relation.A);
 	  			var indicatorB = d2Map.numerators(relation.B);
 
-				dqAnalysisConsistency.analyse(indicatorA.localData.id, indicatorB.localData.id, period, null, ouBoundary, ouLevel, null, 'data', relation.type, relation.criteria, relation).then(
+				dqAnalysisConsistency.analyse(indicatorA.dataID, indicatorB.dataID, period, null, ouBoundary, ouLevel, null, 'data', relation.type, relation.criteria, relation).then(
 					function(data) {
 						var errors = data.errors;
 						var result = data.result;
@@ -305,6 +305,7 @@
 
 	  	
 	  	function receiveDataOutliers(result) {
+			result.displayName = d2Map.d2NameFromID(result.dataID);
 	  		self.outliers.push(result);
 	  		self.outstandingRequests--;
 	  	}
@@ -343,6 +344,14 @@
 
 		};
 
+		self.isNumber = function(number) {
+			return d2Utils.isNumber(number);
+		}
+
+		/** DHIS 2 names */
+		self.nameFromID = function(id) {
+			return d2Map.d2NameFromID(id);
+		}
 
 
 		/** PRINT */
@@ -438,6 +447,7 @@
 
 			angular.element('.interpretationText').remove();
 		}
+
 
 	    	    
 		return self;
