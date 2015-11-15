@@ -1,4 +1,3 @@
-
 (function(){
 	
 	angular.module('consistencyAnalysis', []);
@@ -39,7 +38,7 @@
 			self.type = 'data'; 
 			self.subType = 'level';
 			self.trendType = 'constant';
-			self.consistencyCriteria = 20;
+			self.consistencyCriteria = 33;
 			
 	    	self.dataSelection = {
 				deGroups: [],
