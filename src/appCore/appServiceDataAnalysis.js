@@ -10,6 +10,8 @@
 		var maxPendingRequests = 1;
 		var processIndex = 0;
 		var resultLimit = 200000;
+		var maxValues = 100000;
+
 		self.status = {
 			'done': 0,
 			'total': 0,
@@ -160,18 +162,16 @@
 				self.og.ouCount = self.og.ouBoundary.length;
 				outlierGapRequest();
 			}
-			//If level < 3, we assume things are okay
+			//If method is by level and level < 2, we assume things are okay
 			else if (self.og.ouLevel && self.og.ouLevel <= 2) {
 				self.og.ouCount = Math.pow(20, self.og.ouLevel-1);
 				outlierGapRequest();
 			}
 			else {
 				console.log("Checking if requests needs to be partitioned");
-
 				d2Meta.orgunitCountEstimate(self.og.ouBoundary, self.og.ouLevel ? self.og.ouLevel : null, self.og.ouGroup ? self.og.ouGroup : null).then(
 					function(ouCount) {
 
-						var maxValues = 50000;
 						var peCount = self.og.periods.length;
 						self.og.ouCount = parseInt(ouCount);
 
@@ -181,6 +181,8 @@
 							console.log("Request too large (estimated " + parseInt(ouCount*self.og.ouBoundary.length) +
 								" units and " + peCount + " periods), partitioning");
 
+
+							//TODO: Check here that children are not actually in some of the selected groups (if using groups)
 							d2Meta.objects('organisationUnits', self.og.ouBoundary, 'children[name,id,level]').then(
 								function(data) {
 
@@ -234,7 +236,6 @@
 				return;
 			}
 
-			var maxValues = 50000;
 			var peCount = self.og.periods.length;
 			var ouCount = self.og.ouCount;
 			var dxPerRequest = Math.min(Math.max(Math.floor(maxValues/(ouCount * peCount)), 1), 20);
