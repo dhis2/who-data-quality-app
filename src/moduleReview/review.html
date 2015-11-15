@@ -1,43 +1,48 @@
 <h3 class="no-print" style="margin-top: 20px;">Annual Data Quality Report</h3>
+<div class="no-print" ng-if="!revCtrl.notPossible">
+	<accordion class="no-print" close-others="revCtrl.oneAtATime">
 
-<!-- Parameter selection-->
-<div class="no-print well" ng-if="!revCtrl.notPossible">
-	<span style="white-space:nowrap;"><label>Year:</label>
-	<ui-select ng-model="revCtrl.yearSelected" theme="bootstrap" style="width: 100px; display: inline-block;">
-	 <ui-select-match placeholder="Select year...">
-		{{revCtrl.yearSelected.name}}
-	 </ui-select-match>
-	 <ui-select-choices
-		repeat="obj in revCtrl.years | filter: $select.search">
-			<div ng-bind-html="obj.name | highlight: $select.search"></div>
-	 </ui-select-choices>
-	</ui-select></span>
-	<span style="white-space:nowrap;"><label>Level:</label>
-	<ui-select ng-model="revCtrl.orgunitLevelSelected" theme="bootstrap" style="width: 200px; display: inline-block;">
-	 <ui-select-match placeholder="Select level...">
-		{{revCtrl.orgunitLevelSelected.name}}
-	 </ui-select-match>
-	 <ui-select-choices
-		repeat="obj in revCtrl.orgunitLevels | filter: $select.search">
-			<div ng-bind-html="obj.name | highlight: $select.search"></div>
-	 </ui-select-choices>
-	</ui-select></span>
-	<span style="white-space:nowrap;"><label>Group:</label>
-	<ui-select ng-model="revCtrl.groupSelected" theme="bootstrap" style="min-width: 200px; display: inline-block;">
-	 <ui-select-match placeholder="Select group...">
-		{{revCtrl.groupSelected.name}}
-	 </ui-select-match>
-	 <ui-select-choices
-		repeat="obj in revCtrl.groups | filter: $select.search">
-			<div ng-bind-html="obj.name | highlight: $select.search"></div>
-	 </ui-select-choices>
-	</ui-select></span>
-	<div class="inline pull-right">
-		<button ng-disabled="(!self.userOrgunit && !revCtrl.orgunitLevelSelected && !revCtrl.groupSelected) || revCtrl.outstandingRequests > 0" class="btn btn-primary inline" ng-click="revCtrl.doAnalysis();">Generate</button>
+		<!-- DATA -->
+		<accordion-group heading="Data" is-open="revCtrl.status.isFirstOpen">
+			<label>Group</label><br/>
+			<ui-select ng-model="revCtrl.groupSelected" theme="bootstrap" style="min-width: 200px; display: inline-block;">
+				<ui-select-match placeholder="Select group...">
+					{{revCtrl.groupSelected.name}}
+				</ui-select-match>
+				<ui-select-choices
+						repeat="obj in revCtrl.groups | filter: $select.search">
+					<div ng-bind-html="obj.name | highlight: $select.search"></div>
+				</ui-select-choices>
+			</ui-select>
+		</accordion-group>
+
+		<accordion-group heading="Period">
+			<label>Year</label><br/>
+			<ui-select ng-model="revCtrl.yearSelected" theme="bootstrap" style="width: 100px; display: inline-block;">
+				<ui-select-match placeholder="Select year...">
+					{{revCtrl.yearSelected.name}}
+				</ui-select-match>
+				<ui-select-choices
+						repeat="obj in revCtrl.years | filter: $select.search">
+					<div ng-bind-html="obj.name | highlight: $select.search"></div>
+				</ui-select-choices>
+			</ui-select>
+		</accordion-group>
+
+		<accordion-group heading="Organisation unit">
+			<d2-select-orgunit default-level="1" max-level="2" ng-model="revCtrl.selectedOrgunit"></d2-select-orgunit>
+		</accordion-group>
+
+	</accordion>
+
+	<div class="inline pull-right" style="margin-bottom:20px">
+		<button ng-disabled="(!self.userOrgunit && !revCtrl.selectedOrgunit.level.name && !revCtrl.groupSelected) || revCtrl.outstandingRequests > 0" class="btn btn-primary inline" ng-click="revCtrl.doAnalysis();">Generate</button>
 		<button ng-disabled="!(revCtrl.outstandingRequests === 0 && revCtrl.totalRequests != 0)" class="btn btn-primary inline" ng-click="revCtrl.doPrint();">Print</button>
 	</div>
 
+	<hr style="clear: both;" />
 </div>
+
 
 <div ng-if="revCtrl.outstandingRequests != 0">
 	<h5>Loading data...</h5>
@@ -70,7 +75,7 @@
 	<div style="display: inline-block; width: 650px; vertical-align: top; ">
 		<h2 style="text-align: center; margin-top: 500px; margin-left: 100px; width: 400px;">Assessment of Health Facility Data Quality</h2>
 		<h3 style="text-align: center; margin-top: 100px; margin-left: 100px; width: 400px;">WHO Data Quality Review</h3>
-		<h3 style="text-align: center; margin-left: 100px; width: 400px;">{{revCtrl.userOrgunit.name}} - {{revCtrl.yearSelected.id}}</h3>
+		<h3 style="text-align: center; margin-left: 100px; width: 400px;">{{revCtrl.selectedOrgunit.boundary.name}} - {{revCtrl.yearSelected.id}}</h3>
 	</div>
 </div>
 
@@ -88,14 +93,15 @@
 						<tr bgcolor="#f9f9f9">
 							<th width="275">Dataset</th>
 							<th width="175">Overall score (%)</th>
-							<th width="175"># {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
-							<th width="175">% {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
+							<th width="175"># {{revCtrl.selectedOrgunit.level.name}} with poor score</th>
+							<th width="175">% {{revCtrl.selectedOrgunit.level.name}} with poor score</th>
 						</tr>
 						<tr ng-repeat="dataset in revCtrl.completeness.datasets | orderBy : 'dxName'">
 							<td>{{dataset.dxName}}</td>
-							<td class="valueCell">{{dataset.boundaryValue}}%</td>
-							<td class="valueCell">{{dataset.subunitsOutsideThreshold}}</td>
-							<td class="valueCell">{{dataset.subunitViolationPercentage}}%</td>
+							<td ng-if="revCtrl.isNumber(dataset.boundaryValue)" class="valueCell">{{dataset.boundaryValue}}%</td>
+							<td ng-if="revCtrl.isNumber(dataset.boundaryValue)" class="valueCell">{{dataset.subunitsOutsideThreshold}}</td>
+							<td ng-if="revCtrl.isNumber(dataset.boundaryValue)" class="valueCell">{{dataset.subunitViolationPercentage}}%</td>
+							<td ng-if="!revCtrl.isNumber(dataset.boundaryValue)" colspan="3">Not available</td>
 						</tr>
 					</tbody>
 				</table>
@@ -108,14 +114,15 @@
 						<tr bgcolor="#f9f9f9">
 							<th width="275">Dataset</th>
 							<th width="175">Overall score (%)</th>
-							<th width="175"># {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
-							<th width="175">% {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
+							<th width="175"># {{revCtrl.selectedOrgunit.level.name}} with poor score</th>
+							<th width="175">% {{revCtrl.selectedOrgunit.level.name}} with poor score</th>
 						</tr>
 						<tr ng-repeat="indicator in revCtrl.completeness.indicators | orderBy : 'dxName'">
 							<td>{{indicator.dxName}}</td>
-							<td class="valueCell">{{indicator.boundaryValue}}%</td>
-							<td class="valueCell">{{indicator.subunitsOutsideThreshold}}</td>
-							<td class="valueCell">{{indicator.subunitViolationPercentage}}%</td>
+							<td ng-if="revCtrl.isNumber(indicator.boundaryValue)" class="valueCell">{{indicator.boundaryValue}}%</td>
+							<td ng-if="revCtrl.isNumber(indicator.boundaryValue)" class="valueCell">{{indicator.subunitsOutsideThreshold}}</td>
+							<td ng-if="revCtrl.isNumber(indicator.boundaryValue)" class="valueCell">{{indicator.subunitViolationPercentage}}%</td>
+							<td ng-if="!revCtrl.isNumber(indicator.boundaryValue)" colspan="3">Not available</td>
 						</tr>
 					</tbody>
 				</table>
@@ -128,14 +135,15 @@
 						<tr bgcolor="#f9f9f9">
 							<th width="275">Dataset</th>
 							<th width="175">Overall score (%)</th>
-							<th width="175"># {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
-							<th width="175">% {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
+							<th width="175"># {{revCtrl.selectedOrgunit.level.name}} with poor score</th>
+							<th width="175">% {{revCtrl.selectedOrgunit.level.name}} with poor score</th>
 						</tr>
 						<tr ng-repeat="dataset in revCtrl.completeness.consistency | orderBy:'dxNameA'">
 							<td>{{dataset.dxNameA}}</td>
-							<td class="valueCell">{{dataset.boundaryPercentage}}%</td>
-							<td class="valueCell">{{dataset.subunitsOutsideThreshold}}</td>
-							<td class="valueCell">{{dataset.subunitViolationPercentage}}%</td>
+							<td ng-if="revCtrl.isNumber(dataset.boundaryPercentage)" class="valueCell">{{dataset.boundaryPercentage}}%</td>
+							<td ng-if="revCtrl.isNumber(dataset.boundaryPercentage)" class="valueCell">{{dataset.subunitsOutsideThreshold}}</td>
+							<td ng-if="revCtrl.isNumber(dataset.boundaryPercentage)" class="valueCell">{{dataset.subunitViolationPercentage}}%</td>
+							<td ng-if="!revCtrl.isNumber(dataset.boundaryPercentage)" colspan="3">Not available</td>
 						</tr>
 					</tbody>
 				</table>
@@ -149,14 +157,15 @@
 						<tr bgcolor="#f9f9f9">
 							<th width="275">Indicator</th>
 							<th width="175">Overall score (%)</th>
-							<th width="175"># {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
-							<th width="175">% {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
+							<th width="175"># {{revCtrl.selectedOrgunit.level.name}} with poor score</th>
+							<th width="175">% {{revCtrl.selectedOrgunit.level.name}} with poor score</th>
 						</tr>
-						<tr ng-repeat="indicator in revCtrl.outliers | orderBy:'name'">
-							<td>{{indicator.name}}</td>
-							<td class="valueCell">{{indicator.boundaryExtreme}}%</td>
-							<td class="valueCell">{{indicator.countExtreme}}</td>
-							<td class="valueCell">{{indicator.percentExtreme}}%</td>
+						<tr ng-repeat="indicator in revCtrl.outliers | orderBy:'displayName'">
+							<td>{{indicator.displayName}}</td>
+							<td ng-if="revCtrl.isNumber(indicator.boundaryExtreme)" class="valueCell">{{indicator.boundaryExtreme}}%</td>
+							<td ng-if="revCtrl.isNumber(indicator.boundaryExtreme)" class="valueCell">{{indicator.countExtreme}}</td>
+							<td ng-if="revCtrl.isNumber(indicator.boundaryExtreme)" class="valueCell">{{indicator.percentExtreme}}%</td>
+							<td ng-if="!revCtrl.isNumber(indicator.boundaryExtreme)" colspan="3">Not available</td>
 						</tr>
 					</tbody>
 				</table>
@@ -169,14 +178,15 @@
 						<tr bgcolor="#f9f9f9">
 							<th width="275">Indicator</th>
 							<th width="175">Overall score (%)</th>
-							<th width="175"># {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
-							<th width="175">% {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
+							<th width="175"># {{revCtrl.selectedOrgunit.level.name}} with poor score</th>
+							<th width="175">% {{revCtrl.selectedOrgunit.level.name}} with poor score</th>
 						</tr>
-						<tr ng-repeat="indicator in revCtrl.outliers | orderBy:'name'">
-							<td>{{indicator.name}}</td>
-							<td class="valueCell">{{indicator.boundaryModerate}}%</td>
-							<td class="valueCell">{{indicator.countModerate}}</td>
-							<td class="valueCell">{{indicator.percentModerate}}%</td>
+						<tr ng-repeat="indicator in revCtrl.outliers | orderBy:'displayName'">
+							<td>{{indicator.displayName}}</td>
+							<td ng-if="revCtrl.isNumber(indicator.boundaryModerate)" class="valueCell">{{indicator.boundaryModerate}}%</td>
+							<td ng-if="revCtrl.isNumber(indicator.boundaryModerate)" class="valueCell">{{indicator.countModerate}}</td>
+							<td ng-if="revCtrl.isNumber(indicator.boundaryModerate)" class="valueCell">{{indicator.percentModerate}}%</td>
+							<td ng-if="!revCtrl.isNumber(indicator.boundaryModerate)" colspan="3">Not available</td>
 						</tr>
 					</tbody>
 				</table>
@@ -189,14 +199,15 @@
 						<tr bgcolor="#f9f9f9">
 							<th width="275">Indicator</th>
 							<th width="175">Overall score (%)</th>
-							<th width="175"># {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
-							<th width="175">% {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
+							<th width="175"># {{revCtrl.selectedOrgunit.level.name}} with poor score</th>
+							<th width="175">% {{revCtrl.selectedOrgunit.level.name}} with poor score</th>
 						</tr>
-						<tr ng-repeat="indicator in revCtrl.outliers | orderBy:'name'">
-							<td>{{indicator.name}}</td>
-							<td class="valueCell">{{indicator.boundaryZscore}}%</td>
-							<td class="valueCell">{{indicator.countZscore}}</td>
-							<td class="valueCell">{{indicator.percentZscore}}%</td>
+						<tr ng-repeat="indicator in revCtrl.outliers | orderBy:'displayName'">
+							<td>{{indicator.displayName}}</td>
+							<td ng-if="revCtrl.isNumber(indicator.boundaryZscore)" class="valueCell">{{indicator.boundaryZscore}}%</td>
+							<td ng-if="revCtrl.isNumber(indicator.boundaryZscore)"class="valueCell">{{indicator.countZscore}}</td>
+							<td ng-if="revCtrl.isNumber(indicator.boundaryZscore)"class="valueCell">{{indicator.percentZscore}}%</td>
+							<td ng-if="!revCtrl.isNumber(indicator.boundaryZscore)" colspan="3">Not available</td>
 						</tr>
 					</tbody>
 				</table>
@@ -209,14 +220,15 @@
 						<tr bgcolor="#f9f9f9">
 							<th width="275">Indicator</th>
 							<th width="175">Overall score (%)</th>
-							<th width="175"># {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
-							<th width="175">% {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
+							<th width="175"># {{revCtrl.selectedOrgunit.level.name}} with poor score</th>
+							<th width="175">% {{revCtrl.selectedOrgunit.level.name}} with poor score</th>
 						</tr>
-						<tr ng-repeat="indicator in revCtrl.consistency.data | orderBy:'dxName'">
+						<tr ng-repeat="indicator in revCtrl.consistency.data | orderBy:'dxNameA'">
 							<td>{{indicator.dxNameA}}</td>
-							<td class="valueCell">{{indicator.boundaryPercentage}}%</td>
-							<td class="valueCell">{{indicator.subunitsOutsideThreshold}}</td>
-							<td class="valueCell">{{indicator.subunitViolationPercentage}}%</td>
+							<td ng-if="revCtrl.isNumber(indicator.boundaryPercentage)" class="valueCell">{{indicator.boundaryPercentage}}%</td>
+							<td ng-if="revCtrl.isNumber(indicator.boundaryPercentage)" class="valueCell">{{indicator.subunitsOutsideThreshold}}</td>
+							<td ng-if="revCtrl.isNumber(indicator.boundaryPercentage)" class="valueCell">{{indicator.subunitViolationPercentage}}%</td>
+							<td ng-if="!revCtrl.isNumber(indicator.boundaryPercentage)" colspan="3">Not available</td>
 						</tr>
 					</tbody>
 				</table>
@@ -229,14 +241,15 @@
 						<tr bgcolor="#f9f9f9">
 							<th width="275">Indicator</th>
 							<th width="175">Overall score (%)</th>
-							<th width="175"># {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
-							<th width="175">% {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
+							<th width="175"># {{revCtrl.selectedOrgunit.level.name}} with poor score</th>
+							<th width="175">% {{revCtrl.selectedOrgunit.level.name}} with poor score</th>
 						</tr>
 						<tr ng-repeat="relation in revCtrl.consistency.relations | orderBy:'name'">
 							<td>{{revCtrl.relationName(relation.relationCode)}}</td>
-							<td class="valueCell">{{relation.boundaryPercentage}}%</td>
-							<td class="valueCell">{{relation.subunitsOutsideThreshold}}</td>
-							<td class="valueCell">{{relation.subunitViolationPercentage}}%</td>
+							<td ng-if="revCtrl.isNumber(relation.boundaryPercentage)" class="valueCell">{{relation.boundaryPercentage}}%</td>
+							<td ng-if="revCtrl.isNumber(relation.boundaryPercentage)" class="valueCell">{{relation.subunitsOutsideThreshold}}</td>
+							<td ng-if="revCtrl.isNumber(relation.boundaryPercentage)" class="valueCell">{{relation.subunitViolationPercentage}}%</td>
+							<td ng-if="!revCtrl.isNumber(relation.boundaryPercentage)" colspan="3">Not available</td>
 						</tr>
 					</tbody>
 				</table>
@@ -253,7 +266,8 @@
 					</tr>
 					<tr>
 						<td>Consistency with United Nations Population Projections for Live Births</td>
-						<td class="valueCell">{{self.denominators.un.boundaryRatio}}%</td>
+						<td ng-if="revCtrl.denominators.un">{{revCtrl.denominators.un.boundaryRatio}}%</td>
+						<td ng-if="!revCtrl.denominators.un">Not available</td>
 					</tr>
 					</tbody>
 				</table>
@@ -265,14 +279,17 @@
 					<tr bgcolor="#f9f9f9">
 						<th width="275">Indicator</th>
 						<th width="175">Overall score (%)</th>
-						<th width="175"># {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
-						<th width="175">% {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
+						<th width="175"># {{revCtrl.selectedOrgunit.level.name}} with poor score</th>
+						<th width="175">% {{revCtrl.selectedOrgunit.level.name}} with poor score</th>
 					</tr>
 					<tr ng-repeat="denominator in revCtrl.denominators.relations | orderBy:'name'">
 						<td>{{denominator.meta.name}}</td>
 						<td class="valueCell">{{denominator.boundaryPercentage}}%</td>
 						<td class="valueCell">{{denominator.subunitsOutsideThreshold}}</td>
 						<td class="valueCell">{{denominator.subunitViolationPercentage}}%</td>
+					</tr>
+					<tr ng-if="!revCtrl.denominators.relations || revCtrl.denominator.relations.length === 0">
+						<td colspan="4">Not available</td>
 					</tr>
 					</tbody>
 				</table>
@@ -298,18 +315,22 @@
 					</tr>
 				</thead>
 				<tbody ng-repeat="dataset in revCtrl.completeness.datasets| orderBy:'dxName':false">
-					<tr >
+					<tr ng-if="revCtrl.isNumber(dataset.boundaryValue)">
 						<td rowspan="3">{{dataset.dxName}}</td>
 						<td>Overall score (%)</td>
 						<td class="valueCell">{{dataset.boundaryValue}}%</td>
-						<td rowspan="3">{{dataset.subunitViolationNames.join(', ')}}.</td>
+						<td rowspan="3">{{dataset.subunitViolationNames.join(', ')}}</td>
 					</tr>
-					<tr>
-						<td># {{revCtrl.orgunitLevelSelected.name}}s with completeness below {{dataset.threshold}}%</td>
+					<tr ng-if="!revCtrl.isNumber(dataset.boundaryValue)">
+						<td>{{dataset.dxName}}</td>
+						<td colspan="3">Not available</td>
+					</tr>
+					<tr ng-if="revCtrl.isNumber(dataset.boundaryValue)">
+						<td># {{revCtrl.selectedOrgunit.level.name}} with completeness below {{dataset.threshold}}%</td>
 						<td class="valueCell">{{dataset.subunitsOutsideThreshold}}</td>
 					</tr>
-					<tr>
-						<td>% {{revCtrl.orgunitLevelSelected.name}}s with completeness below {{dataset.threshold}}%</td>
+					<tr ng-if="revCtrl.isNumber(dataset.boundaryValue)">
+						<td>% {{revCtrl.selectedOrgunit.level.name}} with completeness below {{dataset.threshold}}%</td>
 						<td class="valueCell">{{dataset.subunitViolationPercentage}}%</td>
 					</tr>
 				</tbody>
@@ -326,8 +347,8 @@
 						<th width="200">Indicator</th>
 						<th width="80">Threshold</th>
 						<th width="80">Overall score (%)</th>
-						<th width="110"># {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
-						<th width="110">% {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
+						<th width="110"># {{revCtrl.selectedOrgunit.level.name}} with poor score</th>
+						<th width="110">% {{revCtrl.selectedOrgunit.level.name}} with poor score</th>
 						<th>Names</th>
 					</tr>
 					<tr ng-repeat="indicator in revCtrl.completeness.indicators | orderBy : 'dxName'">
@@ -353,18 +374,19 @@
 					<th width="80">Expected trend</th>
 					<th width="80">Quality threshold</th>
 					<th width="80">Overall score (%)</th>
-					<th width="110"># {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
-					<th width="110">% {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
+					<th width="110"># {{revCtrl.selectedOrgunit.level.name}} with poor score</th>
+					<th width="110">% {{revCtrl.selectedOrgunit.level.name}} with poor score</th>
 					<th>Names</th>
 				</tr>
-				<tr ng-repeat="dataset in revCtrl.completeness.consistency| orderBy:'dxName':false">
+				<tr ng-repeat="dataset in revCtrl.completeness.consistency| orderBy:'dxNameA':false">
 					<td>{{dataset.dxNameA}}</td>
 					<td>{{dataset.subType}}</td>
 					<td class="valueCell">{{dataset.criteria}}%</td>
-					<td class="valueCell">{{dataset.boundaryPercentage}}%</td>
-					<td class="valueCell">{{dataset.subunitsOutsideThreshold}}</td>
-					<td class="valueCell">{{dataset.subunitViolationPercentage}}%</td>
-					<td>{{dataset.subunitViolationNames.join(', ')}}</td>
+					<td ng-if="revCtrl.isNumber(dataset.boundaryPercentage)" class="valueCell">{{dataset.boundaryPercentage}}%</td>
+					<td ng-if="revCtrl.isNumber(dataset.boundaryPercentage)" class="valueCell">{{dataset.subunitsOutsideThreshold}}</td>
+					<td ng-if="revCtrl.isNumber(dataset.boundaryPercentage)" class="valueCell">{{dataset.subunitViolationPercentage}}%</td>
+					<td ng-if="revCtrl.isNumber(dataset.boundaryPercentage)" >{{dataset.subunitViolationNames.join(', ')}}</td>
+					<td ng-if="!revCtrl.isNumber(dataset.boundaryPercentage)" colspan="4">Not available</td>
 				</tr>
 			</table>
 
@@ -395,17 +417,18 @@
 						<th width="200">Indicator</th>
 						<th width="80">Threshold</th>
 						<th width="80">Overall score (%)</th>
-						<th width="110"># {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
-						<th width="110">% {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
+						<th width="110"># {{revCtrl.selectedOrgunit.level.name}} with poor score</th>
+						<th width="110">% {{revCtrl.selectedOrgunit.level.name}} with poor score</th>
 						<th>Names</th>
 					</tr>
-					<tr ng-repeat="indicator in revCtrl.outliers | orderBy : 'name'">
-						<td>{{indicator.name}}</td>
+					<tr ng-repeat="indicator in revCtrl.outliers | orderBy : 'displayName'">
+						<td>{{indicator.displayName}}</td>
 						<td class="valueCell">{{indicator.extremeOutlier}} SD</td>
-						<td class="valueCell">{{indicator.boundaryExtreme}}%</td>
-						<td class="valueCell">{{indicator.countExtreme}}</td>
-						<td class="valueCell">{{indicator.percentExtreme}}%</td>
-						<td class="valueCell">{{indicator.namesExtreme.join(', ')}}</td>
+						<td ng-if="revCtrl.isNumber(indicator.boundaryExtreme)" class="valueCell">{{indicator.boundaryExtreme}}%</td>
+						<td ng-if="revCtrl.isNumber(indicator.boundaryExtreme)" class="valueCell">{{indicator.countExtreme}}</td>
+						<td ng-if="revCtrl.isNumber(indicator.boundaryExtreme)" class="valueCell">{{indicator.percentExtreme}}%</td>
+						<td ng-if="revCtrl.isNumber(indicator.boundaryExtreme)" class="valueCell">{{indicator.namesExtreme.join(', ')}}</td>
+						<td ng-if="!revCtrl.isNumber(indicator.boundaryExtreme)" colspan="5" >Not available</td>
 					</tr>
 				</tbody>
 			</table>
@@ -422,17 +445,18 @@
 						<th width="200">Indicator</th>
 						<th width="80">Threshold</th>
 						<th width="80">Overall score (%)</th>
-						<th width="110"># {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
-						<th width="110">% {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
+						<th width="110"># {{revCtrl.selectedOrgunit.level.name}} with poor score</th>
+						<th width="110">% {{revCtrl.selectedOrgunit.level.name}} with poor score</th>
 						<th>Names</th>
 					</tr>
-					<tr ng-repeat="indicator in revCtrl.outliers | orderBy : 'name'">
-						<td>{{indicator.name}}</td>
+					<tr ng-repeat="indicator in revCtrl.outliers | orderBy : 'displayName'">
+						<td>{{indicator.displayName}}</td>
 						<td class="valueCell">{{indicator.moderateOutlier}} SD</td>
-						<td class="valueCell">{{indicator.boundaryModerate}}%</td>
-						<td class="valueCell">{{indicator.countModerate}}</td>
-						<td class="valueCell">{{indicator.percentModerate}}%</td>
-						<td class="valueCell">{{indicator.namesModerate.join(', ')}}</td>
+						<td ng-if="revCtrl.isNumber(indicator.boundaryModerate)" class="valueCell">{{indicator.boundaryModerate}}%</td>
+						<td ng-if="revCtrl.isNumber(indicator.boundaryModerate)" class="valueCell">{{indicator.countModerate}}</td>
+						<td ng-if="revCtrl.isNumber(indicator.boundaryModerate)" class="valueCell">{{indicator.percentModerate}}%</td>
+						<td ng-if="revCtrl.isNumber(indicator.boundaryModerate)" class="valueCell">{{indicator.namesModerate.join(', ')}}</td>
+						<td ng-if="!revCtrl.isNumber(indicator.boundaryModerate)" colspan="4" >Not available</td>
 					</tr>
 				</tbody>
 			</table>
@@ -450,17 +474,18 @@
 						<th width="200">Indicator</th>
 						<th width="80">Threshold</th>
 						<th width="80">Overall score (%)</th>
-						<th width="110"># {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
-						<th width="110">% {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
+						<th width="110"># {{revCtrl.selectedOrgunit.level.name}} with poor score</th>
+						<th width="110">% {{revCtrl.selectedOrgunit.level.name}} with poor score</th>
 						<th>Names</th>
 					</tr>
-					<tr ng-repeat="indicator in revCtrl.outliers | orderBy : 'name'">
-						<td>{{indicator.name}}</td>
+					<tr ng-repeat="indicator in revCtrl.outliers | orderBy : 'displayName'">
+						<td>{{indicator.displayName}}</td>
 						<td class="valueCell">3.5</td>
-						<td class="valueCell">{{indicator.boundaryZscore}}%</td>
-						<td class="valueCell">{{indicator.countZscore}}</td>
-						<td class="valueCell">{{indicator.percentZscore}}%</td>
-						<td class="valueCell">{{indicator.namesZscore.join(', ')}}</td>
+						<td ng-if="revCtrl.isNumber(indicator.boundaryZscore)"  class="valueCell">{{indicator.boundaryZscore}}%</td>
+						<td ng-if="revCtrl.isNumber(indicator.boundaryZscore)"  class="valueCell">{{indicator.countZscore}}</td>
+						<td ng-if="revCtrl.isNumber(indicator.boundaryZscore)"  class="valueCell">{{indicator.percentZscore}}%</td>
+						<td ng-if="revCtrl.isNumber(indicator.boundaryZscore)"  class="valueCell">{{indicator.namesZscore.join(', ')}}</td>
+						<td ng-if="!revCtrl.isNumber(indicator.boundaryZscore)" colspan="4" >Not available</td>
 					</tr>
 				</tbody>
 			</table>
@@ -477,18 +502,19 @@
 					<th width="80">Expected trend</th>
 					<th width="80">Quality threshold</th>
 					<th width="80">Overall score (%)</th>
-					<th width="110"># {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
-					<th width="110">% {{revCtrl.orgunitLevelSelected.name}}s with poor score</th>
+					<th width="110"># {{revCtrl.selectedOrgunit.level.name}} with poor score</th>
+					<th width="110">% {{revCtrl.selectedOrgunit.level.name}} with poor score</th>
 					<th>Names</th>
 				</tr>
-				<tr ng-repeat="indicator in revCtrl.consistency.data | orderBy:'dxName'">
+				<tr ng-repeat="indicator in revCtrl.consistency.data | orderBy:'dxNameA'">
 					<td>{{indicator.dxNameA}}</td>
 					<td>{{indicator.subType}}</td>
 					<td class="valueCell">{{indicator.criteria}}%</td>
-					<td class="valueCell">{{indicator.boundaryPercentage}}%</td>
-					<td class="valueCell">{{indicator.subunitsOutsideThreshold}}</td>
-					<td class="valueCell">{{indicator.subunitViolationPercentage}}%</td>
-					<td>{{indicator.subunitViolationNames.join(', ')}}</td>
+					<td ng-if="revCtrl.isNumber(indicator.boundaryPercentage)" class="valueCell">{{indicator.boundaryPercentage}}%</td>
+					<td ng-if="revCtrl.isNumber(indicator.boundaryPercentage)" class="valueCell">{{indicator.subunitsOutsideThreshold}}</td>
+					<td ng-if="revCtrl.isNumber(indicator.boundaryPercentage)" class="valueCell">{{indicator.subunitViolationPercentage}}%</td>
+					<td ng-if="revCtrl.isNumber(indicator.boundaryPercentage)">{{indicator.subunitViolationNames.join(', ')}}</td>
+					<td ng-if="!revCtrl.isNumber(indicator.boundaryPercentage)" colspan="4">Not available</td>
 				</tr>
 			</table>
 
@@ -540,15 +566,16 @@
 					</tr>
 					<tr>
 						<td>National score</td>
-						<td>{{relation.boundaryPercentage}}%</td>
+						<td ng-if="revCtrl.isNumber(relation.boundaryPercentage)">{{relation.boundaryPercentage}}%</td>
+						<td rowspan="3" ng-if="!revCtrl.isNumber(relation.boundaryPercentage)">Not available</td>
+						</tr>
+					<tr>
+						<td># {{revCtrl.selectedOrgunit.level.name}} with poor score</td>
+						<td ng-if="revCtrl.isNumber(relation.boundaryPercentage)">{{relation.subunitsOutsideThreshold}}</td>
 					</tr>
 					<tr>
-						<td># {{revCtrl.orgunitLevelSelected.name}}s with poor score</td>
-						<td>{{relation.subunitsOutsideThreshold}}</td>
-					</tr>
-					<tr>
-						<td>% {{revCtrl.orgunitLevelSelected.name}}s with poor score</td>
-						<td>{{relation.subunitViolationPercentage}}%</td>
+						<td>% {{revCtrl.selectedOrgunit.level.name}} with poor score</td>
+						<td ng-if="revCtrl.isNumber(relation.boundaryPercentage)">{{relation.subunitsOutsideThreshold}}%</td>
 					</tr>
 					<tr ng-if="relation.subunitViolationNames.length > 0">
 						<td colspan="2">Names:</td>
@@ -579,7 +606,7 @@
 				<tr>
 					<td>Ratio of population projection of live births from the Bureau of Statistics to a UN live births projection</td>
 					<td ng-if="revCtrl.denominators.un">{{revCtrl.denominators.un.boundaryRatio}}</td>
-					<td ng-if="!revCtrl.denominators.un">Unavailable</td>
+					<td ng-if="!revCtrl.denominators.un">Not available</td>
 				</tr>
 			</table>
 		</div>
@@ -605,11 +632,11 @@
 						<td>{{denominator.boundaryPercentage}}%</td>
 					</tr>
 					<tr>
-						<td># {{revCtrl.orgunitLevelSelected.name}}s with poor score</td>
+						<td># {{revCtrl.selectedOrgunit.level.name}} with poor score</td>
 						<td>{{denominator.subunitsOutsideThreshold}}</td>
 					</tr>
 					<tr>
-						<td>% {{revCtrl.orgunitLevelSelected.name}}s with poor score</td>
+						<td>% {{revCtrl.selectedOrgunit.level.name}} with poor score</td>
 						<td>{{denominator.subunitViolationPercentage}}%</td>
 					</tr>
 					<tr ng-if="denominator.subunitViolationNames.length > 0">

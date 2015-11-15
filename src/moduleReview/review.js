@@ -3,8 +3,8 @@
 	angular.module('review', []);
 
 	angular.module('review').controller("ReviewController",
-	['d2Meta','d2Map', 'periodService', 'dataAnalysisService', 'visualisationService', 'dqAnalysisConsistency', '$timeout',
-	function(d2Meta, d2Map, periodService, dataAnalysisService, visualisationService, dqAnalysisConsistency, $timeout) {
+	['d2Meta','d2Map', 'periodService', 'dataAnalysisService', 'visualisationService', 'dqAnalysisConsistency', '$timeout', 'd2Utils',
+	function(d2Meta, d2Map, periodService, dataAnalysisService, visualisationService, dqAnalysisConsistency, $timeout, d2Utils) {
 		var self = this;    
 
 		//Check if map is loaded, if not, do that before initialising
@@ -27,11 +27,8 @@
 	    	self.outstandingRequests = 0;
 	    	
 	    	self.remarks = [];
-	    	
-	    	self.orgunitLevels = [];
-	    	self.orgunitLevelSelected = undefined;
-	    	
-	    	self.userOrgunit = undefined;
+
+			self.selectedOrgunit = {};
 	    	
 	    	self.years = periodService.getYears();
 	    	self.years.shift();
@@ -39,27 +36,12 @@
 	    	
 	    	self.groups = [];
 	    	self.groupSelected = undefined;
-	    	
 
-			d2Meta.userOrgunit().then(function(data) {
-	    		self.userOrgunit = data;
-
-				d2Meta.objects('organisationUnitLevels', null, 'name,id,level').then(function(data) {
-	    			var validLevels = [];
-	    			
-	    			for (var i = 0; i < data.length; i++) {
-	    				if (data[i].level > self.userOrgunit.level && data[i].level <= self.userOrgunit.level+3) {
-	    					validLevels.push(data[i]);
-	    				}
-	    			}
-	    			
-	    			self.orgunitLevels = validLevels;
-	    			if (self.orgunitLevels.length === 0) {
-	    				self.notPossible = true;
-	    			}
-	    		});
-	    		
-	    	});
+			//Accordion settings
+			self.oneAtATime = true;
+			self.status = {
+				isFirstOpen: true
+			};
 
 			self.groups = d2Map.configuredGroups();
 			self.groups.unshift({'name': '[ Core ]', 'code': 'core'});
@@ -70,6 +52,10 @@
 
 	  	/** START ANALYSIS*/
 	  	self.doAnalysis = function() {
+
+			//Collapse open panels
+			angular.element('.panel-collapse').removeClass('in');
+			angular.element('.panel-collapse').addClass('collapse');
 	  		
 	  		clearResults();
 	  		self.outstandingRequests = 0;
@@ -84,8 +70,8 @@
 	  		var period = self.yearSelected.id;
 	  		var refPeriods = precedingYears(self.yearSelected.id, 3);
 	  		
-	  		var ouBoundary = self.userOrgunit.id;
-	  		var ouLevel = self.orgunitLevelSelected.level;
+	  		var ouBoundary = self.selectedOrgunit.boundary.id;
+	  		var ouLevel = self.selectedOrgunit.level.level;
 	  		
 	  		
 	  		//1 Get dataset completeness and consistency
