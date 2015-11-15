@@ -6,7 +6,7 @@
 	
 	  	
 	  	var self = this;
-		var maxScatterPoints = 500;
+		var maxScatterPoints = 1000;
 		
 		/** NG-NVD3 Line */
 		/*
@@ -321,11 +321,9 @@
 
 			var deferred = $q.defer();
 
-	  		var allPeriods = [];
 	  		for (var i = 0; i < periods.length; i++) {
-				allPeriods = d2Utils.arrayMerge(allPeriods, periods[i]);
+				d2Data.addRequest(dataID, periods[i], ouID, null, null);
 	  		}
-			d2Data.addRequest(dataID, allPeriods, ouID, null, null);
 
 			d2Data.fetch().then(function (data) {
 				var yLen = 0, xLen = 0;
@@ -725,11 +723,10 @@
 					}
 				}
 				else {
-
 					//If comparison is A ≈ B or A > B, add A=B and "minimum" line
 					chartSeries.push(
 						{
-							'key': result.dxNameA + ' = ' + result.dxNameB,
+							'key': 'A = B',
 							'color': '#ffff',
 							'values': [{
 								'x': 0,
