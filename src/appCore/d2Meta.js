@@ -592,7 +592,7 @@
 					var deferred = $q.defer();
 
 					var requestURL = '/api/categoryOptionCombos.json?';
-					requestURL += 'filter=name:eq:(default)';
+					requestURL += 'filter=name:in:[default,(default)]';
 					requestURL  += '&fields=name,id';
 					requestURL  += '&paging=false';
 					requestService.getSingleData(requestURL).then(
