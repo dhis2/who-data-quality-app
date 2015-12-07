@@ -143,6 +143,9 @@
 					<img src="img/icons/WHO-logo.png" style="width: 40px;height: 40px;"/>
 				</span>
 				<span style="color: #5B92E5; position:relative; top:1px">Data Quality Tool</span>
+				<p style="position:fixed; left:63px; top:30px; width:140px; height:30px; border:none; color: red; font-size: 10px">
+					TEST VERSION
+				</p>
 			</a>
 			</div>
 			<div collapse="navCtrl.isCollapsed" class="navbar-collapse bs-js-navbar-collapse">
@@ -156,11 +159,11 @@
 <!-- TMP	 				<li><a href="#/dashboard">HB Method</a></li>-->
 						</ul>
 					</li>
-						<li ng-class="navCtrl.navClass('review')"><a href="#/review">Annual Report</a></li>
+					<li ng-class="navCtrl.navClass('review')"><a href="#/review">Annual Report</a></li>
+					<li ng-class="navCtrl.navClass('about')"><a href="#/about">About</a></li>
 				<li class="dropdown" dropdown>
 						<a href="#" class="dropdown-toggle" dropdown-toggle>More<span class="caret"></span></a>
 						<ul class="dropdown-menu" role="menu">
-							<li><a href="#/about">About</a></li>
 							<li><a href="#/dashboard">Using the data quality app</a></li>
 							<li class="divider"></li>
 							<li><a href="#/dictionary">Data Dictionary</a></li>
@@ -170,7 +173,7 @@
 							<li class="divider"></li>
 							<li><a href="#/admin">Administration</a></li>
 						</ul>
-					</li>	
+					</li>
 			</ul>
 			<ul class="nav navbar-nav navbar-right">
 				<li ng-if="!navCtrl.validBrowser"><a class="warning">This browser is not supported!</a></li>
