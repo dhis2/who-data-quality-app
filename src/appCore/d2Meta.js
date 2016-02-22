@@ -30,6 +30,8 @@
 					var requestURL = '/api/' + object + '/' + id + '.json?';
 					if (fieldString) requestURL += 'fields=' + fieldString;
 
+					if (fieldString && fieldString.indexOf("name") > -1) console.log("Used name");
+
 					requestService.getSingleData(requestURL).then(
 						function(data) {
 							deferred.resolve(data);
@@ -48,6 +50,8 @@
 					paging = paging === null || paging === undefined ? paging = false : paging;
 
 					var deferred = $q.defer();
+
+					if (fieldString && fieldString.indexOf("name") > -1) console.log("Warning: Used name property");
 
 					var requestURL;
 					if (ids) {
@@ -145,11 +149,11 @@
 					else {
 
 						var promises = [];
-						promises.push(objects('organisationUnits', ouBoundary, 'name,id,level'));
+						promises.push(objects('organisationUnits', ouBoundary, 'displayName,id,level'));
 						promises.push(objects('organisationUnits', null, null, null, true));
 						promises.push(objects('organisationUnitLevels'));
 						if (ouGroup) {
-							promises.push(object('organisationUnitGroups', ouGroup, 'name,id,organisationUnits::size'));
+							promises.push(object('organisationUnitGroups', ouGroup, 'displayName,id,organisationUnits::size'));
 						}
 						$q.all(promises).then(
 							function(datas) {
@@ -193,7 +197,7 @@
 					var deferred = $q.defer();
 
 					var requestURL = '/api/organisationUnits.json?';
-					requestURL += 'userOnly=true&fields=id,name,level&paging=false';
+					requestURL += 'userOnly=true&fields=id,displayName,level&paging=false';
 
 					requestService.getSingleData(requestURL).then(
 						function(data) { //success
@@ -228,7 +232,7 @@
 					var deferred = $q.defer();
 
 					var requestURL = '/api/organisationUnits.json?';
-					requestURL += 'userOnly=true&fields=id,name,level&paging=false';
+					requestURL += 'userOnly=true&fields=id,displayName,level&paging=false';
 
 					requestService.getSingleData(requestURL).then(
 						function(data) { //success
@@ -255,7 +259,7 @@
 					var deferred = $q.defer();
 
 					var requestURL = '/api/organisationUnits.json?';
-					requestURL += 'userOnly=true&fields=id,name,level,children[name,level,id,children[name,level,id]]&paging=false';
+					requestURL += 'userOnly=true&fields=id,displayName,level,children[displayName,level,id,children[displayName,level,id]]&paging=false';
 
 					requestService.getSingleData(requestURL).then(
 						function(data) { //success
@@ -284,7 +288,7 @@
 					var deferred = $q.defer();
 
 					var requestURL = '/api/organisationUnits.json?';
-					requestURL += 'userDataViewFallback=true&fields=id,name,level,children[name,level,id,children::isNotEmpty]&paging=false';
+					requestURL += 'userDataViewFallback=true&fields=id,displayName,level,children[displayName,level,id,children::isNotEmpty]&paging=false';
 
 					requestService.getSingleData(requestURL).then(
 						function(data) { //success
@@ -343,7 +347,7 @@
 					var deferred = $q.defer();
 
 					var requestURL = '/api/dataElements.json?';
-					requestURL += 'fields=name,id,dataSets[name,id,periodType,organisationUnits::size]';
+					requestURL += 'fields=displayName,id,dataSets[displayName,id,periodType,organisationUnits::size]';
 					requestURL += '&filter=id:in:[' + ids.join(',') + ']';
 					requestURL += '&paging=false';
 
@@ -375,7 +379,7 @@
 				function dataElementOrIndicator(id) {
 					var deferred = $q.defer();
 
-					requestService.getSingleData('/api/dataElements.json?fields=name,id&filter=id:eq:' + id).then(
+					requestService.getSingleData('/api/dataElements.json?fields=displayName,id&filter=id:eq:' + id).then(
 						function(data) { //success
 							data = data.dataElements;
 							if (data && data.length === 1) {
@@ -383,7 +387,7 @@
 							}
 							else {
 
-								requestService.getSingleData('/api/indicators.json?fields=name,id&filter=id:eq:' + id)
+								requestService.getSingleData('/api/indicators.json?fields=displayName,id&filter=id:eq:' + id)
 									.then(function(data) {
 										data = data.indicators;
 										if (data && data.length === 1) {
@@ -408,7 +412,7 @@
 					var deferred = $q.defer();
 
 					var requestURL = '/api/indicators/' + id + '.json?';
-					requestURL += 'fields=name,id,numerator,denominator';
+					requestURL += 'fields=displayName,id,numerator,denominator';
 
 					requestService.getSingleData(requestURL).then(
 						function(data) {
@@ -515,7 +519,7 @@
 							var promises = [];
 							promises.push(objects('dataElements', dataElements));
 							promises.push(dataElementOperandsFromIDs(dataElementOperands));
-							promises.push(objects('constants', constants, 'name,id,value'));
+							promises.push(objects('constants', constants, 'displayName,id,value'));
 
 							$q.all(promises).then(
 								function(datas) {
@@ -554,10 +558,6 @@
 								}
 							)
 
-
-
-
-
 						}
 
 					);
@@ -593,7 +593,7 @@
 
 					var requestURL = '/api/categoryOptionCombos.json?';
 					requestURL += 'filter=name:in:[default,(default)]';
-					requestURL  += '&fields=name,id';
+					requestURL  += '&fields=displayName,id';
 					requestURL  += '&paging=false';
 					requestService.getSingleData(requestURL).then(
 						function(data) {

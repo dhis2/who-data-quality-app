@@ -862,15 +862,13 @@
 				function d2CoreMeta() {
 					var deferred = $q.defer();
 
-					console.log("Getting names");
-
 					var dataIDs = d2IDs();
 					_dataIDs = dataIDs;
 
 					var promises = [];
 					promises.push(d2Meta.objects('dataElements', dataIDs));
 					promises.push(d2Meta.objects('indicators', dataIDs));
-					promises.push(d2Meta.objects('dataSets', dataIDs, 'name,id,periodType'));
+					promises.push(d2Meta.objects('dataSets', dataIDs, 'displayName,id,periodType'));
 					promises.push(d2Meta.dataElementOperands(dataIDs));
 					$q.all(promises).then(
 						function(datas) {
@@ -890,7 +888,7 @@
 
 				function d2NameFromID(id) {
 					if (!_d2Objects.hasOwnProperty(id)) return '';
-					return _d2Objects[id].name;
+					return _d2Objects[id].displayName;
 				}
 
 
