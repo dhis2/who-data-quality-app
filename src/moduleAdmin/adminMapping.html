@@ -1,5 +1,5 @@
 <div class="modal-header">
-<h3>{{mapCtrl.indicator.name}}</h3>
+<h3>{{mapCtrl.indicator.displayName}}</h3>
 </div>
 <div class="modal-body">
 
@@ -18,63 +18,63 @@
 	<div ng-show="mapCtrl.dataDisaggregation === 0">
 	<ui-select ng-show="mapCtrl.dataDisaggregation === 0" ng-model="mapCtrl.dataElementGroupsSelected" theme="bootstrap" style="margin-bottom: 10px; width: 75%; display: inline-block;">
 	  <ui-select-match placeholder="Select data element group...">
-	  	{{mapCtrl.dataElementGroupsSelected.name}}
+	  	{{mapCtrl.dataElementGroupsSelected.displayName}}
 	  </ui-select-match>
-	  <ui-select-choices 
+	  <ui-select-choices
 	  	repeat="obj in mapCtrl.dataElementGroups | filter: $select.search">
-	   		<div ng-bind-html="obj.name | highlight: $select.search"></div>
+	   		<div ng-bind-html="obj.displayName | highlight: $select.search"></div>
 	</ui-select-choices>
 	</ui-select>
-	
+
 	<div class="btn-group pull-right" style="display: inline-block;">
 			<label class="btn btn-default" ng-model="mapCtrl.dataDetails" btn-radio="0">Totals</label>
 	  		<label class="btn btn-default" ng-model="mapCtrl.dataDetails" btn-radio="1">Details</label>
 	</div>
-	
+
 	<ui-select ng-disabled="!mapCtrl.dataElementGroupsSelected" ng-model="mapCtrl.dataElementsSelected" theme="bootstrap" style="margin-bottom: 10px;">
 	  <ui-select-match placeholder="Select data element...">
-	  	{{mapCtrl.dataElementsSelected.name}}
+	  	{{mapCtrl.dataElementsSelected.displayName}}
 	  </ui-select-match>
-	  <ui-select-choices 
+	  <ui-select-choices
 	  	repeat="obj in mapCtrl.dataElements | filter: $select.search">
-	   		<div ng-bind-html="obj.name | highlight: $select.search"></div>
+	   		<div ng-bind-html="obj.displayName | highlight: $select.search"></div>
 	  </ui-select-choices>
 	  </ui-select>
 	</div>
-		
+
 	<div ng-show="mapCtrl.dataDisaggregation === 1">
 	<ui-select ng-model="mapCtrl.indicatorGroupsSelected" theme="bootstrap" style="margin-bottom: 10px;">
 	  <ui-select-match placeholder="Select indicator group...">
-	  	{{mapCtrl.indicatorGroupsSelected.name}}
+	  	{{mapCtrl.indicatorGroupsSelected.displayName}}
 	  </ui-select-match>
 	  <ui-select-choices
 	  	repeat="obj in mapCtrl.indicatorGroups | filter: $select.search">
-	   		<div ng-bind-html="obj.name | highlight: $select.search"></div>
+	   		<div ng-bind-html="obj.displayName | highlight: $select.search"></div>
 	  </ui-select-choices>
 	</ui-select>
-	
+
 	<ui-select ng-disabled="!mapCtrl.indicatorGroupsSelected" ng-model="mapCtrl.indicatorsSelected" theme="bootstrap" style="margin-bottom: 10px;">
 	  <ui-select-match placeholder="Select indicator...">
-	  	{{mapCtrl.indicatorsSelected.name}}
+	  	{{mapCtrl.indicatorsSelected.displayName}}
 	  </ui-select-match>
-	  <ui-select-choices 
+	  <ui-select-choices
 	  	repeat="obj in mapCtrl.indicators | filter: $select.search">
-	   		<div ng-bind-html="obj.name | highlight: $select.search"></div>
+	   		<div ng-bind-html="obj.displayName | highlight: $select.search"></div>
 	  </ui-select-choices>
 	</ui-select>
 	</div>
 	<label>Dataset for completeness</label>
 	<ui-select ng-disabled="(mapCtrl.dataDisaggregation === 0 && !mapCtrl.dataElementsSelected) || (mapCtrl.dataDisaggregation === 1 && !mapCtrl.indicatorsSelected)"ng-model="mapCtrl.dataSetsSelected" theme="bootstrap" style="margin-bottom: 10px;">
 	  <ui-select-match placeholder="Select data set...">
-	  	{{mapCtrl.dataSetsSelected.name}}
+	  	{{mapCtrl.dataSetsSelected.displayName}}
 	  </ui-select-match>
-	  <ui-select-choices 
+	  <ui-select-choices
 	  	repeat="obj in mapCtrl.dataSets | filter: $select.search">
-	   		<div ng-bind-html="obj.name | highlight: $select.search"></div>
+	   		<div ng-bind-html="obj.displayName | highlight: $select.search"></div>
 	  </ui-select-choices>
 	</ui-select>
 <hr />
-<p ng-if="(mapCtrl.dataDisaggregation === 0 && mapCtrl.dataElementsSelected) || (mapCtrl.dataDisaggregation === 1 && mapCtrl.indicatorsSelected)">"<em>{{mapCtrl.indicator.name}}</em>" will be mapped to "<em ng-if="mapCtrl.dataDisaggregation === 0">{{mapCtrl.dataElementsSelected.name}}</em><em ng-if="mapCtrl.dataDisaggregation === 1">{{mapCtrl.indicatorsSelected.name}}</em>"</p>
+<p ng-if="(mapCtrl.dataDisaggregation === 0 && mapCtrl.dataElementsSelected) || (mapCtrl.dataDisaggregation === 1 && mapCtrl.indicatorsSelected)">"<em>{{mapCtrl.indicator.name}}</em>" will be mapped to "<em ng-if="mapCtrl.dataDisaggregation === 0">{{mapCtrl.dataElementsSelected.displayName}}</em><em ng-if="mapCtrl.dataDisaggregation === 1">{{mapCtrl.indicatorsSelected.displayName}}</em>"</p>
 
 </div>
 <div class="modal-footer" style="clear: both;">     

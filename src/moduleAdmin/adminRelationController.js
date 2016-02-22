@@ -64,7 +64,7 @@
 		}
 		
 		function getType(typeCode) {
-			d2Map.dataRelationType(typeCode);
+			return d2Map.dataRelationType(typeCode);
 		}
 	   	
 	   	

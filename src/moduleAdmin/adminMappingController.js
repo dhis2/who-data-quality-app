@@ -42,14 +42,14 @@
 	    function updateDataElementList() {	    	
 	    	if (self.dataDetails === 0) {	    	
 
-				d2Meta.object('dataElementGroups', self.dataElementGroupsSelected.id, 'dataElements[name,id]')
+				d2Meta.object('dataElementGroups', self.dataElementGroupsSelected.id, 'dataElements[displayName,id]')
 		    	 	.then(function(data) { 
 		    	       	self.dataElements = data.dataElements;
 		    	     });
 	    	}
 	    	else {
 				var filter = 'dataElement.dataElementGroups.id:eq:' + self.dataElementGroupsSelected.id;
-				var fields = 'name,id,dataElementId,optionComboId';
+				var fields = 'displayName,id,dataElementId,optionComboId';
 				d2Meta.objects('dataElementOperands', null, fields, filter)
 	    			.then(function(data) {
 	    		       	self.dataElements = data;
@@ -60,7 +60,7 @@
 	    
   	    function updateIndicatorList() {
 
-			d2Meta.object('indicatorGroups', self.indicatorGroupsSelected.id, 'indicators[name,id]')
+			d2Meta.object('indicatorGroups', self.indicatorGroupsSelected.id, 'indicators[displayName,id]')
   	    		.then(function(data) { 
   	    		   	self.indicators = data.indicators;
   	    		});
@@ -79,7 +79,7 @@
 				else {
 					id = self.dataElementsSelected.dataElementId;
 				}
-				d2Meta.object('dataElements', id, 'dataSets[name,id,periodType]')
+				d2Meta.object('dataElements', id, 'dataSets[displayName,id,periodType]')
 		    		.then(function(data) {
 		    			 
 	    			   	self.dataSets = data.dataSets;
