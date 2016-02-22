@@ -413,7 +413,6 @@
 						"code": code,
 						"extremeOutlier": 3,
 						"localData": {},
-						"matched": false,
 						"moderateOutlier": 2,
 						"consistency": 33,
 						"custom": true,
@@ -463,8 +462,6 @@
 
 					indicator.dataSetID = null;
 					indicator.dataID = null;
-					indicator.matched = false;
-
 
 					deleteDataset(dataSetID);
 				}

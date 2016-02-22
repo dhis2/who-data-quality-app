@@ -20,7 +20,7 @@
 					<td class="vert-align">{{admCtrl.d2NameFromID(indicator.dataID)}}</td>
 					<td class="vert-align">{{admCtrl.d2NameFromID(indicator.dataSetID)}}</td>
 					<td class="vert-align" align="center">
-						<button ng-disabled="!admCtrl.isAdmin" ng-click="admCtrl.numeratorMap(indicator.code);" class="btn btn-default btn-xs">Edit</button><button ng-disabled="!admCtrl.isAdmin" ng-if="indicator.custom" style="margin-left: 5px; width: 50px;" ng-click="admCtrl.numeratorDelete(indicator.code);" class="btn btn-danger btn-xs">Delete</button><button ng-if="!indicator.custom" ng-disabled="!indicator.matched || !admCtrl.isAdmin" style="margin-left: 5px; width: 50px" ng-click="admCtrl.numeratorClear(indicator.code);" class="btn btn-warning btn-xs">Clear</button></td>
+						<button ng-disabled="!admCtrl.isAdmin" ng-click="admCtrl.numeratorMap(indicator.code);" class="btn btn-default btn-xs">Edit</button><button ng-disabled="!admCtrl.isAdmin" ng-if="indicator.custom" style="margin-left: 5px; width: 50px;" ng-click="admCtrl.numeratorDelete(indicator.code);" class="btn btn-danger btn-xs">Delete</button><button ng-if="!indicator.custom" ng-disabled="!indicator.dataID || !admCtrl.isAdmin" style="margin-left: 5px; width: 50px" ng-click="admCtrl.numeratorClear(indicator.code);" class="btn btn-warning btn-xs">Clear</button></td>
 				</tr>
 			<tfoot>
 			<tr><td colspan="6"><button ng-disabled="!admCtrl.isAdmin" type="button" class="btn btn-primary pull-right btn-sm" ng-click="admCtrl.numeratorAdd();" style="width: 90px;">Add</button></td></tr></tfoot>
@@ -144,7 +144,7 @@
 					<th>Expected trend</th>
 					<th>Missing/zero values (%)</th>
 				</tr>
-				<tr ng-repeat="indicator in admCtrl.numerators| filter: {matched: true} | orderBy:admCtrl.numeratorSort">
+				<tr ng-repeat="indicator in admCtrl.numerators| filter: {dataID: ''} | orderBy:admCtrl.numeratorSort">
 					<td class="vert-align">{{admCtrl.dataGroups(indicator.code)}}</td>
 					<td class="vert-align">{{indicator.name}}</td>
 					<td class="vert-align">{{admCtrl.d2NameFromID(indicator.dataID)}}</td>
