@@ -210,7 +210,7 @@
 
 			var period;
 			var endDate = moment(self.endDate);
-			if (endDate.month() <= 5) {
+			if (endDate.month() <= 3) {
 				period = endDate.subtract(12, 'months').year();
 			}
 			else {
@@ -520,7 +520,14 @@
 
 
 
-			self.endDate = moment().subtract(new Date().getDate(), 'days');
+			self.endDate = moment();
+			if (self.endDate.date() <= 15) {
+				self.endDate.subtract(new Date().getDate(), 'days');
+			}
+			else {
+				self.endDate.subtract(new Date().getDate(), 'days');
+				self.endDate.add(1, 'months');
+			}
 			self.startDate = moment(self.endDate).subtract(12, 'months').add(1, 'day');
 			self.maxDate = self.endDate;
       	}
