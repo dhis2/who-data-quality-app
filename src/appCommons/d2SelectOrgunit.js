@@ -40,13 +40,13 @@
 
 					var promises = [];
 					promises.push(d2Meta.userOrgunits());
-					promises.push(d2Meta.objects('organisationUnitLevels', null, 'name,id,level'));
+					promises.push(d2Meta.objects('organisationUnitLevels', null, 'displayName,id,level'));
 					promises.push(d2Meta.objects('organisationUnitGroups'));
 					$q.all(promises).then(
 						function(data) {
 							self.userOrgunits = data[0];
 							self.orgunitLevels = d2Utils.arraySortByProperty(data[1], 'level', true, true);
-							self.orgunitGroups = d2Utils.arraySortByProperty(data[2], 'name', false);
+							self.orgunitGroups = d2Utils.arraySortByProperty(data[2], 'displayName', false);
 
 							self.selectionType = 0;
 							self.selectedOrgunit = self.userOrgunits[0];

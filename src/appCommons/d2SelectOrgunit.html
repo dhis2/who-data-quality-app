@@ -5,7 +5,7 @@
 			class="btn btn-default"
 			ng-model="d2sCtrl.selectionType"
 			btn-radio="$index">
-		{{orgunit.name}}
+		{{orgunit.displayName}}
 	</label>
 	<label
 			class="btn btn-default"
@@ -49,9 +49,9 @@
 <label for="orgunitSelected">Selected </label>
 <div id="orgunitSelected">
 	<p>
-		<span style="font-size: 100%;" class="label label-primary">{{d2sCtrl.selectedOrgunit.name}}</span>
-		<span ng-if="d2sCtrl.selectedLevel"><span class="glyphicon glyphicon-chevron-right" style="margin-left: 5px; margin-right: 8px"></span><span style="font-size: 100%;" class="label label-primary">{{d2sCtrl.selectedLevel.name}}</span></span>
-		<span ng-if="d2sCtrl.selectedGroup"><span class="glyphicon glyphicon-chevron-right" style="margin-left: 5px; margin-right: 8px"></span><span style="font-size: 100%;" class="label label-primary">{{d2sCtrl.selectedGroup.name}}</span></span>
+		<span style="font-size: 100%;" class="label label-primary">{{d2sCtrl.selectedOrgunit.displayName}}</span>
+		<span ng-if="d2sCtrl.selectedLevel"><span class="glyphicon glyphicon-chevron-right" style="margin-left: 5px; margin-right: 8px"></span><span style="font-size: 100%;" class="label label-primary">{{d2sCtrl.selectedLevel.displayName}}</span></span>
+		<span ng-if="d2sCtrl.selectedGroup"><span class="glyphicon glyphicon-chevron-right" style="margin-left: 5px; margin-right: 8px"></span><span style="font-size: 100%;" class="label label-primary">{{d2sCtrl.selectedGroup.displayName}}</span></span>
 	</p>
 	<br />
 </div>

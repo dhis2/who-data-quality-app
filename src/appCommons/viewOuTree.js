@@ -33,21 +33,22 @@
 						for (var i = 0; i < data.length; i++) {
 							var ou = data[i];
 							var root = {
-								label: ou.name,
+								label: ou.displayName,
 								data: {
 									ou: ou
 								},
 								children: []
-							}
+							};
 
-							d2Utils.arraySortByProperty(ou.children, 'name', false);
+
+							d2Utils.arraySortByProperty(ou.children, 'displayName', false);
 
 							for (var j = 0; ou.children && j < ou.children.length; j++) {
 
 								var child = ou.children[j];
 
 								root.children.push({
-									label: child.name,
+									label: child.displayName,
 									data: {
 										ou: child
 									},
@@ -72,12 +73,12 @@
 						d2Meta.object('organisationUnits', orgunit.data.ou.id, 'children[name,id,level,children::isNotEmpty]').then(
 							function (data) {
 								var children = data.children;
-								d2Utils.arraySortByProperty(children, 'name', false);
+								d2Utils.arraySortByProperty(children, 'displayName', false);
 								for (var i = 0; i < children.length; i++) {
 									var child = children[i];
 									if (!orgunit.children) orgunit.children = [];
 									orgunit.children.push({
-										label: child.name,
+										label: child.displayName,
 										data: {
 											ou: child
 										},
