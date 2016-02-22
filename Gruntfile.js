@@ -71,7 +71,7 @@ module.exports = function(grunt) {
 			dev: {
 				options: {
 					src: "build/",
-					dest: "/usr/local/var/www/apps/dq",
+					dest: "/Users/Olav/DHIS/tomcat_stable/dhis2_home/apps/dq",
 					delete: true
 				}
 			}
