@@ -319,23 +319,10 @@
 		}
 
 
-		function getPeriodTypes(datasets) {
-      		
-  			var data, pTypes = {};
-  			for (var i = 0; i < self.dataAvailable.length; i++) {
-  				pTypes[self.dataAvailable[i].periodType] = true;
-  			}
-      			
-      		for (pt in pTypes) {
-      			self.periodTypes.push({'pt': pt});
-      		}
-      		
-      	}
-
-
       	self.setWindowWidth = function() {
 
 			var contentWidth = angular.element('.mainView').width();
+
 			//TODO: For now, assume there is a scrollbar - which on Win Chrome is 17 px
 			contentWidth -= 17;
 			self.innerWidth = contentWidth;
@@ -369,11 +356,6 @@
 			}
 			self.widthChanged[self.selectedTab] = false;
 
-		}
-
-
-		function sortName(a, b) {
-			return a.name > b.name ? 1 : -1;
 		}
 
 
@@ -418,6 +400,21 @@
 					self.makeDataConsistencyCharts();
 					break;
 			}
+		}
+
+
+
+		/** ===== SELECTION ===== */
+		self.selectionURL='moduleDashboard/selection.html';
+
+		self.boundarySelected = function(orgunit) {
+			if (self.ouBoundary && self.ouBoundary.id === orgunit.id) return;
+
+			self.ouBoundary = orgunit;
+			self.filterLevels();
+			self.orgunitUserDefaultLevel();
+
+			if (self.orgunitLevels) self.update();
 		}
 
 
@@ -470,9 +467,8 @@
 		};
 
 
-		
-      	/** ===== INIT ===== */		
-      	
+
+      	/** ===== INIT ===== */
       	function init() {
 
 			if (angular.element('.mainView').width() > 1280) {
@@ -546,20 +542,9 @@
 			);
 		}
 
-		self.selectionURL='moduleDashboard/selection.html';
 
-		self.boundarySelected = function(orgunit) {
-			if (self.ouBoundary && self.ouBoundary.id === orgunit.id) return;
 
-			self.ouBoundary = orgunit;
-			self.filterLevels();
-			self.orgunitUserDefaultLevel();
-
-			if (self.orgunitLevels) self.update();
-		}
-			
-			
-		return self;
+		 return self;
 		
 	}]);
 })();
