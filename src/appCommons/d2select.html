@@ -8,12 +8,12 @@
 
 		<ui-select-match
 				placeholder="{{d2sCtrl.placeholder}}">
-			{{$item.name}}
+			{{$item.displayName}}
 		</ui-select-match>
 
 		<ui-select-choices
 				repeat="obj in d2sCtrl.options | filter: $select.search">
-			<div ng-bind-html="obj.name | highlight: $select.search">
+			<div ng-bind-html="obj.displayName | highlight: $select.search">
 			</div>
 		</ui-select-choices>
 
@@ -28,12 +28,12 @@
 		<ui-select-match
 				allow-clear="true"
 				placeholder="{{d2sCtrl.placeholder}}">
-			{{d2sCtrl.ngModel.name}}
+			{{d2sCtrl.ngModel.displayName}}
 		</ui-select-match>
 
 		<ui-select-choices
 				repeat="obj in d2sCtrl.options | filter: $select.search">
-			<div ng-bind-html="obj.name | highlight: $select.search">
+			<div ng-bind-html="obj.displayName | highlight: $select.search">
 			</div>
 		</ui-select-choices>
 
