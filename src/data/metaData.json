@@ -33,7 +33,7 @@
 		"members": ["D8", "D9", "D35", "D23", "D41"	]
 	}		
 	],
-	"data": [
+	"numerators": [
 	{
 		"definition": "Total number of outpatient visits", 
 		"extremeOutlier": 3,
@@ -372,7 +372,7 @@
 	}
 		],
 	"dataSets": [],
-	"relations": [
+	"numeratorRelations": [
 	{
 		"A": "D1",
 		"B": "D19",
@@ -429,23 +429,23 @@
 	  "code": "P3",
 	  "lowLevel": 2
 	},
-	  {
-		"idA": "",
-		"idB": "",
-		"type": "ep",
-		"criteria": 10,
-		"name": "Expected pregnancies",
-		"code": "P4",
-		"lowLevel": 2
-	  },
-	  {
-		"idA": "",
-		"idB": "",
-		"type": "lt1",
-		"criteria": 10,
-		"name": "Children < 1 year",
-		"code": "P5",
-		"lowLevel": 2
-	  }
+	{
+	  "idA": "",
+	  "idB": "",
+	  "type": "ep",
+	  "criteria": 10,
+	  "name": "Expected pregnancies",
+	  "code": "P4",
+	  "lowLevel": 2
+	},
+	{
+	  "idA": "",
+	  "idB": "",
+	  "type": "lt1",
+	  "criteria": 10,
+	  "name": "Children < 1 year",
+	  "code": "P5",
+	  "lowLevel": 2
+	}
   ]
 }

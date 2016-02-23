@@ -162,18 +162,18 @@
 					if (_map.metaDataVersion != currentVersion) {
 
 						//Do whatever upgrades are needed here
-						for (var i = 0; i < _map.data.length; i++) {
+						for (var i = 0; i < _map.numerators.length; i++) {
 
 							//Simplify the "localdata" object
-							if (_map.data[i].localData.hasOwnProperty('id')) {
-								var id = _map.data[i].localData.id;
-								_map.data[i].dataID = id;
+							if (_map.numerators[i].localData.hasOwnProperty('id')) {
+								var id = _map.numerators[i].localData.id;
+								_map.numerators[i].dataID = id;
 							}
 							else {
-								_map.data[i].dataID = null;
+								_map.numerators[i].dataID = null;
 							}
-							delete _map.data[i].localData;
-							delete _map.data[i].id;
+							delete _map.numerators[i].localData;
+							delete _map.numerators[i].id;
 						}
 
 						_map.metaDataVersion = currentVersion;
@@ -402,8 +402,8 @@
 
 				function indicators(code) {
 					if (code) {
-						for (var i = 0; i < _map.data.length; i++) {
-							if (_map.data[i].code === code) return _map.data[i];
+						for (var i = 0; i < _map.numerators.length; i++) {
+							if (_map.numerators[i].code === code) return _map.numerators[i];
 						}
 					}
 					else {
@@ -415,7 +415,7 @@
 				function addIndicator(name, definition, groupCode) {
 					//Add indicator
 					var code = getNewIndicatorCode();
-					_map.data.push({
+					_map.numerators.push({
 						"name": name,
 						"definition": definition,
 						"code": code,
@@ -439,9 +439,9 @@
 
 				function configuredIndicators(code) {
 					if (code) {
-						for (var i = 0; i < _map.data.length; i++) {
-							if (_map.data[i].code === code) {
-								if (_map.data[i].dataID) {
+						for (var i = 0; i < _map.numerators.length; i++) {
+							if (_map.numerators[i].code === code) {
+								if (_map.numerators[i].dataID) {
 									return true;
 								}
 								else return false;
@@ -451,9 +451,9 @@
 					}
 					else {
 						var configured = [];
-						for (var i = 0; i < _map.data.length; i++) {
-							if (_map.data[i].dataID) {
-								configured.push(indicators(_map.data[i].code));
+						for (var i = 0; i < _map.numerators.length; i++) {
+							if (_map.numerators[i].dataID) {
+								configured.push(indicators(_map.numerators[i].code));
 							}
 						}
 						return configured;
@@ -477,10 +477,10 @@
 
 				function numeratorDelete(code) {
 					var dataSetID;
-					for (var i = 0; i < _map.data.length; i++) {
-						if (_map.data[i].code === code) {
-							dataSetID = _map.data[i].dataSetID;
-							_map.data.splice(i, 1);
+					for (var i = 0; i < _map.numerators.length; i++) {
+						if (_map.numerators[i].code === code) {
+							dataSetID = _map.numerators[i].dataSetID;
+							_map.numerators.splice(i, 1);
 						}
 					}
 					removeFromGroups(code);
@@ -503,9 +503,9 @@
 					}
 
 
-					for (var i = 0; i < _map.data.length; i++) {
-						if (_map.data[i].code === indicator.code) {
-							_map.data[i] = indicator;
+					for (var i = 0; i < _map.numerators.length; i++) {
+						if (_map.numerators[i].code === indicator.code) {
+							_map.numerators[i] = indicator;
 							break;
 						}
 					}
@@ -541,13 +541,13 @@
 
 					//Get and return next possible code
 					var current, found;
-					for (var i = 0; i <= _map.data.length; i++) {
+					for (var i = 0; i <= _map.numerators.length; i++) {
 
 						current = "C" + parseInt(i+1);
 						existing = false;
 
-						for (var j = 0; j < _map.data.length; j++) {
-							if (_map.data[j].code === current) existing = true;
+						for (var j = 0; j < _map.numerators.length; j++) {
+							if (_map.numerators[j].code === current) existing = true;
 						}
 
 						if (!existing) return current;
@@ -561,22 +561,22 @@
 				function relations(code) {
 					if (code) {
 						var relations = [];
-						for (var i = 0; i < _map.relations.length; i++) {
-							if (_map.relations[i].code === code) {
-								return _map.relations[i];
+						for (var i = 0; i < _map.numeratorRelations.length; i++) {
+							if (_map.numeratorRelations[i].code === code) {
+								return _map.numeratorRelations[i];
 							}
 						}
 					}
 					else {
-						return _map.relations;
+						return _map.numeratorRelations;
 					}
 				}
 
 
 				function configuredRelations(code) {
 					var confRel = []
-					for (var i = 0; i < _map.relations.length; i++) {
-						var rel = _map.relations[i];
+					for (var i = 0; i < _map.numeratorRelations.length; i++) {
+						var rel = _map.numeratorRelations[i];
 
 						if (code && rel.code === code) {
 							if (rel.A && configuredIndicators(rel.A) && rel.B && configuredIndicators(rel.B)) {
@@ -596,15 +596,15 @@
 
 				function addEditRelation(relation) {
 					if (relation.code != null) {
-						for (var i = 0; i < _map.relations.length; i++) {
-							if (_map.relations[i].code === relation.code) {
-								_map.relations[i] = relation;
+						for (var i = 0; i < _map.numeratorRelations.length; i++) {
+							if (_map.numeratorRelations[i].code === relation.code) {
+								_map.numeratorRelations[i] = relation;
 							}
 						}
 					}
 					else {
 						relation.code = relationCode();
-						_map.relations.push(relation);
+						_map.numeratorRelations.push(relation);
 					}
 
 					return save();
@@ -612,9 +612,9 @@
 
 
 				function deleteRelation(code) {
-					for (var i = 0; i < _map.relations.length; i++) {
-						if (_map.relations[i].code === code) {
-							_map.relations.splice(i, 1);
+					for (var i = 0; i < _map.numeratorRelations.length; i++) {
+						if (_map.numeratorRelations[i].code === code) {
+							_map.numeratorRelations.splice(i, 1);
 						}
 					}
 
@@ -623,9 +623,9 @@
 
 
 				function removeFromRelations(code) {
-					for (var i = 0; i < _map.relations.length; i++) {
-						if (_map.relations[i].A === code) _map.relations[i].A;
-					 	if (_map.relations[i].B === code) _map.relations[i].B;
+					for (var i = 0; i < _map.numeratorRelations.length; i++) {
+						if (_map.numeratorRelations[i].A === code) _map.numeratorRelations[i].A;
+					 	if (_map.numeratorRelations[i].B === code) _map.numeratorRelations[i].B;
 					}
 
 					return save();
@@ -634,13 +634,13 @@
 
 				function relationCode() {
 					var current, found;
-					for (var i = 0; i <= _map.relations.length; i++) {
+					for (var i = 0; i <= _map.numeratorRelations.length; i++) {
 
 						current = "R" + parseInt(i+1);
 						existing = false;
 
-						for (var j = 0; j < _map.relations.length; j++) {
-							if (_map.relations[j].code === current) existing = true;
+						for (var j = 0; j < _map.numeratorRelations.length; j++) {
+							if (_map.numeratorRelations[j].code === current) existing = true;
 						}
 
 						if (!existing) return current;
@@ -694,8 +694,8 @@
 				function deleteDataset(id) {
 
 					// 1 check that no remaining indicators still use it
-					for (var i = 0; i < _map.data.length; i++) {
-						if (_map.data[i].dataID && _map.data[i].dataID === id) {
+					for (var i = 0; i < _map.numerators.length; i++) {
+						if (_map.numerators[i].dataID && _map.numerators[i].dataID === id) {
 							return;
 						}
 					}
@@ -851,9 +851,9 @@
 
 				function d2IDs() {
 					var dataIDs = [];
-					for (var i = 0; i < _map.data.length; i++) {
-						if (_map.data[i].dataID) {
-							dataIDs.push(_map.data[i].dataID);
+					for (var i = 0; i < _map.numerators.length; i++) {
+						if (_map.numerators[i].dataID) {
+							dataIDs.push(_map.numerators[i].dataID);
 						}
 					}
 					for (var i = 0; i < _map.dataSets.length; i++) {
