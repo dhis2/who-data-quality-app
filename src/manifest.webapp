@@ -13,7 +13,8 @@
     },
     "activities": {
         "dhis": {
-            "href": "*"
+            "href": "*",
+            "namespace": "dataQualityTool"
         }
     },
     "launchUrl": null,
