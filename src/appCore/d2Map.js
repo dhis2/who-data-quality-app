@@ -59,11 +59,10 @@
 
 				function load() {
 					var deferred = $q.defer();
-					requestService.getSingle('/api/systemSettings/DQAmapping').then(
-					//requestService.getSingle('/api/dataStore/dataQualityTool/settings').then(
-						function(data) {
-							_map = data;
-							if (_map) {
+					requestService.getSingle('/api/dataStore/dataQualityTool/settings').then(
+						function(response) {
+							_map = response.data;
+							if (_map && _map != '') {
 								d2CoreMeta().then(
 									function (data) {
 										_ready = true;
@@ -71,13 +70,9 @@
 									}
 								);
 							}
-							else {
-								console.log("Error when getting settings");
-							}
 						},
-						function(error) {
-							if (error.status == 404) {
-
+						function(response) {
+							if (response.status == 404) {
 
 								console.log("No map exists");
 
@@ -85,12 +80,12 @@
 								template().then(
 									function (result) {
 										if (result) {
-											deferred.resolve(false);
-											_ready = false;
-										}
-										else {
 											deferred.resolve(true);
 											_ready = true;
+										}
+										else {
+											deferred.resolve(false);
+											_ready = false;
 										}
 
 									}
@@ -109,16 +104,13 @@
 
 				function save() {
 
-
 					//Check if we have new DHIS 2 ids to fetch;
 					var currentIDs = d2IDs().join('');
 					var previousIDs = _dataIDs.join('');
 					if (currentIDs != previousIDs) d2CoreMeta();
 
-					return requestService.post('/api/systemSettings/', {'DQAmapping': angular.toJson(_map)});
-					//return requestService.post('/api/dataStore/dataQualityTool', {'settings': angular.toJson(_map)});
+					return requestService.put('/api/dataStore/dataQualityTool/settings', angular.toJson(_map));
 				}
-
 
 				function admin() {
 					var deferred = $q.defer();
@@ -197,10 +189,8 @@
 									_map = response.data;
 
 									//Save template to systemSettings
-									requestService.post('/api/systemSettings/', {'DQAmapping': angular.toJson(_map)}).then(
-									//requestService.post('/api/dataStore/dataQualityTool', {'settings': angular.toJson(_map)}).then(
+									requestService.post('/api/dataStore/dataQualityTool/settings', angular.toJson(_map)).then(
 										function (data) {
-
 											_ready = true;
 											deferred.resolve(true);
 										},
@@ -211,7 +201,9 @@
 									);
 								});
 							}
-							deferred.resolve(false);
+							else {
+								deferred.resolve(false);
+							}
 						}
 					);
 
@@ -847,6 +839,7 @@
 
 					return false;
 				}
+
 
 
 				function d2IDs() {
