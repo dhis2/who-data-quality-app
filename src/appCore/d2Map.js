@@ -407,7 +407,7 @@
 						}
 					}
 					else {
-						return _map.data;
+						return _map.numerators;
 					}
 				}
 
