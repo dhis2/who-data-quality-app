@@ -65,6 +65,12 @@
 		  	return $http.post(fullURL, data);
 		};
 
+		self.put = function(postURL, data) {
+			var fullURL = BASE_URL + postURL;
+
+			return $http.put(fullURL, data);
+		};
+
 		self.validResponse = function(response) {
 			//TODO - need to decide how to handle this better in general
 			if (Object.prototype.toString.call(response) === '[object Array]') return true;
