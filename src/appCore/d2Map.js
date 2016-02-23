@@ -32,6 +32,14 @@
 					denominatorsConfigured: denominatorsConfigured,
 					denominatorAddEdit: addEditDenominator,
 					denominatorDelete: deleteDenominator,
+					denominatorTypes: denominatorTypes,
+					denominatorType: denominatorType,
+					denominatorRelations: denominatorRelations,
+					denominatorRelationAddEdit: addEditDenominatorRelation,
+					denominatorRelationDelete: deleteDenominatorRelation,
+					externalRelations: externalRelations,
+					externalRelationAddEdit: addEditExternalRelation,
+					externalRelationDelete: deleteExternalRelation,
 					dataSets: dataSets,
 					dataSetPeriodType: dataSetPeriodType,
 					relations: relations,
@@ -39,6 +47,7 @@
 					relationDelete: deleteRelation,
 					dataRelationTypes: dataRelationTypes,
 					dataRelationType: dataRelationType,
+					externalRelations: externalRelations,
 					d2NameFromID: d2NameFromID
 				};
 
@@ -150,24 +159,12 @@
 				 * Upgrade metadata version
 				 */
 				function versionUpgrade() {
-					var currentVersion = 0.5;
+					var currentVersion = 0.7;
 					if (_map.metaDataVersion != currentVersion) {
 
 						//Do whatever upgrades are needed here
-						for (var i = 0; i < _map.numerators.length; i++) {
-
-							//Simplify the "localdata" object
-							if (_map.numerators[i].localData.hasOwnProperty('id')) {
-								var id = _map.numerators[i].localData.id;
-								_map.numerators[i].dataID = id;
-							}
-							else {
-								_map.numerators[i].dataID = null;
-							}
-							delete _map.numerators[i].localData;
-							delete _map.numerators[i].id;
-						}
-
+						delete _map.externalComparison;
+						_map.externalRelations = [];
 						_map.metaDataVersion = currentVersion;
 						return save();
 					}
@@ -726,7 +723,7 @@
 					if (code) {
 						for (var i = 0; i < _map.denominators.length; i++) {
 							if (_map.denominators[i].code === code) {
-								if (_map.denominators[i].idA && _map.denominators[i].idB) return true;
+								if (_map.denominators[i].dataID != '') return true;
 								else return false;
 							}
 						}
@@ -735,7 +732,7 @@
 					else {
 						var configured = [];
 						for (var i = 0; i < _map.denominators.length; i++) {
-							if (_map.denominators[i].idA && _map.denominators[i].idB) {
+							if (_map.denominators[i].dataID != '') {
 								configured.push(_map.denominators[i]);
 							}
 						}
@@ -771,6 +768,27 @@
 					return save();
 				}
 
+				function denominatorTypes() {
+					return [
+						{'name': 'Total Population', 'code': 'total'},
+						{'name': 'Live births', 'code': 'lb'},
+						{'name': 'Children < 1 year', 'code': 'lt1'},
+						{'name': 'Expected pregnancies', 'code': 'ep'},
+						{'name': 'Other', 'code': 'other'},
+						{'name': 'UN population projection', 'code': 'un'}
+					];
+				}
+
+				function denominatorType(code) {
+					var types = denominatorTypes();
+					for (var i = 0; i < types.length; i++) {
+						if (types[i].code === code) return types[i];
+					}
+
+					return false;
+
+
+				}
 
 				function denominatorCode() {
 
@@ -778,7 +796,7 @@
 					var current, found;
 					for (var i = 0; i <= _map.denominators.length; i++) {
 
-						current = "R" + parseInt(i + 1);
+						current = "P" + parseInt(i + 1);
 						existing = false;
 
 						for (var j = 0; j < _map.denominators.length; j++) {
@@ -788,6 +806,130 @@
 						if (!existing) return current;
 					}
 				}
+
+
+				/** ====== DENOMINATOR RELATIONS ===== **/
+				function denominatorRelations(code) {
+					if (code) {
+						for (var i = 0; i < _map.denominatorRelations.length; i++) {
+							if (_map.denominatorRelations[i].code === code) {
+								return _map.denominatorRelations[i];
+							}
+						}
+					}
+					else {
+						return _map.denominatorRelations;
+					}
+				}
+
+
+				function addEditDenominatorRelation(denominatorRelation) {
+					if (denominatorRelation.code != null) {
+						for (var i = 0; i < _map.denominatorRelations.length; i++) {
+							if (_map.denominatorRelations[i].code === denominatorRelation.code) {
+								_map.denominatorRelations[i] = denominatorRelation;
+							}
+						}
+					}
+					else {
+						denominatorRelation.code = denominatorRelationCode();
+						_map.denominatorRelations.push(denominatorRelation);
+					}
+
+					return save();
+				}
+
+
+				function deleteDenominatorRelation(code) {
+					for (var i = 0; i < _map.denominatorRelations.length; i++) {
+						if (_map.denominatorRelations[i].code === code) {
+							_map.denominatorRelations.splice(i, 1);
+						}
+					}
+
+					return save();
+				}
+
+
+				function denominatorRelationCode() {
+
+					//Get and return next possible code
+					var current, found;
+					for (var i = 0; i <= _map.denominatorRelations.length; i++) {
+
+						current = "PR" + parseInt(i + 1);
+						existing = false;
+
+						for (var j = 0; j < _map.denominatorRelations.length; j++) {
+							if (_map.denominatorRelations[j].code === current) existing = true;
+						}
+
+						if (!existing) return current;
+					}
+				}
+
+
+
+				/** ====== EXTERNAL RELATIONS ===== **/
+				function externalRelations(code) {
+					if (code) {
+						for (var i = 0; i < _map.externalRelations.length; i++) {
+							if (_map.externalRelations[i].code === code) {
+								return _map.externalRelations[i];
+							}
+						}
+					}
+					else {
+						return _map.externalRelations;
+					}
+				}
+
+
+				function addEditExternalRelation(externalRelation) {
+					if (externalRelation.code != null) {
+						for (var i = 0; i < _map.externalRelations.length; i++) {
+							if (_map.externalRelations[i].code === externalRelation.code) {
+								_map.externalRelations[i] = externalRelation;
+							}
+						}
+					}
+					else {
+						externalRelation.code = externalRelationCode();
+						_map.externalRelations.push(externalRelation);
+					}
+
+					return save();
+				}
+
+
+				function deleteExternalRelation(code) {
+					for (var i = 0; i < _map.externalRelations.length; i++) {
+						if (_map.externalRelations[i].code === code) {
+							_map.externalRelations.splice(i, 1);
+						}
+					}
+
+					return save();
+				}
+
+
+				function externalRelationCode() {
+
+					//Get and return next possible code
+					var current, found;
+					for (var i = 0; i <= _map.externalRelations.length; i++) {
+
+						current = "ER" + parseInt(i + 1);
+						existing = false;
+
+						for (var j = 0; j < _map.externalRelations.length; j++) {
+							if (_map.externalRelations[j].code === current) existing = true;
+						}
+
+						if (!existing) return current;
+					}
+				}
+
 
 
 				/** ANALYSIS TYPES **/
@@ -853,8 +995,7 @@
 						dataIDs.push(_map.dataSets[i].id);
 					}
 					for (var i = 0; i < _map.denominators.length; i++) {
-						if (_map.denominators[i].idA != '') dataIDs.push(_map.denominators[i].idA);
-						if (_map.denominators[i].idB != '') dataIDs.push(_map.denominators[i].idB);
+						if (_map.denominators[i].dataID != '') dataIDs.push(_map.denominators[i].dataID);
 					}
 					return dataIDs.sort();
 				}

@@ -1,7 +1,10 @@
-	<h3>App Administration</h3>
-	<h4 ng-if="!admCtrl.isAdmin">You do not have access to change any settings!</h4>
+	<h3>Administration</h3>
+	<h4 ng-if="!admCtrl.isAdmin">You do not have access to change the configuration.</h4>
+	<p>This module is used for configuring the Data Quality Tool, and mapping the proposed data quality indicators to
+		data elements and indicators in the	DHIS 2 database. This configuration is used as the basis for the Annual
+		Report, and the numerator and numerator group configuration is also used for the Dashboard.</p>
 	<tabset>
-		<tab heading="Numerator mapping" active="admCtrl.activeTab">
+		<tab heading="Numerators" active="admCtrl.activeTab">
 			<br />
 			<p>Please map the reference numerators to the corresponding data element/indicator in this database.</p>
 			<table class="table table-bordered table-striped table-condensed table-hover">
@@ -30,7 +33,7 @@
 
 		<tab heading="Numerator groups">
 			<br />
-			<p>Use this page to add and remove indicators/data to groups, and to add new groups.</p>
+			<p>Use this page to add and remove numerators to groups, and to add new groups.</p>
 			<div ng-repeat="group in admCtrl.groups |orderBy: 'name'">
 				<h4>{{group.name}}</h4>
 				<table class="table table-bordered table-striped table-condensed table-hover" style="max-width: 600px;">
@@ -92,47 +95,19 @@
 					</table>						
 				</tab>
 
-		<tab heading="Denominator relations">
-			<br />
-			<p>Please map alternative denominators for comparison, for example denominiators from the National Bureau of Statistics
-				with denominators used by health programmes.</p>
-			<table class="table table-bordered table-striped table-condensed table-hover">
-				<tr>
-					<th>Name</th>
-					<th>Denominator A</th>
-					<th>Denominator B</th>
-					<th>Criteria</th>
-					<th width="100px"></th>
-				</tr>
-				<tr ng-repeat="denominator in admCtrl.denominators | orderBy:'type'">
-					<td class="vert-align">{{denominator.name}}</td>
-					<td class="vert-align">{{admCtrl.d2NameFromID(denominator.idA)}}</td>
-					<td class="vert-align">{{admCtrl.d2NameFromID(denominator.idB)}}</td>
-					<td class="vert-align">{{denominator.criteria}} %</td>
-					<td class="vert-align" align="center">
-						<button ng-disabled="!admCtrl.isAdmin" ng-click="admCtrl.editDenominator(denominator);" class="btn btn-default btn-xs">Edit</button>
-						<button ng-disabled="!admCtrl.isAdmin || denominator.type === 'un'" ng-click="admCtrl.deleteDenominator(denominator.code);" class="btn btn-danger btn-xs">Delete</button></td>
-				</tr>
-				<tfoot>
-				<tr><td colspan="6"><button ng-disabled="!admCtrl.isAdmin" type="button" class="btn btn-primary pull-right btn-sm" ng-click="admCtrl.editDenominator(null);" style="width: 90px;">Add</button></td></tr></tfoot>
-			</table>
-
-		</tab>
-
-
-		<tab heading="Quality Parameters">
+		<tab heading="Numerator quality parameters">
 			<h4>Indicator parameters</h4>
 			<p>Modify parameters for each data element/indicator in the table below. Only data elements/indicators mapped to the database are displayed.</p>
 			<ul>
-			 <li><em>Moderate outliers</em> is the threshold on the number of standard deviations (SD) from the mean a value can be before it is flagged as a moderate outlier.</li>
-			 <li><em>Extreme outliers</em> is the threshold on the number of standard deviations (SD) from the mean a value can be before it is flagged as a moderate outlier.</li>			 
-			 <li><em>Consistency:</em>
-			 	<ul>
-				 	<li>For values expected to be constant over time: Percent difference between the ratio of current year indicator value and the average of the preceding three years and the same national level ratio (for indicators expected to remain constant).</li>
-				 	<li>For values expected to increase/decrease over time: Percent difference between the ratio of current year indicator value and the predicted value for the year based on the trend in the preceding three years and the same national level ratio.</li>
-				 </ul></li>
-			<li><em>Missing/zero values.</em> Units with fewer non-zero/non-missing values will be flagged.</li>
-			 </ul>
+				<li><em>Moderate outliers</em> is the threshold on the number of standard deviations (SD) from the mean a value can be before it is flagged as a moderate outlier.</li>
+				<li><em>Extreme outliers</em> is the threshold on the number of standard deviations (SD) from the mean a value can be before it is flagged as a moderate outlier.</li>
+				<li><em>Consistency:</em>
+					<ul>
+						<li>For values expected to be constant over time: Percent difference between the ratio of current year indicator value and the average of the preceding three years and the same national level ratio (for indicators expected to remain constant).</li>
+						<li>For values expected to increase/decrease over time: Percent difference between the ratio of current year indicator value and the predicted value for the year based on the trend in the preceding three years and the same national level ratio.</li>
+					</ul></li>
+				<li><em>Missing/zero values.</em> Units with fewer non-zero/non-missing values will be flagged.</li>
+			</ul>
 			<table class="table table-bordered table-striped table-condensed table-hover minimized">
 				<tr>
 					<th>Group</th>
@@ -158,46 +133,127 @@
 					</td>
 					<td align="middle" style="width: 150px;" class="vert-align"><input ng-disabled="!admCtrl.isAdmin" type="number" style="text-align: right;" ng-model="indicator.consistency" min="0" max="100"/></td>
 					<td align="middle" style="width: 150px;" class="vert-align"><select ng-disabled="!admCtrl.isAdmin" ng-model="indicator.trend">
-					<options>
-						<option value="constant">Constant</option>
-						<option value="increasing">Increasing</option>
-						<option value="decreasing">Decreasing</option>
-					</options></select></td>
-					<td align="middle" style="width: 150px;" class="vert-align"><input ng-disabled="!admCtrl.isAdmin" type="number" style="text-align: right;" ng-model="indicator.missing" min="0" max="100"/></td>
-				</tr>			
-			</table>
-			<h4>Dataset completeness</h4>
-			<div style="max-width: 1000px;">
-			<p>Set the thresholds for various completeness in the table below. Only dataset linked to indicators are displayed.</p>
-			<ul>
-			 <li><em>Completeness</em> is the reporting completeness threshold. Units with a lower score will be flagged as poor performers.</li>
-			 <li><em>Consistency</em> indicates the quality threshold (in percent) for consistency over time, i.e. when comparing the average completeness for previous years with the current year. Units with a difference of ± the given value will be flagged as poor performers.</li>
-			 <li><em>Expected trend</em> is used when looking at consistency over time. If the completeness is expected to increase/decrease, this can be taken into account when comparing the current year with previous years.</li>
-			 </ul>
-			<table class="table table-bordered table-striped table-condensed table-hover minimized">
-				<tr>
-					<th>Data set</th>
-					<th>Completeness (%)</th>
-					<th>Consistency (%)</th>
-					<th>Expected trend</th>
-				</tr>
-				<tr ng-class="{danger: !dataSet.threshold}" ng-repeat="dataSet in admCtrl.dataSets  | orderBy:['name']:false">
-					<td class="vert-align">{{dataSet.name}}</td>
-					<td align="middle" class="vert-align"><input ng-disabled="!admCtrl.isAdmin" style="text-align: right;" type="number" ng-model="dataSet.threshold" min="0" max="100"/></td>
-					<td align="middle" class="vert-align"><input ng-disabled="!admCtrl.isAdmin" style="text-align: right;" type="number" ng-model="dataSet.consistencyThreshold" min="0" max="100"/></td>
-					<td align="middle" class="vert-align">
-						<select ng-disabled="!admCtrl.isAdmin" ng-model="dataSet.trend">
 						<options>
 							<option value="constant">Constant</option>
 							<option value="increasing">Increasing</option>
 							<option value="decreasing">Decreasing</option>
 						</options></select></td>
-						
+					<td align="middle" style="width: 150px;" class="vert-align"><input ng-disabled="!admCtrl.isAdmin" type="number" style="text-align: right;" ng-model="indicator.missing" min="0" max="100"/></td>
 				</tr>
 			</table>
+			<h4>Dataset completeness</h4>
+			<div style="max-width: 1000px;">
+				<p>Set the thresholds for various completeness in the table below. Only dataset linked to indicators are displayed.</p>
+				<ul>
+					<li><em>Completeness</em> is the reporting completeness threshold. Units with a lower score will be flagged as poor performers.</li>
+					<li><em>Consistency</em> indicates the quality threshold (in percent) for consistency over time, i.e. when comparing the average completeness for previous years with the current year. Units with a difference of ± the given value will be flagged as poor performers.</li>
+					<li><em>Expected trend</em> is used when looking at consistency over time. If the completeness is expected to increase/decrease, this can be taken into account when comparing the current year with previous years.</li>
+				</ul>
+				<table class="table table-bordered table-striped table-condensed table-hover minimized">
+					<tr>
+						<th>Data set</th>
+						<th>Completeness (%)</th>
+						<th>Consistency (%)</th>
+						<th>Expected trend</th>
+					</tr>
+					<tr ng-class="{danger: !dataSet.threshold}" ng-repeat="dataSet in admCtrl.dataSets  | orderBy:['name']:false">
+						<td class="vert-align">{{dataSet.name}}</td>
+						<td align="middle" class="vert-align"><input ng-disabled="!admCtrl.isAdmin" style="text-align: right;" type="number" ng-model="dataSet.threshold" min="0" max="100"/></td>
+						<td align="middle" class="vert-align"><input ng-disabled="!admCtrl.isAdmin" style="text-align: right;" type="number" ng-model="dataSet.consistencyThreshold" min="0" max="100"/></td>
+						<td align="middle" class="vert-align">
+							<select ng-disabled="!admCtrl.isAdmin" ng-model="dataSet.trend">
+								<options>
+									<option value="constant">Constant</option>
+									<option value="increasing">Increasing</option>
+									<option value="decreasing">Decreasing</option>
+								</options></select></td>
+
+					</tr>
+				</table>
 			</div>
 			<button ng-disabled="!admCtrl.isAdmin" class="btn btn-primary pull-right" ng-click="admCtrl.saveParameterChanges();">Save changes</button>
-			
-			</tab>
+
+		</tab>
+
+		<tab heading="Denominators">
+			<br />
+			<p>Please map alternative denominators for comparison, for example denominiators from the National Bureau of Statistics
+				with denominators used by health programmes.</p>
+			<table class="table table-bordered table-striped table-condensed table-hover">
+				<tr>
+					<th>Data element/indicator</th>
+					<th>Type</th>
+					<th width="100px"></th>
+				</tr>
+				<tr ng-repeat="denominator in admCtrl.denominators | orderBy:'type'">
+					<td class="vert-align">{{admCtrl.d2NameFromID(denominator.dataID)}}</td>
+					<td class="vert-align">{{admCtrl.denominatorNameFromCode(denominator.type).name}}</td>
+					<td class="vert-align" align="center">
+						<button ng-disabled="!admCtrl.isAdmin" ng-click="admCtrl.editDenominator(denominator);" class="btn btn-default btn-xs">Edit</button>
+						<button ng-disabled="!admCtrl.isAdmin || denominator.type === 'un'" ng-click="admCtrl.deleteDenominator(denominator.code);" class="btn btn-danger btn-xs">Delete</button></td>
+				</tr>
+				<tfoot>
+				<tr><td colspan="6"><button ng-disabled="!admCtrl.isAdmin" type="button" class="btn btn-primary pull-right btn-sm" ng-click="admCtrl.editDenominator(null);" style="width: 90px;">Add</button></td></tr></tfoot>
+			</table>
+
+		</tab>
+
+
+		<tab heading="Denominator relations">
+			<br />
+			<p>Please map alternative denominators for comparison, for example denominiators from the National Bureau of Statistics
+				with denominators used by health programmes.</p>
+			<table class="table table-bordered table-striped table-condensed table-hover">
+				<tr>
+					<th>Name</th>
+					<th>Denominator A</th>
+					<th>Denominator B</th>
+					<th>Criteria</th>
+					<th width="100px"></th>
+				</tr>
+				<tr ng-repeat="relation in admCtrl.denominatorRelations | orderBy:'type'">
+					<td class="vert-align">{{relation.name}}</td>
+					<td class="vert-align">{{admCtrl.d2NameFromCode(relation.A)}}</td>
+					<td class="vert-align">{{admCtrl.d2NameFromCode(relation.B)}}</td>
+					<td class="vert-align">{{relation.criteria}} %</td>
+					<td class="vert-align" align="center">
+						<button ng-disabled="!admCtrl.isAdmin" ng-click="admCtrl.editDenominatorRelation(relation);" class="btn btn-default btn-xs">Edit</button>
+						<button ng-disabled="!admCtrl.isAdmin || relation.type === 'un'" ng-click="admCtrl.deleteDenominatorRelation(relation.code);" class="btn btn-danger btn-xs">Delete</button></td>
+				</tr>
+				<tfoot>
+				<tr><td colspan="6"><button ng-disabled="!admCtrl.isAdmin" type="button" class="btn btn-primary pull-right btn-sm" ng-click="admCtrl.editDenominatorRelation(null);" style="width: 90px;">Add</button></td></tr></tfoot>
+			</table>
+
+		</tab>
+
+		<tab heading="External data comparison">
+			<br />
+			<p>Please identify external (survey) data that can be used for comparison with routine data, e.g. ANC coverage,
+				immunisation coverage etc. The "external data" should refer to calculated survey result (e.g. a percentage),
+				whilst the numerator and denominator refer to the raw data.
+			</p>
+			<table class="table table-bordered table-striped table-condensed table-hover">
+				<tr>
+					<th>External data indicator</th>
+					<th>Routine numerator</th>
+					<th>Routine denominator</th>
+					<th>Criteria</th>
+					<th width="100px"></th>
+				</tr>
+				<tr ng-repeat="relation in admCtrl.externalRelations | orderBy:'type'">
+					<td class="vert-align">{{admCtrl.d2NameFromID(relation.dataID)}}</td>
+					<td class="vert-align">{{admCtrl.d2NameFromCode(relation.numerator)}}</td>
+					<td class="vert-align">{{admCtrl.d2NameFromCode(relation.denominator)}}</td>
+					<td class="vert-align">{{relation.criteria}} %</td>
+					<td class="vert-align" align="center">
+						<button ng-disabled="!admCtrl.isAdmin" ng-click="admCtrl.editExternalRelation(relation);" class="btn btn-default btn-xs">Edit</button>
+						<button ng-disabled="!admCtrl.isAdmin || denominator.type === 'un'" ng-click="admCtrl.deleteExternalRelation(relation.code);" class="btn btn-danger btn-xs">Delete</button></td>
+				</tr>
+				<tfoot>
+				<tr><td colspan="6"><button ng-disabled="!admCtrl.isAdmin" type="button" class="btn btn-primary pull-right btn-sm" ng-click="admCtrl.editExternalRelation(null);" style="width: 90px;">Add</button></td></tr></tfoot>
+			</table>
+
+		</tab>
+
 			
 	</tabset>

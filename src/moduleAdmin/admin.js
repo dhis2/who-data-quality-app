@@ -40,6 +40,8 @@
 
 			self.numerators = d2Map.numerators();
 			self.denominators = d2Map.denominators();
+			self.denominatorRelations = d2Map.denominatorRelations();
+			self.externalRelations = d2Map.externalRelations();
 			self.relations = d2Map.relations();
 			self.groups = d2Map.groups();
 			self.dataSets = d2Map.dataSets();
@@ -224,7 +226,6 @@
 
 		self.editDenominator = function(denominator) {
 
-
 			var modalInstance = $modal.open({
 				templateUrl: "moduleAdmin/adminDenominator.html",
 				controller: "ModalAddEditDenominatorController",
@@ -238,19 +239,72 @@
 
 			modalInstance.result.then(function (result) {
 				if (result) {
-
 					d2Map.denominatorAddEdit(result.denominator);
-
 				}
 			});
-
 		};
 
 
 		self.deleteDenominator = function(code) {
 
 			d2Map.denominatorDelete(code);
+		}
 
+		/** ===== DENOMINATOR RELATIONS ===== */
+
+		self.editDenominatorRelation = function(denominatorRelation) {
+
+			var modalInstance = $modal.open({
+				templateUrl: "moduleAdmin/adminDenominatorRelation.html",
+				controller: "ModalAddEditDenominatorRelationController",
+				controllerAs: 'addCtrl',
+				resolve: {
+					denominatorRelation: function () {
+						return denominatorRelation;
+					}
+				}
+			});
+
+			modalInstance.result.then(function (result) {
+				if (result) {
+					d2Map.denominatorRelationAddEdit(result.denominatorRelation);
+				}
+			});
+		};
+
+
+		self.deleteDenominatorRelation = function(code) {
+
+			d2Map.denominatorRelationDelete(code);
+		}
+
+
+		/** ===== EXTERNAL RELATIONS ===== */
+
+		self.editExternalRelation = function(externalRelation) {
+
+			var modalInstance = $modal.open({
+				templateUrl: "moduleAdmin/adminExternalRelation.html",
+				controller: "ModalAddEditExternalRelationController",
+				controllerAs: 'addCtrl',
+				resolve: {
+					externalRelation: function () {
+						return externalRelation;
+					}
+				}
+			});
+
+			modalInstance.result.then(function (result) {
+				if (result) {
+					d2Map.externalRelationAddEdit(result.externalRelation);
+				}
+			});
+		};
+
+
+		self.deleteExternalRelation = function(code) {
+
+			d2Map.externalRelationDelete(code);
 		}
 
 
@@ -285,10 +339,22 @@
 		self.d2NameFromCode = function(code) {
 			if (!code) return '';
 
+			//Numerator
 			var data = d2Map.numerators(code);
 			if (data && data.dataID) return d2Map.d2NameFromID(data.dataID);
+
+			//Denominator
+			data = d2Map.denominators(code);
+			if (data && data.dataID) return d2Map.d2NameFromID(data.dataID);
+
 			else return '';
 		};
+
+
+		self.denominatorNameFromCode = function (code) {
+			if (!code) return '';
+			return d2Map.denominatorType(code);
+		}
 
 
 		self.getIndicatorsInGroup = function(code) {
