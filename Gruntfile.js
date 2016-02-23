@@ -58,7 +58,7 @@ module.exports = function(grunt) {
 			'using-cwd': {
 				cwd: 'build/',
 				src: ['build/**'],
-				dest: 'compiled/dq.zip'
+				dest: 'compiled/dataQualityTool.zip'
 
 			}
 		},
@@ -71,7 +71,7 @@ module.exports = function(grunt) {
 			dev: {
 				options: {
 					src: "build/",
-					dest: "/Users/Olav/DHIS/tomcat_stable/dhis2_home/apps/dq",
+					dest: "/Users/Olav/DHIS/tomcat_stable/dhis2_home/apps/dataQualityTool",
 					delete: true
 				}
 			}
