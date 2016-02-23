@@ -59,8 +59,8 @@
 
 				function load() {
 					var deferred = $q.defer();
-
-					requestService.getSingleData('/api/systemSettings/DQAmapping').then(
+					requestService.getSingle('/api/systemSettings/DQAmapping').then(
+					//requestService.getSingle('/api/dataStore/dataQualityTool/settings').then(
 						function(data) {
 							_map = data;
 							if (_map) {
@@ -72,6 +72,13 @@
 								);
 							}
 							else {
+								console.log("Error when getting settings");
+							}
+						},
+						function(error) {
+							if (error.status == 404) {
+
+
 								console.log("No map exists");
 
 								//Try to load template
@@ -88,12 +95,11 @@
 
 									}
 								);
-
 							}
-						},
-						function(error) {
-							console.log('Error in getMapping()');
-							console.log('Error');
+							else {
+								console.log("Unknown error when getting settings");
+								console.log(error);
+							}
 						}
 					);
 
@@ -110,6 +116,7 @@
 					if (currentIDs != previousIDs) d2CoreMeta();
 
 					return requestService.post('/api/systemSettings/', {'DQAmapping': angular.toJson(_map)});
+					//return requestService.post('/api/dataStore/dataQualityTool', {'settings': angular.toJson(_map)});
 				}
 
 
@@ -184,13 +191,14 @@
 						function (authorized) {
 							if (authorized) {
 
-								//If authorized, get json tempalte
+								//If authorized, get json template
 								requestService.getSingleLocal('data/metaData.json').then(function(response) {
 
 									_map = response.data;
 
 									//Save template to systemSettings
 									requestService.post('/api/systemSettings/', {'DQAmapping': angular.toJson(_map)}).then(
+									//requestService.post('/api/dataStore/dataQualityTool', {'settings': angular.toJson(_map)}).then(
 										function (data) {
 
 											_ready = true;
