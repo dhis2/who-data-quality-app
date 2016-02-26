@@ -526,6 +526,7 @@
 				}
 
 
+
 				function getNewIndicatorCode() {
 
 					//Get and return next possible code

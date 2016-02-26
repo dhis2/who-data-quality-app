@@ -405,7 +405,6 @@
 	  {
 		"dataID": "",
 		"type": "un",
-		"name": "UN population projection",
 		"code": "P1",
 		"lowLevel": 1
 	  }

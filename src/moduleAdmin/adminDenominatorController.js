@@ -146,13 +146,6 @@
 						"code": denominator && denominator.code ? denominator.code : null
 					};
 
-					if (denominator && denominator.custom === false) {
-						savedDenominator.custom = false;
-					}
-					else {
-						savedDenominator.custom = true;
-					}
-
 					$modalInstance.close({'denominator': savedDenominator});
 				};
 
