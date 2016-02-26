@@ -93,14 +93,16 @@
 					else self.placeholder = "Select indicator...";
 
 					if (self.multiple) filterElements(data);
-					d2Utils.arraySortByProperty(data, 'name', false);
+					d2Utils.arraySortByProperty(data, 'displayName', false);
 
-					data.unshift({
-						name: '[All indicators]',
-						id: 'all',
-						group: self.group.id,
-						elements: angular.copy(data)
-					});
+					if (self.multiple != undefined && self.multiple) {
+						data.unshift({
+							displayName: '[All indicators]',
+							id: 'all',
+							group: self.group.id,
+							elements: angular.copy(data)
+						});
+					}
 
 					self.elements = data;
 				}

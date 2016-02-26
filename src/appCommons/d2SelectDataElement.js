@@ -108,14 +108,16 @@
 
 
 					if (self.multiple) filterElements(data);
-					d2Utils.arraySortByProperty(data, 'name', false);
+					d2Utils.arraySortByProperty(data, 'displayName', false);
 
-					data.unshift({
-						name: '[All data elements]',
-						id: 'all',
-						group: self.group.id,
-						elements: angular.copy(data)
-					});
+					if (self.multiple != undefined && self.multiple) {
+						data.unshift({
+							displayName: '[All data elements]',
+							id: 'all',
+							group: self.group.id,
+							elements: angular.copy(data)
+						});
+					}
 
 					self.elements = data;
 				}
