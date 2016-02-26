@@ -7,56 +7,47 @@
 
 				var self = this;
 
-				return self;
-				self.aSelected = null;
-				self.bSelected = null;
+				self.externalDataSelected = null;
+				self.numeratorSelected = null;
+				self.denominatorSelected = null;
+				self.dataTypeSelected = 'dataElement';
 
-				self.types = d2Map.denominatorTypes();
-				self.typeSelected = null;
 
-				var denominators = d2Map.denominatorsConfigured();
+				self.numerators = d2Map.numeratorsConfigured();
 				//Add name
-				for (var i = 0; i < denominators.length; i++) {
-					denominators[i]['name'] = d2Map.d2NameFromID(denominators[i].dataID);
+				for (var i = 0; i < self.numerators.length; i++) {
+					self.numerators[i]['name'] = d2Map.d2NameFromID(self.numerators[i].dataID);
 				}
-				self.denominatorsFiltered = [];
+
+
+				self.denominators = d2Map.denominatorsConfigured();
+				//Add name
+				for (var i = 0; i < self.denominators.length; i++) {
+					self.denominators[i]['name'] = d2Map.d2NameFromID(self.denominators[i].dataID);
+				}
+
 
 				//Add
-				if (denominatorRelation === null) {
-					self.title = "Add denominator relation";
-					self.name = '';
+				if (externalRelation === null) {
+					self.title = "Add external data comparison";
 					self.criteria = 10;
 				}
 
+
 				//Edit
 				else {
-					self.title = "Edit denominator relation";
-					self.name = denominatorRelation.name;
-					self.typeSelected = getType(denominatorRelation.type);
-					self.criteria = denominatorRelation.criteria;
+					self.title = "Edit external data comparison";
+					self.criteria = externalRelation.criteria;
 
-					self.aSelected = d2Map.denominators(denominatorRelation.A);
-					self.bSelected = d2Map.denominators(denominatorRelation.B);
-
-					self.aSelected['name'] = d2Map.d2NameFromID(self.aSelected.dataID);
-					self.bSelected['name'] = d2Map.d2NameFromID(self.bSelected.dataID);
-
-				}
+					self.dataTypeSelected = externalRelation.dataType;
+					self.externalDataSelected = d2Meta.object(externalRelation.dataType, externalRelation.externalData, null);
+					self.numeratorSelected = d2Map.numerators(externalRelation.numerator);
+					self.denominatorSelected = d2Map.denominators(externalRelation.denominator);
 
 
-				function getType(typeCode) {
-					for (var i = 0; i < self.types.length; i++) {
-						if (self.types[i].code === typeCode) return self.types[i];
-					}
-				}
+					self.numeratorSelected['name'] = d2Map.d2NameFromID(externalRelation.numerator.dataID);
+					self.denominatorSelected['name'] = d2Map.d2NameFromID(externalRelation.denominator.dataID);
 
-				self.filterDenominators = function() {
-					self.denominatorsFiltered = [];
-					for (var i = 0; i < denominators.length; i++) {
-						if (self.typeSelected && denominators[i].type === self.typeSelected.code) {
-							self.denominatorsFiltered.push(denominators[i]);
-						}
-					}
 				}
 
 
@@ -66,19 +57,26 @@
 
 				self.save = function () {
 
+					if (self.dataTypeSelected === 'dataElement') {
+
+						if (self.externalDataSelected.id.length > 11) {
+							self.dataTypeSelected = 'dataElementOperand';
+						}
+
+
+					}
+
 					var savedRelation = {
-						"A": self.aSelected.code,
-						"B": self.bSelected.code,
-						"type": self.typeSelected.code,
+						"externalData": self.externalDataSelected.id,
+						"numerator": self.numeratorSelected.code,
+						"denominator": self.denominatorSelected.code,
+						"dataType": self.dataTypeSelected.code,
 						"criteria": self.criteria,
-						"name": self.name,
 						"code": externalRelation && externalRelation.code ? externalRelation.code : null
 					};
 
 					$modalInstance.close({'externalRelation': savedRelation});
 				};
-
-				self.filterDenominators();
 
 			}]);
 })();

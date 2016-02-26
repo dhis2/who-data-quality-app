@@ -241,7 +241,7 @@
 					<th width="100px"></th>
 				</tr>
 				<tr ng-repeat="relation in admCtrl.externalRelations | orderBy:'type'">
-					<td class="vert-align">{{admCtrl.d2NameFromID(relation.dataID)}}</td>
+					<td class="vert-align">{{admCtrl.d2NameFromID(relation.externalData)}}</td>
 					<td class="vert-align">{{admCtrl.d2NameFromCode(relation.numerator)}}</td>
 					<td class="vert-align">{{admCtrl.d2NameFromCode(relation.denominator)}}</td>
 					<td class="vert-align">{{relation.criteria}} %</td>

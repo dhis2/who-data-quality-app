@@ -5,63 +5,71 @@
 
 	<table class="table table-bordered">
 		<tr>
-			<th width="170px">Name</th>
-			<td><input type="text" class="form-control" style="width: 100%;" ng-model="addCtrl.name"/></td>
+			<th>External data indicator</th>
+			<td>
+				<div style="width: 400px">
+					<div class="btn-group btn-group-justified" style="width: 120px; margin-bottom: 10px; display: inline-block;">
+						<label class="btn btn-default" ng-model="addCtrl.dataTypeSelected" btn-radio="'dataElement'">Data element</label>
+						<label class="btn btn-default" ng-model="addCtrl.dataTypeSelected" btn-radio="'indicator'">Indicator</label>
+					</div>
+
+					<!-- DATA ELEMENTS -->
+					<div ng-if="addCtrl.dataTypeSelected === 'dataElement'" style="max-width: 600px">
+						<d2-select-data-element
+								multiple="false"
+								ng-model="addCtrl.externalDataSelected">
+						</d2-select-data-element>
+					</div>
+
+					<!-- INDICATORS -->
+					<div ng-if="addCtrl.dataTypeSelected === 'indicator'" style="max-width: 600px">
+						<d2-select-indicator
+								ng-model="addCtrl.externalDataSelected"
+								multiple="false">
+						</d2-select-indicator>
+					</div>
+				</div>
+			</td>
 		</tr>
 		<tr>
-			<th>Type</th>
+			<th>Numerator</th>
 			<td>
-				<ui-select ng-model="addCtrl.typeSelected" on-select="addCtrl.filterDenominators()" theme="bootstrap" style="width: 100%;">
-					<ui-select-match placeholder="Select type...">
-						{{addCtrl.typeSelected.name}}
+				<ui-select ng-model="addCtrl.numeratorSelected" theme="bootstrap" style="width: 100%;">
+					<ui-select-match placeholder="Select numerator...">
+						{{addCtrl.numeratorSelected.name}}
 					</ui-select-match>
 					<ui-select-choices
-							repeat="obj in addCtrl.types | filter: $select.search">
+							repeat="obj in addCtrl.numerators | filter: $select.search">
 						<div ng-bind-html="obj.name | highlight: $select.search"></div>
 					</ui-select-choices>
 				</ui-select>
 			</td>
 		</tr>
 		<tr>
-			<th>Denominator A</th>
+			<th>Denominator</th>
 			<td>
-				<ui-select ng-model="addCtrl.aSelected" ng-disabled="!addCtrl.typeSelected" theme="bootstrap" style="width: 100%;">
-					<ui-select-match placeholder="Select type...">
-						{{addCtrl.aSelected.name}}
+				<ui-select ng-model="addCtrl.denominatorSelected" theme="bootstrap" style="width: 100%;">
+					<ui-select-match placeholder="Select denominator...">
+						{{addCtrl.denominatorSelected.name}}
 					</ui-select-match>
 					<ui-select-choices
-							repeat="obj in addCtrl.denominatorsFiltered | filter: $select.search">
+							repeat="obj in addCtrl.denominators | filter: $select.search">
 						<div ng-bind-html="obj.name | highlight: $select.search"></div>
 					</ui-select-choices>
 				</ui-select>
 			</td>
 		</tr>
 		<tr>
-			<th>Denominator B</th>
-			<td>
-				<ui-select ng-model="addCtrl.bSelected" ng-disabled="!addCtrl.typeSelected" theme="bootstrap" style="width: 100%;">
-					<ui-select-match placeholder="Select type...">
-						{{addCtrl.bSelected.name}}
-					</ui-select-match>
-					<ui-select-choices
-							repeat="obj in addCtrl.denominatorsFiltered | filter: $select.search">
-						<div ng-bind-html="obj.name | highlight: $select.search"></div>
-					</ui-select-choices>
-				</ui-select>
-			</td>
-		</tr>
-		<tr ng-if="addCtrl.typeSelected.code != 'do'">
 			<th>Threshold (+/- %)</th>
 			<td><input type="number" class="form-control" style="width: 100px;" ng-model="addCtrl.criteria"/></td>
 		</tr>
 	</table>
 
 	<div style="margin-bottom: 10px;">
-		<strong>Threshold</strong> denotes the % difference from the national ratio that is accepted for a sub-national unit.
+		<strong>Threshold</strong> denotes the % difference between external and routine data that is accepted.
 	</div>
-
 
 	<div class="modal-footer" style="clear: both;">
 		<button type="button" class="btn btn-default" data-ng-click="addCtrl.cancel()">Cancel</button>
-		<button type="button" class="btn btn-default" data-ng-click="addCtrl.save()" ng-disabled="addCtrl.name === '' || addCtrl.typeSelected === undefined || addCtrl.aSelected === undefined || addCtrl.bSelected === undefined || addCtrl.criteria === undefined || addCtrl.aSelected.code === addCtrl.bSelected.code">Save</button>
+		<button type="button" class="btn btn-default" data-ng-click="addCtrl.save()" ng-disabled="addCtrl.dataTypeSelected === undefined || addCtrl.externalDataSelected === undefined || addCtrl.numeratorSelected === undefined || addCtrl.denominatorSelected === undefined || addCtrl.criteria === undefined">Save</button>
 	</div>
