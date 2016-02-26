@@ -997,6 +997,9 @@
 					for (var i = 0; i < _map.denominators.length; i++) {
 						if (_map.denominators[i].dataID != '') dataIDs.push(_map.denominators[i].dataID);
 					}
+					for (var i = 0; i < _map.externalRelations.length; i++) {
+						if (_map.externalRelations[i].externalData != '') dataIDs.push(_map.externalRelations[i].externalData);
+					}
 					return dataIDs.sort();
 				}
 
