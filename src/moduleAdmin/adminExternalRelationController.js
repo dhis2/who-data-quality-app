@@ -10,7 +10,7 @@
 				self.externalDataSelected = null;
 				self.numeratorSelected = null;
 				self.denominatorSelected = null;
-				self.dataTypeSelected = 'dataElement';
+				self.dataTypeSelected = 'dataElements';
 
 
 				self.numerators = d2Map.numeratorsConfigured();
@@ -45,8 +45,8 @@
 					self.denominatorSelected = d2Map.denominators(externalRelation.denominator);
 
 
-					self.numeratorSelected['name'] = d2Map.d2NameFromID(externalRelation.numerator.dataID);
-					self.denominatorSelected['name'] = d2Map.d2NameFromID(externalRelation.denominator.dataID);
+					self.numeratorSelected['name'] = d2Map.d2NameFromID(self.numeratorSelected.dataID);
+					self.denominatorSelected['name'] = d2Map.d2NameFromID(self.denominatorSelected.dataID);
 
 				}
 
@@ -57,10 +57,10 @@
 
 				self.save = function () {
 
-					if (self.dataTypeSelected === 'dataElement') {
+					if (self.dataTypeSelected === 'dataElements') {
 
 						if (self.externalDataSelected.id.length > 11) {
-							self.dataTypeSelected = 'dataElementOperand';
+							self.dataTypeSelected = 'dataElementOperands';
 						}
 
 
@@ -70,7 +70,7 @@
 						"externalData": self.externalDataSelected.id,
 						"numerator": self.numeratorSelected.code,
 						"denominator": self.denominatorSelected.code,
-						"dataType": self.dataTypeSelected.code,
+						"dataType": self.dataTypeSelected,
 						"criteria": self.criteria,
 						"code": externalRelation && externalRelation.code ? externalRelation.code : null
 					};

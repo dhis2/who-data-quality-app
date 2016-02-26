@@ -9,12 +9,12 @@
 			<td>
 				<div style="width: 400px">
 					<div class="btn-group btn-group-justified" style="width: 120px; margin-bottom: 10px; display: inline-block;">
-						<label class="btn btn-default" ng-model="addCtrl.dataTypeSelected" btn-radio="'dataElement'">Data element</label>
-						<label class="btn btn-default" ng-model="addCtrl.dataTypeSelected" btn-radio="'indicator'">Indicator</label>
+						<label class="btn btn-default" ng-model="addCtrl.dataTypeSelected" btn-radio="'dataElements'">Data element</label>
+						<label class="btn btn-default" ng-model="addCtrl.dataTypeSelected" btn-radio="'indicators'">Indicator</label>
 					</div>
 
 					<!-- DATA ELEMENTS -->
-					<div ng-if="addCtrl.dataTypeSelected === 'dataElement'" style="max-width: 600px">
+					<div ng-if="addCtrl.dataTypeSelected === 'dataElements'" style="max-width: 600px">
 						<d2-select-data-element
 								multiple="false"
 								ng-model="addCtrl.externalDataSelected">
@@ -22,7 +22,7 @@
 					</div>
 
 					<!-- INDICATORS -->
-					<div ng-if="addCtrl.dataTypeSelected === 'indicator'" style="max-width: 600px">
+					<div ng-if="addCtrl.dataTypeSelected === 'indicators'" style="max-width: 600px">
 						<d2-select-indicator
 								ng-model="addCtrl.externalDataSelected"
 								multiple="false">
