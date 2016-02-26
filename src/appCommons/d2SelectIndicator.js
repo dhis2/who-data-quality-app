@@ -80,7 +80,7 @@
 					self.placeholder = "Loading...";
 
 
-					var fields = 'indicators[name,id]';
+					var fields = 'indicators[displayName,id]';
 					var object = 'indicatorGroups';
 					d2Meta.object(object, self.group.id, fields).then(function(data) {saveElements(data.indicators);});
 

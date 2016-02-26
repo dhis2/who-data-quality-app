@@ -83,7 +83,7 @@
 
 
 					if (self.disaggregation === 0) {
-						var fields = 'dataElements[name,id]';
+						var fields = 'dataElements[displayName,id]';
 						var object = self.dataset ? 'dataSets' : 'dataElementGroups';
 						d2Meta.object(object, self.group.id, fields).then(function(data) {saveElements(data.dataElements);});
 
@@ -96,7 +96,7 @@
 						else {
 							filter = 'dataElement.dataElementGroups.id:eq:' + self.group.id;
 						}
-						var fields = 'name,id,dataElementId,optionComboId';
+						var fields = 'displayName,id,dataElementId,optionComboId';
 						d2Meta.objects('dataElementOperands', null, fields, filter).then(function(data) {saveElements(data);});
 					}
 				}
