@@ -51,27 +51,6 @@
 
 		/** ===== NUMERATORS ===== **/
 
-		self.numeratorAdd = function () {
-
-			var modalInstance = $modal.open({
-				templateUrl: "moduleAdmin/adminIndicator.html",
-				controller: "ModalAddIndicatorController",
-				controllerAs: 'addCtrl',
-				resolve: {
-					groups: function () {
-						return d2Map.groups();
-					}
-				}
-			});
-
-			modalInstance.result.then(function (result) {
-				if (result) {
-					d2Map.numeratorAdd(result.name, result.definition, result.group);
-				}
-			});
-		};
-
-
 		self.numeratorMap = function(code) {
 
 			var modalInstance = $modal.open({
@@ -80,10 +59,7 @@
 				controllerAs: 'mapCtrl',
 				resolve: {
 					indicator: function () {
-						return angular.copy(d2Map.numerators(code));
-					},
-					groups: function () {
-						return self.dataGroups(code);
+						return code ? d2Map.numerators(code) : null;
 					}
 				}
 			});
@@ -92,7 +68,27 @@
 				console.log(result);
 
 				if (result) {
-					d2Map.numeratorUpdate(result);
+					var indicator = result.indicator;
+					var groups = result.groups;
+
+
+
+					console.log(indicator);
+					console.log(groups);
+
+					return;
+
+					//new custom
+
+					//update custom
+
+					//update standard
+
+					d2Map.numeratorUpdate(indicator);
+
+					//TODO: Update groups
+					d2Map.groupAddNumerator(groupCode, self.groupSelect[groupCode].code);
+
 				}
 			});
 		};

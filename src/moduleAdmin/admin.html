@@ -26,7 +26,7 @@
 						<button ng-disabled="!admCtrl.isAdmin" ng-click="admCtrl.numeratorMap(indicator.code);" class="btn btn-default btn-xs">Edit</button><button ng-disabled="!admCtrl.isAdmin" ng-if="indicator.custom" style="margin-left: 5px; width: 50px;" ng-click="admCtrl.numeratorDelete(indicator.code);" class="btn btn-danger btn-xs">Delete</button><button ng-if="!indicator.custom" ng-disabled="!indicator.dataID || !admCtrl.isAdmin" style="margin-left: 5px; width: 50px" ng-click="admCtrl.numeratorClear(indicator.code);" class="btn btn-warning btn-xs">Clear</button></td>
 				</tr>
 			<tfoot>
-			<tr><td colspan="6"><button ng-disabled="!admCtrl.isAdmin" type="button" class="btn btn-primary pull-right btn-sm" ng-click="admCtrl.numeratorAdd();" style="width: 90px;">Add</button></td></tr></tfoot>
+			<tr><td colspan="6"><button ng-disabled="!admCtrl.isAdmin" type="button" class="btn btn-primary pull-right btn-sm" ng-click="admCtrl.numeratorMap(null);" style="width: 90px;">Add</button></td></tr></tfoot>
 			</table>
 			
 		</tab>

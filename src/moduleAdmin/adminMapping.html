@@ -4,80 +4,65 @@
 <div class="modal-body">
 
 <table class="table table-bordered">
-	<tr><th>Groups</th><td>{{mapCtrl.groups}}</td></tr>
-	<tr><th>Name</th><td>{{mapCtrl.indicator.name}}</td></tr>
-	<tr><th>Definition</th><td>{{mapCtrl.indicator.definition}}</td>
+	<tr>
+		<th>Groups</th>
+		<td>
+			<d2-select multiple="true"
+					   ng-model="mapCtrl.groupsSelected"
+					   options="mapCtrl.groups"
+						placeholder="Select groups...">
+			</d2-select>
+		</td>
+	</tr>
+	<tr>
+		<th>Name</th>
+		<td><input ng-disabled="!mapCtrl.custom" type="text" style="width: 100%;" ng-model="mapCtrl.name"/></td>
+	</tr>
+	<tr>
+		<th>Definition</th>
+		<td><textarea ng-disabled="!mapCtrl.custom" style="width: 100%;" ng-model="mapCtrl.definition"></textarea></td>
 </table>
 
 <label>Data mapping</label>
-<div class="btn-group btn-group-justified" style="margin-bottom: 10px; width: 220px;">
-		<label class="btn btn-default" ng-model="mapCtrl.dataDisaggregation" btn-radio="0">Data Element</label>
-  		<label class="btn btn-default" ng-model="mapCtrl.dataDisaggregation" btn-radio="1">Indicator</label>
-</div>
+	<div style="max-width: 600px">
+		<div class="btn-group btn-group-justified" style="width: 120px; margin-bottom: 10px; display: inline-block;">
+			<label class="btn btn-default" ng-model="mapCtrl.dataTypeSelected" btn-radio="'dataElements'">Data element</label>
+			<label class="btn btn-default" ng-model="mapCtrl.dataTypeSelected" btn-radio="'indicators'">Indicator</label>
+		</div>
 
-	<div ng-show="mapCtrl.dataDisaggregation === 0">
-	<ui-select ng-show="mapCtrl.dataDisaggregation === 0" ng-model="mapCtrl.dataElementGroupsSelected" theme="bootstrap" style="margin-bottom: 10px; width: 75%; display: inline-block;">
-	  <ui-select-match placeholder="Select data element group...">
-	  	{{mapCtrl.dataElementGroupsSelected.displayName}}
-	  </ui-select-match>
-	  <ui-select-choices
-	  	repeat="obj in mapCtrl.dataElementGroups | filter: $select.search">
-	   		<div ng-bind-html="obj.displayName | highlight: $select.search"></div>
-	</ui-select-choices>
-	</ui-select>
+		<!-- DATA ELEMENTS -->
+		<div ng-if="mapCtrl.dataTypeSelected === 'dataElements'" style="max-width: 600px">
+			<d2-select-data-element
+					multiple="false"
+					ng-model="mapCtrl.dataSelected"
+					on-select="mapCtrl.updateDataSetList(object);">
+			</d2-select-data-element>
+		</div>
 
-	<div class="btn-group pull-right" style="display: inline-block;">
-			<label class="btn btn-default" ng-model="mapCtrl.dataDetails" btn-radio="0">Totals</label>
-	  		<label class="btn btn-default" ng-model="mapCtrl.dataDetails" btn-radio="1">Details</label>
+		<!-- INDICATORS -->
+		<div ng-if="mapCtrl.dataTypeSelected === 'indicators'" style="max-width: 600px">
+			<d2-select-indicator
+					ng-model="mapCtrl.dataSelected"
+					multiple="false"
+					on-select="mapCtrl.updateDataSetList(object);">
+			</d2-select-indicator>
+		</div>
 	</div>
 
-	<ui-select ng-disabled="!mapCtrl.dataElementGroupsSelected" ng-model="mapCtrl.dataElementsSelected" theme="bootstrap" style="margin-bottom: 10px;">
-	  <ui-select-match placeholder="Select data element...">
-	  	{{mapCtrl.dataElementsSelected.displayName}}
-	  </ui-select-match>
-	  <ui-select-choices
-	  	repeat="obj in mapCtrl.dataElements | filter: $select.search">
-	   		<div ng-bind-html="obj.displayName | highlight: $select.search"></div>
-	  </ui-select-choices>
-	  </ui-select>
-	</div>
-
-	<div ng-show="mapCtrl.dataDisaggregation === 1">
-	<ui-select ng-model="mapCtrl.indicatorGroupsSelected" theme="bootstrap" style="margin-bottom: 10px;">
-	  <ui-select-match placeholder="Select indicator group...">
-	  	{{mapCtrl.indicatorGroupsSelected.displayName}}
-	  </ui-select-match>
-	  <ui-select-choices
-	  	repeat="obj in mapCtrl.indicatorGroups | filter: $select.search">
-	   		<div ng-bind-html="obj.displayName | highlight: $select.search"></div>
-	  </ui-select-choices>
-	</ui-select>
-
-	<ui-select ng-disabled="!mapCtrl.indicatorGroupsSelected" ng-model="mapCtrl.indicatorsSelected" theme="bootstrap" style="margin-bottom: 10px;">
-	  <ui-select-match placeholder="Select indicator...">
-	  	{{mapCtrl.indicatorsSelected.displayName}}
-	  </ui-select-match>
-	  <ui-select-choices
-	  	repeat="obj in mapCtrl.indicators | filter: $select.search">
-	   		<div ng-bind-html="obj.displayName | highlight: $select.search"></div>
-	  </ui-select-choices>
-	</ui-select>
-	</div>
 	<label>Dataset for completeness</label>
-	<ui-select ng-disabled="(mapCtrl.dataDisaggregation === 0 && !mapCtrl.dataElementsSelected) || (mapCtrl.dataDisaggregation === 1 && !mapCtrl.indicatorsSelected)"ng-model="mapCtrl.dataSetsSelected" theme="bootstrap" style="margin-bottom: 10px;">
-	  <ui-select-match placeholder="Select data set...">
-	  	{{mapCtrl.dataSetsSelected.displayName}}
-	  </ui-select-match>
-	  <ui-select-choices
-	  	repeat="obj in mapCtrl.dataSets | filter: $select.search">
-	   		<div ng-bind-html="obj.displayName | highlight: $select.search"></div>
-	  </ui-select-choices>
-	</ui-select>
-<hr />
-<p ng-if="(mapCtrl.dataDisaggregation === 0 && mapCtrl.dataElementsSelected) || (mapCtrl.dataDisaggregation === 1 && mapCtrl.indicatorsSelected)">"<em>{{mapCtrl.indicator.name}}</em>" will be mapped to "<em ng-if="mapCtrl.dataDisaggregation === 0">{{mapCtrl.dataElementsSelected.displayName}}</em><em ng-if="mapCtrl.dataDisaggregation === 1">{{mapCtrl.indicatorsSelected.displayName}}</em>"</p>
+	<d2-select multiple="false"
+			   ng-model="mapCtrl.dataSetSelected"
+			   options="mapCtrl.dataSets"
+				placeholder="Select data set...">
+	</d2-select>
+
+<span ng-if="mapCtrl.dataSelected && mapCtrl.name && mapCtrl.name.length > 0">
+	<hr />
+	<p >"<em>{{mapCtrl.name}}</em>" will be mapped to "{{mapCtrl.dataSelected.displayName}}".</em></p>
+	</span>
 
 </div>
 <div class="modal-footer" style="clear: both;">     
     <button type="button" class="btn btn-default" data-ng-click="mapCtrl.cancel()">Cancel</button>
-    <button type="button" class="btn btn-default" data-ng-click="mapCtrl.save()" ng-disabled="!(((mapCtrl.dataDisaggregation === 0 && mapCtrl.dataElementsSelected != undefined) || (mapCtrl.dataDisaggregation === 1 && mapCtrl.indicatorsSelected != undefined)) && mapCtrl.dataSetsSelected != undefined)">Save</button>
+    <button type="button" class="btn btn-default" data-ng-click="mapCtrl.save()" ng-disabled="!mapCtrl.name || mapCtrl.name === '' || !mapCtrl.dataSelected || !mapCtrl.dataSetSelected || mapCtrl.groupsSelected.length === 0">Save</button>
 </div>

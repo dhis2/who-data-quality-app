@@ -1,172 +1,73 @@
 (function(){  
 	/**Controller: Parameters*/
 	angular.module('admin').controller("ModalMappingController",
-	['$modalInstance', '$scope', 'requestService', 'd2Meta', 'indicator', 'groups',
-	function($modalInstance, $scope, requestService, d2Meta, indicator, groups) {
+	['$modalInstance', '$scope', 'requestService', 'd2Meta', 'd2Map', 'indicator',
+	function($modalInstance, $scope, requestService, d2Meta, d2Map, indicator) {
 	    	    
 	    var self = this; 
-	    self.indicator = indicator;
-	    self.groups = groups;
-	    
-	    self.dataDisaggregation = 0;
-	    self.dataDetails = 0;
-	    
-	    self.dataElementGroups = [];
-	    self.dataElementGroupsSelected = undefined;
-	    
-	    self.dataElements = [];
-	    self.dataElementPlaceholder = "";
-	    self.dataElementsSelected = undefined;
-	    
-	    self.indicatorGroups = [];
-	    self.indicatorGroupsSelected = undefined;
-	    
-	    self.indicators = [];
-	    self.indicatorPlaceholder = "";
-	    self.indicatorsSelected = undefined;
-	    
-	    self.dataSets = [];
-	    self.dataSetsSelected = undefined;
 
+		self.groups = d2Map.groups();
+		//TODO: decide what to use
+		for (var i = 0; i < self.groups.length; i++) {
+			self.groups[i]['displayName'] = self.groups[i]['name']
+		}
 
-		d2Meta.objects('dataElementGroups').then(function(data) {
-	    	self.dataElementGroups = data;
-	    });
+		if (!indicator) {
+			self.custom = true;
+			self.name = '';
+			self.definition = '';
+			self.groupsSelected = [];
+			self.dataTypeSelected = 'dataElements';
+			self.dataSelected = null;
+			self.dataSetSelected = null;
+		}
+		else {
+			self.custom = indicator.custom;
+			self.name = indicator.name;
+			self.definition = indicator.definition;
+			self.groupsSelected = d2Map.numeratorGroups(indicator.code);
+			self.dataTypeSelected = 'dataElements';
+			self.dataSelected = null;
+			self.dataSetSelected = null;
+		}
 
-		d2Meta.objects('indicatorGroups').then(function(data) {
-	    	self.indicatorGroups = data;
-	    });
-	    
-	    initWatchers();
-	    
-	    function updateDataElementList() {	    	
-	    	if (self.dataDetails === 0) {	    	
+		self.updateDataSetList = function (data) {
+  	    	self.dataSetSelected = undefined;
 
-				d2Meta.object('dataElementGroups', self.dataElementGroupsSelected.id, 'dataElements[displayName,id]')
-		    	 	.then(function(data) { 
-		    	       	self.dataElements = data.dataElements;
-		    	     });
-	    	}
-	    	else {
-				var filter = 'dataElement.dataElementGroups.id:eq:' + self.dataElementGroupsSelected.id;
-				var fields = 'displayName,id,dataElementId,optionComboId';
-				d2Meta.objects('dataElementOperands', null, fields, filter)
-	    			.then(function(data) {
-	    		       	self.dataElements = data;
-	    		     });
-	    	}
-	    }
-	    
-	    
-  	    function updateIndicatorList() {
+  	    	if (!data) return;
+			else self.dataSelected = data;
 
-			d2Meta.object('indicatorGroups', self.indicatorGroupsSelected.id, 'indicators[displayName,id]')
-  	    		.then(function(data) { 
-  	    		   	self.indicators = data.indicators;
-  	    		});
-  	    }
-  	    
-  	    
-  	    function updateDataSetList() {
-  	    	self.dataSetsSelected = undefined;
-  	    	
-  	    	if (self.dataDisaggregation === 0) {
+  	    	if (self.dataTypeSelected === 'dataElements') {
 
-				var id;
-				if (self.dataDetails === 0) {
-					id = self.dataElementsSelected.id
-				}
-				else {
-					id = self.dataElementsSelected.dataElementId;
-				}
+				var id = self.dataSelected.id.substr(0,11);
 				d2Meta.object('dataElements', id, 'dataSets[displayName,id,periodType]')
 		    		.then(function(data) {
-		    			 
 	    			   	self.dataSets = data.dataSets;
 	    			});
 	    	}
 	    	else {
-
-				d2Meta.indicatorDataSets(self.indicatorsSelected.id)
+				d2Meta.indicatorDataSets(self.dataSelected.id)
 	    			.then(function(data) {
 						self.dataSets = data;
 	    			});
 	    	}
   	    }
-  	    
-  	    		
-		
-		function initWatchers() {
-		
-			$scope.$watchCollection(function() { return self.dataElementGroupsSelected; }, 
-				function() {
-					
-					if (self.dataElementGroupsSelected) {
-						updateDataElementList();	
-					}
-					
-				}
-			);
-			
-			$scope.$watchCollection(function() { return self.indicatorGroupsSelected; }, 
-				function() {
-					
-					if (self.indicatorGroupsSelected) {
-						updateIndicatorList();
-						
-			  		}     
-				}
-			);
-			
-			$scope.$watchCollection(function() { return self.indicatorsSelected; }, 
-				function() {
-					
-					if (self.indicatorsSelected) {
-						updateDataSetList();
-						
-			  		}     
-				}
-			);
-			
-			$scope.$watchCollection(function() { return self.dataElementsSelected; }, 
-				function() {
-					
-					if (self.dataElementsSelected) {
-						updateDataSetList();
-			  		}     
-				}
-			);
-			
-			
-			$scope.$watchCollection(function() { return self.dataDetails; }, 
-				function() {
-					if (self.dataElementGroupsSelected) {
-						self.dataElementsSelected = undefined;
-						updateDataElementList();	
-					}   
-				}
-			);
-		}
-	    
-	    	    
+
 	    self.cancel = function () {
 	        $modalInstance.close();
 	    };
 	    
 	    self.save = function () {
+			var updatedIndicator = {
+				"name": self.name,
+				"custom": self.custom,
+				"definition": self.definition,
+				"dataID": self.dataSelected.id,
+				"dataSetID": self.dataSetSelected.id,
+				"code": indicator && indicator.code ? indicator.code : null
+			};
 
-			var id;
-	    	if (self.dataDisaggregation === 0) {
-	    		id = self.dataElementsSelected.id;
-	    	}
-	    	else {
-	    		id = self.indicatorsSelected.id;
-	    	}
-			self.indicator.dataID = id;
-	    	self.indicator.dataSetID = self.dataSetsSelected.id;
-	    	self.indicator.matched = true;
-	    	
-	        $modalInstance.close(self.indicator);
+	        $modalInstance.close({'indicator': updatedIndicator, 'groups': self.groupsSelected});
 	    };
 	    
 	}]);
