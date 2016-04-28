@@ -1091,7 +1091,18 @@
 					promises.push(d2Meta.objects('dataElements', dataIDs));
 					promises.push(d2Meta.objects('indicators', dataIDs));
 					promises.push(d2Meta.objects('dataSets', dataIDs, 'displayName,id,periodType'));
-					promises.push(d2Meta.dataElementOperands(dataIDs));
+
+					//Remove non-operands, to speed things up
+					var operands = [];
+					for (var i = 0; i < dataIDs.length; i++) {
+						if (dataIDs[i].length === 23) { //11 + . + 11
+							operands.push(dataIDs[i]);
+						}
+					}
+					if (operands.length > 0) {
+						promises.push(d2Meta.objects('dataElementOperands', operands));
+					}
+
 					$q.all(promises).then(
 						function(datas) {
 							_d2Objects = {};

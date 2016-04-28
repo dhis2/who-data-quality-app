@@ -310,9 +310,11 @@
 
 
 
-				/** ===== DATA ELEMENTS ===== */
+				/** ===== DATA ELEMENT OPERANDS ===== */
 				function dataElementOperandsFromIDs(ids) {
 					var deferred = $q.defer();
+
+					console.log("Use d2Meta.objects instead for 2.22 and newer");
 
 					var operandDictionary = {};
 					var categoryOptionCombos = [];
