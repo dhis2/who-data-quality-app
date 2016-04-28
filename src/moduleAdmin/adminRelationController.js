@@ -17,14 +17,14 @@
 			if (indicators[i].dataID) {
 				self.numeratorList.push(
 					{
-						'name': d2Map.d2NameFromID(indicators[i].dataID),
+						'displayName': d2Map.d2NameFromID(indicators[i].dataID),
 						'id': indicators[i].dataID,
 						'code': indicators[i].code
 					}
 				);
 			}
 		}
-		d2Utils.arraySortByProperty(self.numeratorList, 'name', false);
+		d2Utils.arraySortByProperty(self.numeratorList, 'displayName', false);
 
     	    	
 	    //Add
