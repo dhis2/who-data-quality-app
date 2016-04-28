@@ -13,6 +13,7 @@
 		}
 
 		if (!indicator) {
+			self.core = false;
 			self.custom = true;
 			self.name = '';
 			self.definition = '';
@@ -22,6 +23,7 @@
 			self.dataSetSelected = null;
 		}
 		else {
+			self.core = d2Map.numeratorIsCore(indicator.code);
 			self.custom = indicator.custom;
 			self.name = indicator.name;
 			self.definition = indicator.definition;
@@ -67,7 +69,7 @@
 				"code": indicator && indicator.code ? indicator.code : null
 			};
 
-	        $modalInstance.close({'indicator': updatedIndicator, 'groups': self.groupsSelected});
+	        $modalInstance.close({'indicator': updatedIndicator, 'groups': self.groupsSelected, 'core': self.core});
 	    };
 	    
 	}]);

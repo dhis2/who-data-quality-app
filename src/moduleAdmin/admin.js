@@ -65,29 +65,21 @@
 			});
 
 			modalInstance.result.then(function (result) {
-				console.log(result);
 
 				if (result) {
 					var indicator = result.indicator;
 					var groups = result.groups;
+					var core = result.core;
 
+					//new
+					if (indicator.code === null) {
+						d2Map.numeratorAdd(indicator, groups, core);
+					}
 
-
-					console.log(indicator);
-					console.log(groups);
-
-					return;
-
-					//new custom
-
-					//update custom
-
-					//update standard
-
-					d2Map.numeratorUpdate(indicator);
-
-					//TODO: Update groups
-					d2Map.groupAddNumerator(groupCode, self.groupSelect[groupCode].code);
+					//update
+					else {
+						d2Map.numeratorUpdate(indicator, groups, core);
+					}
 
 				}
 			});
@@ -112,6 +104,17 @@
 			return firstGroup + indicator.name;
 		};
 
+
+		self.numeratorToggleCore = function (code) {
+
+			if (isCore(code)) {
+				d2Map.numeratorRemoveCore(code);
+			}
+			else {
+				d2Map.numeratorMakeCore(code);
+			}
+
+		}
 
 
 		/** ===== NUMERATOR GROUPS ===== **/
@@ -318,11 +321,7 @@
 
 
 		self.isCore = function(code) {
-			var core = d2Map.groupNumerators('core');
-			for (var i = 0; i < core.length; i++) {
-				if (core[i].code === code) return true;
-			}
-			return false;
+			return d2Map.numeratorIsCore(code);
 		}
 
 

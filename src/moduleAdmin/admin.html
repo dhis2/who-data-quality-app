@@ -19,7 +19,9 @@
 				<tr ng-repeat="indicator in admCtrl.numerators| orderBy:admCtrl.numeratorSort">
 					<td class="vert-align">{{admCtrl.dataGroups(indicator.code)}}</td>
 					<td class="vert-align">{{indicator.name}}</td>
-					<td class="vert-align" style="text-align: center;"><span ng-if="admCtrl.isCore(indicator.code)" class="glyphicon glyphicon-ok"></span></td>
+					<td class="vert-align" style="text-align: center;">
+							<span ng-if="admCtrl.isCore(indicator.code)" class="glyphicon glyphicon-ok"></span>
+					</td>
 					<td class="vert-align">{{admCtrl.d2NameFromID(indicator.dataID)}}</td>
 					<td class="vert-align">{{admCtrl.d2NameFromID(indicator.dataSetID)}}</td>
 					<td class="vert-align" align="center">

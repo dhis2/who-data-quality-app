@@ -28,6 +28,9 @@
 					numeratorAdd: addIndicator,
 					numeratorDelete: numeratorDelete,
 					numeratorUpdate: updateIndicator,
+					numeratorIsCore: numeratorIsCore,
+					numeratorMakeCore: makeIndicatorCore,
+					numeratorRemoveCore: removeIndicatorCore,
 					denominators: denominators,
 					denominatorsConfigured: denominatorsConfigured,
 					denominatorAddEdit: addEditDenominator,
@@ -76,6 +79,7 @@
 									function (data) {
 										_ready = true;
 										deferred.resolve(true);
+										editMap();
 									}
 								);
 							}
@@ -107,7 +111,15 @@
 						}
 					);
 
+
+
 					return deferred.promise;
+				}
+
+				function editMap() {
+
+					_map.groups[0].members = [];
+
 				}
 
 
@@ -338,6 +350,13 @@
 
 
 				function addToGroup(groupCode, dataCode) {
+
+					//check if already in group
+					var current = groups(groupCode).members;
+					for (var i = 0; i < current.length; i++) {
+						if (current[i] === dataCode) return;
+					}
+
 					groups(groupCode).members.push(dataCode);
 
 					return save();
@@ -401,25 +420,26 @@
 				}
 
 
-				function addIndicator(name, definition, groupCode) {
+				function addIndicator(indicator, groups, core) {
 					//Add indicator
-					var code = getNewIndicatorCode();
-					_map.numerators.push({
-						"name": name,
-						"definition": definition,
-						"code": code,
-						"extremeOutlier": 3,
-						"localData": {},
-						"moderateOutlier": 2,
-						"consistency": 33,
-						"custom": true,
-						"trend": "constant",
-						"missing": 90,
-						"dataSetID": ''
-					});
+					indicator.code = getNewIndicatorCode();
+
+					//Add default quality parameters
+					indicator.extremeOutlier = 3;
+					indicator.moderateOutlier = 2;
+					indicator.consistency = 33;
+					indicator.trend = 'constant';
+					indicator.missing = 90;
+
+					//Add to map
+					_map.numerators.push(indicator);
 
 					//Add to group membership
-					addToGroup(groupCode, code);
+					setIndicatorGroups(indicator, groups);
+
+					//Check if core
+					if (core) makeIndicatorCore(indicator.code);
+					else removeIndicatorCore(indicator.code);
 
 					//Save
 					save();
@@ -478,7 +498,43 @@
 				}
 
 
-				function updateIndicator(indicator) {
+				function numeratorIsCore(code) {
+
+					var core = _map.coreIndicators;
+					for (var i = 0; i < core.length; i++) {
+						if (core[i] === code) return true;
+					}
+
+					return false;
+				}
+
+
+				function makeIndicatorCore(code) {
+
+					var core = _map.coreIndicators;
+					for (var i = 0; i < core.length; i++) {
+						if (core[i] === code) return;
+					}
+
+					_map.coreIndicators.push(code);
+					save();
+				}
+
+
+				function removeIndicatorCore(code) {
+					var core = _map.coreIndicators;
+					for (var i = 0; i < core.length; i++) {
+						if (core[i] === code) {
+							_map.coreIndicators.splice(i, 1);
+							break;
+						}
+					}
+
+					save();
+				}
+
+
+				function updateIndicator(indicator, groups, core) {
 					var original = indicators(indicator.code);
 
 					//Check if we need to add or update the related dataset
@@ -499,6 +555,12 @@
 						}
 					}
 
+					if (groups) {
+						setIndicatorGroups(indicator, groups);
+					}
+
+					if (core) makeIndicatorCore(indicator.code);
+					else removeIndicatorCore(indicator.code);
 
 					save();
 				}
@@ -542,6 +604,20 @@
 
 						if (!existing) return current;
 					}
+				}
+
+
+				function setIndicatorGroups(indicator, groups) {
+					if (!groups) return;
+
+					//Remove existing group membership
+					removeFromGroups(indicator.code);
+
+					//Add to specified groups
+					for (var i = 0; i < groups.length; i++) {
+						addToGroup(groups[i].code, indicator.code );
+					}
+
 				}
 
 				

@@ -5,22 +5,28 @@
 
 <table class="table table-bordered">
 	<tr>
-		<th>Groups</th>
-		<td>
-			<d2-select multiple="true"
-					   ng-model="mapCtrl.groupsSelected"
-					   options="mapCtrl.groups"
-						placeholder="Select groups...">
-			</d2-select>
-		</td>
-	</tr>
-	<tr>
 		<th>Name</th>
 		<td><input ng-disabled="!mapCtrl.custom" type="text" style="width: 100%;" ng-model="mapCtrl.name"/></td>
 	</tr>
 	<tr>
 		<th>Definition</th>
 		<td><textarea ng-disabled="!mapCtrl.custom" style="width: 100%;" ng-model="mapCtrl.definition"></textarea></td>
+	<tr>
+		<th>Groups</th>
+		<td>
+			<d2-select multiple="true"
+					   ng-model="mapCtrl.groupsSelected"
+					   options="mapCtrl.groups"
+					   placeholder="Select groups...">
+			</d2-select>
+		</td>
+	</tr>
+	<tr>
+		<th>Core</th>
+		<td>
+			<input type="checkbox" value="mapCtrl.core" ng-model="mapCtrl.core">
+		</td>
+	</tr>
 </table>
 
 <label>Data mapping</label>
