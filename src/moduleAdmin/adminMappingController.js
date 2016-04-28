@@ -13,25 +13,29 @@
 		}
 
 		if (!indicator) {
-			self.core = false;
-			self.custom = true;
-			self.name = '';
-			self.definition = '';
-			self.groupsSelected = [];
-			self.dataTypeSelected = 'dataElements';
-			self.dataSelected = null;
-			self.dataSetSelected = null;
+			//Set up new indicator structure
+			indicator = {
+				'core': false,
+				'custom': true,
+				'name': '',
+				'definition': '',
+				'groupsSelected': [],
+				'dataTypeSelected': 'dataElements',
+				'dataSelected': null,
+				'dataSetSelected': null
+			}
 		}
-		else {
-			self.core = d2Map.numeratorIsCore(indicator.code);
-			self.custom = indicator.custom;
-			self.name = indicator.name;
-			self.definition = indicator.definition;
-			self.groupsSelected = d2Map.numeratorGroups(indicator.code);
-			self.dataTypeSelected = 'dataElements';
-			self.dataSelected = null;
-			self.dataSetSelected = null;
-		}
+
+		//TODO: Could just assign self.indicator
+		self.core = d2Map.numeratorIsCore(indicator.code);
+		self.custom = indicator.custom;
+		self.name = indicator.name;
+		self.definition = indicator.definition;
+		self.groupsSelected = d2Map.numeratorGroups(indicator.code);
+		self.dataTypeSelected = 'dataElements';
+		self.dataSelected = null;
+		self.dataSetSelected = null;
+
 
 		self.updateDataSetList = function (data) {
   	    	self.dataSetSelected = undefined;
@@ -60,16 +64,13 @@
 	    };
 	    
 	    self.save = function () {
-			var updatedIndicator = {
-				"name": self.name,
-				"custom": self.custom,
-				"definition": self.definition,
-				"dataID": self.dataSelected.id,
-				"dataSetID": self.dataSetSelected.id,
-				"code": indicator && indicator.code ? indicator.code : null
-			};
+			indicator.name = self.name;
+			indicator.core = self.core;
+			indicator.defintion = self.definition;
+			indicator.dataID = self.dataSelected.id;
+			indicator.dataSetID = self.dataSetSelected.id;
 
-	        $modalInstance.close({'indicator': updatedIndicator, 'groups': self.groupsSelected, 'core': self.core});
+	        $modalInstance.close({'indicator': indicator, 'groups': self.groupsSelected, 'core': self.core});
 	    };
 	    
 	}]);
