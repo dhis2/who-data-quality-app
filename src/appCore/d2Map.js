@@ -847,12 +847,12 @@
 
 				function denominatorTypes() {
 					return [
-						{'name': 'Total Population', 'code': 'total'},
-						{'name': 'Live births', 'code': 'lb'},
-						{'name': 'Children < 1 year', 'code': 'lt1'},
-						{'name': 'Expected pregnancies', 'code': 'ep'},
-						{'name': 'Other', 'code': 'other'},
-						{'name': 'UN population projection', 'code': 'un'}
+						{'displayName': 'Total Population', 'code': 'total'},
+						{'displayName': 'Live births', 'code': 'lb'},
+						{'displayName': 'Children < 1 year', 'code': 'lt1'},
+						{'displayName': 'Expected pregnancies', 'code': 'ep'},
+						{'displayName': 'Other', 'code': 'other'},
+						{'displayName': 'UN population projection', 'code': 'un'}
 					];
 				}
 

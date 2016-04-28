@@ -189,7 +189,7 @@
 				</tr>
 				<tr ng-repeat="denominator in admCtrl.denominators | orderBy:'type'">
 					<td class="vert-align">{{admCtrl.d2NameFromID(denominator.dataID)}}</td>
-					<td class="vert-align">{{admCtrl.denominatorNameFromCode(denominator.type).name}}</td>
+					<td class="vert-align">{{admCtrl.denominatorNameFromCode(denominator.type).displayName}}</td>
 					<td class="vert-align" align="center">
 						<button ng-disabled="!admCtrl.isAdmin" ng-click="admCtrl.editDenominator(denominator);" class="btn btn-default btn-xs">Edit</button>
 						<button ng-disabled="!admCtrl.isAdmin || denominator.type === 'un'" ng-click="admCtrl.deleteDenominator(denominator.code);" class="btn btn-danger btn-xs">Delete</button></td>

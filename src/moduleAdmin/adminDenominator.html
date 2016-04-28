@@ -7,66 +7,45 @@
 		<tr>
 			<th>Type</th>
 			<td>
-				<ui-select ng-model="addCtrl.typeSelected" theme="bootstrap" style="width: 100%;">
-					<ui-select-match placeholder="Select type...">
-						{{addCtrl.typeSelected.name}}
-					</ui-select-match>
-					<ui-select-choices
-							repeat="obj in addCtrl.types | filter: $select.search">
-						<div ng-bind-html="obj.name | highlight: $select.search"></div>
-					</ui-select-choices>
-				</ui-select>
+				<d2-select ng-model="addCtrl.typeSelected" options="addCtrl.types" placeholder="Select type"></d2-select>
 			</td>
 		</tr>
 		<tr>
-			<th rowspan="2">Denominator</th>
-			<td><ui-select ng-model="addCtrl.dataTypeA" theme="bootstrap" style="width: 100%;">
-				<ui-select-match placeholder="Select data type...">
-					{{addCtrl.dataTypeA.name}}
-				</ui-select-match>
-				<ui-select-choices
-						repeat="obj in addCtrl.dataTypes| filter: $select.search">
-					<div ng-bind-html="obj.name | highlight: $select.search"></div>
-				</ui-select-choices>
-			</ui-select></td>
-		<tr>
-			<td>
-				<ui-select
-						style="margin-bottom: 10px; max-width: 470px;"
-						ng-model="addCtrl.dataA">
-					<ui-select-match allow-clear="true" placeholder="Search...">
-						{{addCtrl.dataA.displayName}}
-					</ui-select-match>
-					<ui-select-choices
-							refresh="addCtrl.dataSearch($select.search, 'a')"
-							refresh-delay="500"
-							repeat="de in addCtrl.dataSearchResultA | filter: $select.search">
-						<div ng-bind-html="de.displayName | highlight: $select.search"></div>
-					</ui-select-choices>
-				</ui-select>
+			<th>Denominator</th>
+			<td style="width: 400px">
+				<div class="btn-group btn-group-justified" style="width: 120px; margin-bottom: 10px; display: inline-block;">
+					<label class="btn btn-default" ng-model="addCtrl.dataTypeSelected" btn-radio="'dataElements'">Data element</label>
+					<label class="btn btn-default" ng-model="addCtrl.dataTypeSelected" btn-radio="'indicators'">Indicator</label>
+				</div>
+
+				<!-- DATA ELEMENTS -->
+				<div ng-if="addCtrl.dataTypeSelected === 'dataElements'" style="max-width: 600px">
+					<d2-select-data-element
+							multiple="false"
+							ng-model="addCtrl.dataSelected"
+							on-select="addCtrl.updateDataSetList(object);">
+					</d2-select-data-element>
+				</div>
+
+				<!-- INDICATORS -->
+				<div ng-if="addCtrl.dataTypeSelected === 'indicators'" style="max-width: 600px">
+					<d2-select-indicator
+							ng-model="addCtrl.dataSelected"
+							multiple="false"
+							on-select="addCtrl.updateDataSetList(object);">
+					</d2-select-indicator>
+				</div>
 			</td>
 		</tr>
 		<tr>
 			<th>Lowest available level</th>
 			<td>
-				<ui-select ng-model="addCtrl.lowLevel" theme="bootstrap" style="width: 100%;">
-					<ui-select-match placeholder="Select level...">
-						{{addCtrl.lowLevel.displayName}}
-					</ui-select-match>
-					<ui-select-choices
-							repeat="obj in addCtrl.levels | filter: $select.search">
-						<div ng-bind-html="obj.displayName | highlight: $select.search"></div>
-					</ui-select-choices>
-				</ui-select>
+				<d2-select ng-model="addCtrl.lowLevel" options="addCtrl.levels" placeholder="Select level..."></d2-select>
 			</td>
 		</tr>
 	</table>
 
-	<div style="margin-bottom: 10px;">
-		<strong>Threshold</strong> denotes the % difference from the national ratio that is accepted for a sub-national unit.
-	</div>
-
 	<div class="modal-footer" style="clear: both;">
 		<button type="button" class="btn btn-default" data-ng-click="addCtrl.cancel()">Cancel</button>
-		<button type="button" class="btn btn-default" data-ng-click="addCtrl.save()" ng-disabled="addCtrl.dataTypeA === undefined || addCtrl.dataA === undefined || addCtrl.lowLevel === undefined">Save</button>
+		<button type="button" class="btn btn-default" data-ng-click="addCtrl.save()" ng-disabled="addCtrl.dataSelected === undefined || addCtrl.lowLevel === undefined || addCtrl.typeSelected === undefined">Save</button>
 	</div>

@@ -10,16 +10,9 @@
 				self.types = d2Map.denominatorTypes();
 				self.typeSelected = null;
 
-				self.dataTypes = [
-					{'name': 'Data element (total)', 'code': 'det'},
-					{'name': 'Data element (details)', 'code': 'ded'},
-					{'name': 'Indicator', 'code': 'in'}
-				];
-				self.dataTypeA = self.dataTypes[0];
+				self.dataTypeSelected = 'dataElements';
 
-				self.dataA;
-
-				self.dataSearchResultA = [];
+				self.dataSelected = null;
 
 				self.levels = [];
 				self.lowLevel;
@@ -57,74 +50,6 @@
 
 				}
 
-				self.dataSearch = function(searchString, indicator) {
-					if (searchString.length >= 2) {
-
-						var targetArray;
-						var type = self.dataTypeA.code;
-
-						if (type === 'det') {
-							dataElementSearch(searchString, indicator);
-						}
-						else if (type === 'ded') {
-							dataElementOperandSearch(searchString, indicator);
-						}
-						else {
-							indicatorSearch(searchString, indicator);
-						}
-					}
-
-				}
-
-
-				function indicatorSearch(searchString, indicator){
-					if (searchString.length >= 2) {
-						var requestURL = "/api/indicators.json?filter=displayName:like:" + searchString + "&paging=false&fields=displayName,id";
-						requestService.getSingle(requestURL).then(function (response) {
-
-							//will do with API filter once API-filter is stable
-							var result = response.data.indicators.sort(function(a,b) {
-								return (a.name < b.name) ? -1 : 1;
-							});
-
-							self.dataSearchResultA = result;
-						});
-					}
-				};
-
-				function dataElementSearch(searchString, indicator){
-					if (searchString.length >= 2) {
-						var requestURL = "/api/dataElements.json?filter=displayName:like:" + searchString + "&paging=false&fields=displayName,id";
-						requestService.getSingle(requestURL).then(function (response) {
-
-							//will do with API filter once API-filter is stable
-							var result = response.data.dataElements.sort(function(a,b) {
-								return (a.name < b.name) ? -1 : 1;
-							});
-							self.dataSearchResultA = result;
-
-						});
-					}
-				};
-
-				function dataElementOperandSearch(searchString, indicator){
-					if (searchString.length >= 2) {
-						var requestURL = "/api/dataElementOperands.json?filter=displayName:like:" + searchString + "&paging=false&fields=displayName,id";
-						requestService.getSingle(requestURL).then(function (response) {
-
-							//will do with API filter once API-filter is stable
-							var result = response.data.dataElementOperands.sort(function(a,b) {
-								return (a.name < b.name) ? -1 : 1;
-							});
-
-							self.dataSearchResultA = result;
-
-
-						});
-					}
-				};
-
-
 				function getType(typeCode) {
 					for (var i = 0; i < self.types.length; i++) {
 						if (self.types[i].code === typeCode) return self.types[i];
@@ -140,7 +65,7 @@
 				self.save = function () {
 
 					var savedDenominator = {
-						"dataID": self.dataA.id,
+						"dataID": self.dataSelected.id,
 						"type": self.typeSelected.code,
 						"lowLevel": self.lowLevel.level,
 						"code": denominator && denominator.code ? denominator.code : null
