@@ -54,7 +54,7 @@
 		self.numeratorMap = function(code) {
 
 			var modalInstance = $modal.open({
-				templateUrl: "moduleAdmin/adminMapping.html",
+				templateUrl: "moduleAdmin/adminNumerator.html",
 				controller: "ModalMappingController",
 				controllerAs: 'mapCtrl',
 				resolve: {
@@ -122,7 +122,7 @@
 		self.groupAdd = function () {
 
 			var modalInstance = $modal.open({
-				templateUrl: "moduleAdmin/adminIndicatorGroup.html",
+				templateUrl: "moduleAdmin/adminNumeratorGroup.html",
 				controller: "ModalAddIndicatorGroupController",
 				controllerAs: 'addCtrl'
 			});
@@ -140,7 +140,7 @@
 		self.groupDelete = function () {
 
 			var modalInstance = $modal.open({
-				templateUrl: "moduleAdmin/adminIndicatorGroupDelete.html",
+				templateUrl: "moduleAdmin/adminNumeratorGroupDelete.html",
 				controller: "ModalDeleteIndicatorGroupController",
 				controllerAs: 'addCtrl',
 				resolve: {
@@ -188,7 +188,7 @@
 		self.editRelation = function(relation) {
 
 			var modalInstance = $modal.open({
-				templateUrl: "moduleAdmin/adminRelation.html",
+				templateUrl: "moduleAdmin/adminNumeratorRelation.html",
 				controller: "ModalAddEditRelationController",
 				controllerAs: 'addCtrl',
 				resolve: {
