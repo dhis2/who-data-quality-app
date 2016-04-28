@@ -70,7 +70,7 @@
 					if (orgunit.noLeaf && orgunit.children.length < 1) {
 
 						//Get children
-						d2Meta.object('organisationUnits', orgunit.data.ou.id, 'children[name,id,level,children::isNotEmpty]').then(
+						d2Meta.object('organisationUnits', orgunit.data.ou.id, 'children[displayName,id,level,children::isNotEmpty]').then(
 							function (data) {
 								var children = data.children;
 								d2Utils.arraySortByProperty(children, 'displayName', false);
