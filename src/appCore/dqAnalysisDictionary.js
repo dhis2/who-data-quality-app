@@ -43,9 +43,9 @@
 				function dataElementMeta() {
 					var deferred = $q.defer();
 
-					var fields = 'name,id,shortName,code,description,domainType,type,numberType,aggregationOperator,zeroIsSignificant,';
-					fields += 'dataSets[name,id,periodType,organisationUnits::size],';
-					fields += 'categoryCombo[name,categories[name,categoryOptions[name]]]';
+					var fields = 'displayName,id,shortName,code,description,domainType,valueType,aggregationType,zeroIsSignificant,';
+					fields += 'dataSets[displayName,id,periodType,organisationUnits::size],';
+					fields += 'categoryCombo[displayName,categories[displayName,categoryOptions[displayName]]]';
 					d2Meta.object('dataElements', _id, fields).then(
 						function(meta) {
 							_meta = meta;
@@ -96,13 +96,13 @@
 					_result = {
 						type: _type,
 						uid: _meta.id,
-						name: _meta.name,
+						displayName: _meta.displayName,
 						shortName: _meta.shortName,
 						code: _meta.code,
 						description: _meta.description,
 						domainType: _meta.domainType === 'AGGREGATE' ? 'Aggregate' : 'Tracker',
-						valueType: valueType(_meta.type, _meta.numberType),
-						aggregationType: aggregationType(_meta.aggregationOperator),
+						valueType: valueType(_meta.valueType),
+						aggregationType: aggregationType(_meta.aggregationType),
 						zeroSignificant: _meta.zeroIsSignificant ? 'Yes' : 'No',
 						categories: categories(_meta.categoryCombo),
 						datasets: _meta.dataSets
@@ -122,7 +122,7 @@
 					data.rows = [];
 					for (var i = 0; i < dx.length; i++) {
 						var row = {
-							name: d2Data.name(dx[i]),
+							displayName: d2Data.name(dx[i]),
 							type: dataType(dx[i]),
 							p1: d2Data.value(dx[i], pe[0], ou),
 							p2: d2Data.value(dx[i], pe[1], ou),
@@ -141,15 +141,15 @@
 					for (var i = 0; i < _meta.categoryCombo.categories.length; i++) {
 						var ct = _meta.categoryCombo.categories[i];
 
-						if (ct.name === 'default') continue;
+						if (ct.displayName === 'default') continue;
 
 						var category = {
-							'name': ct.name,
+							'displayName': ct.displayName,
 							'options': []
 						}
 
 						for (var j = 0; j < ct.categoryOptions.length; j++) {
-							category.options.push(ct.categoryOptions[j].name);
+							category.options.push(ct.categoryOptions[j].displayName);
 						}
 
 						categories.push(category);
@@ -162,11 +162,11 @@
 				function aggregationType(type) {
 
 					switch (type) {
-						case 'sum':
+						case 'SUM':
 							return 'Sum';
-						case 'average':
+						case 'AVERAGE':
 							return 'Average';
-						case 'avg_sum_org_unit':
+						case 'AVG_SUM_ORG_UNIT':
 							return 'Average over time, sum in orgunit hierarhcy';
 						default:
 							return "Unknown";
@@ -174,28 +174,27 @@
 				}
 
 
-				function valueType (type, numberType) {
+				function valueType (type) {
 
 					switch (type) {
-						case 'bool':
+						case 'BOOLEAN':
 							return 'Boolean';
-						case 'trueOnly':
+						case 'TRUE_ONLY':
 							return 'Yes only';
-						case 'string':
+						case 'TEXT':
 							return 'Text';
-						case 'date':
+						case 'LONG_TEXT':
+							return 'Long text';
+						case 'DATE':
 							return 'Date';
-						case 'int':
-							switch (numberType) {
-								case 'number':
-									return 'Real number';
-								case 'int':
-									return 'Integer';
-								case 'zeroPositiveInt':
-									return 'Zero or positive integer';
-								case 'positiveNumber':
-									return 'Positive integer';
-							}
+						case 'NUMBER':
+							return 'Real number';
+						case 'INTEGER':
+							return 'Integer';
+						case 'INTEGER_ZERO_OR_POSITIVE':
+							return 'Zero or positive integer';
+						case 'INTEGER_POSITIVE':
+							return 'Positive integer';
 						default:
 							return "Unknown";
 					}
@@ -226,7 +225,7 @@
 
 					var promises = [];
 
-					var fields = 'name,id,shortName,code,description,indicatorType[name,factor],';
+					var fields = 'displayName,id,shortName,code,description,indicatorType[displayName,factor],';
 					fields += 'denominator,denominatorDescription,numerator,numeratorDescription';
 					promises.push(d2Meta.object('indicators', _id, fields));
 					promises.push(d2Meta.indicatorDataElements(_id));
@@ -294,7 +293,7 @@
 					_result = {
 						type: _type,
 						uid: _meta.id,
-						name: _meta.name,
+						displayName: _meta.displayName,
 						shortName: _meta.shortName,
 						code: _meta.code,
 						description: _meta.description,
@@ -321,7 +320,7 @@
 					data.rows = [];
 					for (var i = 0; i < dx.length; i++) {
 						var row = {
-							name: d2Data.name(dx[i]),
+							displayName: d2Data.name(dx[i]),
 							type: dataType(dx[i]),
 							p1: d2Data.value(dx[i], pe[0], ou),
 							p2: d2Data.value(dx[i], pe[1], ou),

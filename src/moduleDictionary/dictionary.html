@@ -37,7 +37,7 @@
 											ng-click="dCtrl.meta.element = el; dCtrl.updateElement();"
 											ng-class="{'active': dCtrl.meta.element === el}"
 											style="white-space: normal; width: 100%; float: left; text-align: left; margin-top: 5px">
-										{{el.name}}
+										{{el.displayName}}
 									</button>
 								</td>
 							</tr>
@@ -61,7 +61,7 @@
 
 
 
-		<h4>{{dCtrl.result.name}}</h4>
+		<h4>{{dCtrl.result.displayName}}</h4>
 
 		<table class="table table-bordered table-responsive dense">
 			<tr>
@@ -126,7 +126,7 @@
 					</th>
 				</tr>
 				<tr ng-repeat="cat in dCtrl.result.categories">
-					<td>{{cat.name}}</td>
+					<td>{{cat.displayName}}</td>
 					<td>{{cat.options.join(', ')}}</td>
 				</tr>
 			</table>
@@ -138,7 +138,7 @@
 			<table class="table table-bordered table-responsive dense">
 				<tr>
 					<th>Type</th>
-					<td>{{dCtrl.result.indicatorType.name}}</td>
+					<td>{{dCtrl.result.indicatorType.displayName}}</td>
 					<th>Factor</th>
 					<td>{{dCtrl.result.indicatorType.factor}}</td>
 				</tr>
@@ -169,7 +169,7 @@
 					<th>Name</th>
 				</tr>
 				<tr ng-repeat="de in dCtrl.result.dataElements">
-					<td>{{de.name}}</td>
+					<td>{{de.displayName}}</td>
 				</tr>
 			</table>
 		</div>
@@ -184,7 +184,7 @@
 					<th>Expected reports</th>
 				</tr>
 				<tr ng-repeat="ds in dCtrl.result.datasets">
-					<td>{{ds.name}}</td>
+					<td>{{ds.displayName}}</td>
 					<td>{{ds.periodType}}</td>
 					<td>{{ds.organisationUnits}}</td>
 				</tr>
@@ -203,7 +203,7 @@
 					<th>{{dCtrl.result.data.pe[2]}}</th>
 				</tr>
 				<tr ng-repeat="row in dCtrl.result.data.rows">
-					<td>{{row.name}}</td>
+					<td>{{row.displayName}}</td>
 					<td>{{row.type}}</td>
 					<td>{{row.p1}}</td>
 					<td>{{row.p2}}</td>

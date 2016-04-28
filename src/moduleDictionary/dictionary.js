@@ -58,26 +58,26 @@
 
 				switch (self.meta.type.id) {
 					case 'ds':
-						d2Meta.object('dataSets', self.meta.group.id, 'dataElements').then(
+						d2Meta.object('dataSets', self.meta.group.id, 'dataElements[displayName,id]').then(
 							function(dataSet) {
 								self.loading = false;
-								self.meta.elements = d2Utils.arraySortByProperty(dataSet.dataElements, 'name', false);
+								self.meta.elements = d2Utils.arraySortByProperty(dataSet.dataElements, 'displayName', false);
 						});
 						break;
 
 					case 'de':
-						d2Meta.object('dataElementGroups', self.meta.group.id, 'dataElements').then(
+						d2Meta.object('dataElementGroups', self.meta.group.id, 'dataElements[displayName,id]').then(
 							function(dataElementGroup) {
 								self.loading = false;
-								self.meta.elements = d2Utils.arraySortByProperty(dataElementGroup.dataElements, 'name', false);
+								self.meta.elements = d2Utils.arraySortByProperty(dataElementGroup.dataElements, 'displayName', false);
 						});
 						break;
 
 					case 'in':
-						d2Meta.object('indicatorGroups', self.meta.group.id, 'indicators').then(
+						d2Meta.object('indicatorGroups', self.meta.group.id, 'indicators[displayName,id]').then(
 							function(indicatorGroup) {
 								self.loading = false;
-								self.meta.elements = d2Utils.arraySortByProperty(indicatorGroup.indicators, 'name', false);
+								self.meta.elements = d2Utils.arraySortByProperty(indicatorGroup.indicators, 'displayName', false);
 							});
 						break;
 				}
@@ -119,9 +119,9 @@
 			function init() {
 				self.meta = {
 					types: [
-						{name: "Data set", id: 'ds'},
-						{name: "Data elements", id: 'de'},
-						{name: "Indicators", id: 'in'}
+						{displayName: "Data set", id: 'ds'},
+						{displayName: "Data elements", id: 'de'},
+						{displayName: "Indicators", id: 'in'}
 					],
 					type: null,
 					groups: null,
