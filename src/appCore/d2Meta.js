@@ -524,7 +524,7 @@
 							//GET DATA
 							var promises = [];
 							promises.push(objects('dataElements', dataElements));
-							promises.push(dataElementOperandsFromIDs(dataElementOperands));
+							promises.push(objects('dataElementOperands', dataElementOperands));
 							promises.push(objects('constants', constants, 'displayName,id,value'));
 
 							$q.all(promises).then(
@@ -532,10 +532,10 @@
 
 									var displayDictionary = {};
 									for (var i = 0; i < datas[0].length; i++) {
-										displayDictionary[datas[0][i].id] = datas[0][i].name;
+										displayDictionary[datas[0][i].id] = datas[0][i].displayName;
 									}
 									for (var i = 0; i < datas[1].length; i++) {
-										displayDictionary[datas[1][i].id] = datas[1][i].name;
+										displayDictionary[datas[1][i].id] = datas[1][i].displayName;
 									}
 									for (var i = 0; i < datas[2].length; i++) {
 										displayDictionary[datas[2][i].id] = datas[2][i].value;
