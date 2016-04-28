@@ -51,7 +51,11 @@
 
 					var deferred = $q.defer();
 
-					if (fieldString && fieldString.indexOf("name") > -1) console.log("Warning: Used name property");
+					if (fieldString && fieldString.indexOf("name") > -1) {
+						console.log("Warning: Used name property");
+						fieldString += ';displayName';
+					}
+					
 
 					var requestURL;
 					if (ids) {

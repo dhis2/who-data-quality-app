@@ -158,29 +158,29 @@
 			self.dataSelection[code].itemDescription = 'Loading...';
 
 			if (self.dataSelection[code].type === 'de') {
-				d2Meta.object('dataElementGroups', self.dataSelection[code].group.id, 'name,id,dataElements[name,id]').then(
+				d2Meta.object('dataElementGroups', self.dataSelection[code].group.id, 'displayName,id,dataElements[displayName,id]').then(
 					function(data) {
 						self.dataSelection[code].itemDescription  = 'Select data element...';
 						self.dataSelection[code].items = data.dataElements;
-						d2Utils.arraySortByProperty(self.dataSelection[code].items, 'name', false);
+						d2Utils.arraySortByProperty(self.dataSelection[code].items, 'displayName', false);
 					}
 				);
 			}
 			else if (self.dataSelection[code].type === 'dc') {
 				var filter = 'dataElement.dataElementGroups.id:eq:' + self.dataSelection[code].group.id;
-				var fields = 'name,id,dataElementId,optionComboId';
+				var fields = 'displayName,id,dataElementId,optionComboId';
 				d2Meta.objects('dataElementOperands', null, fields, filter).then(function(data) {
 						self.dataSelection[code].itemDescription  = "Select data element...";
 						self.dataSelection[code].items = data;
-						d2Utils.arraySortByProperty(self.dataSelection[code].items, 'name', false);
+						d2Utils.arraySortByProperty(self.dataSelection[code].items, 'displayName', false);
 					});
 			}
 			else {
-				d2Meta.object('indicatorGroups', self.dataSelection[code].group.id, 'name,id,indicators[name,id]').then(
+				d2Meta.object('indicatorGroups', self.dataSelection[code].group.id, 'displayName,id,indicators[displayName,id]').then(
 					function(data) {
 						self.dataSelection[code].itemDescription  = "Select indicator...";
 						self.dataSelection[code].items = data.indicators;
-						d2Utils.arraySortByProperty(self.dataSelection[code].items, 'name', false);
+						d2Utils.arraySortByProperty(self.dataSelection[code].items, 'displayName', false);
 					}
 				);
 			}

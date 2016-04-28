@@ -52,11 +52,11 @@
 				ng-model="aCtrl.dataSelection[code].group"
 				style="margin-bottom: 10px; max-width: 470px;">
 				<ui-select-match allow-clear="true" placeholder="Select group...">
-					{{aCtrl.dataSelection[code].group.name}}
+					{{aCtrl.dataSelection[code].group.displayName}}
 				</ui-select-match>
 				<ui-select-choices
 					repeat="obj in aCtrl.getGroupForCode(code)| filter: $select.search">
-					<div ng-bind-html="obj.name | highlight: $select.search"></div>
+					<div ng-bind-html="obj.displayName | highlight: $select.search"></div>
 				</ui-select-choices>
 			</ui-select>
 
@@ -66,11 +66,11 @@
 				on-select="aCtrl.updatePeriodList(code)"
 				style="margin-bottom: 10px; max-width: 470px;">
 				<ui-select-match allow-clear="true" placeholder="{{aCtrl.dataSelection[code].itemDescription}}">
-					{{aCtrl.dataSelection[code].item.name}}
+					{{aCtrl.dataSelection[code].item.displayName}}
 				</ui-select-match>
 				<ui-select-choices
 					repeat="obj in aCtrl.dataSelection[code].items | filter: $select.search">
-					<div ng-bind-html="obj.name | highlight: $select.search"></div>
+					<div ng-bind-html="obj.displayName | highlight: $select.search"></div>
 				</ui-select-choices>
 			</ui-select>
 			</div>

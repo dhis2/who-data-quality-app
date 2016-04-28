@@ -490,13 +490,13 @@
       		});
 
       		
-      		self.group = {name: '[ Core ]', code: 'core'};
+      		self.group = {displayName: '[ Core ]', code: 'core'};
 			self.groups = d2Map.configuredGroups();
 			self.groups.unshift(self.group);
 
 			self.selectedTab = 0;
 
-			d2Meta.objects('organisationUnitLevels', null, 'name,id,level').then(function(data) {
+			d2Meta.objects('organisationUnitLevels', null, 'displayName,id,level').then(function(data) {
 				self.orgunitLevels = data;
 
 				self.lowestLevel = 0;
