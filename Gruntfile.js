@@ -71,7 +71,7 @@ module.exports = function(grunt) {
 			dev: {
 				options: {
 					src: "build/",
-					dest: "/Users/Olav/DHIS/tomcat_stable/dhis2_home/apps/dataQualityTool",
+					dest: "/Users/Olav/DHIS/tomcat_trunk/dhis2_home/apps/dataQualityTool",
 					delete: true
 				}
 			}
