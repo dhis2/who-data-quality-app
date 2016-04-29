@@ -166,13 +166,13 @@
 
 
 			//4 Denominator consistency
-			var denominator, denominatorChecks = d2Map.denominatorsConfigured();
-			for (var i = 0; i < denominatorChecks.length; i++) {
-				denominator = denominatorChecks[i];
+			var denominator, denominatorRelations = d2Map.denominatorRelations();
+			for (var i = 0; i < denominatorRelations.length; i++) {
+				var denominatorPair = d2Map.denominatorRelationDenominators(denominatorRelations[i].code);
 
-				var meta = {name: denominator.name};
+				denominatorPair.relation = denominatorRelations[i];
 
-				dqAnalysisConsistency.analyse(denominator.idA, denominator.idB, period, null, ouBoundary, ouLevel, null, 'data', 'eq', denominator.criteria, meta)
+				dqAnalysisConsistency.analyse(denominatorPair.a.dataID, denominatorPair.b.dataID, period, null, ouBoundary, ouLevel, null, 'data', 'eq', denominatorRelations[i].criteria, denominatorPair)
 					.then(function(data) {
 
 						self.outstandingRequests--;
@@ -181,7 +181,7 @@
 
 						visualisationService.makeDataConsistencyChart(null, data.result);
 
-						if (denominator.type != 'un') {
+						if (denominatorPair.relation.type != 'un') {
 							self.denominators.relations.push(data.result);
 						}
 						else {

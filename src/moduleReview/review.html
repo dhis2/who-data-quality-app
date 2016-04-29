@@ -283,7 +283,7 @@
 						<th width="175">% {{revCtrl.selectedOrgunit.level.name}} with poor score</th>
 					</tr>
 					<tr ng-repeat="denominator in revCtrl.denominators.relations | orderBy:'name'">
-						<td>{{denominator.meta.name}}</td>
+						<td>{{denominator.meta.relation.name}}</td>
 						<td class="valueCell">{{denominator.boundaryPercentage}}%</td>
 						<td class="valueCell">{{denominator.subunitsOutsideThreshold}}</td>
 						<td class="valueCell">{{denominator.subunitViolationPercentage}}%</td>
@@ -618,7 +618,7 @@
 			<em ng-if="$index === 0" class="inline fullWidth">3b Consistency of denominators</em>
 			<div class="inline relationTable halfWidth">
 				<table class="table tablePrint table-bordered table-condensed">
-					<tr bgcolor="#f9f9f9"><th colspan="2">{{denominator.meta.name}}</th></tr>
+					<tr bgcolor="#f9f9f9"><th colspan="2">{{denominator.meta.relation.name}}</th></tr>
 					<tr>
 						<td>Year</td>
 						<td>{{revCtrl.yearSelected.name}}</td>
