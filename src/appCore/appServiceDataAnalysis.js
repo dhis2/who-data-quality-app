@@ -105,6 +105,7 @@
 		 * @param {float} gapCriteria - minimum number of gaps for result to be included
 		 */
 		self.outlierGap = function (callback, dataIDs, coAll, coIDs, periods, ouBoundary, ouLevel, ouGroup, sScoreCriteria, zScoreCriteria, gapCriteria) {
+			if (coAll || coIDs) console.log("CO still used for in self.outlierGap()");
 			var queueItem = {
 				'parameters': {
 					'callback': callback,
@@ -274,7 +275,6 @@
 			var metaData = data.data.metaData;
 			var names = metaData.names;
 			var rows = data.data.rows;
-			var periods = self.og.periods;
 
 			var sScoreCriteria = self.og.sScoreCriteria;
 			var zScoreCriteria = self.og.zScoreCriteria;
