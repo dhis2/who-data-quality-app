@@ -171,8 +171,8 @@
 					else {
 						result.boundaryValue = boundaryValueA;
 						result.boundaryRefValue = boundaryValueB;
-						result.boundaryRatio = boundaryRatio;
-						result.boundaryPercentage = boundaryPercentage;
+						result.boundaryRatio = mathService.round(boundaryRatio, 3);
+						result.boundaryPercentage = mathService.round(boundaryPercentage, 1);
 					}
 
 

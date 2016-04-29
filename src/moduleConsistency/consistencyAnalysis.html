@@ -39,41 +39,56 @@
 	<!-- DATA -->
     <accordion-group heading="Data">
 
-		<div ng-repeat="code in ['a', 'b']" ng-show="!(code === 'b' && aCtrl.type === 'time')">
-			<h4 ng-if="aCtrl.type === 'data'">Indicator/Data element {{code}}</h4>
-			<div class="btn-group btn-group-justified" ng-click="alert(123);" style="max-width: 470px; margin-bottom: 10px;">
-				<label class="btn btn-default" ng-model="aCtrl.dataSelection[code].type" btn-radio="'de'">Data element (totals)</label>
-				<label class="btn btn-default" ng-model="aCtrl.dataSelection[code].type" btn-radio="'dc'">Data element (details)</label>
-				<label class="btn btn-default" ng-model="aCtrl.dataSelection[code].type" btn-radio="'ind'">Indicator</label>
+		<div>
+			<h4>Select data element/indicator</h4>
+			<div class="btn-group btn-group-justified" style="width: 120px; margin-bottom: 10px; display: inline-block;">
+				<label class="btn btn-default" ng-model="aCtrl.dataTypeSelectedA" btn-radio="'dataElements'">Data element</label>
+				<label class="btn btn-default" ng-model="aCtrl.dataTypeSelectedA" btn-radio="'indicators'">Indicator</label>
 			</div>
 
-			<ui-select
-				on-select="aCtrl.updateItemList(code); aCtrl.dataSelection[code].item = null;"
-				ng-model="aCtrl.dataSelection[code].group"
-				style="margin-bottom: 10px; max-width: 470px;">
-				<ui-select-match allow-clear="true" placeholder="Select group...">
-					{{aCtrl.dataSelection[code].group.displayName}}
-				</ui-select-match>
-				<ui-select-choices
-					repeat="obj in aCtrl.getGroupForCode(code)| filter: $select.search">
-					<div ng-bind-html="obj.displayName | highlight: $select.search"></div>
-				</ui-select-choices>
-			</ui-select>
-
-			<ui-select
-				ng-disabled="!aCtrl.dataSelection[code].group || aCtrl.dataSelection[code].items.length < 1"
-				ng-model="aCtrl.dataSelection[code].item"
-				on-select="aCtrl.updatePeriodList(code)"
-				style="margin-bottom: 10px; max-width: 470px;">
-				<ui-select-match allow-clear="true" placeholder="{{aCtrl.dataSelection[code].itemDescription}}">
-					{{aCtrl.dataSelection[code].item.displayName}}
-				</ui-select-match>
-				<ui-select-choices
-					repeat="obj in aCtrl.dataSelection[code].items | filter: $select.search">
-					<div ng-bind-html="obj.displayName | highlight: $select.search"></div>
-				</ui-select-choices>
-			</ui-select>
+			<!-- DATA ELEMENTS -->
+			<div ng-if="aCtrl.dataTypeSelectedA === 'dataElements'" style="max-width: 600px">
+				<d2-select-data-element
+						multiple="false"
+						ng-model="aCtrl.dataSelectedA"
+						on-select="aCtrl.updatePeriodType(object);">
+				</d2-select-data-element>
 			</div>
+
+			<!-- INDICATORS -->
+			<div ng-if="aCtrl.dataTypeSelectedA === 'indicators'" style="max-width: 600px">
+				<d2-select-indicator
+						ng-model="aCtrl.dataSelectedA"
+						multiple="false"
+						on-select="aCtrl.updatePeriodType(object);">
+				</d2-select-indicator>
+				</div>
+		</div>
+
+		<div ng-if="aCtrl.type === 'data'">
+			<h4>Select data element/indicator for comparison</h4>
+			<div class="btn-group btn-group-justified" style="width: 120px; margin-bottom: 10px; display: inline-block;">
+				<label class="btn btn-default" ng-model="aCtrl.dataTypeSelectedB" btn-radio="'dataElements'">Data element</label>
+				<label class="btn btn-default" ng-model="aCtrl.dataTypeSelectedB" btn-radio="'indicators'">Indicator</label>
+			</div>
+
+			<!-- DATA ELEMENTS -->
+			<div ng-if="aCtrl.dataTypeSelectedB === 'dataElements'" style="max-width: 600px">
+				<d2-select-data-element
+						multiple="false"
+						ng-model="aCtrl.dataSelectedB">
+				</d2-select-data-element>
+			</div>
+
+			<!-- INDICATORS -->
+			<div ng-if="aCtrl.dataTypeSelectedB === 'indicators'" style="max-width: 600px">
+				<d2-select-indicator
+						ng-model="aCtrl.dataSelectedB"
+						multiple="false">
+				</d2-select-indicator>
+			</div>
+		</div>
+
 
     </accordion-group>
     
@@ -134,15 +149,7 @@
     			<h4>Reference periods</h4>
     		<label>No. of Preceding periods</label><br />
     		<div style="display: inline-block;">
-    			<ui-select ng-model="aCtrl.periodCountSelected"  style="margin-bottom: 10px; width: 200px;">
-    			  <ui-select-match placeholder="Select number of periods...">
-    			  	{{aCtrl.periodCountSelected.name}}
-    			  </ui-select-match>
-    			  <ui-select-choices 
-    			  	repeat="obj in aCtrl.periodCounts | filter: $select.search">
-    			   		<div ng-bind-html="obj.name | highlight: $select.search"></div>
-    			  </ui-select-choices>
-    			</ui-select>
+				<input class="form-control" type="number" style="text-align: right; width: 150px; display: inline-block;" ng-model="aCtrl.periodCountSelected" min="0" max="52">
     		</div>    	
     	</div>
     	
@@ -155,8 +162,10 @@
   </accordion>  	
   
 <button type="button" class="btn btn-primary pull-right" ng-click="aCtrl.doAnalysis(null, null); aCtrl.updateCharts();" 
-	ng-disabled="(!aCtrl.periodSelected && aCtrl.periodTypeSelected.id != 'Yearly') || !aCtrl.dataSelection.a.item ||
-		(aCtrl.type === 'data' && !aCtrl.dataSelection.b.item)" style="margin-bottom:20px">Analyze</button>
+	ng-disabled="(!aCtrl.periodSelected && aCtrl.periodTypeSelected.id != 'Yearly') ||
+					!aCtrl.dataSelectedA ||
+					(aCtrl.type === 'data' && !aCtrl.dataSelectedB)"
+		style="margin-bottom:20px">Analyze</button>
 
 <hr / style="clear: both;">
 
@@ -248,7 +257,7 @@
 				<td class="valueCell">{{aCtrl.result.boundaryRefValue}}</td>
 				<td class="valueCell">
 	            	<span ng-if="aCtrl.result.type === 'data' && aCtrl.result.subType === 'do'">
-	            		{{aCtrl.dropoutRate(aCtrl.result.boundaryValue, aCtrl.result.boundaryRefValue)}}%
+	            		{{aCtrl.result.boundaryPercentage}}%
 	            	</span>
 	            	<span ng-if="aCtrl.result.subType != 'do' && aCtrl.validRatio(aCtrl.result.boundaryRatio)">
 	            		{{aCtrl.result.boundaryRatio}}

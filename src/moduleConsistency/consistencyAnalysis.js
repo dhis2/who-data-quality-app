@@ -39,51 +39,21 @@
 			self.subType = 'level';
 			self.trendType = 'constant';
 			self.consistencyCriteria = 33;
-			
-	    	self.dataSelection = {
-				deGroups: [],
-				inGroups: [],
-	    		'a': {
-					groups: [], 		//list of groups
-					group: undefined,	//selected group
-					itemDescription: '',//Placeholder for item dropdown
-					items: [],			//list of items in selected group
-					item: undefined,	//selected item
-	    			type: 'de',			//item type
-					periodType: undefined
-	    		},
-	    		'b': {
-					groups: [], 		//list of groups
-					group: undefined,	//selected group
-					itemDescription: '',//Placeholder for item dropdown
-					items: [],			//list of items in selected group
-					item: undefined,	//selected item
-					type: 'de',			//item type
-					periodType: undefined
-	    		}
-			};
-
-
-			d2Meta.objects('dataElementGroups').then(function(data) {
-	    		self.dataSelection.deGroups = data;
-	    	});
-			d2Meta.objects('indicatorGroups').then(function(data) {
-				self.dataSelection.inGroups = data;
-			});
+			self.dataTypeSelectedA = 'dataElements';
+			self.dataTypeSelectedB = 'dataElements';
+			self.dataSelectedA = null;
+			self.dataSelectedA = null;
 
 			self.selectedOrgunit = {};
 
 	    	//PERIODS
 	    	self.periodTypes = [];
 	    	self.periodTypes = periodService.getPeriodTypes();
-	    	self.periodTypeSelected = self.periodTypes[4];
-			self.filteredPeriodTypes = [];
-			updatePeriodParameters();
-	    	
-	    	self.periodCount = [];	    	
-	    	self.periodCounts = periodService.getPeriodCount();
-	    	self.periodCountSelected = self.periodCounts[3];
-	    	
+			self.filteredPeriodTypes = self.periodTypes;//TODO: temporary?
+	    	self.periodTypeSelected = self.periodTypes[4]; //Default yearly
+			self.currentPeriodType = self.periodTypes[1].id; //Default monthly
+
+	    	self.periodCountSelected = 3;
 			
 	    	self.years = periodService.getYears();
 	    	self.yearSelected = self.years[0];
@@ -106,141 +76,37 @@
 	    	self.status = {
 	    	    isFirstOpen: true
 	    	};
-
-			initWathcers();
-	    }
-
-		function initWathcers() {
-			//Watch for changes in data selection type, clear selection if changing from data element to indicator etc
-			$scope.$watchCollection(function() { return self.dataSelection.a.type; },
-				function(newObject, oldObject) {
-					if (oldObject && newObject && oldObject != newObject) {
-						self.dataSelection.a.item = undefined;
-						self.dataSelection.a.itemDescription = '';
-						self.dataSelection.a.group = undefined;
-					}
-				}
-			);
-			$scope.$watchCollection(function() { return self.dataSelection.b.type; },
-				function(newObject, oldObject) {
-					if (oldObject && newObject && oldObject != newObject) {
-						self.dataSelection.b.item = undefined;
-						self.dataSelection.b.itemDescription = '';
-						self.dataSelection.b.group = undefined;
-					}
-				}
-			);
 		}
+
 
 	
 		/** PARAMETER SELECTION **/
 
-		/** Data */
-		self.getGroupForCode = function(code) {
-			if (self.dataSelection[code].type === 'ind') {
-				return self.dataSelection.inGroups;
-			}
-			else {
-				return self.dataSelection.deGroups;
-			}
-		}
-
-
-	    self.updateItemList = function(code) {
-
-			if (!self.dataSelection[code].group) {
-				self.dataSelection[code].itemDescription = '';
-				return;
-			}
-
-	    	self.dataSelection[code].items = [];
-	    	self.dataSelection[code].item = undefined;
-			self.dataSelection[code].itemDescription = 'Loading...';
-
-			if (self.dataSelection[code].type === 'de') {
-				d2Meta.object('dataElementGroups', self.dataSelection[code].group.id, 'displayName,id,dataElements[displayName,id]').then(
-					function(data) {
-						self.dataSelection[code].itemDescription  = 'Select data element...';
-						self.dataSelection[code].items = data.dataElements;
-						d2Utils.arraySortByProperty(self.dataSelection[code].items, 'displayName', false);
-					}
-				);
-			}
-			else if (self.dataSelection[code].type === 'dc') {
-				var filter = 'dataElement.dataElementGroups.id:eq:' + self.dataSelection[code].group.id;
-				var fields = 'displayName,id,dataElementId,optionComboId';
-				d2Meta.objects('dataElementOperands', null, fields, filter).then(function(data) {
-						self.dataSelection[code].itemDescription  = "Select data element...";
-						self.dataSelection[code].items = data;
-						d2Utils.arraySortByProperty(self.dataSelection[code].items, 'displayName', false);
-					});
-			}
-			else {
-				d2Meta.object('indicatorGroups', self.dataSelection[code].group.id, 'displayName,id,indicators[displayName,id]').then(
-					function(data) {
-						self.dataSelection[code].itemDescription  = "Select indicator...";
-						self.dataSelection[code].items = data.indicators;
-						d2Utils.arraySortByProperty(self.dataSelection[code].items, 'displayName', false);
-					}
-				);
-			}
-	    };
-
-
-		/**
-		 * Get data element id for the selection box with the given code
-		 * @param code
-		 */
-		function dataElementIDForCode(code) {
-			var item = self.dataSelection[code].item;
-			if (item.hasOwnProperty('dataElementId')) { //I.e. data element operand
-				return item.dataElementId;
-			}
-			else {
-				return item.id;
-			}
-		}
-
-
-        //item a or b
-        self.dataItemForCode = function(code) {
-      	    
-      	    //var get data id(s)
-      	    return self.dataSelection[code].item;
-        };
-	      	
-	    
 	    /** Periods */
-		self.updatePeriodList = function (code) {
-			var dataType = self.dataSelection[code].type;
-			if (!self.dataSelection[code].item) {
-				return;
-			}
-			else if (dataType === 'de' || dataType === 'dc') {
+		self.updatePeriodType = function (selectedItem) {
 
-				var dataElementID = dataElementIDForCode(code);
+			var id = selectedItem.id;
 
-				d2Meta.object('dataElements', dataElementID, 'dataSets[periodType]').then(
+			if (self.dataTypeSelectedA === 'dataElements') {
+
+				d2Meta.object('dataElements', id.substring(0,11), 'dataSets[periodType]').then(
 					function (data) {
 						if (!data.dataSets && data.dataSets.length > 1) return;
-						self.dataSelection[code].periodType = data.dataSets[0].periodType;
-						updatePeriodParameters();
+						self.currentPeriodType = data.dataSets[0].periodType;
 					}
 				);
 			}
 			else {
-				var indicatorID = self.dataItemForCode(code).id;
-				d2Meta.indicatorPeriodType(indicatorID).then(
+				d2Meta.indicatorPeriodType(id).then(
 					function (data) {
-						self.dataSelection[code].periodType = data;
-						updatePeriodParameters();
+						self.currentPeriodType = data;
 					}
 				);
 			}
 		};
-		
 
-    	self.getPeriodsInYear = function() {
+
+		self.getPeriodsInYear = function() {
     		self.periodsInYear = [];
     		var isoPeriods = periodService.getISOPeriods(self.yearSelected.name.toString() + '-01-01', self.yearSelected.name.toString() + '-12-31', self.periodTypeSelected.id);
     		for (var i = 0; i < isoPeriods.length; i++) {
@@ -259,59 +125,6 @@
     		self.periodsInYear.sort(function(a, b) { return (a.id > b.id) ? -1 : 1});
     	};
 
-	    
-	    function updatePeriodParameters() {
-
-			var periodsForRelation = self.dataSelection['a'].periodType && self.dataSelection['b'].periodType;
-			var periodsForTime = self.dataSelection['a'].periodType;
-
-			if ((self.type === 'data' && !periodsForRelation) || (self.type && !periodsForTime)) {
-				self.filteredPeriodTypes = self.periodTypes;
-				return;
-			}
-
-	    	var longestPeriodType = longestPeriodInSelection();
-	    	
-	    	self.filteredPeriodTypes = [];
-	    	for (var i = self.periodTypes.length-1; i >= 0; i--) {
-	    		
-	    		if (self.periodTypes[i].id === longestPeriodType) {
-	    			self.filteredPeriodTypes.push(self.periodTypes[i]);
-	    			break;	
-	    		}
-	    		else {
-	    			self.filteredPeriodTypes.push(self.periodTypes[i]);
-	    		}
-	    	}
-	    	
-	    	defaultPeriodType();
-	    	self.getPeriodsInYear();
-	    }
-
-
-	    function defaultPeriodType() {
-			
-			//For drop out rate we want yearly by default
-			if (self.subType === 'do') {
-			    self.periodTypeSelected = self.filteredPeriodTypes[0];
-			}
-			//Otherwise we go for shortest
-			else {
-				self.periodTypeSelected = self.filteredPeriodTypes[self.filteredPeriodTypes.length-1];
-			}    	
-	    }
-	    
-	    
-	    function longestPeriodInSelection() {
-
-			//TODO: Should use result, not parameters
-
-	    	var periods = [];
-	    	if (self.dataSelection['a'].periodType) periods.push(self.dataSelection['a'].periodType);
-	    	if (self.type === 'data' && self.dataSelection['b'].periodType) periods.push(self.dataSelection['b'].periodType);
-
-	    	return periodService.longestPeriod(periods);
-	    }
 
 
 		function selectedPeriod() {
@@ -345,7 +158,7 @@
 
 
 			var period = selectedPeriod().id;
-			var dxA = self.dataItemForCode('a').id;
+			var dxA = self.dataSelectedA.id;
 
 			var ouBoundary = self.selectedOrgunit.boundary.id;
 			var ouLevel = self.selectedOrgunit.level;
@@ -362,16 +175,18 @@
 				ouGroup = null;
 			}
 
+
 			var maxPeriodType = {
-				periodType: longestPeriodInSelection()
+				periodType: self.currentPeriodType
 			}
 
+			console.log("pType: " + maxPeriodType.periodType);
 
 			self.req = true;
 			
 			//1 Relation
 			if (analysisType === 'data') {	
-				var dxB = self.dataItemForCode('b').id;
+				var dxB = self.dataSelectedB.id;
 				dqAnalysisConsistency.analyse(dxA, dxB, period, null, ouBoundary, ouLevel, ouGroup, 'data', relationType, criteria, maxPeriodType).then(
 					function (data) {
 						receiveResult(data.result, data.errors);
@@ -380,9 +195,9 @@
 			}
 			//2 Over time
 			else {
-				var refPeriods = periodService.precedingPeriods(period, self.periodCountSelected.value);
+				var refPeriods = periodService.precedingPeriods(period, self.periodCountSelected);
 				
-				dqAnalysisConsistency.analyse(dxA, null, period, refPeriods, ouBoundary, ouLevel, ouGroup, 'time', self.trendType, criteria, null).then(
+				dqAnalysisConsistency.analyse(dxA, null, period, refPeriods, ouBoundary, ouLevel, ouGroup, 'time', trendType, criteria, null).then(
 					function (data) {
 						receiveResult(data.result, data.errors);
 					}
@@ -709,8 +524,6 @@
 		};
 
 
-
-	   	
 	   	/** UTILITIES */
 		function getFileContent() {
 			var headers = [];
