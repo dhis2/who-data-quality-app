@@ -38,6 +38,7 @@
 					denominatorTypes: denominatorTypes,
 					denominatorType: denominatorType,
 					denominatorRelations: denominatorRelations,
+					denominatorRelationDenominators: denominatorRelationDenominators,
 					denominatorRelationAddEdit: addEditDenominatorRelation,
 					denominatorRelationDelete: deleteDenominatorRelation,
 					externalRelations: externalRelations,
@@ -896,6 +897,23 @@
 					}
 					else {
 						return _map.denominatorRelations;
+					}
+				}
+
+
+				function denominatorRelationDenominators(code) {
+					if (code) {
+						for (var i = 0; i < _map.denominatorRelations.length; i++) {
+							if (_map.denominatorRelations[i].code === code) {
+								return {
+									'a': denominators(_map.denominatorRelations[i].A),
+									'b': denominators(_map.denominatorRelations[i].B)
+								}
+							}
+						}
+					}
+					else {
+						null;
 					}
 				}
 
