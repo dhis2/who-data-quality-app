@@ -23,8 +23,8 @@
 	    
 	    function getInformation() {
 	    	var requestURL = '/api/organisationUnits/' + orgunitID + '.json?';
-	    	requestURL += 'fields=name,id,contactPerson,address,email,phoneNumber,users[name,id,phoneNumber],';
-	    	requestURL += 'parent[name,id,users[name,id,phoneNumber],parent[name,id,users[name,id,phoneNumber]]]';
+	    	requestURL += 'fields=displayName,id,contactPerson,address,email,phoneNumber,users[displayName,id,phoneNumber],';
+	    	requestURL += 'parent[displayName,id,users[displayName,id,phoneNumber],parent[displayName,id,users[displayName,id,phoneNumber]]]';
 	    	
 	    	
 	    	requestService.getSingle(requestURL).then(function (response) {
@@ -64,7 +64,7 @@
 	    			if (attribute.attr === 'users') {
 	    				var user, users = [];
 						for (var j = 0; j < data[attribute.attr].length; j++) {
-							user = data[attribute.attr][j].name;
+							user = data[attribute.attr][j].displayName;
 							if (data[attribute.attr][j].phoneNumber) {
 								user += ' (' + data[attribute.attr][j].phoneNumber + ')';
 							}
@@ -80,9 +80,9 @@
 	    			}
 	    			
 	    			else if (attribute.attr === 'parent') {
-	    				var parents = data[attribute.attr].name;
+	    				var parents = data[attribute.attr].displayName;
 	    				if (data[attribute.attr].parent) {
-	    					parents = data[attribute.attr].parent.name + ' - ' + parents;
+	    					parents = data[attribute.attr].parent.displayName + ' - ' + parents;
 	    				}
 	    				
 	    				
@@ -113,8 +113,8 @@
 	    		var orgunit = potentialRecipients[i];
 	    		if (orgunit.users && orgunit.users.length > 0) {
 	    			self.recipients.push({
-						'name': orgunit.name,
-	    				'orgunit': orgunit.name,
+						'displayName': orgunit.displayName,
+	    				'orgunit': orgunit.displayName,
 	    				'id': orgunit.id,
 	    				'users': orgunit.users
 	    			});
