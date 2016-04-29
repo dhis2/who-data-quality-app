@@ -477,6 +477,11 @@
 
 				}
 			);
+
+			//Scroll to top of main chart/table
+			element = document.getElementById("mainChart")
+			alignWithTop = true;
+			element.scrollIntoView(alignWithTop);
         };
 
 
