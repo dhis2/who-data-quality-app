@@ -4,7 +4,7 @@
   "dependencies": {
     "angular": "~1.4.2",
     "angular-bootstrap": "~0.13.0",
-    "angular-nvd3": "~1.0.0",
+    "angular-nvd3": "~1.0.7",
     "angular-route": "~1.4.2",
     "angular-sanitize": "~1.4.2",
     "angular-ui-select": "~0.12.0",
@@ -14,8 +14,13 @@
     "font-awesome": "~4.3.0",
     "jquery": "~2.1.4",
     "moment": "~2.10.3",
-    "nvd3": "~1.8.1",
+    "nvd3": "~1.8.3",
     "regression-js": "~1.3.0"
   },
-  "private": true
+  "private": true,
+  "resolutions": {
+    "angular": "1.4.10",
+    "nvd3": "~1.8.3",
+    "d3": "^3.3.13"
+  }
 }
