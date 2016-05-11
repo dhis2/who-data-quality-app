@@ -6,7 +6,7 @@
 		return {
 			scope: {
 				'onSelect': '&',
-				'ngModel': '='
+				'ngModel': '=?'
 			},
 			bindToController: true,
 			controller: "ouTreeController",
