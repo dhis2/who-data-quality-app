@@ -4,10 +4,10 @@
 			<h4>Dashboard</h4>
 		</td>
 		<td>
-			<progressbar ng-if="dashCtrl.cmpLoading || dashCtrl.tcLoading || dashCtrl.dcLoading || dashCtrl.outLoading"
+			<uib-progressbar ng-if="dashCtrl.cmpLoading || dashCtrl.tcLoading || dashCtrl.dcLoading || dashCtrl.outLoading"
 					style="width: 140px; float: right; margin-top: 20px"
 					class="progress-striped active" value="100" type="default"><i ng-show="showWarning">Processing</i>
-			</progressbar>
+			</uib-progressbar>
 			<p></p>
 		</td>
 		<td width="50px">
@@ -23,12 +23,12 @@
 <div style="width: 100%; display: inline-block;">
 	<div ng-include="dashCtrl.selectionURL"
 		 ng-show="dashCtrl.innerWidth <= 600"
-		 collapse="!dashCtrl.showParameters"
+		 uib-collapse="!dashCtrl.showParameters"
 		 class="well well-sm no-print"
 		 style="vertical-align: top; height: auto; width: 320px; clear: right">
 	</div>
-	<tabset justified="true" ng-style="{width: dashCtrl.contentWidth, 'display': 'inline-block', 'vertical-align': 'top', 'float': 'left'}">
-		<tab heading="Completeness" select="dashCtrl.selectedTab = 0; dashCtrl.makeCompletenessCharts();">
+	<uib-tabset justified="true" ng-style="{width: dashCtrl.contentWidth, 'display': 'inline-block', 'vertical-align': 'top', 'float': 'left'}">
+		<uib-tab heading="Completeness" select="dashCtrl.selectedTab = 0; dashCtrl.makeCompletenessCharts();">
 			<div
 				style="display: inline-block; width: 100%; margin-top: 10px"
 				ng-repeat="dataset in dashCtrl.completenessCharts|orderBy:'name'">
@@ -47,8 +47,8 @@
 					</nvd3>
 				</div>
 			</div>
-		</tab>
-		<tab heading="Consistency - time" select="dashCtrl.selectedTab = 1;dashCtrl.makeTimeConsistencyCharts();">
+		</uib-tab>
+		<uib-tab heading="Consistency - time" select="dashCtrl.selectedTab = 1;dashCtrl.makeTimeConsistencyCharts();">
 			<div
 				style="display: inline-block; width: 100%; margin-top: 10px"
 				ng-repeat="data in dashCtrl.consistencyCharts|orderBy:'name'|limitTo: 100">
@@ -65,8 +65,8 @@
 					data='data.consistencyChartData'>
 				</nvd3>
 			</div>
-		</tab>
-		<tab heading="Consistency - data" select="dashCtrl.selectedTab = 2; dashCtrl.makeDataConsistencyCharts();">
+		</uib-tab>
+		<uib-tab heading="Consistency - data" select="dashCtrl.selectedTab = 2; dashCtrl.makeDataConsistencyCharts();">
 			<div style="display: inline-block; width: 100%; margin-top: 10px"
 					ng-repeat="data in dashCtrl.dataConsistencyCharts|orderBy:'name'|limitTo: 100">
 				<h5>{{data.name}} - {{data.period}}</h5>
@@ -77,14 +77,14 @@
 						data='data.chartData'>
 				</nvd3>
 			</div>
-		</tab>
-		<tab heading="Outliers" select=" dashCtrl.selectedTab = 3; dashCtrl.makeOutlierTable();">
+		</uib-tab>
+		<uib-tab heading="Outliers" select=" dashCtrl.selectedTab = 3; dashCtrl.makeOutlierTable();">
 			<div style="margin-bottom: 20px"></div>
 			<outlier-result  result-control="dashCtrl.resultControl"></outlier-result>
-		</tab>
-	</tabset>
+		</uib-tab>
+	</uib-tabset>
 	<div ng-show="dashCtrl.innerWidth > 600"
-		 collapse="!dashCtrl.showParameters"
+		 uib-collapse="!dashCtrl.showParameters"
 		 class="well well-sm no-print"
 		 style="vertical-align: top; height: auto; margin-left: 10px; width: 320px; margin-top: 42px; float:right">
 		<div ng-include="dashCtrl.selectionURL"></div>

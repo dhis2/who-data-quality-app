@@ -1,8 +1,8 @@
 (function(){
 	/**Controller: Parameters*/
 	angular.module('admin').controller("ModalAddEditDenominatorController",
-		['$modalInstance', 'd2Meta', 'd2Map', 'requestService', 'denominator',
-			function($modalInstance, d2Meta, d2Map, requestService, denominator) {
+		['$uibModalInstance', 'd2Meta', 'd2Map', 'requestService', 'denominator',
+			function($uibModalInstance, d2Meta, d2Map, requestService, denominator) {
 
 				var self = this;
 				self.aSelected = null;
@@ -59,7 +59,7 @@
 
 
 				self.cancel = function () {
-					$modalInstance.close();
+					$uibModalInstance.close();
 				};
 
 				self.save = function () {
@@ -71,7 +71,7 @@
 						"code": denominator && denominator.code ? denominator.code : null
 					};
 
-					$modalInstance.close({'denominator': savedDenominator});
+					$uibModalInstance.close({'denominator': savedDenominator});
 				};
 
 			}]);

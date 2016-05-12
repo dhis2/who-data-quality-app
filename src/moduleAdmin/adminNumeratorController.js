@@ -1,8 +1,8 @@
 (function(){  
 	/**Controller: Parameters*/
 	angular.module('admin').controller("ModalMappingController",
-	['$modalInstance', '$scope', 'requestService', 'd2Meta', 'd2Map', 'indicator',
-	function($modalInstance, $scope, requestService, d2Meta, d2Map, indicator) {
+	['$uibModalInstance', '$scope', 'requestService', 'd2Meta', 'd2Map', 'indicator',
+	function($uibModalInstance, $scope, requestService, d2Meta, d2Map, indicator) {
 	    	    
 	    var self = this; 
 
@@ -60,7 +60,7 @@
   	    }
 
 	    self.cancel = function () {
-	        $modalInstance.close();
+	        $uibModalInstance.close();
 	    };
 	    
 	    self.save = function () {
@@ -70,7 +70,7 @@
 			indicator.dataID = self.dataSelected.id;
 			indicator.dataSetID = self.dataSetSelected.id;
 
-	        $modalInstance.close({'indicator': indicator, 'groups': self.groupsSelected, 'core': self.core});
+	        $uibModalInstance.close({'indicator': indicator, 'groups': self.groupsSelected, 'core': self.core});
 	    };
 	    
 	}]);

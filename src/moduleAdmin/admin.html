@@ -3,8 +3,8 @@
 	<p>This module is used for configuring the Data Quality Tool, and mapping the proposed data quality indicators to
 		data elements and indicators in the	DHIS 2 database. This configuration is used as the basis for the Annual
 		Report, and the numerator and numerator group configuration is also used for the Dashboard.</p>
-	<tabset>
-		<tab heading="Numerators" active="admCtrl.activeTab">
+	<uib-tabset>
+		<uib-tab heading="Numerators" active="admCtrl.activeTab">
 			<br />
 			<p>Please map the reference numerators to the corresponding data element/indicator in this database.</p>
 			<table class="table table-bordered table-striped table-condensed table-hover">
@@ -31,9 +31,9 @@
 			<tr><td colspan="6"><button ng-disabled="!admCtrl.isAdmin" type="button" class="btn btn-primary pull-right btn-sm" ng-click="admCtrl.numeratorMap(null);" style="width: 90px;">Add</button></td></tr></tfoot>
 			</table>
 			
-		</tab>
+		</uib-tab>
 
-		<tab heading="Numerator groups">
+		<uib-tab heading="Numerator groups">
 			<br />
 			<p>Use this page to add and remove numerators to groups, and to add new groups.</p>
 			<div ng-repeat="group in admCtrl.groups |orderBy: 'name'">
@@ -65,9 +65,9 @@
 			<hr style="margin: 20px;"/>
 			<button ng-disabled="!admCtrl.isAdmin" type="button" class="btn btn-primary" ng-click="admCtrl.groupAdd();" style="margin: 5px;">Add Group</button>
 			<button ng-disabled="!admCtrl.isAdmin" type="button" class="btn btn-danger" ng-click="admCtrl.groupDelete();" style="margin:5px">Delete Group</button>
-		</tab>
+		</uib-tab>
 
-		<tab heading="Numerator relations">
+		<uib-tab heading="Numerator relations">
 		<br />
 					<h4>Internal consistency</h4>
 					<table class="table table-bordered table-striped table-condensed table-hover minimized">
@@ -95,9 +95,9 @@
 						<tr><td colspan="8"><button ng-disabled="!admCtrl.isAdmin" style="width: 125px" ng-click="admCtrl.editRelation(null);" class="btn btn-primary pull-right btn-sm">Add</button></td></tr>
 						</tfoot>
 					</table>						
-				</tab>
+				</uib-tab>
 
-		<tab heading="Numerator quality parameters">
+		<uib-tab heading="Numerator quality parameters">
 			<h4>Indicator parameters</h4>
 			<p>Modify parameters for each data element/indicator in the table below. Only data elements/indicators mapped to the database are displayed.</p>
 			<ul>
@@ -175,9 +175,9 @@
 			</div>
 			<button ng-disabled="!admCtrl.isAdmin" class="btn btn-primary pull-right" ng-click="admCtrl.saveParameterChanges();">Save changes</button>
 
-		</tab>
+		</uib-tab>
 
-		<tab heading="Denominators">
+		<uib-tab heading="Denominators">
 			<br />
 			<p>Please map alternative denominators for comparison, for example denominiators from the National Bureau of Statistics
 				with denominators used by health programmes.</p>
@@ -198,10 +198,10 @@
 				<tr><td colspan="6"><button ng-disabled="!admCtrl.isAdmin" type="button" class="btn btn-primary pull-right btn-sm" ng-click="admCtrl.editDenominator(null);" style="width: 90px;">Add</button></td></tr></tfoot>
 			</table>
 
-		</tab>
+		</uib-tab>
 
 
-		<tab heading="Denominator relations">
+		<uib-tab heading="Denominator relations">
 			<br />
 			<p>Please map alternative denominators for comparison, for example denominiators from the National Bureau of Statistics
 				with denominators used by health programmes.</p>
@@ -226,9 +226,9 @@
 				<tr><td colspan="6"><button ng-disabled="!admCtrl.isAdmin" type="button" class="btn btn-primary pull-right btn-sm" ng-click="admCtrl.editDenominatorRelation(null);" style="width: 90px;">Add</button></td></tr></tfoot>
 			</table>
 
-		</tab>
+		</uib-tab>
 
-		<tab heading="External data comparison">
+		<uib-tab heading="External data comparison">
 			<br />
 			<p>Please identify external (survey) data that can be used for comparison with routine data, e.g. ANC coverage,
 				immunisation coverage etc. The "external data" should refer to calculated survey result (e.g. a percentage),
@@ -255,7 +255,7 @@
 				<tr><td colspan="6"><button ng-disabled="!admCtrl.isAdmin" type="button" class="btn btn-primary pull-right btn-sm" ng-click="admCtrl.editExternalRelation(null);" style="width: 90px;">Add</button></td></tr></tfoot>
 			</table>
 
-		</tab>
+		</uib-tab>
 
 			
-	</tabset>
+	</uib-tabset>

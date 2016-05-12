@@ -1,8 +1,8 @@
 (function(){  
 	/**Controller: Parameters*/
 	angular.module('dataQualityApp').controller("ModalMessageController",
-	['$modalInstance', 'requestService', 'orgunitID', 'orgunitName',
-	function($modalInstance, requestService, orgunitID, orgunitName) {
+	['$uibModalInstance', 'requestService', 'orgunitID', 'orgunitName',
+	function($uibModalInstance, requestService, orgunitID, orgunitName) {
 	    
 	    var self = this; 
 	    
@@ -167,7 +167,7 @@
 	    
 	    
 	    self.close = function () {
-	        $modalInstance.close(self.text);
+	        $uibModalInstance.close(self.text);
 	    };
 	    
 	}]);

@@ -1,13 +1,14 @@
 (function(){
 	angular.module('dataQualityApp').service('notificationService',
-	['$modal',
-	function ($modal) {
+	['$uibModal',
+	function ($uibModal) {
 
 		var self = this;
 		self.notify = notification;
 
 		function notification(title, message) {
-			var modalInstance = $modal.open({
+			console.log(title);
+			var modalInstance = $uibModal.open({
 				templateUrl: "appCommons/modalNotification.html",
 				controller: "ModalNotificationController",
 				controllerAs: 'nCtrl',

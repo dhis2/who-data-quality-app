@@ -1,31 +1,31 @@
 <h4 style="margin-top: 20px;">Consistency</h4>
 
 <!-- PARAMETERS -->
-<accordion close-others="aCtrl.oneAtATime">
+<uib-accordion close-others="aCtrl.oneAtATime">
 	
 	<!-- OPTIONS -->
-	<accordion-group heading="Analysis Type" is-open="aCtrl.status.isFirstOpen">
+	<uib-accordion-group heading="Analysis Type" is-open="aCtrl.status.isFirstOpen">
 		<label>Consistency analysis type</label><br />
 		<div class="btn-group btn-group-justified" style="width: 330px; margin-bottom: 10px;">
-				<label class="btn btn-default" ng-model="aCtrl.type" btn-radio="'data'">Between Indicators</label>
-		  		<label class="btn btn-default" ng-model="aCtrl.type" btn-radio="'time'">Over Time</label>
+				<label class="btn btn-default" ng-model="aCtrl.type" uib-btn-radio="'data'">Between Indicators</label>
+		  		<label class="btn btn-default" ng-model="aCtrl.type" uib-btn-radio="'time'">Over Time</label>
 		</div>
 		
 		<div ng-if="aCtrl.type === 'data'">		
 		<label>Expected relationship</label><br />
 		<div class="btn-group btn-group-justified" style="width: 330px; margin-bottom: 10px;">
-				<label class="btn btn-default" ng-model="aCtrl.subType" btn-radio="'level'">None</label>
-				<label class="btn btn-default" ng-model="aCtrl.subType" btn-radio="'eq'">A ≈ B</label>
-		  		<label class="btn btn-default" ng-model="aCtrl.subType" btn-radio="'aGTb'">A > B</label>
-		  		<label class="btn btn-default" ng-model="aCtrl.subType" btn-radio="'do'">Dropout</label>
+				<label class="btn btn-default" ng-model="aCtrl.subType" uib-btn-radio="'level'">None</label>
+				<label class="btn btn-default" ng-model="aCtrl.subType" uib-btn-radio="'eq'">A ≈ B</label>
+		  		<label class="btn btn-default" ng-model="aCtrl.subType" uib-btn-radio="'aGTb'">A > B</label>
+		  		<label class="btn btn-default" ng-model="aCtrl.subType" uib-btn-radio="'do'">Dropout</label>
 		</div>
 		</div>
 		
 		<div ng-if="aCtrl.type === 'time'">		
 		<label>Expected trend</label><br />
 		<div class="btn-group btn-group-justified" style="width: 330px; margin-bottom: 10px;">
-				<label class="btn btn-default" ng-model="aCtrl.trendType" btn-radio="'constant'">Constant</label>
-		  		<label class="btn btn-default" ng-model="aCtrl.trendType" btn-radio="'increase'">Increasing/decreasing</label>
+				<label class="btn btn-default" ng-model="aCtrl.trendType" uib-btn-radio="'constant'">Constant</label>
+		  		<label class="btn btn-default" ng-model="aCtrl.trendType" uib-btn-radio="'increase'">Increasing/decreasing</label>
 		</div>
 		</div>
 		
@@ -33,17 +33,17 @@
 		<label>Criteria</label><br />
 		<input class="form-control" type="number" style="text-align: right; width: 150px; display: inline-block;" ng-model="aCtrl.consistencyCriteria" min="0" max="50"> <span style="display: inline-block;">%</span>
 		</div>
-	</accordion-group>	
+	</uib-accordion-group>
 
 
 	<!-- DATA -->
-    <accordion-group heading="Data">
+    <uib-accordion-group heading="Data">
 
 		<div>
 			<h4>Select data element/indicator</h4>
 			<div class="btn-group btn-group-justified" style="width: 120px; margin-bottom: 10px; display: inline-block;">
-				<label class="btn btn-default" ng-model="aCtrl.dataTypeSelectedA" btn-radio="'dataElements'">Data element</label>
-				<label class="btn btn-default" ng-model="aCtrl.dataTypeSelectedA" btn-radio="'indicators'">Indicator</label>
+				<label class="btn btn-default" ng-model="aCtrl.dataTypeSelectedA" uib-btn-radio="'dataElements'">Data element</label>
+				<label class="btn btn-default" ng-model="aCtrl.dataTypeSelectedA" uib-btn-radio="'indicators'">Indicator</label>
 			</div>
 
 			<!-- DATA ELEMENTS -->
@@ -68,8 +68,8 @@
 		<div ng-if="aCtrl.type === 'data'">
 			<h4>Select data element/indicator for comparison</h4>
 			<div class="btn-group btn-group-justified" style="width: 120px; margin-bottom: 10px; display: inline-block;">
-				<label class="btn btn-default" ng-model="aCtrl.dataTypeSelectedB" btn-radio="'dataElements'">Data element</label>
-				<label class="btn btn-default" ng-model="aCtrl.dataTypeSelectedB" btn-radio="'indicators'">Indicator</label>
+				<label class="btn btn-default" ng-model="aCtrl.dataTypeSelectedB" uib-btn-radio="'dataElements'">Data element</label>
+				<label class="btn btn-default" ng-model="aCtrl.dataTypeSelectedB" uib-btn-radio="'indicators'">Indicator</label>
 			</div>
 
 			<!-- DATA ELEMENTS -->
@@ -90,11 +90,11 @@
 		</div>
 
 
-    </accordion-group>
+    </uib-accordion-group>
     
     
     <!-- PERIOD -->
-    <accordion-group heading="Period">
+    <uib-accordion-group heading="Period">
     	
     	<h4 ng-if="aCtrl.type === 'time'">Period</h4>
     	<div style="display: inline-block;">
@@ -153,13 +153,13 @@
     		</div>    	
     	</div>
     	
-    </accordion-group>
+    </uib-accordion-group>
     
     <!-- ORGUNIT -->
-    <accordion-group heading="Orgunit" is-open="status.open">
+    <uib-accordion-group heading="Orgunit" is-open="status.open">
 		<d2-select-orgunit default-level="1" max-level="3" ng-model="aCtrl.selectedOrgunit"></d2-select-orgunit>
-    </accordion-group>
-  </accordion>  	
+    </uib-accordion-group>
+  </uib-accordion>
   
 <button type="button" class="btn btn-primary pull-right" ng-click="aCtrl.doAnalysis(null, null); aCtrl.updateCharts();" 
 	ng-disabled="(!aCtrl.periodSelected && aCtrl.periodTypeSelected.id != 'Yearly') ||
@@ -171,7 +171,7 @@
 
 <div ng-if="aCtrl.req">
 <h5>Loading data...</h5>
-<progressbar class="progress-striped active" value="100" type="default"><i ng-show="showWarning">Processing</i></progressbar>
+<uib-progressbar class="progress-striped active" value="100" type="default"><i ng-show="showWarning">Processing</i></uib-progressbar>
 </div>
 
 <!-- RESULT -->
@@ -325,11 +325,11 @@
 	            </span>
 	        </td>
             <td>
-            	<span class="dropdown" dropdown>
-                  <a href class="dropdown-toggle" dropdown-toggle>
+            	<span class="dropdown" uib-dropdown>
+                  <a href class="dropdown-toggle" uib-dropdown-toggle>
                           <span class="glyphicon glyphicon-th-list" style="color: black" aria-hidden="true"></span>
                         </a>
-                  <ul class="dropdown-menu dropdown-menu-right">
+                  <ul class="dropdown-menu uib-dropdown-menu-right">
                     <li><a href ng-click="aCtrl.sendMessage(aCtrl.selectedObject);">Contact</a></li>
                     <li><a href ng-click="aCtrl.drillDown(aCtrl.selectedObject);">Drill down</a></li>
                   </ul>

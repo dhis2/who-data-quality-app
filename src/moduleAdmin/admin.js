@@ -5,8 +5,8 @@
 	
 	/**Controller: Parameters*/
 	angular.module('admin').controller("AdminController",
-	['$modal', 'notificationService', 'd2Map',
-	function($modal, notificationService, d2Map) {
+	['$uibModal', 'notificationService', 'd2Map',
+	function($uibModal, notificationService, d2Map) {
 	    	    
 	    var self = this;
 
@@ -53,7 +53,7 @@
 
 		self.numeratorMap = function(code) {
 
-			var modalInstance = $modal.open({
+			var modalInstance = $uibModal.open({
 				templateUrl: "moduleAdmin/adminNumerator.html",
 				controller: "ModalMappingController",
 				controllerAs: 'mapCtrl',
@@ -121,7 +121,7 @@
 
 		self.groupAdd = function () {
 
-			var modalInstance = $modal.open({
+			var modalInstance = $uibModal.open({
 				templateUrl: "moduleAdmin/adminNumeratorGroup.html",
 				controller: "ModalAddIndicatorGroupController",
 				controllerAs: 'addCtrl'
@@ -139,7 +139,7 @@
 
 		self.groupDelete = function () {
 
-			var modalInstance = $modal.open({
+			var modalInstance = $uibModal.open({
 				templateUrl: "moduleAdmin/adminNumeratorGroupDelete.html",
 				controller: "ModalDeleteIndicatorGroupController",
 				controllerAs: 'addCtrl',
@@ -150,6 +150,7 @@
 				}
 			});
 
+			
 			modalInstance.result.then(function (result) {
 				if (result) {
 
@@ -187,7 +188,7 @@
 
 		self.editRelation = function(relation) {
 
-			var modalInstance = $modal.open({
+			var modalInstance = $uibModal.open({
 				templateUrl: "moduleAdmin/adminNumeratorRelation.html",
 				controller: "ModalAddEditRelationController",
 				controllerAs: 'addCtrl',
@@ -225,7 +226,7 @@
 
 		self.editDenominator = function(denominator) {
 
-			var modalInstance = $modal.open({
+			var modalInstance = $uibModal.open({
 				templateUrl: "moduleAdmin/adminDenominator.html",
 				controller: "ModalAddEditDenominatorController",
 				controllerAs: 'addCtrl',
@@ -253,7 +254,7 @@
 
 		self.editDenominatorRelation = function(denominatorRelation) {
 
-			var modalInstance = $modal.open({
+			var modalInstance = $uibModal.open({
 				templateUrl: "moduleAdmin/adminDenominatorRelation.html",
 				controller: "ModalAddEditDenominatorRelationController",
 				controllerAs: 'addCtrl',
@@ -282,7 +283,7 @@
 
 		self.editExternalRelation = function(externalRelation) {
 
-			var modalInstance = $modal.open({
+			var modalInstance = $uibModal.open({
 				templateUrl: "moduleAdmin/adminExternalRelation.html",
 				controller: "ModalAddEditExternalRelationController",
 				controllerAs: 'addCtrl',

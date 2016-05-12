@@ -27,39 +27,11 @@
 	    	self.yearSelected = undefined;
 
 
-			d2Meta.objects('organisationUnitLevels', null, 'name,id,level').then(function(data) {
+			d2Meta.objects('organisationUnitLevels', null, 'displayName,id,level').then(function(data) {
 	    		self.orgunitLevels = data;
 	    	});
 	    }
-
-
-		self.indicatorSearch = function(searchString){
-			if (searchString.length >= 2) {
-
-				d2Meta.objects('indicators', null, 'name,id', 'name:like:' + searchString).then(
-					function (data) {
-						self.indicatorSearchResult = data;
-						d2Utils.arraySortByProperty(self.indicatorSearchResult, 'name', false);
-					}
-				);
-
-			}
-		};
-
-
-		self.dataElementSearch = function(searchString){
-			if (searchString.length >= 2) {
-
-				d2Meta.objects('dataElements', null, 'name,id', 'name:like:' + searchString).then(
-					function (data) {
-						self.dataElementSearchResult = data;
-						d2Utils.arraySortByProperty(self.dataElementSearchResult, 'name', false);
-					}
-				);
-			}
-		};
-
-
+		
 		self.doOuExport = function() {
 			d2Meta.objects('organisationUnits', null, 'name,parent[name,parent[name,parent[name]]]', 'level:eq:' + self.orgunitLevelSelected.level).then(
 				function(ouData) {
@@ -97,13 +69,7 @@
 
 
 	    self.doTrendExport = function() {
-	    	var dx;
-	    	if (self.dataElementSelected) {
-	    		dx = self.dataElementSelected.id
-	    	}
-	    	else {
-	    		dx = self.indicatorSelected.id;
-	    	}
+			var dx = self.dataSelected.id;
 	    	
 	    	var pe = [self.yearSelected.id - 3, self.yearSelected.id - 2, self.yearSelected.id - 1];
 	    	var ou = "LEVEL-" + self.orgunitLevelSelected.level;
@@ -121,13 +87,7 @@
 	    
 	    self.doExport = function() {
 	    	
-	    	var dx;
-	    	if (self.dataElementSelected) {
-	    		dx = self.dataElementSelected.id
-	    	}
-	    	else {
-	    		dx = self.indicatorSelected.id;
-	    	}
+	    	var dx = self.dataSelected.id;
 	    	
 	    	var pe = periodsInYear(self.yearSelected.id).join(';');
 	    	var ou = "LEVEL-" + self.orgunitLevelSelected.level;

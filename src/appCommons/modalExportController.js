@@ -1,8 +1,8 @@
 (function(){  
 	/**Controller: Parameters*/
 	angular.module('dataQualityApp').controller("ModalExportController",
-	['$modalInstance', 'fileContent', 'fileName',
-	function($modalInstance, fileContent, fileName) {
+	['$uibModalInstance', 'fileContent', 'fileName',
+	function($uibModalInstance, fileContent, fileName) {
 	    
 	    var self = this; 
 
@@ -101,12 +101,12 @@
 
 		/** ACTIONS */
 		self.cancel = function () {
-			$modalInstance.dismiss("Cancelled");
+			$uibModalInstance.dismiss("Cancelled");
 		}
 
 	    self.close = function () {
 			makeExportFile();
-	        $modalInstance.close(self.options);
+	        $uibModalInstance.close(self.options);
 	    };
 
 

@@ -1,8 +1,8 @@
 (function(){
 	/**Controller: Parameters*/
 	angular.module('admin').controller("ModalAddEditExternalRelationController",
-		['$modalInstance', 'd2Meta', 'd2Map', 'requestService', 'externalRelation',
-			function($modalInstance, d2Meta, d2Map, requestService, externalRelation) {
+		['$uibModalInstance', 'd2Meta', 'd2Map', 'requestService', 'externalRelation',
+			function($uibModalInstance, d2Meta, d2Map, requestService, externalRelation) {
 
 
 				var self = this;
@@ -52,7 +52,7 @@
 
 
 				self.cancel = function () {
-					$modalInstance.close();
+					$uibModalInstance.close();
 				};
 
 				self.save = function () {
@@ -75,7 +75,7 @@
 						"code": externalRelation && externalRelation.code ? externalRelation.code : null
 					};
 
-					$modalInstance.close({'externalRelation': savedRelation});
+					$uibModalInstance.close({'externalRelation': savedRelation});
 				};
 
 			}]);

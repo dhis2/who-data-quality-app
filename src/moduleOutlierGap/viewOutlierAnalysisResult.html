@@ -4,7 +4,7 @@
 			<h4>Result</h4>
 		</div>
 		<div class="pull-right">
-			<button type="button" class="btn btn-default" ng-model="resultCtrl.showFilter" btn-checkbox btn-checkbox-true="true" btn-checkbox-false="false">
+			<button type="button" class="btn btn-default" ng-model="resultCtrl.showFilter" uib-btn-checkbox btn-checkbox-true="true" btn-checkbox-false="false">
 				Options
 			</button>
 			<div class="btn-group">
@@ -18,27 +18,27 @@
 			</div>
 		</div>
 	</div>
-	<div collapse="!resultCtrl.showFilter" class="well well-sm">
+	<div uib-collapse="!resultCtrl.showFilter" class="well well-sm">
 		<div style="display: inline-block; margin-right: 15px;">
 			<label for="threshold">Display columns</label>
 			<div class="btn-group btn-group-justified" ng-click="resultCtrl.updateType();" style="margin-bottom: 5px; max-width: 400px;">
-				<label class="btn btn-default" ng-model="resultCtrl.typeFilter" btn-radio="0">All</label>
-				<label class="btn btn-default" ng-model="resultCtrl.typeFilter" btn-radio="1">Missing data</label>
-				<label class="btn btn-default" ng-model="resultCtrl.typeFilter" btn-radio="2">Outliers</label>
+				<label class="btn btn-default" ng-model="resultCtrl.typeFilter" uib-btn-radio="0">All</label>
+				<label class="btn btn-default" ng-model="resultCtrl.typeFilter" uib-btn-radio="1">Missing data</label>
+				<label class="btn btn-default" ng-model="resultCtrl.typeFilter" uib-btn-radio="2">Outliers</label>
 			</div>
 		</div>
 		<div style="display: inline-block; margin-right: 15px;">
 			<label for="threshold">Outlier filter</label>
 			<div class="btn-group btn-group-justified" ng-click="resultCtrl.updateFilter();" style="margin-bottom: 5px; max-width: 400px;">
-				<label class="btn btn-default" ng-model="resultCtrl.stdFilterType" btn-radio="0">Off</label>
-				<label class="btn btn-default" ng-model="resultCtrl.stdFilterType" btn-radio="1">Standard Score</label>
-				<label class="btn btn-default" ng-model="resultCtrl.stdFilterType" btn-radio="2">Modified Z-Score</label>
+				<label class="btn btn-default" ng-model="resultCtrl.stdFilterType" uib-btn-radio="0">Off</label>
+				<label class="btn btn-default" ng-model="resultCtrl.stdFilterType" uib-btn-radio="1">Standard Score</label>
+				<label class="btn btn-default" ng-model="resultCtrl.stdFilterType" uib-btn-radio="2">Modified Z-Score</label>
 			</div>
 		</div>
 		<div style="display: inline-block; margin-right: 15px; vertical-align: bottom;">
 			<div  class="btn-group btn-group-justified" ng-click="resultCtrl.updateFilter();" style="margin-bottom: 5px; max-width: 250px;">
-				<label ng-disabled="resultCtrl.stdFilterType === 0" class="btn btn-warning" ng-model="resultCtrl.stdFilterDegree" btn-radio="1">Moderate</label>
-				<label ng-disabled="resultCtrl.stdFilterType === 0" class="btn btn-danger" ng-model="resultCtrl.stdFilterDegree" btn-radio="2">Extreme</label>
+				<label ng-disabled="resultCtrl.stdFilterType === 0" class="btn btn-warning" ng-model="resultCtrl.stdFilterDegree" uib-btn-radio="1">Moderate</label>
+				<label ng-disabled="resultCtrl.stdFilterType === 0" class="btn btn-danger" ng-model="resultCtrl.stdFilterDegree" uib-btn-radio="2">Extreme</label>
 			</div>
 		</div>
 	</div>
@@ -127,8 +127,8 @@
 				<td ng-if="resultCtrl.typeFilter === 0" class="valueCell">{{row.result.totalWeight}}</td>
 
 				<td>
-					<span class="dropdown" dropdown>
-					  <a href class="dropdown-toggle" dropdown-toggle>
+					<span class="dropdown" uib-dropdown>
+					  <a href class="dropdown-toggle" uib-dropdown-toggle>
 						  <span class="glyphicon glyphicon-th-list" style="color: black" aria-hidden="true"></span>
 					  </a>
 					  <ul class="dropdown-menu dropdown-menu-right">

@@ -1,8 +1,9 @@
 
 (function(){
 	var app = angular.module('dataQualityApp',
-	['d2',  'dqAnalysis', 'ngRoute', 'dashboard', 'review', 'consistencyAnalysis', 'outlierGapAnalysis', 'about', 'dictionary', 'dataExport', 'admin', 'ui.select',
-		'ngSanitize', 'ui.bootstrap', 'nvd3', 'angularBootstrapNavTree']);
+	['ngAnimate', 'ngSanitize', 'ngRoute', 'ui.bootstrap', 'ui.select', 'nvd3', 'angularBootstrapNavTree',
+		'd2',  'dqAnalysis', 'dashboard', 'review', 'consistencyAnalysis', 'outlierGapAnalysis', 'about',
+		'dictionary', 'dataExport', 'admin']);
 	
 	/**Bootstrap*/
 	angular.element(document).ready( 
@@ -22,7 +23,7 @@
 	/**Config*/
 	app.config(['uiSelectConfig', function(uiSelectConfig) {
 		uiSelectConfig.theme = 'bootstrap';
-		uiSelectConfig.resetSearchInput = true;
+		uiSelectConfig.resetSearchInput = false;
 	}]);
 	
 	app.config(['$routeProvider',

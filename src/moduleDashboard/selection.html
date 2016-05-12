@@ -10,14 +10,14 @@
 
 	<label>Period</label>
 	<div style="width: 290px">
-		<datepicker ng-change="dashCtrl.update();"
+		<uib-datepicker ng-change="dashCtrl.update();"
 					class="well well-sm"
 					ng-model="dashCtrl.endDate"
-					datepicker-mode="'month'"
-					max-date="dashCtrl.maxDate"
-					starting-day="1"
-					min-mode="month">
-		</datepicker>
+					datepickerMode="'month'"
+					maxDate="dashCtrl.maxDate"
+					startingDay="1"
+					minMode="month">
+		</uib-datepicker>
 		<span>Data for the 12 preceding months will be used</span>
 	</div>
 

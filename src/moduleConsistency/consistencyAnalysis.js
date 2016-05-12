@@ -12,9 +12,9 @@
 
 	angular.module('consistencyAnalysis').controller("ConsistencyAnalysisController",
 	['d2Meta', 'd2Utils', 'dqAnalysisConsistency', 'periodService', 'visualisationService', 'mathService',
-		'$modal', '$timeout', '$scope',
+		'$uibModal', '$timeout', '$scope',
 	function(d2Meta, d2Utils, dqAnalysisConsistency, periodService, visualisationService, mathService,
-			 $modal, $timeout, $scope) {
+			 $uibModal, $timeout, $scope) {
 		var self = this;
 
 		//Variables for storing result and result history
@@ -454,7 +454,8 @@
 
 					var hasChildren = orgunit.children;
 					if (!hasChildren) {
-						var modalInstance = $modal.open({
+						//TODO
+						var modalInstance = $uibModal.open({
 							templateUrl: "appCommons/modalNotification.html",
 							controller: "ModalNotificationController",
 							controllerAs: 'nCtrl',
@@ -487,7 +488,7 @@
 
 		self.exportCSV = function() {
 			var fileContent = getFileContent();
-			var modalInstance = $modal.open({
+			var modalInstance = $uibModal.open({
 				templateUrl: "appCommons/modalExport.html",
 				controller: "ModalExportController",
 				controllerAs: 'exportCtrl',
@@ -510,7 +511,7 @@
 
 		self.sendMessage = function(item) {
 
-			var modalInstance = $modal.open({
+			var modalInstance = $uibModal.open({
 				templateUrl: "appCommons/modalMessage.html",
 				controller: "ModalMessageController",
 				controllerAs: 'mmCtrl',

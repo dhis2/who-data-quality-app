@@ -1,20 +1,20 @@
 (function(){  
 	/**Controller: Parameters*/
 	angular.module('admin').controller("ModalAddIndicatorGroupController",
-	['$modalInstance',
-	function($modalInstance) {
+	['$uibModalInstance',
+	function($uibModalInstance) {
 	    	    
 	    var self = this; 
 	    
 	    self.name = '';
 	    	    
 	    self.cancel = function () {
-	        $modalInstance.close();
+	        $uibModalInstance.close();
 	    };
 	    
 	    self.save = function () {
 	    		    	
-	        $modalInstance.close({'name': self.name});
+	        $uibModalInstance.close({'name': self.name});
 	    };
 	    
 	}]);

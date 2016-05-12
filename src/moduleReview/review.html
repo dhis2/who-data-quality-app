@@ -1,9 +1,9 @@
 <h3 class="no-print" style="margin-top: 20px;">Annual Data Quality Report</h3>
 <div class="no-print" ng-if="!revCtrl.notPossible">
-	<accordion class="no-print" close-others="revCtrl.oneAtATime">
+	<uib-accordion class="no-print" close-others="revCtrl.oneAtATime">
 
 		<!-- DATA -->
-		<accordion-group heading="Data" is-open="revCtrl.status.isFirstOpen">
+		<uib-accordion-group heading="Data" is-open="revCtrl.status.isFirstOpen">
 			<label>Group</label><br/>
 			<ui-select ng-model="revCtrl.groupSelected" theme="bootstrap" style="min-width: 200px; display: inline-block;">
 				<ui-select-match placeholder="Select group...">
@@ -14,9 +14,9 @@
 					<div ng-bind-html="obj.name | highlight: $select.search"></div>
 				</ui-select-choices>
 			</ui-select>
-		</accordion-group>
+		</uib-accordion-group>
 
-		<accordion-group heading="Period">
+		<uib-accordion-group heading="Period">
 			<label>Year</label><br/>
 			<ui-select ng-model="revCtrl.yearSelected" theme="bootstrap" style="width: 100px; display: inline-block;">
 				<ui-select-match placeholder="Select year...">
@@ -27,13 +27,13 @@
 					<div ng-bind-html="obj.name | highlight: $select.search"></div>
 				</ui-select-choices>
 			</ui-select>
-		</accordion-group>
+		</uib-accordion-group>
 
-		<accordion-group heading="Organisation unit">
+		<uib-accordion-group heading="Organisation unit">
 			<d2-select-orgunit default-level="1" max-level="2" ng-model="revCtrl.selectedOrgunit"></d2-select-orgunit>
-		</accordion-group>
+		</uib-accordion-group>
 
-	</accordion>
+	</uib-accordion>
 
 	<div class="inline pull-right" style="margin-bottom:20px">
 		<button ng-disabled="(!self.userOrgunit && !revCtrl.selectedOrgunit.level.name && !revCtrl.groupSelected) || revCtrl.outstandingRequests > 0" class="btn btn-primary inline" ng-click="revCtrl.doAnalysis();">Generate</button>
@@ -46,9 +46,9 @@
 
 <div ng-if="revCtrl.outstandingRequests != 0">
 	<h5>Loading data...</h5>
-	<progressbar animate="false" value="revCtrl.progress()" type="default">
+	<uib-progressbar animate="false" value="revCtrl.progress()" type="default">
 		<b>{{revCtrl.progress()}}%</b>
-	</progressbar>
+	</uib-progressbar>
 </div>
 
 <div class="onlyPrint reportPart noBreak" style="display: inline-block; height: 1400px;">

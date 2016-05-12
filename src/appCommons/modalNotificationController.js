@@ -1,8 +1,8 @@
 (function(){  
 	/**Controller: Parameters*/
 	angular.module('dataQualityApp').controller("ModalNotificationController",
-	['$modalInstance', 'title', 'message',
-	function($modalInstance, title, message) {
+	['$uibModalInstance', 'title', 'message',
+	function($uibModalInstance, title, message) {
 	    
 	    var self = this; 
 	    
@@ -10,7 +10,7 @@
 	    self.message = message;
 	    
 	    self.close = function () {
-	        $modalInstance.close(true);
+	        $uibModalInstance.close(true);
 	    };
 
 		return self;

@@ -23,8 +23,8 @@
 	});
 
 	app.controller("OutlierResultController",
-	['periodService', 'mathService', 'dataAnalysisService', 'requestService', 'visualisationService', '$modal',
-	function(periodService, mathService, dataAnalysisService, requestService, visualisationService, $modal) {
+	['periodService', 'mathService', 'dataAnalysisService', 'requestService', 'visualisationService', '$uibModal',
+	function(periodService, mathService, dataAnalysisService, requestService, visualisationService, $uibModal) {
 		var self = this;
 
 		//"API" for sending result
@@ -202,7 +202,7 @@
 				}
 			};
 
-			var modalInstance = $modal.open({
+			var modalInstance = $uibModal.open({
 				templateUrl: "moduleOutlierGap/modalOutlierAnalysisGraph.html",
 				controller: "ModalGraphController",
 				controllerAs: 'mgCtrl',
@@ -229,7 +229,7 @@
 
 		self.sendMessage = function (metaData) {
 
-			var modalInstance = $modal.open({
+			var modalInstance = $uibModal.open({
 				templateUrl: "appCommons/modalMessage.html",
 				controller: "ModalMessageController",
 				controllerAs: 'mmCtrl',
@@ -284,7 +284,7 @@
 
 		self.exportCSV = function () {
 			var fileContent = getFileContent();
-			var modalInstance = $modal.open({
+			var modalInstance = $uibModal.open({
 				templateUrl: "appCommons/modalExport.html",
 				controller: "ModalExportController",
 				controllerAs: 'exportCtrl',
@@ -344,7 +344,8 @@
 		};
 
 		function notification(title, message) {
-			var modalInstance = $modal.open({
+			//TODO
+			var modalInstance = $uibModal.open({
 				templateUrl: "appCommons/modalNotification.html",
 				controller: "ModalNotificationController",
 				controllerAs: 'nCtrl',

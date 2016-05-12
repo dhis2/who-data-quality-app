@@ -1,54 +1,44 @@
 <h4 style="margin-top: 20px;">Data Export</h4>
-<h5>Export data for use with the Excel-based data quality report card</h5>
-	
+<p>Export data for use with the Excel-based data quality report card</p>
+
+<div class="well well-large" style="width: 470px">
+<label>Select data element OR indicator</label><br />
+<div class="btn-group btn-group-justified" style="width: 120px; margin-bottom: 10px; display: inline-block;" ng-init="exportCtrl.dataTypeSelected = 'dataElements'">
+	<label class="btn btn-default" ng-model="exportCtrl.dataTypeSelected" uib-btn-radio="'dataElements'">Data element</label>
+	<label class="btn btn-default" ng-model="exportCtrl.dataTypeSelected" uib-btn-radio="'indicators'">Indicator</label>
+</div>
+
+<!-- DATA ELEMENTS -->
+<div ng-if="exportCtrl.dataTypeSelected === 'dataElements'" style="max-width: 470px">
+	<d2-select-data-element
+			multiple="false"
+			ng-model="exportCtrl.dataSelected">
+	</d2-select-data-element>
+</div>
+
+<!-- INDICATORS -->
+<div ng-if="exportCtrl.dataTypeSelected === 'indicators'" style="max-width: 470px">
+	<d2-select-indicator
+			ng-model="exportCtrl.dataSelected"
+			multiple="false">
+	</d2-select-indicator>
+</div>
+
 <br />
 
-<p>Select data element OR indicator</p>
-<ui-select
-		style="margin-bottom: 10px; max-width: 470px;"
-		ng-model="exportCtrl.dataElementSelected"
-		ng-disabled="exportCtrl.indicatorSelected">
-	<ui-select-match allow-clear="true" placeholder="Search for data element...">
-		{{exportCtrl.dataElementSelected.name}}
-	</ui-select-match>
-	<ui-select-choices
-			refresh="exportCtrl.dataElementSearch($select.search)"
-			refresh-delay="500"
-			repeat="de in exportCtrl.dataElementSearchResult | filter: $select.search">
-		<div ng-bind-html="de.name | highlight: $select.search"></div>
-	</ui-select-choices>
-</ui-select>
-
-<ui-select
-		style="margin-bottom: 10px; max-width: 470px;"
-		ng-model="exportCtrl.indicatorSelected"
-		ng-disabled="exportCtrl.dataElementSelected">
-	<ui-select-match allow-clear="true" placeholder="Search for indicator...">
-		{{exportCtrl.indicatorSelected.name}}
-	</ui-select-match>
-	<ui-select-choices
-			refresh="exportCtrl.indicatorSearch($select.search)"
-			refresh-delay="500"
-			repeat="in in exportCtrl.indicatorSearchResult | filter: $select.search">
-		<div ng-bind-html="in.name | highlight: $select.search"></div>
-	</ui-select-choices>
-</ui-select>
-	
-<br />
-
-<p>Select organisation unit level</p>
+<label>Select organisation unit level</label>
 <ui-select ng-model="exportCtrl.orgunitLevelSelected" theme="bootstrap" style="margin-bottom: 10px; min-width: 250px; max-width: 470px;">
   <ui-select-match allow-clear="true" placeholder="Select organisation unit level">
-	{{exportCtrl.orgunitLevelSelected.name}}
+	{{exportCtrl.orgunitLevelSelected.displayName}}
   </ui-select-match>
   <ui-select-choices
 	repeat="obj in exportCtrl.orgunitLevels | filter: $select.search">
-		<div ng-bind-html="obj.name | highlight: $select.search"></div>
+		<div ng-bind-html="obj.displayName | highlight: $select.search"></div>
   </ui-select-choices>
 </ui-select>
 
 <br />
-<p>Select year</p>
+<label>Select year</label>
 <ui-select ng-model="exportCtrl.yearSelected" theme="bootstrap" style="margin-bottom: 10px; min-width: 250px; max-width: 470px;">
   <ui-select-match allow-clear="true" placeholder="Select year">
 	{{exportCtrl.yearSelected.name}}
@@ -58,7 +48,8 @@
 		<div ng-bind-html="obj.name | highlight: $select.search"></div>
   </ui-select-choices>
 </ui-select>
-<br />
-<button type="button" class="btn btn-primary" ng-click="exportCtrl.doOuExport();" ng-disabled="exportCtrl.orgunitLevelSelected === undefined">Download Admin Units</button>
-<button type="button" class="btn btn-primary" ng-click="exportCtrl.doTrendExport();" ng-disabled="exportCtrl.orgunitLevelSelected === undefined || (exportCtrl.dataElementSelected === undefined && exportCtrl.indicatorSelected === undefined) || exportCtrl.yearSelected === undefined">Download Trend Data</button>
-<button type="button" class="btn btn-primary" ng-click="exportCtrl.doExport();" ng-disabled="exportCtrl.orgunitLevelSelected === undefined || (exportCtrl.dataElementSelected === undefined && exportCtrl.indicatorSelected === undefined) || exportCtrl.yearSelected === undefined">Download Service Data</button>
+</div>
+<label>Download</label><br />
+<button type="button" class="btn btn-primary" ng-click="exportCtrl.doOuExport();" ng-disabled="exportCtrl.orgunitLevelSelected === undefined">Admin Units</button>
+<button type="button" class="btn btn-primary" ng-click="exportCtrl.doTrendExport();" ng-disabled="exportCtrl.orgunitLevelSelected === undefined || exportCtrl.dataSelected === undefined || exportCtrl.yearSelected === undefined">Trend Data</button>
+<button type="button" class="btn btn-primary" ng-click="exportCtrl.doExport();" ng-disabled="exportCtrl.orgunitLevelSelected === undefined || exportCtrl.dataSelected === undefined || exportCtrl.yearSelected === undefined">Service Data</button>

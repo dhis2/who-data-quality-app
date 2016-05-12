@@ -16,7 +16,7 @@
 			templateUrl: 'appCommons/d2SelectOrgunit.html'
 		};
 	});
-
+	
 	app.controller("d2SelectOUController",
 		['d2Meta', 'd2Utils', '$q',
 			function(d2Meta, d2Utils, $q) {
@@ -112,6 +112,8 @@
 						self.selectedOrgunit = orgunit;
 					}
 					else {
+						if (!d2Utils.isNumber(self.selectionType)) console.log("No selectionType");
+						if (!self.userOrgunits) console.log("No userOrgunits");
 						self.selectedOrgunit = self.userOrgunits[self.selectionType];
 					}
 

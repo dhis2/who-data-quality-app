@@ -4,13 +4,13 @@
 			ng-repeat="orgunit in d2sCtrl.userOrgunits track by $index"
 			class="btn btn-default"
 			ng-model="d2sCtrl.selectionType"
-			btn-radio="$index">
+			uib-btn-radio="$index">
 		{{orgunit.displayName}}
 	</label>
 	<label
 			class="btn btn-default"
 			ng-model="d2sCtrl.selectionType"
-			btn-radio="d2sCtrl.userOrgunits.length">
+			uib-btn-radio="d2sCtrl.userOrgunits.length">
 		Other
 	</label>
 </div>

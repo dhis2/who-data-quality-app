@@ -1,8 +1,8 @@
 (function(){  
 	/**Controller: Parameters*/
 	angular.module('outlierGapAnalysis').controller("ModalGraphController",
-	['$modalInstance', 'requestService', 'ouName', 'dxName', 'chartOptions', 'chartData',
-	function($modalInstance, requestService, ouName, dxName, chartOptions, chartData) {
+	['$uibModalInstance', 'requestService', 'ouName', 'dxName', 'chartOptions', 'chartData',
+	function($uibModalInstance, requestService, ouName, dxName, chartOptions, chartData) {
 	    
 	    var self = this; 
 	    
@@ -14,7 +14,7 @@
 	  		    
 	    
 	    self.close = function () {
-	        $modalInstance.close(self.text);
+	        $uibModalInstance.close(self.text);
 	    };
 	    
 	}]);

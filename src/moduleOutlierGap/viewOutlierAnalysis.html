@@ -1,10 +1,10 @@
 <h4 style="margin-top: 20px;">Outliers and Missing Data</h4>
 <!-- PARAMETERS -->
-<accordion close-others="aCtrl.oneAtATime">
+<uib-accordion close-others="aCtrl.oneAtATime">
 
 
 	<!-- DATA -->
-    <accordion-group heading="Data" is-open="aCtrl.status.isFirstOpen">
+    <uib-accordion-group heading="Data" is-open="aCtrl.status.isFirstOpen">
 
 		<!-- DATA SETS -->
 		<div style="max-width: 600px">
@@ -35,15 +35,15 @@
 					multiple="true">
 			</d2-select-indicator>
 		</div>
-    </accordion-group>
+    </uib-accordion-group>
            
            
     <!-- PERIOD -->
-    <accordion-group heading="Period">
+    <uib-accordion-group heading="Period">
 		<div class="btn-group btn-group-justified" style="margin-bottom: 10px; width: 306px;">
-			  <label class="btn btn-default" ng-model="aCtrl.periodOption" btn-radio="'last'">Recent</label>
-			  <label class="btn btn-default" ng-model="aCtrl.periodOption" btn-radio="'year'">By year</label>
-			  <label class="btn btn-default" ng-model="aCtrl.periodOption" btn-radio="'custom'">Custom</label>
+			  <label class="btn btn-default" ng-model="aCtrl.periodOption" uib-btn-radio="'last'">Recent</label>
+			  <label class="btn btn-default" ng-model="aCtrl.periodOption" uib-btn-radio="'year'">By year</label>
+			  <label class="btn btn-default" ng-model="aCtrl.periodOption" uib-btn-radio="'custom'">Custom</label>
 			</div>
 			
 		
@@ -117,21 +117,21 @@
 			</div>
 			<div style="display: inline-block;"><label>From</label>
 			<div style="min-height:290px;">
-			        <datepicker ng-model="aCtrl.date.startDate" class="well well-sm" starting-day="1" max-date="aCtrl.date.endDate"></datepicker>
+			        <uib-datepicker ng-model="aCtrl.date.startDate" class="well well-sm" starting-day="1" max-date="aCtrl.date.endDate"></uib-datepicker>
 			</div></div>
 			<div style="display: inline-block;"><label>To</label>
 			<div style="min-height:290px;">
-			        <datepicker ng-model="aCtrl.date.endDate" min-date="aCtrl.date.startDate" max-date="aCtrl.currentDate" class="well well-sm" starting-day="1"></datepicker>
+			        <uib-datepicker ng-model="aCtrl.date.endDate" min-date="aCtrl.date.startDate" max-date="aCtrl.currentDate" class="well well-sm" starting-day="1"></uib-datepicker>
 			</div>
 			</div>
 		</div>
-    </accordion-group>
+    </uib-accordion-group>
     
     <!-- ORGUNIT -->
-    <accordion-group heading="Orgunit" is-open="status.open">
+    <uib-accordion-group heading="Orgunit" is-open="status.open">
     	<d2-select-orgunit default-level="2" ng-model="aCtrl.selectedOrgunit"></d2-select-orgunit>
-    </accordion-group>
-  </accordion>  	
+    </uib-accordion-group>
+  </uib-accordion>
   
 <button type="button" class="btn btn-primary pull-right" ng-click="aCtrl.doAnalysis();" style="margin-bottom:20px"
 	ng-disabled="!(aCtrl.selectedData.ds || aCtrl.selectedData.deg || aCtrl.selectedData.ig) || !(aCtrl.selectedOrgunit.boundary)"
@@ -141,7 +141,7 @@
 
 <div ng-if="aCtrl.processStatus.total > 0 && aCtrl.processStatus.progress != 100">
 <h5>Loading data...</h5>
-<progressbar animate="false" value="aCtrl.processStatus.progress" type="default"><b>{{aCtrl.processStatus.progress}}%</b></progressbar>
+<uib-progressbar animate="false" value="aCtrl.processStatus.progress" type="default"><b>{{aCtrl.processStatus.progress}}%</b></uib-progressbar>
 </div>
 
 <!-- RESULT -->

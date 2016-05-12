@@ -1,8 +1,8 @@
 (function(){  
 	/**Controller: Parameters*/
 	angular.module('admin').controller("ModalDeleteIndicatorGroupController",
-	['$modalInstance', 'groups',
-	function($modalInstance, groups) {
+	['$uibModalInstance', 'groups',
+	function($uibModalInstance, groups) {
 	    	    
 	    var self = this; 
 	    
@@ -11,12 +11,12 @@
 	    
 	    	    
 	    self.cancel = function () {
-	        $modalInstance.close();
+	        $uibModalInstance.close();
 	    };
 	    
 	    self.save = function () {
 	    		    	
-	        $modalInstance.close({'group': self.groupSelected.code});
+	        $uibModalInstance.close({'group': self.groupSelected.code});
 	    };
 	    
 	}]);

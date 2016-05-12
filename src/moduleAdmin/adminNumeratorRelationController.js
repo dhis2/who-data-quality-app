@@ -1,8 +1,8 @@
 (function(){  
 	/**Controller: Parameters*/
 	angular.module('admin').controller("ModalAddEditRelationController",
-	['$modalInstance', 'indicators', 'relation', 'd2Map', 'd2Utils',
-	function($modalInstance, indicators, relation, d2Map, d2Utils) {
+	['$uibModalInstance', 'indicators', 'relation', 'd2Map', 'd2Utils',
+	function($uibModalInstance, indicators, relation, d2Map, d2Utils) {
 	    	    
 	    var self = this;
     	self.aSelected = null;
@@ -11,7 +11,7 @@
     	self.types = d2Map.dataRelationTypes();
     	self.typeSelected = null;
 
-		//Make a dropdown list with numerator codes and DHIS names
+		//Make a uib-dropdown list with numerator codes and DHIS names
 		self.numeratorList = [];
 		for (var i = 0; i < indicators.length; i++) {
 			if (indicators[i].dataID) {
@@ -69,7 +69,7 @@
 	   	
 	   	
 	    self.cancel = function () {
-	        $modalInstance.close();
+	        $uibModalInstance.close();
 	    };
 	    
 	    self.save = function () {
@@ -81,7 +81,7 @@
 	    	if (self.relation.type === 'do') self.relation.criteria = null;
 	    	
 	    		    	
-	        $modalInstance.close({'relation': self.relation});
+	        $uibModalInstance.close({'relation': self.relation});
 	    };
 	    
 	}]);

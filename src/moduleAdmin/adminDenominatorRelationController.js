@@ -1,8 +1,8 @@
 (function(){
 	/**Controller: Parameters*/
 	angular.module('admin').controller("ModalAddEditDenominatorRelationController",
-		['$modalInstance', 'd2Meta', 'd2Map', 'requestService', 'denominatorRelation',
-			function($modalInstance, d2Meta, d2Map, requestService, denominatorRelation) {
+		['$uibModalInstance', 'd2Meta', 'd2Map', 'requestService', 'denominatorRelation',
+			function($uibModalInstance, d2Meta, d2Map, requestService, denominatorRelation) {
 
 
 				var self = this;
@@ -62,7 +62,7 @@
 
 
 				self.cancel = function () {
-					$modalInstance.close();
+					$uibModalInstance.close();
 				};
 
 				self.save = function () {
@@ -76,7 +76,7 @@
 						"code": denominatorRelation && denominatorRelation.code ? denominatorRelation.code : null
 					};
 
-					$modalInstance.close({'denominatorRelation': savedDenominator});
+					$uibModalInstance.close({'denominatorRelation': savedDenominator});
 				};
 
 				self.filterDenominators();

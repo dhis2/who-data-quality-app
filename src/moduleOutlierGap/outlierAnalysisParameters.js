@@ -1,8 +1,8 @@
 (function() {
 
 	angular.module('outlierGapAnalysis').controller("OutlierGapAnalysisController",
-	['d2Meta', 'd2Utils', 'periodService', 'requestService', 'dataAnalysisService', '$scope', '$modal',
-	function(d2Meta, d2Utils, periodService, requestService, dataAnalysisService, $scope, $modal) {
+	['d2Meta', 'd2Utils', 'periodService', 'requestService', 'dataAnalysisService', '$scope', '$uibModal',
+	function(d2Meta, d2Utils, periodService, requestService, dataAnalysisService, $scope, $uibModal) {
 
 		var self = this;
 

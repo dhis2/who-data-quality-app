@@ -38,7 +38,7 @@
 			<button ng-disabled="!mmCtrl.selectedRecipient || mmCtrl.text === ''" style="float: right; margin-bottom: 10px;" type="button" class="btn btn-success" data-ng-click="mmCtrl.sendMessage()">Send message</button>
 			</div>
 			<div style="clear: both;">
-			<alert ng-repeat="alert in mmCtrl.alerts track by $index" type="{{alert.type}}" close="mmCtrl.alerts.splice($index, 1)">{{alert.msg}}</alert>
+			<uib-alert ng-repeat="alert in mmCtrl.alerts track by $index" type="{{alert.type}}" close="mmCtrl.alerts.splice($index, 1)">{{alert.msg}}</uib-alert>
 			</div>
 		</div>
 	</div>
