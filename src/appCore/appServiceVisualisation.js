@@ -467,97 +467,45 @@
 	    		}
 	    	    return toolTipHTML;
 	    	};
-	    	
-	    	
-	    	var chartSeries = [];
+
+			var chartSeries;
+			var maxX;
+			var maxY;
 
 			//Only relevant if there is subunit data
 			if (datapoints.length > 0) {
-				datapoints = sortScatterData(datapoints);
-				if (consistency > 0) {
-					var chartSerie = {
-						'key': "Orgunits within threshold",
-						'values': []
-					};
-					var chartSerieOutliers = {
-						'key': "Orgunits outside threshold",
-						'color': '#FF8300',
-						'values': []
-					};
-					for (var i = 0; i < Math.min(datapoints.length, maxScatterPoints); i++) {
-						var datapoint = {
-							'x': datapoints[i].refValue,
-							'y': datapoints[i].value,
-							'z': datapoints[i].id
-						};
-						if (datapoints[i].violation) chartSerieOutliers.values.push(datapoint);
-						else chartSerie.values.push(datapoint)
-					}
-					if (chartSerie.values.length > 0) chartSeries.push(chartSerie);
-					if (chartSerieOutliers.values.length > 0) chartSeries.push(chartSerieOutliers);
-				}
-				else {
-					var chartSerie = {
-						'key': "Orgunits",
-						'values': []
-					};
-					for (var i = 0; i < Math.min(datapoints.length, maxScatterPoints); i++) {
-						var datapoint = {
-							'x': datapoints[i].refValue,
-							'y': datapoints[i].value,
-							'z': datapoints[i].id
-						};
-						chartSerie.values.push(datapoint)
-					}
-					chartSeries.push(chartSerie);
-				}
+				var scatterData = scatterPoints(datapoints);
 
-				chartSeries.push(
-					{
-						'key': result.boundaryName,
-						'color': '#ffff',
-						'values': [{
-							'x': 0,
-							'y': 0,
-							'size': 0
-						}
-						],
-						'slope': boundaryRatio,
-						'intercept': 0.001
-					});
+				chartSeries = scatterData.chartSeries;
+				maxX = getRange(scatterData.maxX);
+				maxY = getRange(scatterData.maxY);
+
+				var ratio, key;
+
+				//national = subunit
+				if (true) {
+					ratio = boundaryRatio;
+					key = result.boundaryName;
+				}
+				//else current = average/forecast
+				else {
+					ratio = 1;
+					key = result.subType === "constant" ? "Current = Average" : "Current = Forecast";
+				}
+				chartSeries.push(scatterLine(ratio, key, '#000000', maxX, maxY));
+
 				if (consistency > 0) {
-					chartSeries.push( {
-							'key': "+ " + consistency + "%",
-							'color': '#B0B0B0',
-							'values': [{
-								'x': 0,
-								'y': 0,
-								'size': 0
-							}
-							],
-							'slope': boundaryRatio * (1 + (consistency / 100)),
-							'intercept': 0.001
-						},
-						{
-							'key': "- " + consistency + "%",
-							'color': '#B0B0B0',
-							'values': [{
-								'x': 0,
-								'y': 0,
-								'size': 0
-							}
-							],
-							'slope': boundaryRatio * (1 - (consistency / 100)),
-							'intercept': 0.001
-						}
-					);
+					chartSeries.push(scatterLine(ratio * (1 + (consistency / 100)), "+ " + consistency + "%", '#B0B0B0', maxX, maxY));
+					chartSeries.push(scatterLine(ratio * (1 - (consistency / 100)), "- " + consistency + "%", '#B0B0B0', maxX, maxY));
 				}
 			}
-	    		    	
+
 			var xAxisLabel;
 			if (result.subType === "constant") xAxisLabel = "Average of previous periods";
 			else xAxisLabel = "Forecasted value";
-			
+
+
+
 	    	var chartOptions = {
 	    	   	"chart": {
 	    	        "type": "scatterChart",
@@ -567,29 +515,23 @@
 	    	          "bottom": 80,
 	    	          "left": 100
 	    	        },
-	    	        "scatter": {
-	    	        	"onlyCircles": false
-	    	        },
-	    	        "clipEdge": false,
-	    	        "staggerLabels": true,
-	    	        "transitionDuration": 1,
-	    	        "showDistX": true,
-	    	        "showDistY": true,
+					"xDomain": [0, maxX],
+					"yDomain": [0, maxY],
 	    	        "xAxis": {
 	    	              "axisLabel": xAxisLabel,
 	    	              "axisLabelDistance": 30,
-	    	              "tickFormat": d3.format('g')
+	    	              "tickFormat": d3.format('d')
 	    	        },
 	    	        "yAxis": {
 	    	        	"axisLabel": periodService.shortPeriodName(result.pe),
 	    	            "axisLabelDistance": 30,
-	    	            "tickFormat": d3.format('g')
+	    	            "tickFormat": d3.format('d')
 	    	        },
 	    	        'tooltip': {
 						enabled: true,
 						contentGenerator: toolTip
 					}
-	    	        
+
 	    	    }
 	    	};
 			if (includeTitle) {
@@ -602,7 +544,7 @@
 				};
 
 			}
-	    	
+
 	    	if (callback) {
 		    	callback(chartSeries, chartOptions);
 		    }
@@ -614,12 +556,12 @@
 
 
 		/** Data consistency */
-		self.makeDataConsistencyChart = function (callback, result) {	    		    	
-			    
+		self.makeDataConsistencyChart = function (callback, result) {
+
 	    	var datapoints = result.subunitDatapoints;
 	    	var boundaryRatio = result.boundaryRatio;
-	    	var consistency = result.criteria; 
-	    		    	
+	    	var consistency = result.criteria;
+
 	    	var toolTip = function(point) {
 
 	    		var data = result.subunitDatapoints;
@@ -635,143 +577,43 @@
 	    	        '<p style="margin-bottom: 0px">' + result.dxNameA + ': ' + point.point.y + '</p>' +
 	    	        '<p>' + result.dxNameB + ': ' + point.point.x + '</p>';
 	    	};
-	    	
-	    	
+
+			var maxX = 0;
+			var maxY = 0;
 	    	var chartSeries = [];
+
+
 			if (datapoints.length > 0) {
 
-				datapoints = sortScatterData(datapoints);
-				if (consistency > 0) {
-					var chartSerie = {
-						'key': "Orgunits within threshold",
-						'values': []
-					};
-					var chartSerieOutliers = {
-						'key': "Orgunits outside threshold",
-						'color': '#FF8300',
-						'values': []
-					};
-					for (var i = 0; i < Math.min(datapoints.length, maxScatterPoints); i++) {
-						var datapoint = {
-							'x': datapoints[i].refValue,
-							'y': datapoints[i].value,
-							'z': datapoints[i].id
-						};
-						if (datapoints[i].violation) chartSerieOutliers.values.push(datapoint);
-						else chartSerie.values.push(datapoint)
-					}
-					if (chartSerie.values.length > 0) chartSeries.push(chartSerie);
-					if (chartSerieOutliers.values.length > 0) chartSeries.push(chartSerieOutliers);
-				}
-				else {
-					var chartSerie = {
-						'key': "Orgunits",
-						'values': []
-					};
-					for (var i = 0; i < Math.min(datapoints.length, maxScatterPoints); i++) {
-						var datapoint = {
-							'x': datapoints[i].refValue,
-							'y': datapoints[i].value,
-							'z': datapoints[i].id
-						};
-						chartSerie.values.push(datapoint)
-					}
-					chartSeries.push(chartSerie);
-				}
 
-				//If we are comparing consistency across orgunits only, add line for "parent"
+				var scatterData = scatterPoints(datapoints);
+
+				chartSeries = scatterData.chartSeries;
+				maxX = getRange(scatterData.maxX);
+				maxY = getRange(scatterData.maxY);
+
+				var ratio, key;
+
+				//national = subunit
 				if (result.subType === 'level') {
-					chartSeries.push(
-						{
-							'key': result.boundaryName,
-							'color': '#ffff',
-							'values': [{
-								'x': 0,
-								'y': 0,
-								'size': 0
-							}
-							],
-							'slope': boundaryRatio,
-							'intercept': 0.001
-						});
-					if (consistency > 0) {
-						chartSeries.push({
-							'key': "+ " + consistency + "%",
-							'color': '#B0B0B0',
-							'values': [{
-								'x': 0,
-								'y': 0,
-								'size': 0
-							}
-							],
-							'slope': boundaryRatio * (1 + (consistency / 100)),
-							'intercept': 0.001
-						});
-						chartSeries.push({
-								'key': "- " + consistency + "%",
-								'color': '#B0B0B0',
-								'values': [{
-									'x': 0,
-									'y': 0,
-									'size': 0
-								}
-								],
-								'slope': boundaryRatio * (1 - (consistency / 100)),
-								'intercept': 0.001
-							}
-						);
-					}
+					ratio = boundaryRatio;
+					key = result.boundaryName;
 				}
+				//else current = average/forecast
 				else {
-					//If comparison is A ≈ B or A > B, add A=B and "minimum" line
-					chartSeries.push(
-						{
-							'key': 'A = B',
-							'color': '#ffff',
-							'values': [{
-								'x': 0,
-								'y': 0,
-								'size': 0
-							}
-							],
-							'slope': 1,
-							'intercept': 0.001
-						});
-					if (consistency > 0) {
-						chartSeries.push({
-								'key': "- " + consistency + "%",
-								'color': '#B0B0B0',
-								'values': [{
-									'x': 0,
-									'y': 0,
-									'size': 0
-								}
-								],
-								'slope': 1 * (1 - (consistency / 100)),
-								'intercept': 0.001
-							}
-						);
-					}
+					ratio = 1;
+					key = "A = B";
+				}
+				chartSeries.push(scatterLine(ratio, key, '#000000', maxX, maxY));
 
-					//If comparison is A ≈ B, also add "maximum" line
-					if (consistency > 0) {
-						if (result.subType == 'eq') {
-							chartSeries.push({
-								'key': "+ " + consistency + "%",
-								'color': '#B0B0B0',
-								'values': [{
-									'x': 0,
-									'y': 0,
-									'size': 0
-								}
-								],
-								'slope': 1 * (1 + (consistency / 100)),
-								'intercept': 0.001
-							});
-						}
+				if (consistency > 0) {
+					if (result.subType === 'eq') {
+						chartSeries.push(scatterLine(ratio * (1 + (consistency / 100)), "+ " + consistency + "%", '#B0B0B0', maxX, maxY));
 					}
+					chartSeries.push(scatterLine(ratio * (1 - (consistency / 100)), "- " + consistency + "%", '#B0B0B0', maxX, maxY));
 				}
 			}
+
 	    	var chartOptions = {
 	    	   	"chart": {
 	    	        "type": "scatterChart",
@@ -781,23 +623,17 @@
 	    	          "bottom": 80,
 	    	          "left": 100
 	    	        },
-	    	        "scatter": {
-	    	        	"onlyCircles": false
-	    	        },
-	    	        "clipEdge": false,
-	    	        "staggerLabels": true,
-	    	        "transitionDuration": 1,
-	    	        "showDistX": true,
-	    	        "showDistY": true,
+					"xDomain": [0, maxX],
+					"yDomain": [0, maxY],
 	    	        "xAxis": {
 	    	              "axisLabel": result.dxNameB,
 	    	              "axisLabelDistance": 30,
-	    	              "tickFormat": d3.format('g')
+	    	              "tickFormat": d3.format('d')
 	    	        },
 	    	        "yAxis": {
 	    	        	"axisLabel": result.dxNameA,
 	    	            "axisLabelDistance": 30,
-	    	            "tickFormat": d3.format('g')
+	    	            "tickFormat": d3.format('d')
 	    	        },
 					'tooltip': {
 						enabled: true,
@@ -815,6 +651,7 @@
 	    		result.chartData = chartSeries;
 	    	}
 	    };
+
 
 
 	    /** Dropout */
@@ -922,9 +759,8 @@
 	    };
 		
 
+
 		/** -- MODIFYING OPTIONS -- */
-
-
 		self.setChartTitle = function(options, title, subtitle) {
 			if (title) {
 				options.title = {
@@ -962,29 +798,6 @@
 			if (bottom) options.chart.margin.bottom = bottom;
 			if (left) options.chart.margin.left = left;
 		}
-
-
-		/**
-		 * Estimates the required margin for the x and y labels.
-		 * @param x
-		 * @param y
-		 * @param rotated	is y axis rotated?
-		 */
-		function estimateLabelSize(x, y, rotated) {
-
-			//Assume 7 pixels per digit if not rotated, 4 if rotated
-
-			var x = rotated ? parseInt(4.3*x) : 8*x;
-			x = Math.max(x, 16);
-			var y = 8*y;
-			y = Math.max(y, 16);
-
-			return {
-				'x': x,
-				'y': y
-			}
-		}
-
 
 
 
@@ -1057,9 +870,130 @@
 
 		};
 
-	  	
-	  	
-	  	return self;
+
+		/**
+		 * Calculates a reasonable max X and Y axis range based on highest values
+		 *
+		 * @param value 	highest value in dataset
+		 * @returns 		object with proposed max value to use
+		 */
+
+		function getRange(value) {
+
+			//Else, get number of digits
+			var digits = parseInt(value).toString().length;
+
+			var factor;
+			if (digits > 2) {
+				factor  = Math.pow(10, (digits-2));
+			}
+			else if (digits == 2) {
+				factor = 5;
+			}
+			else if (digits == 1) {
+				factor = 2
+			}
+			else return 0;
+
+
+			var partial = value/factor;
+			if (partial % 10 === 0) {
+				partial++;
+			}
+			else {
+				partial = Math.ceil(partial);
+			}
+
+			return factor*partial;
+
+		}
+
+
+		/**
+		 * Estimates the required margin for the x and y labels.
+		 * @param x
+		 * @param y
+		 * @param rotated	is y axis rotated?
+		 */
+		function estimateLabelSize(x, y, rotated) {
+
+			//Assume 7 pixels per digit if not rotated, 4 if rotated
+
+			var x = rotated ? parseInt(4.3*x) : 8*x;
+			x = Math.max(x, 16);
+			var y = 8*y;
+			y = Math.max(y, 16);
+
+			return {
+				'x': x,
+				'y': y
+			}
+		}
+
+
+		/**
+		 * Make "scatter" points from subunit data, for use with MultiChart
+		 * 
+		 *
+		 */
+		function scatterPoints(datapoints) {
+			datapoints = sortScatterData(datapoints);
+
+			var chartSeries = [];
+			var maxX = 0;
+			var maxY = 0;
+
+			var chartSerie = {
+				'key': "Within threshold",
+				'values': []
+			};
+			var chartSerieOutliers = {
+				'key': "Outside threshold",
+				'color': '#FF8300',
+				'values': []
+			};
+			for (var i = 0; i < Math.min(datapoints.length, maxScatterPoints); i++) {
+				var datapoint = {
+					'x': datapoints[i].refValue,
+					'y': datapoints[i].value,
+					'z': datapoints[i].id
+				};
+
+				if (datapoints[i].refValue > maxX) maxX = datapoints[i].refValue;
+				if (datapoints[i].value > maxY) maxY = datapoints[i].value;
+
+				if (datapoints[i].violation) chartSerieOutliers.values.push(datapoint);
+				else chartSerie.values.push(datapoint)
+			}
+			if (chartSerie.values.length > 0) chartSeries.push(chartSerie);
+			if (chartSerieOutliers.values.length > 0) chartSeries.push(chartSerieOutliers);
+
+			//If only one series, simply call it "Orgunits"
+			if (chartSeries.length === 1) chartSeries[0].key = 'Orgunits';
+
+			return {
+				"chartSeries": chartSeries,
+				"maxX": maxX,
+				"maxY": maxY
+			}
+
+		}
+
+
+		function scatterLine(ratio, key, color) {
+
+			return {
+				'key': key,
+				'color': color,
+				'values': [],
+				'slope': ratio,
+				'intercept': 0.000001
+			}
+		}
+
+
+
+		return self;
 	  	
 		}]);
 	
