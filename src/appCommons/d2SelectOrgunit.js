@@ -113,7 +113,11 @@
 					}
 					else {
 						if (!d2Utils.isNumber(self.selectionType)) console.log("No selectionType");
-						if (!self.userOrgunits) console.log("No userOrgunits");
+						if (!self.userOrgunits) {
+							//TODO
+							console.log("No userOrgunits");
+							return;
+						}
 						self.selectedOrgunit = self.userOrgunits[self.selectionType];
 					}
 

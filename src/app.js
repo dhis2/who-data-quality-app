@@ -23,7 +23,7 @@
 	/**Config*/
 	app.config(['uiSelectConfig', function(uiSelectConfig) {
 		uiSelectConfig.theme = 'bootstrap';
-		uiSelectConfig.resetSearchInput = false;
+		uiSelectConfig.resetSearchInput = true;
 	}]);
 	
 	app.config(['$routeProvider',

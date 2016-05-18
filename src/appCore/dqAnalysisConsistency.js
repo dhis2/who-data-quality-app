@@ -41,12 +41,12 @@
 				 * @param dxA				data a
 				 * @param dxB				data b, null when consistencyType is 'time'
 				 * @param pe				period
-				 * @param peRef				reference periods, nulle when consistencyType is 'data'
+				 * @param peRef				reference periods, null when consistencyType is 'data'
 				 * @param ouBoundary		boundary orgunit
 				 * @param ouLevel			orgunit level
 				 * @param ouGroup			orgunit group - level is used if both level and group is specified
 				 * @param type				'time' or 'data' consistency
-				 * @param subType		specific type of 'time' or 'data' consistency check, i.e. dropout rate
+				 * @param subType			specific type of 'time' or 'data' consistency check, i.e. dropout rate
 				 * @param criteria			criteria for when subnational units are counted as outlier
 				 * @param meta				object that is simply passed on in the result, for various metadata
 				 * @returns {*}
@@ -285,11 +285,11 @@
 					var boundaryRatio = getRatioAndPercentage(boundaryValueA, boundaryValueB).ratio;
 					var boundaryPercentage = getRatioAndPercentage(boundaryValueA, boundaryValueB).percent;
 
-					//Check if we have data for boundary orgunit for indicator A
+					//Check if we have data for boundary orgunit for current period
 					if (!d2Utils.isNumber(boundaryValueA)) {
 						errors.push(makeError(_dxA, _pe, _ouBoundary));
 					}
-					//Check if we have data for boundary orgunit for indicator B
+					//Check if we have data for boundary orgunit for reference periods
 					else if (!d2Utils.isNumber(boundaryValueB)) {
 						errors.push(makeError(_dxA, _pe, _ouBoundary));
 					}
@@ -451,7 +451,7 @@
 
 
 				/**
-				 * Checks if the ratio for a subunit is and "outlier" based on the given analysis type and criteria
+				 * Checks if the ratio for a subunit is an "outlier" based on the given analysis type and criteria
 				 * @param boundaryRatio
 				 * @param subunitRatio
 				 * @returns {boolean}
