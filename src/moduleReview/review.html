@@ -82,13 +82,24 @@
 <div class="reviewResult reportPart" ng-if="revCtrl.outstandingRequests === 0 && revCtrl.totalRequests != 0">
 	<!--SUMMARY-->
 	<div class="reportPart">
-		<h3>Summary</h3>
+		<div class="fullWidth headerPart">
+			SUMMARY
+		</div>
 		<div>
 			<div class="noBreak">
-				<h5>1 Completeness</h5>
-				<em>1a Completeness of facility reporting.</em> The percentage of expected reports that have been entered and completed.
-				<table style="" class="table tablePrint table-bordered table-condensed noBreak">
+
+				<div class="fullWidth headerSection">
+					Domain 1: Completeness
+				</div>
+
+				<table class="table tablePrint table-bordered table-condensed noBreak">
 					<tbody>
+						<tr bgcolor="#f9f9f9">
+							<th colspan="4">
+								<em>1a: Completeness of facility reporting.</em>
+								The percentage of expected reports that have been entered and completed.
+							</th>
+						</tr>
 						<tr bgcolor="#f9f9f9">
 							<th width="275">Dataset</th>
 							<th width="175">Overall score (%)</th>
@@ -107,9 +118,13 @@
 			</div>
 
 			<div class="noBreak">
-				<em>1b Completeness of indicator data (missing or zero values)</em>
-				<table style="" class="table tablePrint table-bordered table-condensed noBreak">
+				<table class="table tablePrint table-bordered table-condensed noBreak">
 					<tbody>
+						<tr bgcolor="#f9f9f9">
+							<th colspan="4">
+								<em>1b: Completeness of indicator data (missing or zero values)</em>
+							</th>
+						</tr>
 						<tr bgcolor="#f9f9f9">
 							<th width="275">Dataset</th>
 							<th width="175">Overall score (%)</th>
@@ -128,9 +143,14 @@
 			</div>
 
 			<div class="noBreak">
-				<em>1c Consistency of dataset completeness over time. </em>Completeness of datasets in {{revCtrl.yearSelected.id}} compared to previous three years.
-				<table style="" class="table tablePrint table-bordered table-condensed noBreak">
+				<table class="table tablePrint table-bordered table-condensed noBreak">
 					<tbody>
+						<tr bgcolor="#f9f9f9">
+							<th colspan="4">
+								<em>1c: Consistency of dataset completeness over time. </em>
+								Completeness of datasets in {{revCtrl.yearSelected.id}} compared to previous three years.
+							</th>
+						</tr>
 						<tr bgcolor="#f9f9f9">
 							<th width="275">Dataset</th>
 							<th width="175">Overall score (%)</th>
@@ -149,10 +169,17 @@
 			</div>
 
 			<div class="noBreak">
-				<h5>2 Internal consistency</h5>
-				<em>2a Extreme outliers.</em>
-				<table style="" class="table tablePrint table-bordered table-condensed noBreak">
+				<div class="fullWidth headerSection">
+					Domain 2: Internal consistency
+				</div>
+
+				<table class="table tablePrint table-bordered table-condensed noBreak">
 					<tbody>
+						<tr bgcolor="#f9f9f9">
+							<th colspan="4">
+								<em>2a: Extreme outliers.</em>
+							</th>
+						</tr>
 						<tr bgcolor="#f9f9f9">
 							<th width="275">Indicator</th>
 							<th width="175">Overall score (%)</th>
@@ -171,9 +198,15 @@
 			</div>
 
 			<div class="noBreak">
-				<em>2b Moderate outliers.</em> Outliers relative to the mean.
-				<table style="" class="table tablePrint table-bordered table-condensed noBreak">
+
+				<table class="table tablePrint table-bordered table-condensed noBreak">
 					<tbody>
+						<tr bgcolor="#f9f9f9">
+							<th colspan="4">
+								<em>2b: Moderate outliers.</em>
+								Outliers relative to the mean.
+							</th>
+						</tr>
 						<tr bgcolor="#f9f9f9">
 							<th width="275">Indicator</th>
 							<th width="175">Overall score (%)</th>
@@ -192,9 +225,15 @@
 			</div>
 
 			<div class="noBreak">
-				<em>2c Moderate outliers.</em> Outliers relative to the median (modified Z-score > 3.5).
-				<table style="" class="table tablePrint table-bordered table-condensed noBreak">
+
+				<table class="table tablePrint table-bordered table-condensed noBreak">
 					<tbody>
+						<tr bgcolor="#f9f9f9">
+							<th colspan="4">
+								<em>2c: Moderate outliers.</em>
+								Outliers relative to the median (modified Z-score > 3.5).
+							</th>
+						</tr>
 						<tr bgcolor="#f9f9f9">
 							<th width="275">Indicator</th>
 							<th width="175">Overall score (%)</th>
@@ -213,9 +252,13 @@
 			</div>
 
 			<div class="noBreak">
-				<em>2d Consistency over time.</em>
-				<table style="" class="table tablePrint table-bordered table-condensed noBreak">
+				<table class="table tablePrint table-bordered table-condensed noBreak">
 					<tbody>
+						<tr bgcolor="#f9f9f9">
+							<th colspan="4">
+								<em>2d: Consistency over time.</em>
+							</th>
+						</tr>
 						<tr bgcolor="#f9f9f9">
 							<th width="275">Indicator</th>
 							<th width="175">Overall score (%)</th>
@@ -234,16 +277,21 @@
 			</div>
 
 			<div class="noBreak">
-				<em>2e Consistency between related indicators.</em>
-				<table style="" class="table tablePrint table-bordered table-condensed ">
+
+				<table class="table tablePrint table-bordered table-condensed ">
 					<tbody>
+						<tr bgcolor="#f9f9f9">
+							<th colspan="4">
+								<em>2e: Consistency between related indicators.</em>
+							</th>
+						</tr>
 						<tr bgcolor="#f9f9f9">
 							<th width="275">Indicator</th>
 							<th width="175">Overall score (%)</th>
 							<th width="175"># {{revCtrl.selectedOrgunit.level.name}} with poor score</th>
 							<th width="175">% {{revCtrl.selectedOrgunit.level.name}} with poor score</th>
 						</tr>
-						<tr ng-repeat="relation in revCtrl.consistency.relations | orderBy:'name'">
+						<tr ng-repeat="relation in revCtrl.consistency.relations | orderBy:'meta.name'">
 							<td>{{revCtrl.relationName(relation.relationCode)}}</td>
 							<td ng-if="revCtrl.isNumber(relation.boundaryPercentage)" class="valueCell">{{relation.boundaryPercentage}}%</td>
 							<td ng-if="revCtrl.isNumber(relation.boundaryPercentage)" class="valueCell">{{relation.subunitsOutsideThreshold}}</td>
@@ -254,11 +302,32 @@
 				</table>
 			</div>
 
+
 			<div class="noBreak">
-				<h5>3 Consistency of Population Data</h5>
-				<em>3a Consistency with UN projections.</em>
-				<table style="" class="table tablePrint table-bordered table-condensed noBreak">
-					<tbody>
+				<div class="fullWidth headerSection">
+							Domain 3: External comparison
+				</div>
+				<table class="table tablePrint table-bordered table-condensed noBreak">
+					<tr bgcolor="#f9f9f9">
+						<th colspan="2">
+							<em>3a Comparison of routine data with survey values.</em>
+						</th>
+					</tr>
+				</table>
+			</div>
+
+
+			<div class="noBreak">
+				<div class="fullWidth headerSection">
+					Domain 4: Consistency of Population Data
+				</div>
+
+				<table class="table tablePrint table-bordered table-condensed noBreak">
+					<tr bgcolor="#f9f9f9">
+						<th colspan="2">
+							<em>4a: Consistency with UN projections.</em>
+						</th>
+					</tr>
 					<tr bgcolor="#f9f9f9">
 						<th width="275">Indicator</th>
 						<th width="175">Overall score (%)</th>
@@ -268,13 +337,15 @@
 						<td ng-if="revCtrl.denominators.un">{{revCtrl.denominators.un.boundaryRatio}}%</td>
 						<td ng-if="!revCtrl.denominators.un">Not available</td>
 					</tr>
-					</tbody>
 				</table>
 			</div>
 			<div class="noBreak">
-				<em>3b Consistency of population/denominator data.</em>
-				<table style="" class="table tablePrint table-bordered table-condensed noBreak">
-					<tbody>
+				<table class="table tablePrint table-bordered table-condensed noBreak">
+					<tr bgcolor="#f9f9f9">
+						<th colspan="4">
+							<em>4b: Consistency of population/denominator data.</em>
+						</th>
+					</tr>
 					<tr bgcolor="#f9f9f9">
 						<th width="275">Indicator</th>
 						<th width="175">Overall score (%)</th>
@@ -290,22 +361,28 @@
 					<tr ng-if="!revCtrl.denominators.relations || revCtrl.denominator.relations.length === 0">
 						<td colspan="4">Not available</td>
 					</tr>
-					</tbody>
+
 				</table>
 			</div>
-
-
 		</div>
 	</div>
 
+
 	<!--COMPLETENESS-->
 	<div class="reportPart">
-		<h3>Completeness</h3>
+		<div class="fullWidth headerPart">
+			DOMAIN 1: COMPLETENESS OF REPORTING
+		</div>
 
 		<div class="noBreak">
-			<em>1a Completeness of facility reporting.</em><br />The percentage of expected reports that have been entered and completed.
-			<table style="" class="table tablePrint table-bordered table-condensed ">
+			<table class="table tablePrint table-bordered table-condensed ">
 				<thead>
+					<tr bgcolor="#f9f9f9">
+						<th colspan="4">
+							<em>1a: Completeness of facility reporting.</em>
+							The percentage of expected reports that have been entered and completed.
+						</th>
+					</tr>
 					<tr bgcolor="#f9f9f9">
 						<th width="200">Dataset</th>
 						<th width="260">Indicator</th>
@@ -339,9 +416,13 @@
 		</div>
 
 		<div class="noBreak">
-			<em>1b Completeness of indicator data (missing/zero values).</em>
-			<table style="" class="table tablePrint table-bordered table-condensed ">
+			<table class="table tablePrint table-bordered table-condensed ">
 				<tbody>
+					<tr bgcolor="#f9f9f9">
+						<th colspan="6">
+							<em>1b: Completeness of indicator data (missing/zero values).</em>
+						</th>
+					</tr>
 					<tr bgcolor="#f9f9f9">
 						<th width="200">Indicator</th>
 						<th width="80">Threshold</th>
@@ -366,8 +447,14 @@
 		</div>
 
 		<div class="noBreak">
-			<em>1c Consistency of dataset completeness over time.</em><br />Difference between the current year completeness and either the average of the 3 preceding years (if expected trend is constant), or the forecasted value.
-			<table style="" class="table tablePrint table-bordered table-condensed ">
+
+			<table class="table tablePrint table-bordered table-condensed ">
+				<tr bgcolor="#f9f9f9">
+					<th colspan="7">
+						<em>1c: Consistency of dataset completeness over time.</em>
+						Difference between the current year completeness and either the average of the 3 preceding years (if expected trend is constant), or the forecasted value.
+					</th>
+				</tr>
 				<tr bgcolor="#f9f9f9">
 					<th width="200">Dataset</th>
 					<th width="80">Expected trend</th>
@@ -405,12 +492,19 @@
 
 	<!--INTERNAL CONSISTENCY-->
 	<div class="reportPart">
-		<h3>Internal Consistency</h3>
+		<div class="fullWidth headerPart">
+			DOMAIN 2: INTERNAL CONSISTENCY OF REPORTED DATA
+		</div>
 
 		<div class="noBreak">
-			<em>2a Extreme outliers.</em>
-			<table style="" class="table tablePrint table-bordered table-condensed ">
+
+			<table class="table tablePrint table-bordered table-condensed ">
 				<tbody>
+					<tr bgcolor="#f9f9f9">
+						<th colspan="6">
+							<em>2a: Extreme outliers.</em>
+						</th>
+					</tr>
 					<tr bgcolor="#f9f9f9">
 						<th width="200">Indicator</th>
 						<th width="80">Threshold</th>
@@ -436,9 +530,13 @@
 		</div>
 
 		<div class="noBreak">
-			<em>2b Moderate outliers.</em>
-			<table style="" class="table tablePrint table-bordered table-condensed ">
+			<table class="table tablePrint table-bordered table-condensed ">
 				<tbody>
+					<tr bgcolor="#f9f9f9">
+						<th colspan="6">
+							<em>2b: Moderate outliers.</em>
+						</th>
+					</tr>
 					<tr bgcolor="#f9f9f9">
 						<th width="200">Indicator</th>
 						<th width="80">Threshold</th>
@@ -465,9 +563,14 @@
 		</div>
 
 		<div class="noBreak">
-			<em>2c Moderate outliers.</em> Based on median (modified Z score).
-			<table style="" class="table tablePrint table-bordered table-condensed ">
+
+			<table class="table tablePrint table-bordered table-condensed ">
 				<tbody>
+					<tr bgcolor="#f9f9f9">
+						<th colspan="6">
+							<em>2c: Moderate outliers.</em> Based on median (modified Z score).
+						</th>
+					</tr>
 					<tr bgcolor="#f9f9f9">
 						<th width="200">Indicator</th>
 						<th width="80">Threshold</th>
@@ -492,14 +595,21 @@
 			<textarea class="interpretation"></textarea>
 		</div>
 
-		<div class="noBreak inline fullWidth">
-			<div
-				 style="margin-bottom: 10px;"
-				 ng-repeat="indicator in revCtrl.consistency.data track by $index | orderBy:'name'">
+		<div class="inline fullWidth">
+			<div class="noBreak" style="margin-bottom: 10px;"
+				 ng-repeat="indicator in revCtrl.consistency.data | orderBy:'dxNameA' track by $index">
 
 				<div ng-if="$index === 0" class="inline fullWidth">
-					<em>2d (new) Consistency of indicator values over time.</em><br/>
-					Difference between the current year and either the average of the 3 preceding years (if expected trend is constant), or the forecasted value.
+					<table class="table tablePrint table-bordered table-condensed" style="margin-bottom: 5px">
+						<tbody>
+						<tr bgcolor="#f9f9f9">
+							<th>
+								<em>2d: Consistency of indicator values over time.</em>
+								Difference between the current year and either the average of the 3 preceding years (if expected trend is constant), or the forecasted value.
+							</th>
+						</tr>
+						</tbody>
+					</table>
 				</div>
 
 				<div class="inline relationTable halfWidth">
@@ -551,9 +661,19 @@
 
 		<div class="noBreak inline fullWidth"
 			 style="margin-bottom: 10px;"
-			 ng-repeat="relation in revCtrl.consistency.relations track by $index | orderBy:'name'">
+			 ng-repeat="relation in revCtrl.consistency.relations | orderBy:'meta.name' track by $index">
 
-			<em ng-if="$index === 0" class="inline fullWidth">2e Consistency between related indicators</em>
+			<div ng-if="$index === 0" class="inline fullWidth">
+				<table class="table tablePrint table-bordered table-condensed" style="margin-bottom: 5px">
+					<tbody>
+					<tr bgcolor="#f9f9f9">
+						<th>
+							2e: Consistency between related indicators</em>
+						</th>
+					</tr>
+					</tbody>
+				</table>
+			</div>
 
 			<div class="inline relationTable halfWidth">
 				<table class="table tablePrint table-bordered table-condensed">
@@ -601,12 +721,27 @@
 	</div>
 
 
+	<!--EXTERNAL CONSISTENCY-->
 	<div class="reportPart">
-		<h3>Consistency of Population Data</h3>
+		<div class="fullWidth headerPart">
+			DOMAIN 3: EXTERNAL COMPARISON
+		</div>
+	</div>
 
+
+	<!--DENOMINATOR CONSISTENCY-->
+	<div class="reportPart">
+		<div class="fullWidth headerPart">
+			DOMAIN 4: CONSISTENCY OF POPULATION DATA
+		</div>
 		<div class="noBreak">
-			<em>3a Consistency with UN population projection.</em>
+
 			<table class="table tablePrint table-bordered table-condensed ">
+				<tr bgcolor="#f9f9f9">
+					<th colspan="2">
+						<em>3a: Consistency with UN population projection.</em>
+					</th>
+				</tr>
 				<tr>
 					<td>Ratio of population projection of live births from the Bureau of Statistics to a UN live births projection</td>
 					<td ng-if="revCtrl.denominators.un">{{revCtrl.denominators.un.boundaryRatio}}</td>
@@ -618,8 +753,20 @@
 
 		<div class="noBreak inline fullWidth"
 			 style="margin-bottom: 10px;"
-			 ng-repeat="denominator in revCtrl.denominators.relations track by $index | orderBy:'name'">
-			<em ng-if="$index === 0" class="inline fullWidth">3b Consistency of denominators</em>
+			 ng-repeat="denominator in revCtrl.denominators.relations | orderBy:'meta.relation.name' track by $index">
+
+
+			<div ng-if="$index === 0" class="inline fullWidth">
+				<table class="table tablePrint table-bordered table-condensed" style="margin-bottom: 5px">
+					<tbody>
+					<tr bgcolor="#f9f9f9">
+						<th>
+							<em>3b: Consistency of denominators</em>
+						</th>
+					</tr>
+					</tbody>
+				</table>
+			</div>
 			<div class="inline relationTable halfWidth">
 				<table class="table tablePrint table-bordered table-condensed">
 					<tr bgcolor="#f9f9f9"><th colspan="2">{{denominator.meta.relation.name}}</th></tr>
@@ -660,6 +807,7 @@
 	</div>
 
 
+	<!--ALERTS-->
 	<div class="reportPart" ng-if="revCtrl.remarks.length > 0">
 		<h3>Remarks</h3>
 		<table class="table tablePrint table-bordered" style=" margin-top: 20px;">

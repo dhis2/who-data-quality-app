@@ -40,7 +40,6 @@
 		overflow: auto;
 	}
 
-
 	/* MISC */
 
 	.interpretation {
@@ -53,6 +52,23 @@
 	.interpretationText {
 		margin-bottom: 20px;
 	}
+
+	.headerPart {
+		margin-bottom: 1px !important;
+		margin-top: 20px !important;
+		background-color: #5B92E5 !important;
+		font-size: 20px !important;
+		color: white !important;
+		padding: 5px !important;
+	}
+
+	.headerSection {
+		background-color: #5B92E5 !important;
+		font-size: 16px !important;
+		color: white !important;
+		padding: 5px !important;
+	}
+
 }
 
 @media screen and (max-width: 768px) {
@@ -212,6 +228,9 @@
 		padding: 3px;
 		vertical-align: top;
 	}
+
+
+
 
 	.relationTable {
 		width: 300px;
