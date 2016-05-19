@@ -69,6 +69,8 @@
 	  		
 	  		var period = self.yearSelected.id;
 	  		var refPeriods = precedingYears(self.yearSelected.id, 3);
+			var allYears = angular.copy(refPeriods);
+			allYears.push(period);
 	  		
 	  		var ouBoundary = self.selectedOrgunit.boundary.id;
 	  		var ouLevel = self.selectedOrgunit.level.level;
@@ -104,8 +106,8 @@
 	  			//periods for data completeness
 	  			var startDate = self.yearSelected.id.toString() + "-01-01";
 	  			var endDate = self.yearSelected.id.toString() + "-12-31";
-	  			var periods = periodService.getISOPeriods(startDate, endDate, periodType);	  			
-	  			
+	  			var periods = periodService.getISOPeriods(startDate, endDate, periodType);
+
 	  			
 				dataAnalysisService.dataCompleteness(receiveDataCompleteness, indicator.missing, indicator.dataID, null, periods, ouBoundary, ouLevel);
 
@@ -116,7 +118,27 @@
 
 						if (result) {
 							visualisationService.makeTimeConsistencyChart(null, result, null);
+
 							self.consistency.data.push(result);
+
+
+							visualisationService.lineChart(null, [result.dxIDa], allYears, ouBoundary, 'dataOverTime').then(function (data) {
+
+								var dataID = data.opts.parameters.dataIDs[0];
+
+								for (var i = 0; i < self.consistency.data.length; i++) {
+
+									if (self.consistency.data[i].dxIDa === dataID) {
+										self.consistency.data[i].trendChartData = data.data;
+										self.consistency.data[i].trendChartOptions = data.opts;
+
+										visualisationService.setChartLegend(self.consistency.data[i].trendChartOptions, false);
+									}
+
+								}
+								//self.outstandingRequests--;
+							});
+
 						}
 						if (errors) {
 							self.remarks = self.remarks.concat(errors);

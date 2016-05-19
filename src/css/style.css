@@ -125,11 +125,20 @@
 		width: 100%;
 	}
 
+	.tinyChart {
+		height: 150px;
+		width: 100%;
+	}
+
 	.relationChart {
 		height: 300px;
 		width: 100%;
 	}
 
+	.relationChartBig {
+		width: 556px;
+		height: 393px;
+	}
 
 	/* TABLES */
 	.table tbody>tr>td.vert-align {
@@ -201,9 +210,19 @@
 		height: 300px;
 	}
 
+	.tinyChart {
+		height: 150px;
+		width: 300px;
+	}
+
 	.relationChart {
 		width: 556px;
 		height: 300px;
+	}
+
+	.relationChartBig {
+		width: 556px;
+		height: 363px;
 	}
 
 
@@ -237,7 +256,7 @@
 	}
 
 	.bigRow {
-		height: 91px;
+		height: 51px;
 	}
 
 	.biggerRow {

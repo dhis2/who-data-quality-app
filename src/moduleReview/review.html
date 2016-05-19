@@ -613,7 +613,7 @@
 				</div>
 
 				<div class="inline relationTable halfWidth">
-					<table class="table tablePrint table-bordered table-condensed">
+					<table class="table tablePrint table-bordered table-condensed" style="margin-bottom: 5px">
 						<tr bgcolor="#f9f9f9"><th colspan="2">{{indicator.dxNameA}}</th></tr>
 						<tr>
 							<td>Expected trend</td>
@@ -635,26 +635,24 @@
 							<td>% {{revCtrl.selectedOrgunit.level.name}} with poor score</td>
 							<td ng-if="revCtrl.isNumber(indicator.boundaryPercentage)" class="valueCell">{{indicator.subunitsOutsideThreshold}}%</td>
 						</tr>
-						<tr class="bigRow" ng-if="indicator.subunitViolationNames.length > 0">
+						<tr class="bigRow">
 							<td colspan="2"><em>Outside threshold:</em> {{indicator.subunitViolationNames.join(', ')}}</td>
 						</tr>
 					</table>
+
+					<!--Line chart with last 4 years of data-->
+					<div class="tinyChart" style="border: 1px dashed gray;">
+						<nvd3 options='indicator.trendChartOptions' data='indicator.trendChartData'></nvd3>
+					</div>
 				</div>
 				<div class="halfWidth inline">
-					<div class="dottedBox relationChart">
+					<div class="dottedBox relationChartBig">
 						<nvd3 options='indicator.chartOptions' data='indicator.chartData'></nvd3>
 					</div>
 				</div>
 
 				<h5 style="margin-top: 10px;">Interpretations</h5>
 				<textarea class="interpretation"></textarea>
-			</div>
-
-			<div style="border: 1px dashed gray; margin-bottom: 20px" class="noBreak">
-				<h5 class="chartTitle">Reporting over time</h5>
-				<div class="bigChart">
-					<nvd3 options='revCtrl.dataConsistencyChart.options' data='revCtrl.dataConsistencyChart.data'></nvd3>
-				</div>
 			</div>
 		</div>
 
