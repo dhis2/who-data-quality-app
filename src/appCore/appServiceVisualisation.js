@@ -19,7 +19,9 @@
 				function (metadata) {
 
 					orgunitIDs = metadata.ou;
-				
+
+					var maxY = 0;
+
 					var chartData = [];
 					var chartOptions;
 					if (type === 'dataOverTime') {
@@ -40,6 +42,8 @@
 									'x': j,
 									'y': y
 								});
+
+								if (y > maxY) maxY = y;
 
 								//For the first two, check if we have very long x-axis labels that interfere with y axis
 								if (y && j < 2) xLen = Math.max(xLen, y.toString().length);
@@ -73,6 +77,7 @@
 									"bottom": 25 + labelSizes.x,
 									"left": 25 + labelSizes.y
 								},
+								'forceY': [0, getRange(maxY)],
 								"xAxis": {
 								  'rotateLabels': -45,
 								  'tickFormat': function(d) {
@@ -127,6 +132,8 @@
 
 				orgunitIDs = response.data.metaData.ou; //Replace for "USER ORGUNIT" etc
 
+				var maxY;
+
 				var chartData = [];
 				var chartOptions;
 				if (type === 'dataOverTime') {
@@ -149,6 +156,8 @@
 								'x': j,
 								'y': value
 							});
+
+							if (value > maxY) maxY = value;
 
 						}
 
@@ -173,6 +182,7 @@
 					          "bottom": 100,
 					          "left": 100
 					        },
+							"forceY": [0, getRange(maxY)],
 					        "xAxis": {
 					          'rotateLabels': -45,
 					          'tickFormat': function(d) {
@@ -220,6 +230,8 @@
 
 					orgunitIDs = metadata.ou;
 
+					var maxY;
+
 					var chartData = [];
 					var chartOptions;
 					if (type === 'ou') {
@@ -251,6 +263,8 @@
 									'value': value
 								});
 
+								if (value > maxY) maxY = value;
+
 								if (name) xLen = Math.max(xLen, name.length);
 								if (value) yLen = Math.max(yLen, value.toString().length);
 
@@ -275,6 +289,7 @@
 									'enabled': true
 								},
 								'showLegend': true,
+								'forceY': [0, getRange(maxY)],
 								'x': function(d){return d.label;},
 								'y': function(d){return d.value;},
 								'transitionDuration': 50,
@@ -336,6 +351,8 @@
 					xLen = Math.max(xLen, name.length);
   				}
 
+				var maxY = 0;
+
   				var minRange = 0, maxRange = 0;
   				var chartData = [], chartSeries, values, dataSet;
   				for (var i = 0; i < periods.length; i++) {
@@ -360,6 +377,8 @@
 							'x': j,
 							'y': value
 						});
+
+						if (value > maxY) maxY = value;
 
 						if (value) yLen = Math.max(yLen, value.toString().length);
 
@@ -396,6 +415,7 @@
   				          "bottom": 25 + labelSizes.x,
   				          "left": 25 + labelSizes.y
   				        },
+						"forceY": [0, getRange(maxY)],
   				        "xAxis": {
   				          'rotateLabels': -45,
   				          'tickFormat': function(d) {return periodNames[d];}
