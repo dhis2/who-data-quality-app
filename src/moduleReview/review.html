@@ -36,7 +36,7 @@
 	</uib-accordion>
 
 	<div class="inline pull-right" style="margin-bottom:20px">
-		<button ng-disabled="(!self.userOrgunit && !revCtrl.selectedOrgunit.level.name && !revCtrl.groupSelected) || revCtrl.outstandingRequests > 0" class="btn btn-primary inline" ng-click="revCtrl.doAnalysis();">Generate</button>
+		<button ng-disabled="(!self.userOrgunit && !revCtrl.selectedOrgunit.level.displayName && !revCtrl.groupSelected) || revCtrl.outstandingRequests > 0" class="btn btn-primary inline" ng-click="revCtrl.doAnalysis();">Generate</button>
 		<button ng-disabled="!(revCtrl.outstandingRequests === 0 && revCtrl.totalRequests != 0)" class="btn btn-primary inline" ng-click="revCtrl.doPrint();">Print</button>
 	</div>
 
@@ -103,8 +103,8 @@
 						<tr bgcolor="#f9f9f9">
 							<th width="275">Dataset</th>
 							<th width="175">Overall score (%)</th>
-							<th width="175"># {{revCtrl.selectedOrgunit.level.name}} with poor score</th>
-							<th width="175">% {{revCtrl.selectedOrgunit.level.name}} with poor score</th>
+							<th width="175"># {{revCtrl.selectedOrgunit.level.displayName}} with poor score</th>
+							<th width="175">% {{revCtrl.selectedOrgunit.level.displayName}} with poor score</th>
 						</tr>
 						<tr ng-repeat="dataset in revCtrl.completeness.datasets | orderBy : 'dxName'">
 							<td>{{dataset.dxName}}</td>
@@ -128,8 +128,8 @@
 						<tr bgcolor="#f9f9f9">
 							<th width="275">Dataset</th>
 							<th width="175">Overall score (%)</th>
-							<th width="175"># {{revCtrl.selectedOrgunit.level.name}} with poor score</th>
-							<th width="175">% {{revCtrl.selectedOrgunit.level.name}} with poor score</th>
+							<th width="175"># {{revCtrl.selectedOrgunit.level.displayName}} with poor score</th>
+							<th width="175">% {{revCtrl.selectedOrgunit.level.displayName}} with poor score</th>
 						</tr>
 						<tr ng-repeat="indicator in revCtrl.completeness.indicators | orderBy : 'dxName'">
 							<td>{{indicator.dxName}}</td>
@@ -154,8 +154,8 @@
 						<tr bgcolor="#f9f9f9">
 							<th width="275">Dataset</th>
 							<th width="175">Overall score (%)</th>
-							<th width="175"># {{revCtrl.selectedOrgunit.level.name}} with poor score</th>
-							<th width="175">% {{revCtrl.selectedOrgunit.level.name}} with poor score</th>
+							<th width="175"># {{revCtrl.selectedOrgunit.level.displayName}} with poor score</th>
+							<th width="175">% {{revCtrl.selectedOrgunit.level.displayName}} with poor score</th>
 						</tr>
 						<tr ng-repeat="dataset in revCtrl.completeness.consistency | orderBy:'dxNameA'">
 							<td>{{dataset.dxNameA}}</td>
@@ -183,8 +183,8 @@
 						<tr bgcolor="#f9f9f9">
 							<th width="275">Indicator</th>
 							<th width="175">Overall score (%)</th>
-							<th width="175"># {{revCtrl.selectedOrgunit.level.name}} with poor score</th>
-							<th width="175">% {{revCtrl.selectedOrgunit.level.name}} with poor score</th>
+							<th width="175"># {{revCtrl.selectedOrgunit.level.displayName}} with poor score</th>
+							<th width="175">% {{revCtrl.selectedOrgunit.level.displayName}} with poor score</th>
 						</tr>
 						<tr ng-repeat="indicator in revCtrl.outliers | orderBy:'displayName'">
 							<td>{{indicator.displayName}}</td>
@@ -210,8 +210,8 @@
 						<tr bgcolor="#f9f9f9">
 							<th width="275">Indicator</th>
 							<th width="175">Overall score (%)</th>
-							<th width="175"># {{revCtrl.selectedOrgunit.level.name}} with poor score</th>
-							<th width="175">% {{revCtrl.selectedOrgunit.level.name}} with poor score</th>
+							<th width="175"># {{revCtrl.selectedOrgunit.level.displayName}} with poor score</th>
+							<th width="175">% {{revCtrl.selectedOrgunit.level.displayName}} with poor score</th>
 						</tr>
 						<tr ng-repeat="indicator in revCtrl.outliers | orderBy:'displayName'">
 							<td>{{indicator.displayName}}</td>
@@ -237,8 +237,8 @@
 						<tr bgcolor="#f9f9f9">
 							<th width="275">Indicator</th>
 							<th width="175">Overall score (%)</th>
-							<th width="175"># {{revCtrl.selectedOrgunit.level.name}} with poor score</th>
-							<th width="175">% {{revCtrl.selectedOrgunit.level.name}} with poor score</th>
+							<th width="175"># {{revCtrl.selectedOrgunit.level.displayName}} with poor score</th>
+							<th width="175">% {{revCtrl.selectedOrgunit.level.displayName}} with poor score</th>
 						</tr>
 						<tr ng-repeat="indicator in revCtrl.outliers | orderBy:'displayName'">
 							<td>{{indicator.displayName}}</td>
@@ -262,8 +262,8 @@
 						<tr bgcolor="#f9f9f9">
 							<th width="275">Indicator</th>
 							<th width="175">Overall score (%)</th>
-							<th width="175"># {{revCtrl.selectedOrgunit.level.name}} with poor score</th>
-							<th width="175">% {{revCtrl.selectedOrgunit.level.name}} with poor score</th>
+							<th width="175"># {{revCtrl.selectedOrgunit.level.displayName}} with poor score</th>
+							<th width="175">% {{revCtrl.selectedOrgunit.level.displayName}} with poor score</th>
 						</tr>
 						<tr ng-repeat="indicator in revCtrl.consistency.data | orderBy:'dxNameA'">
 							<td>{{indicator.dxNameA}}</td>
@@ -288,8 +288,8 @@
 						<tr bgcolor="#f9f9f9">
 							<th width="275">Indicator</th>
 							<th width="175">Overall score (%)</th>
-							<th width="175"># {{revCtrl.selectedOrgunit.level.name}} with poor score</th>
-							<th width="175">% {{revCtrl.selectedOrgunit.level.name}} with poor score</th>
+							<th width="175"># {{revCtrl.selectedOrgunit.level.displayName}} with poor score</th>
+							<th width="175">% {{revCtrl.selectedOrgunit.level.displayName}} with poor score</th>
 						</tr>
 						<tr ng-repeat="relation in revCtrl.consistency.relations | orderBy:'meta.name'">
 							<td>{{revCtrl.relationName(relation.relationCode)}}</td>
@@ -349,8 +349,8 @@
 					<tr bgcolor="#f9f9f9">
 						<th width="275">Indicator</th>
 						<th width="175">Overall score (%)</th>
-						<th width="175"># {{revCtrl.selectedOrgunit.level.name}} with poor score</th>
-						<th width="175">% {{revCtrl.selectedOrgunit.level.name}} with poor score</th>
+						<th width="175"># {{revCtrl.selectedOrgunit.level.displayName}} with poor score</th>
+						<th width="175">% {{revCtrl.selectedOrgunit.level.displayName}} with poor score</th>
 					</tr>
 					<tr ng-repeat="denominator in revCtrl.denominators.relations | orderBy:'name'">
 						<td>{{denominator.meta.relation.name}}</td>
@@ -402,11 +402,11 @@
 						<td colspan="3">Not available</td>
 					</tr>
 					<tr ng-if="revCtrl.isNumber(dataset.boundaryValue)">
-						<td># {{revCtrl.selectedOrgunit.level.name}} with completeness below {{dataset.threshold}}%</td>
+						<td># {{revCtrl.selectedOrgunit.level.displayName}} with completeness below {{dataset.threshold}}%</td>
 						<td class="valueCell">{{dataset.subunitsOutsideThreshold}}</td>
 					</tr>
 					<tr ng-if="revCtrl.isNumber(dataset.boundaryValue)">
-						<td>% {{revCtrl.selectedOrgunit.level.name}} with completeness below {{dataset.threshold}}%</td>
+						<td>% {{revCtrl.selectedOrgunit.level.displayName}} with completeness below {{dataset.threshold}}%</td>
 						<td class="valueCell">{{dataset.subunitViolationPercentage}}%</td>
 					</tr>
 				</tbody>
@@ -427,8 +427,8 @@
 						<th width="200">Indicator</th>
 						<th width="80">Threshold</th>
 						<th width="80">Overall score (%)</th>
-						<th width="110"># {{revCtrl.selectedOrgunit.level.name}} with poor score</th>
-						<th width="110">% {{revCtrl.selectedOrgunit.level.name}} with poor score</th>
+						<th width="110"># {{revCtrl.selectedOrgunit.level.displayName}} with poor score</th>
+						<th width="110">% {{revCtrl.selectedOrgunit.level.displayName}} with poor score</th>
 						<th>Names</th>
 					</tr>
 					<tr ng-repeat="indicator in revCtrl.completeness.indicators | orderBy : 'dxName'">
@@ -460,8 +460,8 @@
 					<th width="80">Expected trend</th>
 					<th width="80">Quality threshold</th>
 					<th width="80">Overall score (%)</th>
-					<th width="110"># {{revCtrl.selectedOrgunit.level.name}} with poor score</th>
-					<th width="110">% {{revCtrl.selectedOrgunit.level.name}} with poor score</th>
+					<th width="110"># {{revCtrl.selectedOrgunit.level.displayName}} with poor score</th>
+					<th width="110">% {{revCtrl.selectedOrgunit.level.displayName}} with poor score</th>
 					<th>Names</th>
 				</tr>
 				<tr ng-repeat="dataset in revCtrl.completeness.consistency| orderBy:'dxNameA':false">
@@ -509,8 +509,8 @@
 						<th width="200">Indicator</th>
 						<th width="80">Threshold</th>
 						<th width="80">Overall score (%)</th>
-						<th width="110"># {{revCtrl.selectedOrgunit.level.name}} with poor score</th>
-						<th width="110">% {{revCtrl.selectedOrgunit.level.name}} with poor score</th>
+						<th width="110"># {{revCtrl.selectedOrgunit.level.displayName}} with poor score</th>
+						<th width="110">% {{revCtrl.selectedOrgunit.level.displayName}} with poor score</th>
 						<th>Names</th>
 					</tr>
 					<tr ng-repeat="indicator in revCtrl.outliers | orderBy : 'displayName'">
@@ -541,8 +541,8 @@
 						<th width="200">Indicator</th>
 						<th width="80">Threshold</th>
 						<th width="80">Overall score (%)</th>
-						<th width="110"># {{revCtrl.selectedOrgunit.level.name}} with poor score</th>
-						<th width="110">% {{revCtrl.selectedOrgunit.level.name}} with poor score</th>
+						<th width="110"># {{revCtrl.selectedOrgunit.level.displayName}} with poor score</th>
+						<th width="110">% {{revCtrl.selectedOrgunit.level.displayName}} with poor score</th>
 						<th>Names</th>
 					</tr>
 					<tr ng-repeat="indicator in revCtrl.outliers | orderBy : 'displayName'">
@@ -575,8 +575,8 @@
 						<th width="200">Indicator</th>
 						<th width="80">Threshold</th>
 						<th width="80">Overall score (%)</th>
-						<th width="110"># {{revCtrl.selectedOrgunit.level.name}} with poor score</th>
-						<th width="110">% {{revCtrl.selectedOrgunit.level.name}} with poor score</th>
+						<th width="110"># {{revCtrl.selectedOrgunit.level.displayName}} with poor score</th>
+						<th width="110">% {{revCtrl.selectedOrgunit.level.displayName}} with poor score</th>
 						<th>Names</th>
 					</tr>
 					<tr ng-repeat="indicator in revCtrl.outliers | orderBy : 'displayName'">
@@ -617,7 +617,13 @@
 						<tr bgcolor="#f9f9f9"><th colspan="2">{{indicator.dxNameA}}</th></tr>
 						<tr>
 							<td>Expected trend</td>
-							<td>{{indicator.subType}}</td>
+							<td class="valueCell">{{indicator.subType}}</td>
+						</tr>
+						<tr>
+							<td>Compare {{revCtrl.selectedOrgunit.level.displayName}} with</td>
+							<td ng-if="true" class="valueCell">{{revCtrl.selectedOrgunit.boundary.displayName}}</td>
+							<td ng-if="!true && indicator.subType === constant" class="valueCell">Current vs average</td>
+							<td ng-if="!true && indicator.subType != constant" class="valueCell">Current vs forecast</td>
 						</tr>
 						<tr>
 							<td>Quality threshold</td>
@@ -628,15 +634,15 @@
 							<td ng-if="revCtrl.isNumber(indicator.boundaryPercentage)" class="valueCell">{{indicator.boundaryPercentage}}%</td>
 						</tr>
 						<tr>
-							<td># {{revCtrl.selectedOrgunit.level.name}} with poor score</td>
+							<td># {{revCtrl.selectedOrgunit.level.displayName}} with poor score</td>
 							<td ng-if="revCtrl.isNumber(indicator.boundaryPercentage)" class="valueCell">{{indicator.subunitsOutsideThreshold}}</td>
 						</tr>
 						<tr>
-							<td>% {{revCtrl.selectedOrgunit.level.name}} with poor score</td>
-							<td ng-if="revCtrl.isNumber(indicator.boundaryPercentage)" class="valueCell">{{indicator.subunitsOutsideThreshold}}%</td>
+							<td>% {{revCtrl.selectedOrgunit.level.displayName}} with poor score</td>
+							<td ng-if="revCtrl.isNumber(indicator.boundaryPercentage)" class="valueCell">{{indicator.subunitViolationPercentage}}%</td>
 						</tr>
 						<tr class="bigRow">
-							<td colspan="2"><em>Outside threshold:</em> {{indicator.subunitViolationNames.join(', ')}}</td>
+							<td colspan="2">{{indicator.subunitViolationNames.join(', ')}}</td>
 						</tr>
 					</table>
 
@@ -645,7 +651,7 @@
 						<nvd3 options='indicator.trendChartOptions' data='indicator.trendChartData'></nvd3>
 					</div>
 				</div>
-				<div class="halfWidth inline">
+				<div class="halfWidth inline" style="float: right">
 					<div class="dottedBox relationChartBig">
 						<nvd3 options='indicator.chartOptions' data='indicator.chartData'></nvd3>
 					</div>
@@ -676,38 +682,34 @@
 			<div class="inline relationTable halfWidth">
 				<table class="table tablePrint table-bordered table-condensed">
 					<tr bgcolor="#f9f9f9"><th colspan="2">{{revCtrl.relationName(relation.relationCode)}}</th></tr>
-						<tr>
-							<td>Year</td>
-							<td>{{revCtrl.yearSelected.name}}</td>
-					</tr>
 					<tr>
 						<td>Expected relationship</td>
-						<td>{{revCtrl.relationType(relation.subType).name}}</td>
+						<td class="valueCell">{{revCtrl.relationType(relation.subType).name}}</td>
 					</tr>
 					<tr>
 						<td>Quality threshold</td>
-						<td ng-if="relation.subType != 'do'">± {{relation.criteria}} %</td>
-						<td ng-if="relation.subType === 'do'">Not negative</td>
+						<td class="valueCell"  ng-if="relation.subType != 'do'">± {{relation.criteria}} %</td>
+						<td class="valueCell" ng-if="relation.subType === 'do'">Not negative</td>
 					</tr>
 					<tr>
 						<td>National score</td>
 						<td ng-if="revCtrl.isNumber(relation.boundaryPercentage)" class="valueCell">{{relation.boundaryPercentage}}%</td>
-						<td rowspan="3" ng-if="!revCtrl.isNumber(relation.boundaryPercentage)">Not available</td>
+						<td class="valueCell" rowspan="3" ng-if="!revCtrl.isNumber(relation.boundaryPercentage)">Not available</td>
 						</tr>
 					<tr>
-						<td># {{revCtrl.selectedOrgunit.level.name}} with poor score</td>
+						<td># {{revCtrl.selectedOrgunit.level.displayName}} with poor score</td>
 						<td ng-if="revCtrl.isNumber(relation.boundaryPercentage)" class="valueCell">{{relation.subunitsOutsideThreshold}}</td>
 					</tr>
 					<tr>
-						<td>% {{revCtrl.selectedOrgunit.level.name}} with poor score</td>
-						<td ng-if="revCtrl.isNumber(relation.boundaryPercentage)" class="valueCell">{{relation.subunitsOutsideThreshold}}%</td>
+						<td>% {{revCtrl.selectedOrgunit.level.displayName}} with poor score</td>
+						<td ng-if="revCtrl.isNumber(relation.boundaryPercentage)" class="valueCell">{{relation.subunitViolationPercentage}}%</td>
 					</tr>
-					<tr class="bigRow" ng-if="relation.subunitViolationNames.length > 0">
-						<td colspan="2"><em>Outside threshold:</em> {{relation.subunitViolationNames.join(', ')}}</td>
+					<tr class="bigRow">
+						<td colspan="2">{{relation.subunitViolationNames.join(', ')}}</td>
 					</tr>
 				</table>
 			</div>
-			<div class="halfWidth inline">
+			<div class="halfWidth inline" style="float: right">
 				<div class="dottedBox relationChart">
 					<nvd3 options='relation.chartOptions' data='relation.chartData'></nvd3>
 				</div>
@@ -781,15 +783,15 @@
 						<td>{{denominator.boundaryPercentage}}%</td>
 					</tr>
 					<tr>
-						<td># {{revCtrl.selectedOrgunit.level.name}} with poor score</td>
+						<td># {{revCtrl.selectedOrgunit.level.displayName}} with poor score</td>
 						<td>{{denominator.subunitsOutsideThreshold}}</td>
 					</tr>
 					<tr>
-						<td>% {{revCtrl.selectedOrgunit.level.name}} with poor score</td>
+						<td>% {{revCtrl.selectedOrgunit.level.displayName}} with poor score</td>
 						<td>{{denominator.subunitViolationPercentage}}%</td>
 					</tr>
 					<tr class="biggerRow" ng-if="denominator.subunitViolationNames.length > 0">
-						<td colspan="2"><em>Outside threshold:</em> {{denominator.subunitViolationNames.join(', ')}}</td>
+						<td colspan="2">{{denominator.subunitViolationNames.join(', ')}}</td>
 					</tr>
 				</table>
 			</div>

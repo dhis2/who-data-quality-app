@@ -106,7 +106,7 @@
 
 	/* SIZES */
 	.halfWidth {
-		width: 48%;
+		width: 49%;
 	}
 
 	.fullWidth {
@@ -136,8 +136,8 @@
 	}
 
 	.relationChartBig {
-		width: 556px;
-		height: 393px;
+		width: 100%;
+		height: 424px;
 	}
 
 	/* TABLES */
@@ -221,8 +221,7 @@
 	}
 
 	.relationChartBig {
-		width: 556px;
-		height: 363px;
+		height: 394px;
 	}
 
 
