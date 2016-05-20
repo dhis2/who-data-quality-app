@@ -165,8 +165,6 @@
 
 					visualisationService.setChartHeight(consistencyChart.yyChartOptions, 400);
 					visualisationService.setChartLegend(consistencyChart.yyChartOptions, false);
-					visualisationService.setChartYAxis(consistencyChart.yyChartOptions, 0, 100);
-					//visualisationService.setChartMargins(consistencyChart.yyChartOptions, 20, 20, 100, 50);
 
 					visualisationService.setChartHeight(consistencyChart.consistencyChartOptions, 400);
 					visualisationService.setChartLegend(consistencyChart.consistencyChartOptions, true);
