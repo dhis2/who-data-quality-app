@@ -6,32 +6,41 @@
 	<!-- OPTIONS -->
 	<uib-accordion-group heading="Analysis Type" is-open="aCtrl.status.isFirstOpen">
 		<label>Consistency analysis type</label><br />
-		<div class="btn-group btn-group-justified" style="width: 330px; margin-bottom: 10px;">
+		<div class="btn-group btn-group-justified" style="width: 330px; margin-bottom: 10px;" ng-init="aCtrl.type = 'data'">
 				<label class="btn btn-default" ng-model="aCtrl.type" uib-btn-radio="'data'">Between Indicators</label>
 		  		<label class="btn btn-default" ng-model="aCtrl.type" uib-btn-radio="'time'">Over Time</label>
 		</div>
 		
-		<div ng-if="aCtrl.type === 'data'">		
-		<label>Expected relationship</label><br />
-		<div class="btn-group btn-group-justified" style="width: 330px; margin-bottom: 10px;">
-				<label class="btn btn-default" ng-model="aCtrl.subType" uib-btn-radio="'level'">None</label>
-				<label class="btn btn-default" ng-model="aCtrl.subType" uib-btn-radio="'eq'">A ≈ B</label>
-		  		<label class="btn btn-default" ng-model="aCtrl.subType" uib-btn-radio="'aGTb'">A > B</label>
-		  		<label class="btn btn-default" ng-model="aCtrl.subType" uib-btn-radio="'do'">Dropout</label>
-		</div>
+		<div ng-if="aCtrl.type === 'data'">
+			<label>Compare organisational units to</label><br />
+			<div class="btn-group btn-group-justified" style="width: 330px; margin-bottom: 10px;" ng-init="aCtrl.comparisonType = 'level'">
+				<label class="btn btn-default" ng-model="aCtrl.comparisonType" uib-btn-radio="'level'">Overall result</label>
+				<label class="btn btn-default" ng-model="aCtrl.comparisonType" uib-btn-radio="'relationship'">Expected result</label>
+			</div>
+			<label>Expected relationship</label><br />
+			<div class="btn-group btn-group-justified" style="width: 330px; margin-bottom: 10px;" ng-init="aCtrl.subType = 'eq'">
+					<label ng-disabled="aCtrl.comparisonType != 'relationship'" class="btn btn-default" ng-model="aCtrl.subType" uib-btn-radio="'eq'">A ≈ B</label>
+					<label ng-disabled="aCtrl.comparisonType != 'relationship'" class="btn btn-default" ng-model="aCtrl.subType" uib-btn-radio="'aGTb'">A > B</label>
+					<label ng-disabled="aCtrl.comparisonType != 'relationship'" class="btn btn-default" ng-model="aCtrl.subType" uib-btn-radio="'do'">Dropout</label>
+			</div>
 		</div>
 		
-		<div ng-if="aCtrl.type === 'time'">		
-		<label>Expected trend</label><br />
-		<div class="btn-group btn-group-justified" style="width: 330px; margin-bottom: 10px;">
-				<label class="btn btn-default" ng-model="aCtrl.trendType" uib-btn-radio="'constant'">Constant</label>
-		  		<label class="btn btn-default" ng-model="aCtrl.trendType" uib-btn-radio="'increase'">Increasing/decreasing</label>
-		</div>
+		<div ng-if="aCtrl.type === 'time'">
+			<label>Compare organisational units to</label><br />
+			<div class="btn-group btn-group-justified" style="width: 330px; margin-bottom: 10px;" ng-init="aCtrl.comparisonType = 'level'">
+				<label class="btn btn-default" ng-model="aCtrl.comparisonType" uib-btn-radio="'level'">Overall result</label>
+				<label class="btn btn-default" ng-model="aCtrl.comparisonType" uib-btn-radio="'relationship'">Expected result</label>
+			</div>
+			<label>Expected trend</label><br />
+			<div class="btn-group btn-group-justified" style="width: 330px; margin-bottom: 10px;" ng-init="aCtrl.trendType = 'constant'">
+					<label class="btn btn-default" ng-model="aCtrl.trendType" uib-btn-radio="'constant'">Constant</label>
+					<label class="btn btn-default" ng-model="aCtrl.trendType" uib-btn-radio="'increase'">Increasing/decreasing</label>
+			</div>
 		</div>
 		
 		<div style="margin-bottom: 10px;" ng-if="aCtrl.subType != 'do' || aCtrl.type === 'time'">		
 		<label>Criteria</label><br />
-		<input class="form-control" type="number" style="text-align: right; width: 150px; display: inline-block;" ng-model="aCtrl.consistencyCriteria" min="0" max="50"> <span style="display: inline-block;">%</span>
+		<input ng-init="aCtrl.consistencyCriteria = 33" class="form-control" type="number" style="text-align: right; width: 150px; display: inline-block;" ng-model="aCtrl.consistencyCriteria" min="0" max="50"> <span style="display: inline-block;">%</span>
 		</div>
 	</uib-accordion-group>
 
@@ -39,7 +48,7 @@
 	<!-- DATA -->
     <uib-accordion-group heading="Data">
 
-		<div>
+		<div ng-init="aCtrl.dataTypeSelectedA = 'dataElements'">
 			<h4>Select data element/indicator</h4>
 			<div class="btn-group btn-group-justified" style="width: 120px; margin-bottom: 10px; display: inline-block;">
 				<label class="btn btn-default" ng-model="aCtrl.dataTypeSelectedA" uib-btn-radio="'dataElements'">Data element</label>
@@ -47,7 +56,7 @@
 			</div>
 
 			<!-- DATA ELEMENTS -->
-			<div ng-if="aCtrl.dataTypeSelectedA === 'dataElements'" style="max-width: 600px">
+			<div ng-if="aCtrl.dataTypeSelectedA === 'dataElements'" style="max-width: 600px" >
 				<d2-select-data-element
 						multiple="false"
 						ng-model="aCtrl.dataSelectedA"
@@ -65,7 +74,7 @@
 				</div>
 		</div>
 
-		<div ng-if="aCtrl.type === 'data'">
+		<div ng-if="aCtrl.type === 'data'" ng-init="aCtrl.dataTypeSelectedB = 'dataElements'">
 			<h4>Select data element/indicator for comparison</h4>
 			<div class="btn-group btn-group-justified" style="width: 120px; margin-bottom: 10px; display: inline-block;">
 				<label class="btn btn-default" ng-model="aCtrl.dataTypeSelectedB" uib-btn-radio="'dataElements'">Data element</label>

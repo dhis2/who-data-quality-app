@@ -79,8 +79,9 @@
 								d2CoreMeta().then(
 									function (data) {
 										_ready = true;
-										deferred.resolve(true);
 										editMap();
+										deferred.resolve(true);
+
 									}
 								);
 							}
@@ -118,8 +119,7 @@
 				}
 
 				function editMap() {
-
-					_map.groups[0].members = [];
+					
 
 				}
 

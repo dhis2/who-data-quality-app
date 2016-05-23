@@ -507,7 +507,7 @@
 				var ratio, key;
 
 				//national = subunit
-				if (true) {
+				if (result.comparison === 'ou') {
 					ratio = boundaryRatio;
 					key = result.boundaryName;
 				}
@@ -624,7 +624,7 @@
 					ratio = boundaryRatio;
 					key = result.boundaryName;
 				}
-				//else current = average/forecast
+				//else current = expected
 				else {
 					ratio = 1;
 					key = "A = B";
@@ -632,7 +632,7 @@
 				chartSeries.push(scatterLine(ratio, key, '#000000', maxX, maxY));
 
 				if (consistency > 0) {
-					if (result.subType === 'eq') {
+					if (result.subType === 'eq' || result.subType === 'level') {
 						chartSeries.push(scatterLine(ratio * (1 + (consistency / 100)), "+ " + consistency + "%", '#B0B0B0', maxX, maxY));
 					}
 					chartSeries.push(scatterLine(ratio * (1 - (consistency / 100)), "- " + consistency + "%", '#B0B0B0', maxX, maxY));

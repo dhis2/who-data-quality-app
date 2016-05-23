@@ -119,6 +119,7 @@
 					<th>Extreme outlier (SD)</th>
 					<th>Consistency (%)</th>
 					<th>Expected trend</th>
+					<th>Compare orgunit consistency with</th>
 					<th>Missing/zero values (%)</th>
 				</tr>
 				<tr ng-repeat="indicator in admCtrl.numerators| filter: {dataID: ''} | orderBy:admCtrl.numeratorSort">
@@ -140,6 +141,11 @@
 							<option value="increasing">Increasing</option>
 							<option value="decreasing">Decreasing</option>
 						</options></select></td>
+					<td align="middle" style="width: 150px;" class="vert-align"><select ng-disabled="!admCtrl.isAdmin" ng-model="indicator.comparison">
+					<options>
+						<option value="ou">Overall result</option>
+						<option value="th">Expected result</option>
+					</options></select></td>
 					<td align="middle" style="width: 150px;" class="vert-align"><input ng-disabled="!admCtrl.isAdmin" type="number" style="text-align: right;" ng-model="indicator.missing" min="0" max="100"/></td>
 				</tr>
 			</table>
@@ -157,6 +163,7 @@
 						<th>Completeness (%)</th>
 						<th>Consistency (%)</th>
 						<th>Expected trend</th>
+						<th>Compare orgunit consistency with</th>
 					</tr>
 					<tr ng-class="{danger: !dataSet.threshold}" ng-repeat="dataSet in admCtrl.dataSets  | orderBy:['name']:false">
 						<td class="vert-align">{{dataSet.name}}</td>
@@ -168,7 +175,16 @@
 									<option value="constant">Constant</option>
 									<option value="increasing">Increasing</option>
 									<option value="decreasing">Decreasing</option>
-								</options></select></td>
+								</options></select>
+						</td>
+						<td align="middle" class="vert-align">
+							<select ng-disabled="!admCtrl.isAdmin" ng-model="dataSet.comparison">
+								<options>
+									<option value="ou">Overall result</option>
+									<option value="th">Expected result</option>
+								</options>
+							</select>
+						</td>
 
 					</tr>
 				</table>

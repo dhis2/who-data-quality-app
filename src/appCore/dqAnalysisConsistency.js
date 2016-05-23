@@ -18,6 +18,7 @@
 				var _ouGroup;
 				var _type;
 				var _subType;
+				var _comparison;
 				var _criteria;
 				var _meta;
 				var _deferred;
@@ -47,11 +48,12 @@
 				 * @param ouGroup			orgunit group - level is used if both level and group is specified
 				 * @param type				'time' or 'data' consistency
 				 * @param subType			specific type of 'time' or 'data' consistency check, i.e. dropout rate
+				 * @param comparison		for 'time' analysis, whether to compare with expected ratio or national/boundary ratio
 				 * @param criteria			criteria for when subnational units are counted as outlier
 				 * @param meta				object that is simply passed on in the result, for various metadata
 				 * @returns {*}
 				 */
-				function analyse(dxA, dxB, pe, peRef, ouBoundary, ouLevel, ouGroup, type, subType, criteria, meta) {
+				function analyse(dxA, dxB, pe, peRef, ouBoundary, ouLevel, ouGroup, type, subType, comparison, criteria, meta) {
 
 					//Store a new request object and queue it
 					var newRequest = {
@@ -64,6 +66,7 @@
 						'ouGroup': ouGroup,
 						'type': type,
 						'subType': subType,
+						'comparison': comparison,
 						'criteria': criteria,
 						'meta': meta,
 						'deferred': $q.defer()
@@ -110,7 +113,8 @@
 					_ouLevel = request.ouLevel;
 					_ouGroup = request.ouGroup;
 					_type = request.type;
-					_subType= request.subType;
+					_subType = request.subType;
+					_comparison = request.comparison;
 					_criteria = request.criteria;
 					_meta = request.meta;
 					_deferred = request.deferred;
@@ -325,9 +329,9 @@
 					result.peRef = _peRef;
 					result.type = _type;
 					result.subType = _subType;
+					result.comparison = _comparison;
 					result.criteria = _criteria;
 					result.meta = _meta;
-					//result.relationCode = relationCode;
 
 
 					//Resolve current promise
@@ -356,6 +360,9 @@
 						datapoints: []
 					}
 
+
+					var thresholdRatio = _comparison === '_ou' ? boundaryRatio : 1;
+
 					for (var j = 0; j < subunits.length; j++) {
 						var subunit = subunits[j];
 
@@ -370,13 +377,13 @@
 
 
 						var data = getRatioAndPercentage(valueA, valueB);
-						var outlier = isOutlier(boundaryRatio, data.ratio);
+						var outlier = isOutlier(thresholdRatio, data.ratio);
 						var weight = 0;
 
 						if (outlier) {
 							subunitData.outlierCount++;
 							subunitData.outlierNames.push(d2Data.name(subunit));
-							weight = outlierWeight(valueA, valueB, boundaryRatio);
+							weight = outlierWeight(valueA, valueB, thresholdRatio);
 						}
 						else {
 							subunitData.nonOutlierCount++;
@@ -452,11 +459,11 @@
 
 				/**
 				 * Checks if the ratio for a subunit is an "outlier" based on the given analysis type and criteria
-				 * @param boundaryRatio
+				 * @param thresholdRatio
 				 * @param subunitRatio
 				 * @returns {boolean}
 				 */
-				function isOutlier(boundaryRatio, subunitRatio) {
+				function isOutlier(thresholdRatio, subunitRatio) {
 
 					if (_type === 'data') {
 						switch (_subType) {
@@ -467,12 +474,12 @@
 							case 'eq':
 								return subunitRatio > (1.0 + _criteria * 0.01) || subunitRatio < (1.0 - _criteria * 0.01) ? true : false;
 							case 'level':
-								var ratioOfRatios = subunitRatio/boundaryRatio;
+								var ratioOfRatios = subunitRatio/thresholdRatio;
 								return ratioOfRatios > (1.0 + _criteria * 0.01) || ratioOfRatios < (1.0 - _criteria * 0.01) ? true : false;
 						}
 					}
 					else {
-						var ratioOfRatios = subunitRatio/boundaryRatio;
+						var ratioOfRatios = subunitRatio/thresholdRatio;
 						return ratioOfRatios > (1.0 + _criteria * 0.01) || ratioOfRatios < (1.0 - _criteria * 0.01) ? true : false;
 					}
 

@@ -43,6 +43,7 @@
 	    "custom": false,
 		"name": "OPD visits",
 		"trend": "constant",
+		"comparison": "ou",
 		"missing": 90,
 		"code": "D21"
 	}, 
@@ -55,6 +56,7 @@
 		"name": "ANC 1",
 		"custom": false,
 		"trend": "constant",
+		"comparison": "ou",
 		"missing": 90,
 		"code": "D1"
 	}, 
@@ -67,6 +69,7 @@
 		"name": "ANC 4",
 		"custom": false,
 		"trend": "constant",
+		"comparison": "ou",
 		"missing": 90,
 		"code": "D40"
 	},
@@ -79,6 +82,7 @@
 		"name": "Institutional deliveries",
 		"custom": false,
 		"trend": "constant",
+		"comparison": "ou",
 		"missing": 90,
 		"code": "D2"
 	},
@@ -91,6 +95,7 @@
 		"name": "IPTp 3",
 		"custom": false,
 		"trend": "constant",
+		"comparison": "ou",
 		"missing": 90,
 		"code": "D23"
 	},
@@ -103,6 +108,7 @@
 		"name": "DPT 3",
 		"custom": false,
 		"trend": "constant",
+		"comparison": "ou",
 		"missing": 90,
 		"code": "D3"
 	}, 
@@ -115,6 +121,7 @@
 		"name": "MCV1",
 		"custom": false,
 		"trend": "constant",
+		"comparison": "ou",
 		"missing": 90,
 		"code": "D4"
 	}, 
@@ -127,6 +134,7 @@
 		"name": "TB cases notified",
 		"custom": false,
 		"trend": "constant",
+		"comparison": "ou",
 		"missing": 90,
 		"code": "D5"
 	}, 
@@ -139,6 +147,7 @@
 		"name": "TB cases successfully treated",
 		"custom": false,
 		"trend": "constant",
+		"comparison": "ou",
 		"missing": 90,
 		"code": "D30"
 	}, 
@@ -151,6 +160,7 @@
 		"name": "TB cases tested for HIV",
 		"custom": false,
 		"trend": "constant",
+		"comparison": "ou",
 		"missing": 90,
 		"code": "D31"
 	}, 
@@ -163,6 +173,7 @@
 		"name": "HIV+ TB cases initiating ART",
 		"custom": false,
 		"trend": "constant",
+		"comparison": "ou",
 		"missing": 90,
 		"code": "D32"
 	}, 
@@ -175,6 +186,7 @@
 		"name": "MDR-TB cases successfully treated",
 		"custom": false,
 		"trend": "constant",
+		"comparison": "ou",
 		"missing": 90,
 		"code": "D34"
 	},	
@@ -187,6 +199,7 @@
 		"name": "Confirmed malaria cases",
 		"custom": false,
 		"trend": "constant",
+		"comparison": "ou",
 		"missing": 90,
 		"code": "D8"
 	},	
@@ -199,6 +212,7 @@
 		"name": "Confirmed malaria treated",
 		"custom": false,
 		"trend": "constant",
+		"comparison": "ou",
 		"missing": 90,
 		"code": "D41"
 	}, 
@@ -211,6 +225,7 @@
 		"name": "Malaria cases treated",
 		"custom": false,
 		"trend": "constant",
+		"comparison": "ou",
 		"missing": 90,
 		"code": "D9"
 	}, 
@@ -223,6 +238,7 @@
 		"name": "Malaria cases tested",
 		"custom": false,
 		"trend": "constant",
+		"comparison": "ou",
 		"missing": 90,
 		"code": "D35"
 	}, 
@@ -235,6 +251,7 @@
 		"name": "DPT 1",
 		"custom": false,
 		"trend": "constant",
+		"comparison": "ou",
 		"missing": 90,
 		"code": "D10"
 	}, 
@@ -247,6 +264,7 @@
 		"name": "DPT 2",
 		"custom": false,
 		"trend": "constant",
+		"comparison": "ou",
 		"missing": 90,
 		"code": "D24"
 	},
@@ -259,6 +277,7 @@
 		"name": "PCV1",
 		"custom": false,
 		"trend": "constant",
+		"comparison": "ou",
 		"missing": 90,
 		"code": "D12"
 	},{ 
@@ -271,6 +290,7 @@
 		"name": "PCV2",
 		"custom": false,
 		"trend": "constant",
+		"comparison": "ou",
 		"missing": 90,
 		"code": "D25"
 	},
@@ -283,6 +303,7 @@
 		"name": "PCV3",
 		"custom": false,
 		"trend": "constant",
+		"comparison": "ou",
 		"missing": 90,
 		"code": "D13"
 	}, 
@@ -295,6 +316,7 @@
 		"name": "Pregnant women on HIV prophylaxis",
 		"custom": false,
 		"trend": "constant",
+		"comparison": "ou",
 		"missing": 90,
 		"code": "D16"
 	},
@@ -307,6 +329,7 @@
 		"name": "PLHIV virally supressed ",
 		"custom": false,
 		"trend": "constant",
+		"comparison": "ou",
 		"missing": 90,
 		"code": "D6"
 	}, 
@@ -319,6 +342,7 @@
 		"name": "On ART after 12 months",
 		"custom": false,
 		"trend": "constant",
+		"comparison": "ou",
 		"missing": 90,
 		"code": "D26"
 	}, 
@@ -331,6 +355,7 @@
 		"name": "Persons receiving HIV care",
 		"custom": false,
 		"trend": "constant",
+		"comparison": "ou",
 		"missing": 90,
 		"code": "D27"
 	}, 
@@ -343,6 +368,7 @@
 		"name": "PLHIV on ART",
 		"custom": false,
 		"trend": "constant",
+		"comparison": "ou",
 		"missing": 90,
 		"code": "D42"
 	}, 
@@ -355,6 +381,7 @@
 		"name": "PNC1",
 		"custom": false,
 		"trend": "constant",
+		"comparison": "ou",
 		"missing": 90,
 		"code": "D29"
 	}, 
@@ -367,6 +394,7 @@
 		"name": "TT1",
 		"custom": false,
 		"trend": "constant",
+		"comparison": "ou",
 		"missing": 90,
 		"code": "D19"
 	}

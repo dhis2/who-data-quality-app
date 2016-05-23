@@ -95,7 +95,7 @@
 	  			dataAnalysisService.datasetCompleteness(receiveDatasetCompleteness, datasets[i].threshold, datasets[i].id, period, ouBoundary, ouLevel);
 	  			
 	  			//consistency
-				dqAnalysisConsistency.analyse(datasets[i].id, null, period, refPeriods, ouBoundary, ouLevel, null, 'time', datasets[i].trend, datasets[i].consistencyThreshold, null).then(
+				dqAnalysisConsistency.analyse(datasets[i].id, null, period, refPeriods, ouBoundary, ouLevel, null, 'time', datasets[i].trend, datasets[i].comparison, datasets[i].consistencyThreshold, null).then(
 					function (data) {
 						self.completeness.consistency.push(data.result);
 						if (data.errors) self.remarks = self.remarks.concat(data.errors);
@@ -123,7 +123,7 @@
 	  			
 				dataAnalysisService.dataCompleteness(receiveDataCompleteness, indicator.missing, indicator.dataID, null, periods, ouBoundary, ouLevel);
 
-				dqAnalysisConsistency.analyse(indicator.dataID, null, period, refPeriods, ouBoundary, ouLevel, null, 'time', indicator.trend, indicator.consistency, null).then(
+				dqAnalysisConsistency.analyse(indicator.dataID, null, period, refPeriods, ouBoundary, ouLevel, null, 'time', indicator.trend, indicator.comparison, indicator.consistency, null).then(
 					function (data) {
 						var errors = data.errors;
 						var result = data.result;
@@ -172,7 +172,7 @@
 	  			var indicatorA = d2Map.numerators(relation.A);
 	  			var indicatorB = d2Map.numerators(relation.B);
 
-				dqAnalysisConsistency.analyse(indicatorA.dataID, indicatorB.dataID, period, null, ouBoundary, ouLevel, null, 'data', relation.type, relation.criteria, relation).then(
+				dqAnalysisConsistency.analyse(indicatorA.dataID, indicatorB.dataID, period, null, ouBoundary, ouLevel, null, 'data', relation.type, null, relation.criteria, relation).then(
 					function(data) {
 						var errors = data.errors;
 						var result = data.result;
@@ -206,7 +206,7 @@
 
 				denominatorPair.relation = denominatorRelations[i];
 
-				dqAnalysisConsistency.analyse(denominatorPair.a.dataID, denominatorPair.b.dataID, period, null, ouBoundary, ouLevel, null, 'data', 'eq', denominatorRelations[i].criteria, denominatorPair)
+				dqAnalysisConsistency.analyse(denominatorPair.a.dataID, denominatorPair.b.dataID, period, null, ouBoundary, ouLevel, null, 'data', 'eq', null, denominatorRelations[i].criteria, denominatorPair)
 					.then(function(data) {
 
 						self.outstandingRequests--;

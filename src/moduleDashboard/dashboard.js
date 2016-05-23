@@ -142,7 +142,7 @@
 				var promises = [];
 				promises.push(promiseObject(data));
 				promises.push(visualisationService.yyLineChart(null, yyPeriods, data.dataID, ouBoundaryID));
-				promises.push(dqAnalysisConsistency.analyse(data.dataID, null, period, refPeriods, ouBoundaryID, ouLevel, null, 'time', data.trend, data.consistency, null));
+				promises.push(dqAnalysisConsistency.analyse(data.dataID, null, period, refPeriods, ouBoundaryID, ouLevel, null, 'time', data.trend, data.comparison, data.consistency, null));
 				$q.all(promises).then(function(datas) {
 
 					var data = datas[0];
@@ -225,7 +225,7 @@
 
 				var promises = [];
 				promises.push(relation);
-				promises.push(dqAnalysisConsistency.analyse(indicatorA.dataID, indicatorB.dataID, period, null, ouBoundaryID, ouLevel, null, 'data', relation.type, relation.criteria, null));
+				promises.push(dqAnalysisConsistency.analyse(indicatorA.dataID, indicatorB.dataID, period, null, ouBoundaryID, ouLevel, null, 'data', null, relation.type, relation.criteria, null));
 				$q.all(promises).then(function(datas) {
 					var data = datas[0]
 					var result = datas[1];

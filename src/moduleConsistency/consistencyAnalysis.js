@@ -34,16 +34,9 @@
 			self.chartSelected = {};
 			
 			self.selectedObject = {};
-			
-			self.type = 'data'; 
-			self.subType = 'level';
-			self.trendType = 'constant';
-			self.consistencyCriteria = 33;
-			self.dataTypeSelectedA = 'dataElements';
-			self.dataTypeSelectedB = 'dataElements';
-			self.dataSelectedA = null;
-			self.dataSelectedA = null;
 
+			self.dataSelectedA = null;
+			self.dataSelectedA = null;
 			self.selectedOrgunit = {};
 
 	    	//PERIODS
@@ -152,9 +145,10 @@
 			self.chart = {};
 			
 			var analysisType = self.type;
-			var relationType = self.subType;
+			var relationType = self.comparisonType === 'level' ? 'level' : self.subType;
 			var trendType = self.trendType;
 			var criteria = self.consistencyCriteria;
+			var comparison = self.comparisonType === 'level' ? 'ou' : 'th';
 
 
 			var period = selectedPeriod().id;
@@ -180,14 +174,12 @@
 				periodType: self.currentPeriodType
 			}
 
-			console.log("pType: " + maxPeriodType.periodType);
-
 			self.req = true;
 			
 			//1 Relation
 			if (analysisType === 'data') {	
 				var dxB = self.dataSelectedB.id;
-				dqAnalysisConsistency.analyse(dxA, dxB, period, null, ouBoundary, ouLevel, ouGroup, 'data', relationType, criteria, maxPeriodType).then(
+				dqAnalysisConsistency.analyse(dxA, dxB, period, null, ouBoundary, ouLevel, ouGroup, 'data', relationType, null, criteria, maxPeriodType).then(
 					function (data) {
 						receiveResult(data.result, data.errors);
 					}
@@ -196,8 +188,8 @@
 			//2 Over time
 			else {
 				var refPeriods = periodService.precedingPeriods(period, self.periodCountSelected);
-				
-				dqAnalysisConsistency.analyse(dxA, null, period, refPeriods, ouBoundary, ouLevel, ouGroup, 'time', trendType, criteria, null).then(
+
+				dqAnalysisConsistency.analyse(dxA, null, period, refPeriods, ouBoundary, ouLevel, ouGroup, 'time', trendType, comparison, criteria, null).then(
 					function (data) {
 						receiveResult(data.result, data.errors);
 					}
