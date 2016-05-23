@@ -7,28 +7,37 @@
 
 		<table class="table tablePrint table-bordered table-condensed ">
 			<tbody>
-			<tr bgcolor="#f9f9f9">
-				<th colspan="6">
-					<em>2a: Extreme outliers.</em>
-				</th>
-			</tr>
-			<tr bgcolor="#f9f9f9">
-				<th width="200">Indicator</th>
-				<th width="80">Threshold</th>
-				<th width="80">Overall score (%)</th>
-				<th width="110"># {{revCtrl.selectedOrgunit.level.displayName}} with poor score</th>
-				<th width="110">% {{revCtrl.selectedOrgunit.level.displayName}} with poor score</th>
-				<th>Names</th>
-			</tr>
-			<tr ng-repeat="indicator in revCtrl.outliers | orderBy : 'displayName'">
-				<td>{{indicator.displayName}}</td>
-				<td class="valueCell">{{indicator.extremeOutlier}} SD</td>
-				<td ng-if="revCtrl.isNumber(indicator.boundaryExtreme)" class="valueCell">{{indicator.boundaryExtreme}}%</td>
-				<td ng-if="revCtrl.isNumber(indicator.boundaryExtreme)" class="valueCell">{{indicator.countExtreme}}</td>
-				<td ng-if="revCtrl.isNumber(indicator.boundaryExtreme)" class="valueCell">{{indicator.percentExtreme}}%</td>
-				<td ng-if="revCtrl.isNumber(indicator.boundaryExtreme)" class="valueCell">{{indicator.namesExtreme.join(', ')}}</td>
-				<td ng-if="!revCtrl.isNumber(indicator.boundaryExtreme)" colspan="5" >Not available</td>
-			</tr>
+				<tr bgcolor="#f9f9f9">
+					<th colspan="6">
+						2a: Extreme outliers
+					</th>
+				</tr>
+				<tr >
+					<td colspan="6">
+						<em>Extreme outliers, using the standard method. Threshold denotes the number of standard deviations
+						from the mean.</em>
+					</td>
+				</tr>
+				<tr bgcolor="#f9f9f9">
+					<th rowspan="2" width="200">Indicator</th>
+					<th rowspan="2" width="80">Threshold</th>
+					<th rowspan="2" width="80">Overall score (%)</th>
+					<th colspan="3">{{revCtrl.selectedOrgunit.level.displayName}} with divergent score</th>
+				</tr>
+				<tr bgcolor="#f9f9f9">
+					<th width="110">Number</th>
+					<th width="110">Percent</th>
+					<th>Names</th>
+				</tr>
+				<tr ng-repeat="indicator in revCtrl.outliers | orderBy : 'displayName'">
+					<td>{{indicator.displayName}}</td>
+					<td class="valueCell">{{indicator.extremeOutlier}} SD</td>
+					<td ng-if="revCtrl.isNumber(indicator.boundaryExtreme)" class="valueCell">{{indicator.boundaryExtreme}}%</td>
+					<td ng-if="revCtrl.isNumber(indicator.boundaryExtreme)" class="valueCell">{{indicator.countExtreme}}</td>
+					<td ng-if="revCtrl.isNumber(indicator.boundaryExtreme)" class="valueCell">{{indicator.percentExtreme}}%</td>
+					<td ng-if="revCtrl.isNumber(indicator.boundaryExtreme)" class="valueCell">{{indicator.namesExtreme.join(', ')}}</td>
+					<td ng-if="!revCtrl.isNumber(indicator.boundaryExtreme)" colspan="5" >Not available</td>
+				</tr>
 			</tbody>
 		</table>
 
@@ -44,12 +53,21 @@
 					<em>2b: Moderate outliers.</em>
 				</th>
 			</tr>
+			<tr >
+				<td colspan="6">
+					<em>Moderate outliers, using the standard method. Threshold denotes the number of standard deviations
+						from the mean.</em>
+				</td>
+			</tr>
 			<tr bgcolor="#f9f9f9">
-				<th width="200">Indicator</th>
-				<th width="80">Threshold</th>
-				<th width="80">Overall score (%)</th>
-				<th width="110"># {{revCtrl.selectedOrgunit.level.displayName}} with poor score</th>
-				<th width="110">% {{revCtrl.selectedOrgunit.level.displayName}} with poor score</th>
+				<th rowspan="2" width="200">Indicator</th>
+				<th rowspan="2" width="80">Threshold</th>
+				<th rowspan="2" width="80">Overall score (%)</th>
+				<th colspan="3">{{revCtrl.selectedOrgunit.level.displayName}} with divergent score</th>
+			</tr>
+			<tr bgcolor="#f9f9f9">
+				<th width="110">Number</th>
+				<th width="110">Percent</th>
 				<th>Names</th>
 			</tr>
 			<tr ng-repeat="indicator in revCtrl.outliers | orderBy : 'displayName'">
@@ -75,15 +93,24 @@
 			<tbody>
 			<tr bgcolor="#f9f9f9">
 				<th colspan="6">
-					<em>2c: Moderate outliers.</em> Based on median (modified Z score).
+					2c: Moderate outliers
 				</th>
 			</tr>
+			<tr >
+				<td colspan="6">
+					<em>Moderate outliers, based on median (modified Z score). Threshold denotes the number of standard deviations
+						from the mean.</em>
+				</td>
+			</tr>
 			<tr bgcolor="#f9f9f9">
-				<th width="200">Indicator</th>
-				<th width="80">Threshold</th>
-				<th width="80">Overall score (%)</th>
-				<th width="110"># {{revCtrl.selectedOrgunit.level.displayName}} with poor score</th>
-				<th width="110">% {{revCtrl.selectedOrgunit.level.displayName}} with poor score</th>
+				<th rowspan="2" width="200">Indicator</th>
+				<th rowspan="2" width="80">Threshold</th>
+				<th rowspan="2" width="80">Overall score (%)</th>
+				<th colspan="3">{{revCtrl.selectedOrgunit.level.displayName}} with divergent score</th>
+			</tr>
+			<tr bgcolor="#f9f9f9">
+				<th width="110">Number</th>
+				<th width="110">Percent</th>
 				<th>Names</th>
 			</tr>
 			<tr ng-repeat="indicator in revCtrl.outliers | orderBy : 'displayName'">
@@ -111,9 +138,14 @@
 					<tbody>
 					<tr bgcolor="#f9f9f9">
 						<th>
-							<em>2d: Consistency of indicator values over time.</em>
-							Difference between the current year and either the average of the 3 preceding years (if expected trend is constant), or the forecasted value.
+							2d: Consistency of indicator values over time
 						</th>
+					</tr>
+					<tr >
+						<td>
+							<em>Difference between the current year and either the average of the 3 preceding years
+								(if expected trend is constant), or the forecasted value.</em>
+						</td>
 					</tr>
 					</tbody>
 				</table>
@@ -124,13 +156,15 @@
 					<tr bgcolor="#f9f9f9"><th colspan="2">{{indicator.dxNameA}}</th></tr>
 					<tr>
 						<td>Expected trend</td>
-						<td class="valueCell">{{indicator.subType}}</td>
+						<td ng-if="indicator.subType === 'constant'" class="valueCell">Constant</td>
+						<td ng-if="indicator.subType === 'increasing'" class="valueCell">Increasing</td>
+						<td ng-if="indicator.subType === 'decreasing'" class="valueCell">Decreasing</td>
 					</tr>
 					<tr>
-						<td>Compare {{revCtrl.selectedOrgunit.level.displayName}} with</td>
-						<td ng-if="true" class="valueCell">{{revCtrl.selectedOrgunit.boundary.displayName}}</td>
-						<td ng-if="!true && indicator.subType === constant" class="valueCell">Current vs average</td>
-						<td ng-if="!true && indicator.subType != constant" class="valueCell">Current vs forecast</td>
+						<td>Compare {{revCtrl.selectedOrgunit.level.displayName}} to</td>
+						<td ng-if="indicator.comparison === 'ou'" class="valueCell">{{revCtrl.selectedOrgunit.boundary.displayName}}</td>
+						<td ng-if="indicator.comparison === 'th' && indicator.subType === constant" class="valueCell">Current vs average</td>
+						<td ng-if="indicator.comparison === 'th'" class="valueCell">Current vs forecast</td>
 					</tr>
 					<tr>
 						<td>Quality threshold</td>
@@ -141,11 +175,11 @@
 						<td ng-if="revCtrl.isNumber(indicator.boundaryPercentage)" class="valueCell">{{indicator.boundaryPercentage}}%</td>
 					</tr>
 					<tr>
-						<td># {{revCtrl.selectedOrgunit.level.displayName}} with poor score</td>
+						<td>Number of {{revCtrl.selectedOrgunit.level.displayName}} with divergent score</td>
 						<td ng-if="revCtrl.isNumber(indicator.boundaryPercentage)" class="valueCell">{{indicator.subunitsOutsideThreshold}}</td>
 					</tr>
 					<tr>
-						<td>% {{revCtrl.selectedOrgunit.level.displayName}} with poor score</td>
+						<td>Percent of {{revCtrl.selectedOrgunit.level.displayName}} with divergent score</td>
 						<td ng-if="revCtrl.isNumber(indicator.boundaryPercentage)" class="valueCell">{{indicator.subunitViolationPercentage}}%</td>
 					</tr>
 					<tr class="bigRow">
@@ -179,8 +213,13 @@
 				<tbody>
 				<tr bgcolor="#f9f9f9">
 					<th>
-						2e: Consistency between related indicators</em>
+						2e: Consistency between related indicators
 					</th>
+				</tr>
+				<tr >
+					<td>
+						<em>Consistency between reported values for two related indicators within the same year.</em>
+					</td>
 				</tr>
 				</tbody>
 			</table>
@@ -191,13 +230,7 @@
 				<tr bgcolor="#f9f9f9"><th colspan="2">{{revCtrl.relationName(relation.relationCode)}}</th></tr>
 				<tr>
 					<td>Expected relationship</td>
-					<td class="valueCell">{{revCtrl.relationType(relation.subType).name}}</td>
-				</tr>
-				<tr>
-					<td>Compare {{revCtrl.selectedOrgunit.level.displayName}} with</td>
-					<td ng-if="true" class="valueCell">{{revCtrl.selectedOrgunit.boundary.displayName}}</td>
-					<td ng-if="!true && indicator.subType === constant" class="valueCell">Current vs average</td>
-					<td ng-if="!true && indicator.subType != constant" class="valueCell">Current vs forecast</td>
+					<td class="valueCell">{{revCtrl.relationType(relation.subType).displayName}}</td>
 				</tr>
 				<tr>
 					<td>Quality threshold</td>
@@ -210,11 +243,11 @@
 					<td class="valueCell" rowspan="3" ng-if="!revCtrl.isNumber(relation.boundaryPercentage)">Not available</td>
 				</tr>
 				<tr>
-					<td># {{revCtrl.selectedOrgunit.level.displayName}} with poor score</td>
+					<td>Number of {{revCtrl.selectedOrgunit.level.displayName}} with divergent score</td>
 					<td ng-if="revCtrl.isNumber(relation.boundaryPercentage)" class="valueCell">{{relation.subunitsOutsideThreshold}}</td>
 				</tr>
 				<tr>
-					<td>% {{revCtrl.selectedOrgunit.level.displayName}} with poor score</td>
+					<td>Percent of {{revCtrl.selectedOrgunit.level.displayName}} with divergent score</td>
 					<td ng-if="revCtrl.isNumber(relation.boundaryPercentage)" class="valueCell">{{relation.subunitViolationPercentage}}%</td>
 				</tr>
 				<tr class="bigRow">

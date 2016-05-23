@@ -14,15 +14,22 @@
 				<tbody>
 				<tr bgcolor="#f9f9f9">
 					<th colspan="4">
-						<em>1a: Completeness of facility reporting.</em>
-						The percentage of expected reports that have been entered and completed.
+						1a: Completeness of facility reporting
 					</th>
 				</tr>
+				<tr>
+					<td colspan="4">
+						<em>The percentage of expected reports that have been entered and completed.</em>
+					</td>
+				</td>
 				<tr bgcolor="#f9f9f9">
-					<th width="275">Dataset</th>
-					<th width="175">Overall score (%)</th>
-					<th width="175"># {{revCtrl.selectedOrgunit.level.displayName}} with poor score</th>
-					<th width="175">% {{revCtrl.selectedOrgunit.level.displayName}} with poor score</th>
+					<th rowspan="2" width="275">Dataset</th>
+					<th rowspan="2" width="175">Overall score</th>
+					<th colspan="2" width="175">{{revCtrl.selectedOrgunit.level.displayName}} with divergent score</th>
+				</tr>
+				<tr bgcolor="#f9f9f9">
+					<th width="175">Number</th>
+					<th width="175">Percent</th>
 				</tr>
 				<tr ng-repeat="dataset in revCtrl.completeness.datasets | orderBy : 'dxName'">
 					<td>{{dataset.dxName}}</td>
@@ -40,14 +47,22 @@
 				<tbody>
 				<tr bgcolor="#f9f9f9">
 					<th colspan="4">
-						<em>1b: Completeness of indicator data (missing or zero values)</em>
+						1b: Completeness of indicator data
 					</th>
 				</tr>
+				<tr>
+					<td colspan="4">
+						<em>Missing or zero values</em>
+					</td>
+				</tr>
 				<tr bgcolor="#f9f9f9">
-					<th width="275">Dataset</th>
-					<th width="175">Overall score (%)</th>
-					<th width="175"># {{revCtrl.selectedOrgunit.level.displayName}} with poor score</th>
-					<th width="175">% {{revCtrl.selectedOrgunit.level.displayName}} with poor score</th>
+					<th rowspan="2" width="275">Indicator</th>
+					<th rowspan="2" width="175">Overall score</th>
+					<th colspan="2" width="175">{{revCtrl.selectedOrgunit.level.displayName}} with divergent score</th>
+				</tr>
+				<tr bgcolor="#f9f9f9">
+					<th width="175">Number</th>
+					<th width="175">Percent</th>
 				</tr>
 				<tr ng-repeat="indicator in revCtrl.completeness.indicators | orderBy : 'dxName'">
 					<td>{{indicator.dxName}}</td>
@@ -65,15 +80,22 @@
 				<tbody>
 				<tr bgcolor="#f9f9f9">
 					<th colspan="4">
-						<em>1c: Consistency of dataset completeness over time. </em>
-						Completeness of datasets in {{revCtrl.yearSelected.id}} compared to previous three years.
+						1c: Consistency of dataset completeness over time
 					</th>
 				</tr>
+				<tr>
+					<td colspan="4">
+						<em>Completeness of datasets in {{revCtrl.yearSelected.id}} compared to previous three years.</em>
+					</td>
+				</tr>
 				<tr bgcolor="#f9f9f9">
-					<th width="275">Dataset</th>
-					<th width="175">Overall score (%)</th>
-					<th width="175"># {{revCtrl.selectedOrgunit.level.displayName}} with poor score</th>
-					<th width="175">% {{revCtrl.selectedOrgunit.level.displayName}} with poor score</th>
+					<th rowspan="2" width="275">Dataset</th>
+					<th rowspan="2" width="175">Overall score</th>
+					<th colspan="2" width="175">{{revCtrl.selectedOrgunit.level.displayName}} with divergent score</th>
+				</tr>
+				<tr bgcolor="#f9f9f9">
+					<th width="175">Number</th>
+					<th width="175">Percent</th>
 				</tr>
 				<tr ng-repeat="dataset in revCtrl.completeness.consistency | orderBy:'dxNameA'">
 					<td>{{dataset.dxNameA}}</td>
@@ -98,11 +120,20 @@
 						<em>2a: Extreme outliers.</em>
 					</th>
 				</tr>
+				<tr>
+					<td colspan="4">
+						<em>Extreme outliers, using the standard method. Threshold denotes the number of standard deviations
+							from the mean.</em>
+					</td>
+				</tr>
 				<tr bgcolor="#f9f9f9">
-					<th width="275">Indicator</th>
-					<th width="175">Overall score (%)</th>
-					<th width="175"># {{revCtrl.selectedOrgunit.level.displayName}} with poor score</th>
-					<th width="175">% {{revCtrl.selectedOrgunit.level.displayName}} with poor score</th>
+					<th rowspan="2" width="275">Indicator</th>
+					<th rowspan="2" width="175">Overall score</th>
+					<th colspan="2" width="175">{{revCtrl.selectedOrgunit.level.displayName}} with divergent score</th>
+				</tr>
+				<tr bgcolor="#f9f9f9">
+					<th width="175">Number</th>
+					<th width="175">Percent</th>
 				</tr>
 				<tr ng-repeat="indicator in revCtrl.outliers | orderBy:'displayName'">
 					<td>{{indicator.displayName}}</td>
@@ -125,11 +156,20 @@
 						Outliers relative to the mean.
 					</th>
 				</tr>
+				<tr>
+					<td colspan="4">
+						<em>Moderate outliers, using the standard method. Threshold denotes the number of standard deviations
+							from the mean.</em>
+					</td>
+				</tr>
 				<tr bgcolor="#f9f9f9">
-					<th width="275">Indicator</th>
-					<th width="175">Overall score (%)</th>
-					<th width="175"># {{revCtrl.selectedOrgunit.level.displayName}} with poor score</th>
-					<th width="175">% {{revCtrl.selectedOrgunit.level.displayName}} with poor score</th>
+					<th rowspan="2" width="275">Indicator</th>
+					<th rowspan="2" width="175">Overall score</th>
+					<th colspan="2" width="175">{{revCtrl.selectedOrgunit.level.displayName}} with divergent score</th>
+				</tr>
+				<tr bgcolor="#f9f9f9">
+					<th width="175">Number</th>
+					<th width="175">Percent</th>
 				</tr>
 				<tr ng-repeat="indicator in revCtrl.outliers | orderBy:'displayName'">
 					<td>{{indicator.displayName}}</td>
@@ -149,14 +189,22 @@
 				<tr bgcolor="#f9f9f9">
 					<th colspan="4">
 						<em>2c: Moderate outliers.</em>
-						Outliers relative to the median (modified Z-score > 3.5).
 					</th>
 				</tr>
+				<tr>
+					<td colspan="4">
+						<em>Moderate outliers, based on median (modified Z score). Threshold denotes the number of standard deviations
+							from the mean.</em>
+					</td>
+				</tr>
 				<tr bgcolor="#f9f9f9">
-					<th width="275">Indicator</th>
-					<th width="175">Overall score (%)</th>
-					<th width="175"># {{revCtrl.selectedOrgunit.level.displayName}} with poor score</th>
-					<th width="175">% {{revCtrl.selectedOrgunit.level.displayName}} with poor score</th>
+					<th rowspan="2" width="275">Indicator</th>
+					<th rowspan="2" width="175">Overall score</th>
+					<th colspan="2" width="175">{{revCtrl.selectedOrgunit.level.displayName}} with divergent score</th>
+				</tr>
+				<tr bgcolor="#f9f9f9">
+					<th width="175">Number</th>
+					<th width="175">Percent</th>
 				</tr>
 				<tr ng-repeat="indicator in revCtrl.outliers | orderBy:'displayName'">
 					<td>{{indicator.displayName}}</td>
@@ -177,11 +225,20 @@
 						<em>2d: Consistency over time.</em>
 					</th>
 				</tr>
+				<tr>
+					<td colspan="4">
+						<em>Difference between the current year and either the average of the 3 preceding years
+							(if expected trend is constant), or the forecasted value.</em>
+					</td>
+				</tr>
 				<tr bgcolor="#f9f9f9">
-					<th width="275">Indicator</th>
-					<th width="175">Overall score (%)</th>
-					<th width="175"># {{revCtrl.selectedOrgunit.level.displayName}} with poor score</th>
-					<th width="175">% {{revCtrl.selectedOrgunit.level.displayName}} with poor score</th>
+					<th rowspan="2" width="275">Indicator</th>
+					<th rowspan="2" width="175">Overall score</th>
+					<th colspan="2" width="175">{{revCtrl.selectedOrgunit.level.displayName}} with divergent score</th>
+				</tr>
+				<tr bgcolor="#f9f9f9">
+					<th width="175">Number</th>
+					<th width="175">Percent</th>
 				</tr>
 				<tr ng-repeat="indicator in revCtrl.consistency.data | orderBy:'dxNameA'">
 					<td>{{indicator.dxNameA}}</td>
@@ -203,11 +260,19 @@
 						<em>2e: Consistency between related indicators.</em>
 					</th>
 				</tr>
+				<tr>
+					<td colspan="4">
+						<em>Consistency between reported values for two related indicators within the same year.</em>
+					</td>
+				</tr>
 				<tr bgcolor="#f9f9f9">
-					<th width="275">Indicator</th>
-					<th width="175">Overall score (%)</th>
-					<th width="175"># {{revCtrl.selectedOrgunit.level.displayName}} with poor score</th>
-					<th width="175">% {{revCtrl.selectedOrgunit.level.displayName}} with poor score</th>
+					<th rowspan="2" width="275">Indicator</th>
+					<th rowspan="2" width="175">Overall score</th>
+					<th colspan="2" width="175">{{revCtrl.selectedOrgunit.level.displayName}} with divergent score</th>
+				</tr>
+				<tr bgcolor="#f9f9f9">
+					<th width="175">Number</th>
+					<th width="175">Percent</th>
 				</tr>
 				<tr ng-repeat="relation in revCtrl.consistency.relations | orderBy:'meta.name'">
 					<td>{{revCtrl.relationName(relation.relationCode)}}</td>
@@ -248,7 +313,7 @@
 				</tr>
 				<tr bgcolor="#f9f9f9">
 					<th width="275">Indicator</th>
-					<th width="175">Overall score (%)</th>
+					<th width="175">Overall score</th>
 				</tr>
 				<tr>
 					<td>Consistency with United Nations Population Projections for Live Births</td>
@@ -265,10 +330,13 @@
 					</th>
 				</tr>
 				<tr bgcolor="#f9f9f9">
-					<th width="275">Indicator</th>
-					<th width="175">Overall score (%)</th>
-					<th width="175"># {{revCtrl.selectedOrgunit.level.displayName}} with poor score</th>
-					<th width="175">% {{revCtrl.selectedOrgunit.level.displayName}} with poor score</th>
+					<th rowspan="2" width="275">Indicator</th>
+					<th rowspan="2" width="175">Overall score</th>
+					<th colspan="2" width="175">{{revCtrl.selectedOrgunit.level.displayName}} with divergent score</th>
+				</tr>
+				<tr bgcolor="#f9f9f9">
+					<th width="175">Number</th>
+					<th width="175">Percent</th>
 				</tr>
 				<tr ng-repeat="denominator in revCtrl.denominators.relations | orderBy:'name'">
 					<td>{{denominator.meta.relation.name}}</td>
