@@ -1,0 +1,286 @@
+
+<div class="reportPart">
+	<div class="fullWidth headerPart">
+		SUMMARY
+	</div>
+	<div>
+		<div class="noBreak">
+
+			<div class="fullWidth headerSection">
+				Domain 1: Completeness
+			</div>
+
+			<table class="table tablePrint table-bordered table-condensed noBreak">
+				<tbody>
+				<tr bgcolor="#f9f9f9">
+					<th colspan="4">
+						<em>1a: Completeness of facility reporting.</em>
+						The percentage of expected reports that have been entered and completed.
+					</th>
+				</tr>
+				<tr bgcolor="#f9f9f9">
+					<th width="275">Dataset</th>
+					<th width="175">Overall score (%)</th>
+					<th width="175"># {{revCtrl.selectedOrgunit.level.displayName}} with poor score</th>
+					<th width="175">% {{revCtrl.selectedOrgunit.level.displayName}} with poor score</th>
+				</tr>
+				<tr ng-repeat="dataset in revCtrl.completeness.datasets | orderBy : 'dxName'">
+					<td>{{dataset.dxName}}</td>
+					<td ng-if="revCtrl.isNumber(dataset.boundaryValue)" class="valueCell">{{dataset.boundaryValue}}%</td>
+					<td ng-if="revCtrl.isNumber(dataset.boundaryValue)" class="valueCell">{{dataset.subunitsOutsideThreshold}}</td>
+					<td ng-if="revCtrl.isNumber(dataset.boundaryValue)" class="valueCell">{{dataset.subunitViolationPercentage}}%</td>
+					<td ng-if="!revCtrl.isNumber(dataset.boundaryValue)" colspan="3">Not available</td>
+				</tr>
+				</tbody>
+			</table>
+		</div>
+
+		<div class="noBreak">
+			<table class="table tablePrint table-bordered table-condensed noBreak">
+				<tbody>
+				<tr bgcolor="#f9f9f9">
+					<th colspan="4">
+						<em>1b: Completeness of indicator data (missing or zero values)</em>
+					</th>
+				</tr>
+				<tr bgcolor="#f9f9f9">
+					<th width="275">Dataset</th>
+					<th width="175">Overall score (%)</th>
+					<th width="175"># {{revCtrl.selectedOrgunit.level.displayName}} with poor score</th>
+					<th width="175">% {{revCtrl.selectedOrgunit.level.displayName}} with poor score</th>
+				</tr>
+				<tr ng-repeat="indicator in revCtrl.completeness.indicators | orderBy : 'dxName'">
+					<td>{{indicator.dxName}}</td>
+					<td ng-if="revCtrl.isNumber(indicator.boundaryValue)" class="valueCell">{{indicator.boundaryValue}}%</td>
+					<td ng-if="revCtrl.isNumber(indicator.boundaryValue)" class="valueCell">{{indicator.subunitsOutsideThreshold}}</td>
+					<td ng-if="revCtrl.isNumber(indicator.boundaryValue)" class="valueCell">{{indicator.subunitViolationPercentage}}%</td>
+					<td ng-if="!revCtrl.isNumber(indicator.boundaryValue)" colspan="3">Not available</td>
+				</tr>
+				</tbody>
+			</table>
+		</div>
+
+		<div class="noBreak">
+			<table class="table tablePrint table-bordered table-condensed noBreak">
+				<tbody>
+				<tr bgcolor="#f9f9f9">
+					<th colspan="4">
+						<em>1c: Consistency of dataset completeness over time. </em>
+						Completeness of datasets in {{revCtrl.yearSelected.id}} compared to previous three years.
+					</th>
+				</tr>
+				<tr bgcolor="#f9f9f9">
+					<th width="275">Dataset</th>
+					<th width="175">Overall score (%)</th>
+					<th width="175"># {{revCtrl.selectedOrgunit.level.displayName}} with poor score</th>
+					<th width="175">% {{revCtrl.selectedOrgunit.level.displayName}} with poor score</th>
+				</tr>
+				<tr ng-repeat="dataset in revCtrl.completeness.consistency | orderBy:'dxNameA'">
+					<td>{{dataset.dxNameA}}</td>
+					<td ng-if="revCtrl.isNumber(dataset.boundaryPercentage)" class="valueCell">{{dataset.boundaryPercentage}}%</td>
+					<td ng-if="revCtrl.isNumber(dataset.boundaryPercentage)" class="valueCell">{{dataset.subunitsOutsideThreshold}}</td>
+					<td ng-if="revCtrl.isNumber(dataset.boundaryPercentage)" class="valueCell">{{dataset.subunitViolationPercentage}}%</td>
+					<td ng-if="!revCtrl.isNumber(dataset.boundaryPercentage)" colspan="3">Not available</td>
+				</tr>
+				</tbody>
+			</table>
+		</div>
+
+		<div class="noBreak">
+			<div class="fullWidth headerSection">
+				Domain 2: Internal consistency
+			</div>
+
+			<table class="table tablePrint table-bordered table-condensed noBreak">
+				<tbody>
+				<tr bgcolor="#f9f9f9">
+					<th colspan="4">
+						<em>2a: Extreme outliers.</em>
+					</th>
+				</tr>
+				<tr bgcolor="#f9f9f9">
+					<th width="275">Indicator</th>
+					<th width="175">Overall score (%)</th>
+					<th width="175"># {{revCtrl.selectedOrgunit.level.displayName}} with poor score</th>
+					<th width="175">% {{revCtrl.selectedOrgunit.level.displayName}} with poor score</th>
+				</tr>
+				<tr ng-repeat="indicator in revCtrl.outliers | orderBy:'displayName'">
+					<td>{{indicator.displayName}}</td>
+					<td ng-if="revCtrl.isNumber(indicator.boundaryExtreme)" class="valueCell">{{indicator.boundaryExtreme}}%</td>
+					<td ng-if="revCtrl.isNumber(indicator.boundaryExtreme)" class="valueCell">{{indicator.countExtreme}}</td>
+					<td ng-if="revCtrl.isNumber(indicator.boundaryExtreme)" class="valueCell">{{indicator.percentExtreme}}%</td>
+					<td ng-if="!revCtrl.isNumber(indicator.boundaryExtreme)" colspan="3">Not available</td>
+				</tr>
+				</tbody>
+			</table>
+		</div>
+
+		<div class="noBreak">
+
+			<table class="table tablePrint table-bordered table-condensed noBreak">
+				<tbody>
+				<tr bgcolor="#f9f9f9">
+					<th colspan="4">
+						<em>2b: Moderate outliers.</em>
+						Outliers relative to the mean.
+					</th>
+				</tr>
+				<tr bgcolor="#f9f9f9">
+					<th width="275">Indicator</th>
+					<th width="175">Overall score (%)</th>
+					<th width="175"># {{revCtrl.selectedOrgunit.level.displayName}} with poor score</th>
+					<th width="175">% {{revCtrl.selectedOrgunit.level.displayName}} with poor score</th>
+				</tr>
+				<tr ng-repeat="indicator in revCtrl.outliers | orderBy:'displayName'">
+					<td>{{indicator.displayName}}</td>
+					<td ng-if="revCtrl.isNumber(indicator.boundaryModerate)" class="valueCell">{{indicator.boundaryModerate}}%</td>
+					<td ng-if="revCtrl.isNumber(indicator.boundaryModerate)" class="valueCell">{{indicator.countModerate}}</td>
+					<td ng-if="revCtrl.isNumber(indicator.boundaryModerate)" class="valueCell">{{indicator.percentModerate}}%</td>
+					<td ng-if="!revCtrl.isNumber(indicator.boundaryModerate)" colspan="3">Not available</td>
+				</tr>
+				</tbody>
+			</table>
+		</div>
+
+		<div class="noBreak">
+
+			<table class="table tablePrint table-bordered table-condensed noBreak">
+				<tbody>
+				<tr bgcolor="#f9f9f9">
+					<th colspan="4">
+						<em>2c: Moderate outliers.</em>
+						Outliers relative to the median (modified Z-score > 3.5).
+					</th>
+				</tr>
+				<tr bgcolor="#f9f9f9">
+					<th width="275">Indicator</th>
+					<th width="175">Overall score (%)</th>
+					<th width="175"># {{revCtrl.selectedOrgunit.level.displayName}} with poor score</th>
+					<th width="175">% {{revCtrl.selectedOrgunit.level.displayName}} with poor score</th>
+				</tr>
+				<tr ng-repeat="indicator in revCtrl.outliers | orderBy:'displayName'">
+					<td>{{indicator.displayName}}</td>
+					<td ng-if="revCtrl.isNumber(indicator.boundaryZscore)" class="valueCell">{{indicator.boundaryZscore}}%</td>
+					<td ng-if="revCtrl.isNumber(indicator.boundaryZscore)"class="valueCell">{{indicator.countZscore}}</td>
+					<td ng-if="revCtrl.isNumber(indicator.boundaryZscore)"class="valueCell">{{indicator.percentZscore}}%</td>
+					<td ng-if="!revCtrl.isNumber(indicator.boundaryZscore)" colspan="3">Not available</td>
+				</tr>
+				</tbody>
+			</table>
+		</div>
+
+		<div class="noBreak">
+			<table class="table tablePrint table-bordered table-condensed noBreak">
+				<tbody>
+				<tr bgcolor="#f9f9f9">
+					<th colspan="4">
+						<em>2d: Consistency over time.</em>
+					</th>
+				</tr>
+				<tr bgcolor="#f9f9f9">
+					<th width="275">Indicator</th>
+					<th width="175">Overall score (%)</th>
+					<th width="175"># {{revCtrl.selectedOrgunit.level.displayName}} with poor score</th>
+					<th width="175">% {{revCtrl.selectedOrgunit.level.displayName}} with poor score</th>
+				</tr>
+				<tr ng-repeat="indicator in revCtrl.consistency.data | orderBy:'dxNameA'">
+					<td>{{indicator.dxNameA}}</td>
+					<td ng-if="revCtrl.isNumber(indicator.boundaryPercentage)" class="valueCell">{{indicator.boundaryPercentage}}%</td>
+					<td ng-if="revCtrl.isNumber(indicator.boundaryPercentage)" class="valueCell">{{indicator.subunitsOutsideThreshold}}</td>
+					<td ng-if="revCtrl.isNumber(indicator.boundaryPercentage)" class="valueCell">{{indicator.subunitViolationPercentage}}%</td>
+					<td ng-if="!revCtrl.isNumber(indicator.boundaryPercentage)" colspan="3">Not available</td>
+				</tr>
+				</tbody>
+			</table>
+		</div>
+
+		<div class="noBreak">
+
+			<table class="table tablePrint table-bordered table-condensed ">
+				<tbody>
+				<tr bgcolor="#f9f9f9">
+					<th colspan="4">
+						<em>2e: Consistency between related indicators.</em>
+					</th>
+				</tr>
+				<tr bgcolor="#f9f9f9">
+					<th width="275">Indicator</th>
+					<th width="175">Overall score (%)</th>
+					<th width="175"># {{revCtrl.selectedOrgunit.level.displayName}} with poor score</th>
+					<th width="175">% {{revCtrl.selectedOrgunit.level.displayName}} with poor score</th>
+				</tr>
+				<tr ng-repeat="relation in revCtrl.consistency.relations | orderBy:'meta.name'">
+					<td>{{revCtrl.relationName(relation.relationCode)}}</td>
+					<td ng-if="revCtrl.isNumber(relation.boundaryPercentage)" class="valueCell">{{relation.boundaryPercentage}}%</td>
+					<td ng-if="revCtrl.isNumber(relation.boundaryPercentage)" class="valueCell">{{relation.subunitsOutsideThreshold}}</td>
+					<td ng-if="revCtrl.isNumber(relation.boundaryPercentage)" class="valueCell">{{relation.subunitViolationPercentage}}%</td>
+					<td ng-if="!revCtrl.isNumber(relation.boundaryPercentage)" colspan="3">Not available</td>
+				</tr>
+				</tbody>
+			</table>
+		</div>
+
+
+		<div class="noBreak">
+			<div class="fullWidth headerSection">
+				Domain 3: External comparison
+			</div>
+			<table class="table tablePrint table-bordered table-condensed noBreak">
+				<tr bgcolor="#f9f9f9">
+					<th colspan="2">
+						<em>3a Comparison of routine data with survey values.</em>
+					</th>
+				</tr>
+			</table>
+		</div>
+
+
+		<div class="noBreak">
+			<div class="fullWidth headerSection">
+				Domain 4: Consistency of Population Data
+			</div>
+
+			<table class="table tablePrint table-bordered table-condensed noBreak">
+				<tr bgcolor="#f9f9f9">
+					<th colspan="2">
+						<em>4a: Consistency with UN projections.</em>
+					</th>
+				</tr>
+				<tr bgcolor="#f9f9f9">
+					<th width="275">Indicator</th>
+					<th width="175">Overall score (%)</th>
+				</tr>
+				<tr>
+					<td>Consistency with United Nations Population Projections for Live Births</td>
+					<td ng-if="revCtrl.denominators.un">{{revCtrl.denominators.un.boundaryRatio}}%</td>
+					<td ng-if="!revCtrl.denominators.un">Not available</td>
+				</tr>
+			</table>
+		</div>
+		<div class="noBreak">
+			<table class="table tablePrint table-bordered table-condensed noBreak">
+				<tr bgcolor="#f9f9f9">
+					<th colspan="4">
+						<em>4b: Consistency of population/denominator data.</em>
+					</th>
+				</tr>
+				<tr bgcolor="#f9f9f9">
+					<th width="275">Indicator</th>
+					<th width="175">Overall score (%)</th>
+					<th width="175"># {{revCtrl.selectedOrgunit.level.displayName}} with poor score</th>
+					<th width="175">% {{revCtrl.selectedOrgunit.level.displayName}} with poor score</th>
+				</tr>
+				<tr ng-repeat="denominator in revCtrl.denominators.relations | orderBy:'name'">
+					<td>{{denominator.meta.relation.name}}</td>
+					<td class="valueCell">{{denominator.boundaryPercentage}}%</td>
+					<td class="valueCell">{{denominator.subunitsOutsideThreshold}}</td>
+					<td class="valueCell">{{denominator.subunitViolationPercentage}}%</td>
+				</tr>
+				<tr ng-if="!revCtrl.denominators.relations || revCtrl.denominator.relations.length === 0">
+					<td colspan="4">Not available</td>
+				</tr>
+
+			</table>
+		</div>
+	</div>
+</div>

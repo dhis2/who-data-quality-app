@@ -1,0 +1,75 @@
+<div class="reportPart">
+	<div class="fullWidth headerPart">
+		DOMAIN 4: CONSISTENCY OF POPULATION DATA
+	</div>
+	<div class="noBreak">
+
+		<table class="table tablePrint table-bordered table-condensed ">
+			<tr bgcolor="#f9f9f9">
+				<th colspan="2">
+					<em>3a: Consistency with UN population projection.</em>
+				</th>
+			</tr>
+			<tr>
+				<td>Ratio of population projection of live births from the Bureau of Statistics to a UN live births projection</td>
+				<td ng-if="revCtrl.denominators.un">{{revCtrl.denominators.un.boundaryRatio}}</td>
+				<td ng-if="!revCtrl.denominators.un">Not available</td>
+			</tr>
+		</table>
+	</div>
+
+
+	<div class="noBreak inline fullWidth"
+		 style="margin-bottom: 10px;"
+		 ng-repeat="denominator in revCtrl.denominators.relations | orderBy:'meta.relation.name' track by $index">
+
+
+		<div ng-if="$index === 0" class="inline fullWidth">
+			<table class="table tablePrint table-bordered table-condensed" style="margin-bottom: 5px">
+				<tbody>
+				<tr bgcolor="#f9f9f9">
+					<th>
+						<em>3b: Consistency of denominators</em>
+					</th>
+				</tr>
+				</tbody>
+			</table>
+		</div>
+		<div class="inline relationTable halfWidth" style="min-height: 300px">
+			<table class="table tablePrint table-bordered table-condensed">
+				<tr bgcolor="#f9f9f9"><th colspan="2">{{denominator.meta.relation.name}}</th></tr>
+				<tr>
+					<td>Year</td>
+					<td>{{revCtrl.yearSelected.name}}</td>
+				</tr>
+				<tr>
+					<td>Quality threshold</td>
+					<td>{{denominator.criteria}}</td>
+				</tr>
+				<tr>
+					<td>National score</td>
+					<td>{{denominator.boundaryPercentage}}%</td>
+				</tr>
+				<tr>
+					<td># {{revCtrl.selectedOrgunit.level.displayName}} with poor score</td>
+					<td>{{denominator.subunitsOutsideThreshold}}</td>
+				</tr>
+				<tr>
+					<td>% {{revCtrl.selectedOrgunit.level.displayName}} with poor score</td>
+					<td>{{denominator.subunitViolationPercentage}}%</td>
+				</tr>
+				<tr class="biggerRow" ng-if="denominator.subunitViolationNames.length > 0">
+					<td colspan="2">{{denominator.subunitViolationNames.join(', ')}}</td>
+				</tr>
+			</table>
+		</div>
+		<div class="halfWidth inline" style="float: right">
+			<div class="dottedBox relationChart">
+				<nvd3 options='denominator.chartOptions' data='denominator.chartData'></nvd3>
+			</div>
+		</div>
+
+		<h5 style="margin-top: 10px;">Interpretations</h5>
+		<textarea class="interpretation"></textarea>
+	</div>
+</div>

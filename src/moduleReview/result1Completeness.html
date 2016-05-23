@@ -1,0 +1,120 @@
+<div class="reportPart">
+	<div class="fullWidth headerPart">
+		DOMAIN 1: COMPLETENESS OF REPORTING
+	</div>
+
+	<div class="noBreak">
+		<table class="table tablePrint table-bordered table-condensed ">
+			<thead>
+			<tr bgcolor="#f9f9f9">
+				<th colspan="4">
+					<em>1a: Completeness of facility reporting.</em>
+					The percentage of expected reports that have been entered and completed.
+				</th>
+			</tr>
+			<tr bgcolor="#f9f9f9">
+				<th width="200">Dataset</th>
+				<th width="260">Indicator</th>
+				<th width="80">{{revCtrl.yearSelected.name}}</th>
+				<th>Names</th>
+			</tr>
+			</thead>
+			<tbody ng-repeat="dataset in revCtrl.completeness.datasets| orderBy:'dxName':false">
+			<tr ng-if="revCtrl.isNumber(dataset.boundaryValue)">
+				<td rowspan="3">{{dataset.dxName}}</td>
+				<td>Overall score (%)</td>
+				<td class="valueCell">{{dataset.boundaryValue}}%</td>
+				<td rowspan="3">{{dataset.subunitViolationNames.join(', ')}}</td>
+			</tr>
+			<tr ng-if="!revCtrl.isNumber(dataset.boundaryValue)">
+				<td>{{dataset.dxName}}</td>
+				<td colspan="3">Not available</td>
+			</tr>
+			<tr ng-if="revCtrl.isNumber(dataset.boundaryValue)">
+				<td># {{revCtrl.selectedOrgunit.level.displayName}} with completeness below {{dataset.threshold}}%</td>
+				<td class="valueCell">{{dataset.subunitsOutsideThreshold}}</td>
+			</tr>
+			<tr ng-if="revCtrl.isNumber(dataset.boundaryValue)">
+				<td>% {{revCtrl.selectedOrgunit.level.displayName}} with completeness below {{dataset.threshold}}%</td>
+				<td class="valueCell">{{dataset.subunitViolationPercentage}}%</td>
+			</tr>
+			</tbody>
+		</table>
+		<h5>Interpretations</h5>
+		<textarea class="interpretation"></textarea>
+	</div>
+
+	<div class="noBreak">
+		<table class="table tablePrint table-bordered table-condensed ">
+			<tbody>
+			<tr bgcolor="#f9f9f9">
+				<th colspan="6">
+					<em>1b: Completeness of indicator data (missing/zero values).</em>
+				</th>
+			</tr>
+			<tr bgcolor="#f9f9f9">
+				<th width="200">Indicator</th>
+				<th width="80">Threshold</th>
+				<th width="80">Overall score (%)</th>
+				<th width="110"># {{revCtrl.selectedOrgunit.level.displayName}} with poor score</th>
+				<th width="110">% {{revCtrl.selectedOrgunit.level.displayName}} with poor score</th>
+				<th>Names</th>
+			</tr>
+			<tr ng-repeat="indicator in revCtrl.completeness.indicators | orderBy : 'dxName'">
+				<td>{{indicator.dxName}}</td>
+				<td>{{indicator.threshold}}%</td>
+				<td class="valueCell">{{indicator.boundaryValue}}%</td>
+				<td class="valueCell">{{indicator.subunitsOutsideThreshold}}</td>
+				<td class="valueCell">{{indicator.subunitViolationPercentage}}%</td>
+				<td class="valueCell">{{indicator.subunitViolationNames.join(', ')}}</td>
+			</tr>
+			</tbody>
+		</table>
+
+		<h5>Interpretations</h5>
+		<textarea class="interpretation"></textarea>
+	</div>
+
+	<div class="noBreak">
+
+		<table class="table tablePrint table-bordered table-condensed ">
+			<tr bgcolor="#f9f9f9">
+				<th colspan="7">
+					<em>1c: Consistency of dataset completeness over time.</em>
+					Difference between the current year completeness and either the average of the 3 preceding years (if expected trend is constant), or the forecasted value.
+				</th>
+			</tr>
+			<tr bgcolor="#f9f9f9">
+				<th width="200">Dataset</th>
+				<th width="80">Expected trend</th>
+				<th width="80">Quality threshold</th>
+				<th width="80">Overall score (%)</th>
+				<th width="110"># {{revCtrl.selectedOrgunit.level.displayName}} with poor score</th>
+				<th width="110">% {{revCtrl.selectedOrgunit.level.displayName}} with poor score</th>
+				<th>Names</th>
+			</tr>
+			<tr ng-repeat="dataset in revCtrl.completeness.consistency| orderBy:'dxNameA':false">
+				<td>{{dataset.dxNameA}}</td>
+				<td>{{dataset.subType}}</td>
+				<td class="valueCell">{{dataset.criteria}}%</td>
+				<td ng-if="revCtrl.isNumber(dataset.boundaryPercentage)" class="valueCell">{{dataset.boundaryPercentage}}%</td>
+				<td ng-if="revCtrl.isNumber(dataset.boundaryPercentage)" class="valueCell">{{dataset.subunitsOutsideThreshold}}</td>
+				<td ng-if="revCtrl.isNumber(dataset.boundaryPercentage)" class="valueCell">{{dataset.subunitViolationPercentage}}%</td>
+				<td ng-if="revCtrl.isNumber(dataset.boundaryPercentage)" >{{dataset.subunitViolationNames.join(', ')}}</td>
+				<td ng-if="!revCtrl.isNumber(dataset.boundaryPercentage)" colspan="4">Not available</td>
+			</tr>
+		</table>
+
+		<h5>Interpretations</h5>
+		<textarea class="interpretation"></textarea>
+	</div>
+
+
+	<div style="border: 1px dashed gray" class="noBreak" >
+		<h5 class="chartTitle">Reporting completeness over time</h5>
+		<div class="bigChart">
+			<nvd3 options='revCtrl.datasetConsistencyChart.options' data='revCtrl.datasetConsistencyChart.data'></nvd3>
+		</div>
+	</div>
+</div>
+

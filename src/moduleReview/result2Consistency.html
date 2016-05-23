@@ -1,0 +1,234 @@
+<div class="reportPart">
+	<div class="fullWidth headerPart">
+		DOMAIN 2: INTERNAL CONSISTENCY OF REPORTED DATA
+	</div>
+
+	<div class="noBreak">
+
+		<table class="table tablePrint table-bordered table-condensed ">
+			<tbody>
+			<tr bgcolor="#f9f9f9">
+				<th colspan="6">
+					<em>2a: Extreme outliers.</em>
+				</th>
+			</tr>
+			<tr bgcolor="#f9f9f9">
+				<th width="200">Indicator</th>
+				<th width="80">Threshold</th>
+				<th width="80">Overall score (%)</th>
+				<th width="110"># {{revCtrl.selectedOrgunit.level.displayName}} with poor score</th>
+				<th width="110">% {{revCtrl.selectedOrgunit.level.displayName}} with poor score</th>
+				<th>Names</th>
+			</tr>
+			<tr ng-repeat="indicator in revCtrl.outliers | orderBy : 'displayName'">
+				<td>{{indicator.displayName}}</td>
+				<td class="valueCell">{{indicator.extremeOutlier}} SD</td>
+				<td ng-if="revCtrl.isNumber(indicator.boundaryExtreme)" class="valueCell">{{indicator.boundaryExtreme}}%</td>
+				<td ng-if="revCtrl.isNumber(indicator.boundaryExtreme)" class="valueCell">{{indicator.countExtreme}}</td>
+				<td ng-if="revCtrl.isNumber(indicator.boundaryExtreme)" class="valueCell">{{indicator.percentExtreme}}%</td>
+				<td ng-if="revCtrl.isNumber(indicator.boundaryExtreme)" class="valueCell">{{indicator.namesExtreme.join(', ')}}</td>
+				<td ng-if="!revCtrl.isNumber(indicator.boundaryExtreme)" colspan="5" >Not available</td>
+			</tr>
+			</tbody>
+		</table>
+
+		<h5>Interpretations</h5>
+		<textarea class="interpretation"></textarea>
+	</div>
+
+	<div class="noBreak">
+		<table class="table tablePrint table-bordered table-condensed ">
+			<tbody>
+			<tr bgcolor="#f9f9f9">
+				<th colspan="6">
+					<em>2b: Moderate outliers.</em>
+				</th>
+			</tr>
+			<tr bgcolor="#f9f9f9">
+				<th width="200">Indicator</th>
+				<th width="80">Threshold</th>
+				<th width="80">Overall score (%)</th>
+				<th width="110"># {{revCtrl.selectedOrgunit.level.displayName}} with poor score</th>
+				<th width="110">% {{revCtrl.selectedOrgunit.level.displayName}} with poor score</th>
+				<th>Names</th>
+			</tr>
+			<tr ng-repeat="indicator in revCtrl.outliers | orderBy : 'displayName'">
+				<td>{{indicator.displayName}}</td>
+				<td class="valueCell">{{indicator.moderateOutlier}} SD</td>
+				<td ng-if="revCtrl.isNumber(indicator.boundaryModerate)" class="valueCell">{{indicator.boundaryModerate}}%</td>
+				<td ng-if="revCtrl.isNumber(indicator.boundaryModerate)" class="valueCell">{{indicator.countModerate}}</td>
+				<td ng-if="revCtrl.isNumber(indicator.boundaryModerate)" class="valueCell">{{indicator.percentModerate}}%</td>
+				<td ng-if="revCtrl.isNumber(indicator.boundaryModerate)" class="valueCell">{{indicator.namesModerate.join(', ')}}</td>
+				<td ng-if="!revCtrl.isNumber(indicator.boundaryModerate)" colspan="4" >Not available</td>
+			</tr>
+			</tbody>
+		</table>
+
+
+		<h5>Interpretations</h5>
+		<textarea class="interpretation"></textarea>
+	</div>
+
+	<div class="noBreak">
+
+		<table class="table tablePrint table-bordered table-condensed ">
+			<tbody>
+			<tr bgcolor="#f9f9f9">
+				<th colspan="6">
+					<em>2c: Moderate outliers.</em> Based on median (modified Z score).
+				</th>
+			</tr>
+			<tr bgcolor="#f9f9f9">
+				<th width="200">Indicator</th>
+				<th width="80">Threshold</th>
+				<th width="80">Overall score (%)</th>
+				<th width="110"># {{revCtrl.selectedOrgunit.level.displayName}} with poor score</th>
+				<th width="110">% {{revCtrl.selectedOrgunit.level.displayName}} with poor score</th>
+				<th>Names</th>
+			</tr>
+			<tr ng-repeat="indicator in revCtrl.outliers | orderBy : 'displayName'">
+				<td>{{indicator.displayName}}</td>
+				<td class="valueCell">3.5</td>
+				<td ng-if="revCtrl.isNumber(indicator.boundaryZscore)"  class="valueCell">{{indicator.boundaryZscore}}%</td>
+				<td ng-if="revCtrl.isNumber(indicator.boundaryZscore)"  class="valueCell">{{indicator.countZscore}}</td>
+				<td ng-if="revCtrl.isNumber(indicator.boundaryZscore)"  class="valueCell">{{indicator.percentZscore}}%</td>
+				<td ng-if="revCtrl.isNumber(indicator.boundaryZscore)"  class="valueCell">{{indicator.namesZscore.join(', ')}}</td>
+				<td ng-if="!revCtrl.isNumber(indicator.boundaryZscore)" colspan="4" >Not available</td>
+			</tr>
+			</tbody>
+		</table>
+
+		<h5>Interpretations</h5>
+		<textarea class="interpretation"></textarea>
+	</div>
+
+	<div class="inline fullWidth">
+		<div class="noBreak" style="margin-bottom: 10px;"
+			 ng-repeat="indicator in revCtrl.consistency.data | orderBy:'dxNameA' track by $index">
+
+			<div ng-if="$index === 0" class="inline fullWidth">
+				<table class="table tablePrint table-bordered table-condensed" style="margin-bottom: 5px">
+					<tbody>
+					<tr bgcolor="#f9f9f9">
+						<th>
+							<em>2d: Consistency of indicator values over time.</em>
+							Difference between the current year and either the average of the 3 preceding years (if expected trend is constant), or the forecasted value.
+						</th>
+					</tr>
+					</tbody>
+				</table>
+			</div>
+
+			<div class="inline relationTable halfWidth">
+				<table class="table tablePrint table-bordered table-condensed" style="margin-bottom: 5px">
+					<tr bgcolor="#f9f9f9"><th colspan="2">{{indicator.dxNameA}}</th></tr>
+					<tr>
+						<td>Expected trend</td>
+						<td class="valueCell">{{indicator.subType}}</td>
+					</tr>
+					<tr>
+						<td>Compare {{revCtrl.selectedOrgunit.level.displayName}} with</td>
+						<td ng-if="true" class="valueCell">{{revCtrl.selectedOrgunit.boundary.displayName}}</td>
+						<td ng-if="!true && indicator.subType === constant" class="valueCell">Current vs average</td>
+						<td ng-if="!true && indicator.subType != constant" class="valueCell">Current vs forecast</td>
+					</tr>
+					<tr>
+						<td>Quality threshold</td>
+						<td class="valueCell">± {{indicator.criteria}}%</td>
+					</tr>
+					<tr>
+						<td>Overall score (%)</td>
+						<td ng-if="revCtrl.isNumber(indicator.boundaryPercentage)" class="valueCell">{{indicator.boundaryPercentage}}%</td>
+					</tr>
+					<tr>
+						<td># {{revCtrl.selectedOrgunit.level.displayName}} with poor score</td>
+						<td ng-if="revCtrl.isNumber(indicator.boundaryPercentage)" class="valueCell">{{indicator.subunitsOutsideThreshold}}</td>
+					</tr>
+					<tr>
+						<td>% {{revCtrl.selectedOrgunit.level.displayName}} with poor score</td>
+						<td ng-if="revCtrl.isNumber(indicator.boundaryPercentage)" class="valueCell">{{indicator.subunitViolationPercentage}}%</td>
+					</tr>
+					<tr class="bigRow">
+						<td colspan="2">{{indicator.subunitViolationNames.join(', ')}}</td>
+					</tr>
+				</table>
+
+				<!--Line chart with last 4 years of data-->
+				<div class="tinyChart" style="border: 1px dashed gray;">
+					<nvd3 options='indicator.trendChartOptions' data='indicator.trendChartData'></nvd3>
+				</div>
+			</div>
+			<div class="halfWidth inline" style="float: right">
+				<div class="dottedBox relationChartBig">
+					<nvd3 options='indicator.chartOptions' data='indicator.chartData'></nvd3>
+				</div>
+			</div>
+
+			<h5 style="margin-top: 10px;">Interpretations</h5>
+			<textarea class="interpretation"></textarea>
+		</div>
+	</div>
+
+
+	<div class="noBreak inline fullWidth"
+		 style="margin-bottom: 10px;"
+		 ng-repeat="relation in revCtrl.consistency.relations | orderBy:'meta.name' track by $index">
+
+		<div ng-if="$index === 0" class="inline fullWidth">
+			<table class="table tablePrint table-bordered table-condensed" style="margin-bottom: 5px">
+				<tbody>
+				<tr bgcolor="#f9f9f9">
+					<th>
+						2e: Consistency between related indicators</em>
+					</th>
+				</tr>
+				</tbody>
+			</table>
+		</div>
+
+		<div class="inline relationTable halfWidth" style="min-height: 300px;">
+			<table class="table tablePrint table-bordered table-condensed">
+				<tr bgcolor="#f9f9f9"><th colspan="2">{{revCtrl.relationName(relation.relationCode)}}</th></tr>
+				<tr>
+					<td>Expected relationship</td>
+					<td class="valueCell">{{revCtrl.relationType(relation.subType).name}}</td>
+				</tr>
+				<tr>
+					<td>Compare {{revCtrl.selectedOrgunit.level.displayName}} with</td>
+					<td ng-if="true" class="valueCell">{{revCtrl.selectedOrgunit.boundary.displayName}}</td>
+					<td ng-if="!true && indicator.subType === constant" class="valueCell">Current vs average</td>
+					<td ng-if="!true && indicator.subType != constant" class="valueCell">Current vs forecast</td>
+				</tr>
+				<tr>
+					<td>Quality threshold</td>
+					<td class="valueCell"  ng-if="relation.subType != 'do'">± {{relation.criteria}} %</td>
+					<td class="valueCell" ng-if="relation.subType === 'do'">Not negative</td>
+				</tr>
+				<tr>
+					<td>National score</td>
+					<td ng-if="revCtrl.isNumber(relation.boundaryPercentage)" class="valueCell">{{relation.boundaryPercentage}}%</td>
+					<td class="valueCell" rowspan="3" ng-if="!revCtrl.isNumber(relation.boundaryPercentage)">Not available</td>
+				</tr>
+				<tr>
+					<td># {{revCtrl.selectedOrgunit.level.displayName}} with poor score</td>
+					<td ng-if="revCtrl.isNumber(relation.boundaryPercentage)" class="valueCell">{{relation.subunitsOutsideThreshold}}</td>
+				</tr>
+				<tr>
+					<td>% {{revCtrl.selectedOrgunit.level.displayName}} with poor score</td>
+					<td ng-if="revCtrl.isNumber(relation.boundaryPercentage)" class="valueCell">{{relation.subunitViolationPercentage}}%</td>
+				</tr>
+				<tr class="bigRow">
+					<td colspan="2">{{relation.subunitViolationNames.join(', ')}}</td>
+				</tr>
+			</table>
+		</div>
+		<div class="halfWidth inline" style="float: right">
+			<div class="dottedBox relationChart">
+				<nvd3 options='relation.chartOptions' data='relation.chartData'></nvd3>
+			</div>
+		</div>
+
+		<h5 style="margin-top: 10px;">Interpretations</h5>
+		<textarea class="interpretation"></textarea>
+	</div>
+</div>
