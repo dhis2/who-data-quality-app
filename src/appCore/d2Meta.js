@@ -152,36 +152,22 @@
 					if (!ouLevel && !ouGroup) deferred.resolve(ouBoundary.length);
 					else {
 
-						var promises = [];
-						promises.push(objects('organisationUnits', ouBoundary, 'displayName,id,level'));
-						promises.push(objects('organisationUnits', null, null, null, true));
-						promises.push(objects('organisationUnitLevels'));
-						if (ouGroup) {
-							promises.push(object('organisationUnitGroups', ouGroup, 'displayName,id,organisationUnits::size'));
-						}
-						$q.all(promises).then(
-							function(datas) {
-								var boundary = datas[0];
-								var total = datas[1].pager.total;
-								var levels = datas[2].length;
-								if (ouGroup) var group = datas[3].organisationUnits;
+						//TODO: multiple boundary orgunits = check all? Although this is perhaps enough for an estimate
+						var filterString = 'filter=path:like:' + ouBoundary[0];
+						if (ouLevel) filterString += '&filter=level:eq:' + ouLevel;
+						if (ouGroup) filterString += '&filter=organisationUnitGroups.id:eq:' + ouGroup;
 
-								var minBoundary = 99;
-								for (var i = 0; i < boundary.length; i++) {
-									minBoundary = Math.min(minBoundary, boundary[i].level);
-								}
+						var requestURL = '/api/organisationUnits.json?';
+						requestURL += filterString;
 
-								if (ouLevel) {
-									var levelFactor = Math.pow(total, 1/levels);
-									var boundaryFactor = minBoundary === 1 ? 1 : Math.pow(levelFactor, minBoundary);
-									var subunitFactor = Math.pow(levelFactor, ouLevel);
-									deferred.resolve(subunitFactor/boundaryFactor);
-								}
-								else if (ouGroup) {
-									var levelFactor = Math.pow(group, 1/levels);
-									var boundaryFactor = minBoundary === 1 ? 1 : Math.pow(levelFactor, minBoundary);
-									deferred.resolve(group/boundaryFactor);
-								}
+						requestService.getSingleData(requestURL).then(
+							function(data) { //success
+								var orgunitCount = data.pager.total;
+								deferred.resolve(orgunitCount*ouBoundary.length);
+							},
+							function(response) { //error
+								deferred.reject("Error in userOrgunit()");
+								console.log(response);
 							}
 						);
 					}
