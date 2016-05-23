@@ -187,7 +187,6 @@
 
 	div.reportPart { /* Make it possible to start new "parts" of the report on new page */
 		page-break-after: always;
-		page-break-before: always;
 	}
 
 	.noBreak { /* Elements with this class will not be spread across pages*/
@@ -221,7 +220,8 @@
 	}
 
 	.relationChartBig {
-		height: 394px;
+		width: 556px;
+		height: 389px;
 	}
 
 
@@ -246,10 +246,7 @@
 		padding: 3px;
 		vertical-align: top;
 	}
-
-
-
-
+	
 	.relationTable {
 		width: 300px;
 	}
@@ -267,7 +264,7 @@
 @page {
 	/* A4 */
 	size: A4;
-	margin: 10mm 20mm 10mm 20mm;
+	margin: 15mm 15mm 15mm 15mm;
 }
 
 

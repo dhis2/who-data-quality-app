@@ -396,7 +396,9 @@
 			angular.element('.bigChart').width('860px');
 			angular.element('.bigChart').height('300px');
 			angular.element('.smallChart').width('422px');
-			angular.element('.relationChart').width('552px');
+			angular.element('.tinyChart').width('300px');
+			angular.element('.relationChart').width('556px');
+			angular.element('.relationChartBig').width('556px');
 
 
 			window.dispatchEvent(new Event('resize'));
@@ -404,7 +406,7 @@
 			interpretationToParagraph();
 
 			//Give charts time to finish animation
-			$timeout(function () { window.print(); }, 3000);
+			$timeout(function () { window.print(); }, 5000);
 
 		}
 
@@ -412,7 +414,7 @@
 		function printDone() {
 
 			//Remove the chart scaling
-			var classes = ['.bigChart', '.smallChart', '.relationTableHolderPrint', '.relationChartPrint'];
+			var classes = ['.bigChart', '.smallChart', '.tinyChart', '.relationTable', '.relationChart', '.relationChartBig'];
 			for (var i = 0; i < classes.length; i++) {
 				var elements = angular.element(classes[i]);
 				for (var j = 0; j < elements.length; j++) {

@@ -87,7 +87,8 @@
 								'tooltip': {
 									'enabled': true
 								},
-								'showLegend': true
+								'showLegend': true,
+								'transitionDuration': 100
 							},
 							'parameters': {
 								'dataIDs': dataIDs,
@@ -192,7 +193,8 @@
 							'tooltip': {
 								'enabled': true
 							},
-					        'showLegend': true
+					        'showLegend': true,
+							'transitionDuration': 100
 					    },
 					    'parameters': {
 					    	'dataIDs': dataIDs,
@@ -292,10 +294,11 @@
 								'forceY': [0, getRange(maxY)],
 								'x': function(d){return d.label;},
 								'y': function(d){return d.value;},
-								'transitionDuration': 50,
+								'transitionDuration': 100,
 								'xAxis': {
 									'rotateLabels': -45
-								}
+								},
+								'transitionDuration': 100
 							},
 							'parameters': {
 								'dataIDs': dataIDs,
@@ -425,7 +428,8 @@
 							contentGenerator: toolTip
 						},
   				        'showLegend': true,
-  				        'useInteractiveGuideline': true
+  				        'useInteractiveGuideline': true,
+						'transitionDuration': 100
   				    },
   				    'parameters': {
   				    	'dataID': dataID, 
@@ -550,7 +554,8 @@
 	    	        'tooltip': {
 						enabled: true,
 						contentGenerator: toolTip
-					}
+					},
+					'transitionDuration': 100
 
 	    	    }
 	    	};
@@ -658,7 +663,8 @@
 					'tooltip': {
 						enabled: true,
 						contentGenerator: toolTip
-					}
+					},
+					'transitionDuration': 100
 	    	    }
 	    	};
 	    	
@@ -765,7 +771,8 @@
 						contentGenerator: toolTip
 					},
 	    	        'showLegend': true,
-	    	      	'yDomain': [0,maxVal]
+	    	      	'yDomain': [0,maxVal],
+					'transitionDuration': 100
 	    	    }
 	    	};
 	    	
