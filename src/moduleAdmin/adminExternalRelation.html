@@ -5,7 +5,7 @@
 
 	<table class="table table-bordered">
 		<tr>
-			<th>External data indicator</th>
+			<th>Survey/external indicator</th>
 			<td>
 				<div style="width: 400px">
 					<div class="btn-group btn-group-justified" style="width: 120px; margin-bottom: 10px; display: inline-block;">
@@ -32,7 +32,7 @@
 			</td>
 		</tr>
 		<tr>
-			<th>Numerator</th>
+			<th>Routine data numerator</th>
 			<td>
 				<ui-select ng-model="addCtrl.numeratorSelected" theme="bootstrap" style="width: 100%;">
 					<ui-select-match placeholder="Select numerator...">
@@ -46,7 +46,7 @@
 			</td>
 		</tr>
 		<tr>
-			<th>Denominator</th>
+			<th>Routine data denominator</th>
 			<td>
 				<ui-select ng-model="addCtrl.denominatorSelected" theme="bootstrap" style="width: 100%;">
 					<ui-select-match placeholder="Select denominator...">
@@ -62,6 +62,10 @@
 		<tr>
 			<th>Threshold (+/- %)</th>
 			<td><input type="number" class="form-control" style="width: 100px;" ng-model="addCtrl.criteria"/></td>
+		</tr>
+		<tr>
+			<th>Survey level</th>
+			<td><d2-select ng-model="addCtrl.levelSelected" options="addCtrl.levels" placeholder="Select organisation unit level..."></d2-select></td>
 		</tr>
 	</table>
 

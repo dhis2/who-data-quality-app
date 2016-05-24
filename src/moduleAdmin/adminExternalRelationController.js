@@ -1,8 +1,8 @@
 (function(){
 	/**Controller: Parameters*/
 	angular.module('admin').controller("ModalAddEditExternalRelationController",
-		['$uibModalInstance', 'd2Meta', 'd2Map', 'requestService', 'externalRelation',
-			function($uibModalInstance, d2Meta, d2Map, requestService, externalRelation) {
+		['$uibModalInstance', 'd2Meta', 'd2Map', 'd2Utils', 'requestService', 'externalRelation',
+			function($uibModalInstance, d2Meta, d2Map, d2Utils, requestService, externalRelation) {
 
 
 				var self = this;
@@ -11,6 +11,7 @@
 				self.numeratorSelected = null;
 				self.denominatorSelected = null;
 				self.dataTypeSelected = 'dataElements';
+				self.levelSelected = null;
 
 
 				self.numerators = d2Map.numeratorsConfigured();
@@ -51,6 +52,23 @@
 				}
 
 
+				d2Meta.objects('organisationUnitLevels', null, 'displayName,level,uid').then(function (levels) {
+
+					d2Utils.arraySortByProperty(levels, 'level', true, true);
+					self.levels = levels;
+
+					if (externalRelation.level) {
+						for (var i = 0; i < self.levels.length; i++) {
+
+							if (self.levels[i].level === externalRelation.level) {
+								self.levelSelected = self.levels[i];
+								break;
+							}
+						}
+					}
+				});
+
+
 				self.cancel = function () {
 					$uibModalInstance.close();
 				};
@@ -72,6 +90,7 @@
 						"denominator": self.denominatorSelected.code,
 						"dataType": self.dataTypeSelected,
 						"criteria": self.criteria,
+						"level": self.levelSelected.level,
 						"code": externalRelation && externalRelation.code ? externalRelation.code : null
 					};
 

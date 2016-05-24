@@ -5,8 +5,8 @@
 	
 	/**Controller: Parameters*/
 	angular.module('admin').controller("AdminController",
-	['$uibModal', 'notificationService', 'd2Map',
-	function($uibModal, notificationService, d2Map) {
+	['$uibModal', 'notificationService', 'd2Map', 'd2Meta', 'd2Utils',
+	function($uibModal, notificationService, d2Map, d2Meta, d2Utils) {
 	    	    
 	    var self = this;
 
@@ -45,6 +45,13 @@
 			self.relations = d2Map.relations();
 			self.groups = d2Map.groups();
 			self.dataSets = d2Map.dataSets();
+
+
+			//Need to get orgunit level names
+			d2Meta.objects('organisationUnitLevels', null, 'displayName,level,uid').then(function (levels) {
+				d2Utils.arraySortByProperty(levels, 'level', true, true);
+				self.orgunitLevels = levels;
+			});
 	    }
 
 
@@ -305,6 +312,19 @@
 		self.deleteExternalRelation = function(code) {
 
 			d2Map.externalRelationDelete(code);
+		}
+
+
+
+		/** ==== D2META WRAPPERS FOR PRESENTATION ==== **/
+		self.d2OrgunitLevelNameFromLevel = function(level) {
+
+			for (var i = 0; i < self.orgunitLevels.length; i++) {
+				if (self.orgunitLevels[i].level === level) {
+					return self.orgunitLevels[i].displayName;
+				}
+			}
+			return 'Level ' + level;
 		}
 
 

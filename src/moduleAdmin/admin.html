@@ -252,10 +252,11 @@
 			</p>
 			<table class="table table-bordered table-striped table-condensed table-hover">
 				<tr>
-					<th>External data indicator</th>
-					<th>Routine numerator</th>
-					<th>Routine denominator</th>
+					<th>Survey/external indicator</th>
+					<th>Routine data numerator</th>
+					<th>Routine data denominator</th>
 					<th>Criteria</th>
+					<th>Level</th>
 					<th width="100px"></th>
 				</tr>
 				<tr ng-repeat="relation in admCtrl.externalRelations | orderBy:'type'">
@@ -263,6 +264,7 @@
 					<td class="vert-align">{{admCtrl.d2NameFromCode(relation.numerator)}}</td>
 					<td class="vert-align">{{admCtrl.d2NameFromCode(relation.denominator)}}</td>
 					<td class="vert-align">{{relation.criteria}} %</td>
+					<td class="vert-align">{{admCtrl.d2OrgunitLevelNameFromLevel(relation.level)}}</td>
 					<td class="vert-align" align="center">
 						<button ng-disabled="!admCtrl.isAdmin" ng-click="admCtrl.editExternalRelation(relation);" class="btn btn-default btn-xs">Edit</button>
 						<button ng-disabled="!admCtrl.isAdmin || denominator.type === 'un'" ng-click="admCtrl.deleteExternalRelation(relation.code);" class="btn btn-danger btn-xs">Delete</button></td>
