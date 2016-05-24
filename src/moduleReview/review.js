@@ -3,8 +3,8 @@
 	angular.module('review', []);
 
 	angular.module('review').controller("ReviewController",
-	['d2Meta','d2Map', 'periodService', 'dataAnalysisService', 'visualisationService', 'dqAnalysisConsistency', '$timeout', 'd2Utils',
-	function(d2Meta, d2Map, periodService, dataAnalysisService, visualisationService, dqAnalysisConsistency, $timeout, d2Utils) {
+	['d2Meta','d2Map', 'periodService', 'dataAnalysisService', 'visualisationService', 'dqAnalysisConsistency', 'dqAnalysisExternal', '$timeout', 'd2Utils',
+	function(d2Meta, d2Map, periodService, dataAnalysisService, visualisationService, dqAnalysisConsistency, dqAnalysisExternal, $timeout, d2Utils) {
 		var self = this;    
 
 		//Check if map is loaded, if not, do that before initialising
@@ -87,7 +87,7 @@
 	  		var ouBoundary = self.selectedOrgunit.boundary.id;
 	  		var ouLevel = self.selectedOrgunit.level.level;
 	  		
-	  		
+
 	  		//1 Get dataset completeness and consistency
 	  		var datasetIDsForConsistencyChart = [];
 	  		for (var i = 0; i < datasets.length; i++) {
@@ -222,13 +222,37 @@
 							self.denominators.un = data.result;
 						}
 
-						console.log(self.denominators);
-
 				});
 
 				self.outstandingRequests++;
 			}
 
+
+			//5 External data consistency
+			var externalRelation, externalRelations = d2Map.externalRelations();
+			for (var i = 0; i < externalRelations.length; i++) {
+				var externalRelation = externalRelations[i];
+
+				var dataIdExternal = externalRelation.externalData;
+				var dataIdNumerator = d2Map.numerators(externalRelation.numerator).dataID;
+				var dataIdDenominator = d2Map.denominators(externalRelation.denominator).dataID;
+
+				dqAnalysisExternal.analyse(dataIdExternal, dataIdNumerator, dataIdDenominator, period, ouBoundary, externalRelation.level, externalRelation.criteria, externalRelation)
+					.then(function(data) {
+
+						self.outstandingRequests--;
+
+						if (data.errors) self.remarks = self.remarks.concat(data.errors);
+
+						console.log(data);
+
+						self.external.push(data.result);
+						//visualisationService.makeDataConsistencyChart(null, data.result);
+
+					});
+
+				self.outstandingRequests++;
+			}
 
 
 	  		
@@ -261,6 +285,8 @@
   			
   			self.dataConsistencyChart = {};
   			self.datasetConsistencyChart = {};
+
+			self.external = [];
 
 			self.denominators = {
 				'un': null,

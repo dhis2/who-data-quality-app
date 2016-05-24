@@ -2,4 +2,72 @@
 	<div class="fullWidth headerPart">
 		DOMAIN 3: EXTERNAL COMPARISON
 	</div>
+
+
+	<div class="noBreak inline fullWidth"
+		 style="margin-bottom: 10px;"
+		 ng-repeat="relation in revCtrl.external | orderBy:'meta.name' track by $index">
+
+
+		<div ng-if="$index === 0" class="inline fullWidth">
+			<table class="table tablePrint table-bordered table-condensed" style="margin-bottom: 5px">
+				<tbody>
+				<tr bgcolor="#f9f9f9">
+					<th>
+						3a: Comparison with external/survey data
+					</th>
+				</tr>
+				<tr>
+					<td>
+						<em>Consistency of routine data with data from external source, e.g. population-based surveys.</em>
+					</td>
+				</tr>
+				</tbody>
+			</table>
+		</div>
+		<div class="inline relationTable halfWidth" style="min-height: 300px">
+			<table class="table tablePrint table-bordered table-condensed">
+				<tr bgcolor="#f9f9f9">
+					<th colspan="2">{{relation.meta.name}}</th>
+				</tr>
+				<tr>
+					<td>Survey value</td>
+					<td class="valueCell">{{relation.boundaryValue}}%</td>
+				</tr>
+				<tr>
+					<td>Routine value</td>
+					<td class="valueCell">{{relation.boundaryRefValue}}%</td>
+				</tr>
+				<tr>
+					<td>Quality threshold</td>
+					<td class="valueCell">±{{relation.criteria}}%</td>
+				</tr>
+				<tr>
+					<td>National score (ratio)</td>
+					<td class="valueCell">{{relation.boundaryPercentage}}%</td>
+				</tr>
+				<tr>
+					<td>Number of {{revCtrl.selectedOrgunit.level.displayName}} with divergent score</td>
+					<td class="valueCell">{{relation.subunitsOutsideThreshold}}</td>
+				</tr>
+				<tr>
+					<td>Percent of {{revCtrl.selectedOrgunit.level.displayName}} with divergent score</td>
+					<td class="valueCell">{{relation.subunitViolationPercentage}}%</td>
+				</tr>
+				<tr class="biggerRow" ng-if="relation.subunitViolationNames.length > 0">
+					<td colspan="2">{{relation.subunitViolationNames.join(', ')}}</td>
+				</tr>
+			</table>
+		</div>
+		<div class="halfWidth inline" style="float: right">
+			<div class="dottedBox relationChart">
+				<nvd3 options='relation.chartOptions' data='relation.chartData'></nvd3>
+			</div>
+		</div>
+
+		<h5 style="margin-top: 10px;">Interpretations</h5>
+		<textarea class="interpretation"></textarea>
+	</div>
+
+
 </div>
