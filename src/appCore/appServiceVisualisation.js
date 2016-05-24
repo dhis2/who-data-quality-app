@@ -678,6 +678,170 @@
 	    	}
 	    };
 
+		/** Data consistency */
+		self.makeExternalConsistencyChart = function (callback, result) {
+
+	    	var datapoints = result.subunitDatapoints;
+			var names = [];
+
+			var toolTip = function(point) {
+
+	    		var data = result.subunitDatapoints;
+				var ouID = point.point.z;
+				var ouName;
+				var data;
+				for (var i = 0; i < data.length; i++) {
+					if (data[i].id === ouID) {
+						ouName = data[i].name;
+						data = data[i];
+						break;
+					}
+				}
+	    	    return '<h3>' + ouName + '</h3>' +
+	    	        '<p style="margin-bottom: 0px">Survey: ' + data.value + '%</p>'+
+					'<p style="margin-bottom: 0px">Routine: ' + data.refValue + '%</p>';
+	    	};
+
+			var maxY = 0;
+	    	var chartSeries = [], tickValues = [0, 1];
+			if (datapoints.length > 0) {
+
+				var externalSeries = {
+					'key': 'Survey',
+					'color': 'red',
+					'values': [{'x': 0, 'y': -100}]
+				};
+				var routineSeries = {
+					'key': 'Routine',
+					'color': 'blue',
+					'values': [{'x': 0, 'y': -100}]
+				};
+
+				var externalShape = 'circle', routineShape = 'square';
+				if (result.boundaryRatio > (1 + 0.01*result.criteria) ||result.boundaryRatio < (1 - 0.01*result.criteria)) {
+					if (result.boundaryValue > result.boundaryRefValue ) {
+						externalShape = 'triangle-down';
+						routineShape = 'triangle-up';
+					}
+					else {
+						routineShape = 'triangle-down';
+						externalShape = 'triangle-up';
+					}
+				}
+
+				//Add national first
+				externalSeries.values.push({
+					'x': 1,
+					'y': result.boundaryValue,
+					'shape': externalShape,
+					'size': 1.5,
+					'z': result.boundaryID
+				});
+				if (result.boundaryValue > maxY) maxY = result.boundaryValue;
+
+				routineSeries.values.push({
+					'x': 1,
+					'y': result.boundaryRefValue,
+					'shape': routineShape,
+					'size': 1.5,
+					'z': result.boundaryID
+				});
+				if (result.boundaryValue > maxY) maxY = result.boundaryRefValue;
+
+				names.push(result.boundaryName);
+
+				var i, j;
+				for (j = 0; j < datapoints.length; j++) {
+
+					var externalShape = 'circle', routineShape = 'square';
+					if (datapoints[j].violation) {
+						if (datapoints[j].value > datapoints[j].refValue) {
+							externalShape = 'triangle-down';
+							routineShape = 'triangle-up';
+						}
+						else {
+							routineShape = 'triangle-down';
+							externalShape = 'triangle-up';
+						}
+					}
+
+					i = j+2;
+					externalSeries.values.push({
+						'x': i,
+						'y': datapoints[j].value,
+						'z': datapoints[j].id,
+						'shape': externalShape,
+						'size': datapoints[j].violation ? 1.5 : 1
+					});
+					if (datapoints[j].value > maxY) maxY = datapoints[j].value;
+
+
+					routineSeries.values.push({
+						'x': i,
+						'y': datapoints[j].refValue,
+						'z': datapoints[j].id,
+						'shape': routineShape,
+						'size': datapoints[j].violation ? 1.5 : 1,
+					});
+					if (datapoints[j].refValue > maxY) maxY = datapoints[j].refValue;
+
+					names.push(datapoints[j].name)
+					tickValues.push(i);
+				}
+				++i;
+				externalSeries.values.push({
+					'x': i,
+					'y': -100
+				});
+				routineSeries.values.push({
+					'x': i,
+					'y': -100
+				});
+				tickValues.push(i);
+
+				chartSeries.push(externalSeries, routineSeries);
+			}
+
+	    	var chartOptions = {
+				chart: {
+					type: 'scatterChart',
+					margin : {
+						top: 30,
+						right: 30,
+						bottom: 100,
+						left: 50
+					},
+					yDomain: [0, getRange(maxY)],
+					xAxis: {
+						'tickFormat': function(d) {
+							if (d === tickValues[0] || d === tickValues[tickValues.length-1]) return '';
+							return names[d-1];
+						},
+						'tickValues': tickValues,
+						'rotateLabels': -45
+					},
+					yAxis: {
+						tickFormat: function(d){
+							return d3.format('d')(d);
+						}
+					},
+					'transitionDuration': 100,
+					'tooltip': {
+						enabled: true,
+						contentGenerator: toolTip
+					},
+				}
+	    	};
+
+	    	if (callback) {
+	    		callback(chartSeries, chartOptions);
+	    	}
+	    	else {
+	    		result.chartOptions = chartOptions;
+	    		result.chartData = chartSeries;
+	    	}
+	    };
+
 
 
 	    /** Dropout */

@@ -247,7 +247,7 @@
 						console.log(data);
 
 						self.external.push(data.result);
-						//visualisationService.makeDataConsistencyChart(null, data.result);
+						visualisationService.makeExternalConsistencyChart(null, data.result);
 
 					});
 
