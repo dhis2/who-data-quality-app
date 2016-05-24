@@ -319,7 +319,7 @@
 		/** ==== D2META WRAPPERS FOR PRESENTATION ==== **/
 		self.d2OrgunitLevelNameFromLevel = function(level) {
 
-			for (var i = 0; i < self.orgunitLevels.length; i++) {
+			for (var i = 0; self.orgunitLevels && i < self.orgunitLevels.length; i++) {
 				if (self.orgunitLevels[i].level === level) {
 					return self.orgunitLevels[i].displayName;
 				}
