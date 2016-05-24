@@ -148,8 +148,8 @@
 
 
 					//Calculate ratio and percentage
-					var boundaryRatio = getRatioAndPercentage(boundaryExternal, boundaryRoutine).ratio;
-					var boundaryPercentage = getRatioAndPercentage(boundaryExternal, boundaryRoutine).percent;
+					var boundaryRatio = getRatioAndPercentage(boundaryRoutine, boundaryExternal).ratio;
+					var boundaryPercentage = getRatioAndPercentage(boundaryRoutine, boundaryExternal).percent;
 
 
 					//Check if we have data for boundary orgunit for external
@@ -236,7 +236,7 @@
 							continue;
 						}
 
-						var data = getRatioAndPercentage(valueA, valueB);
+						var data = getRatioAndPercentage(valueB, valueA);
 						var outlier = isOutlier(data.ratio);
 						var weight = 0;
 
