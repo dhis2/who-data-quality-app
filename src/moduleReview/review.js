@@ -148,7 +148,7 @@
 									}
 
 								}
-								//self.outstandingRequests--;
+								self.outstandingRequests--;
 							});
 
 						}
@@ -162,7 +162,7 @@
 				dataAnalysisService.indicatorOutlier(receiveDataOutliers, indicator, periods, ouBoundary, ouLevel);
 				
 				indicatorIDsForConsistencyChart.push(indicator.dataID);
-				self.outstandingRequests += 3;
+				self.outstandingRequests += 4;
 	  		}
 
 	  		//3 Indicator relations
