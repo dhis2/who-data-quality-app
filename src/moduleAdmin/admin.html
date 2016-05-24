@@ -252,6 +252,7 @@
 			</p>
 			<table class="table table-bordered table-striped table-condensed table-hover">
 				<tr>
+					<th>Name</th>
 					<th>Survey/external indicator</th>
 					<th>Routine data numerator</th>
 					<th>Routine data denominator</th>
@@ -260,6 +261,7 @@
 					<th width="100px"></th>
 				</tr>
 				<tr ng-repeat="relation in admCtrl.externalRelations | orderBy:'type'">
+					<td class="vert-align">{{relation.name}}</td>
 					<td class="vert-align">{{admCtrl.d2NameFromID(relation.externalData)}}</td>
 					<td class="vert-align">{{admCtrl.d2NameFromCode(relation.numerator)}}</td>
 					<td class="vert-align">{{admCtrl.d2NameFromCode(relation.denominator)}}</td>

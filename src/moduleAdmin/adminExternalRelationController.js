@@ -39,6 +39,7 @@
 				else {
 					self.title = "Edit external data comparison";
 					self.criteria = externalRelation.criteria;
+					self.name = externalRelation.name;
 
 					self.dataTypeSelected = externalRelation.dataType;
 					self.externalDataSelected = d2Meta.object(externalRelation.dataType, externalRelation.externalData, null);
@@ -85,6 +86,7 @@
 					}
 
 					var savedRelation = {
+						"name": self.name,
 						"externalData": self.externalDataSelected.id,
 						"numerator": self.numeratorSelected.code,
 						"denominator": self.denominatorSelected.code,
