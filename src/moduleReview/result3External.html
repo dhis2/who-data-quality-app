@@ -46,21 +46,28 @@
 					<td>National score (ratio)</td>
 					<td class="valueCell">{{relation.boundaryPercentage}}%</td>
 				</tr>
-				<tr>
+				<tr >
 					<td>Number of {{revCtrl.selectedOrgunit.level.displayName}} with divergent score</td>
-					<td class="valueCell">{{relation.subunitsOutsideThreshold}}</td>
+					<td ng-if="relation.subunitDatapoints.length > 0" class="valueCell">{{relation.subunitsOutsideThreshold}}</td>
+					<td ng-if="relation.subunitDatapoints.length === 0" class="valueCell">Not available</td>
 				</tr>
 				<tr>
 					<td>Percent of {{revCtrl.selectedOrgunit.level.displayName}} with divergent score</td>
-					<td class="valueCell">{{relation.subunitViolationPercentage}}%</td>
+					<td ng-if="relation.subunitDatapoints.length > 0" class="valueCell">{{relation.subunitViolationPercentage}}%</td>
+					<td ng-if="relation.subunitDatapoints.length === 0" class="valueCell">Not available</td>
 				</tr>
-				<tr class="biggerRow" ng-if="relation.subunitViolationNames.length > 0">
+				<tr class="biggerRow" ng-if="relation.subunitViolationNames.length > 0 && relation.subunitDatapoints.length > 0">
 					<td colspan="2">{{relation.subunitViolationNames.join(', ')}}</td>
 				</tr>
 			</table>
 		</div>
-		<div class="halfWidth inline" style="float: right">
+		<div class="halfWidth inline" style="float: right" ng-if="relation.chartOptions.type === 'scatter'">
 			<div class="dottedBox relationChart">
+				<nvd3 options='relation.chartOptions' data='relation.chartData'></nvd3>
+			</div>
+		</div>
+		<div class="halfWidth inline" style="float: right" ng-if="relation.chartOptions.type === 'bullet'">
+			<div class="dottedBox" style="height: 60px; width: 100%">
 				<nvd3 options='relation.chartOptions' data='relation.chartData'></nvd3>
 			</div>
 		</div>
