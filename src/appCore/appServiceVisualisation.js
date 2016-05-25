@@ -697,13 +697,19 @@
 						break;
 					}
 				}
+
+				if (!ouName) ouName = result.boundaryName;
+				var survey = data.value, routine = data.refValue;
+				if (!survey) survey = result.boundaryValue;
+				if (!routine) routine = result.boundaryRefValue;
+
 	    	    return '<h3>' + ouName + '</h3>' +
-	    	        '<p style="margin-bottom: 0px">Survey: ' + data.value + '%</p>'+
-					'<p style="margin-bottom: 0px">Routine: ' + data.refValue + '%</p>';
+	    	        '<p style="margin-bottom: 0px">Survey: ' + survey + '%</p>'+
+					'<p style="margin-bottom: 0px">Routine: ' + routine + '%</p>';
 	    	};
 
 			var maxY = 0;
-	    	var chartSeries = [], tickValues = [0, 1];
+	    	var chartSeries = [], tickValues = [0, 1], chartOptions = {};
 			if (datapoints.length > 0) {
 
 				var externalSeries = {
@@ -717,7 +723,7 @@
 					'values': [{'x': 0, 'y': -100}]
 				};
 
-				var externalShape = 'circle', routineShape = 'square';
+				var externalShape = 'circle', routineShape = 'cross';
 				if (result.boundaryRatio > (1 + 0.01*result.criteria) ||result.boundaryRatio < (1 - 0.01*result.criteria)) {
 					if (result.boundaryValue > result.boundaryRefValue ) {
 						externalShape = 'triangle-down';
@@ -734,7 +740,7 @@
 					'x': 1,
 					'y': result.boundaryValue,
 					'shape': externalShape,
-					'size': 1.5,
+					'size': 2,
 					'z': result.boundaryID
 				});
 				if (result.boundaryValue > maxY) maxY = result.boundaryValue;
@@ -743,7 +749,7 @@
 					'x': 1,
 					'y': result.boundaryRefValue,
 					'shape': routineShape,
-					'size': 1.5,
+					'size': 2,
 					'z': result.boundaryID
 				});
 				if (result.boundaryValue > maxY) maxY = result.boundaryRefValue;
@@ -753,7 +759,7 @@
 				var i, j;
 				for (j = 0; j < datapoints.length; j++) {
 
-					var externalShape = 'circle', routineShape = 'square';
+					var externalShape = 'circle', routineShape = 'cross';
 					if (datapoints[j].violation) {
 						if (datapoints[j].value > datapoints[j].refValue) {
 							externalShape = 'triangle-down';
@@ -771,7 +777,7 @@
 						'y': datapoints[j].value,
 						'z': datapoints[j].id,
 						'shape': externalShape,
-						'size': datapoints[j].violation ? 1.5 : 1
+						'size': datapoints[j].violation ? 3 : 3
 					});
 					if (datapoints[j].value > maxY) maxY = datapoints[j].value;
 
@@ -781,7 +787,7 @@
 						'y': datapoints[j].refValue,
 						'z': datapoints[j].id,
 						'shape': routineShape,
-						'size': datapoints[j].violation ? 1.5 : 1,
+						'size': datapoints[j].violation ? 3 : 2,
 					});
 					if (datapoints[j].refValue > maxY) maxY = datapoints[j].refValue;
 
@@ -799,47 +805,94 @@
 				});
 				tickValues.push(i);
 
-				chartSeries.push(externalSeries, routineSeries);
-			}
+				chartSeries.push(routineSeries, externalSeries);
 
-	    	var chartOptions = {
-				chart: {
-					type: 'scatterChart',
-					margin : {
-						top: 30,
-						right: 30,
-						bottom: 100,
-						left: 50
-					},
-					yDomain: [0, getRange(maxY)],
-					xAxis: {
-						'tickFormat': function(d) {
-							if (d === tickValues[0] || d === tickValues[tickValues.length-1]) return '';
-							return names[d-1];
+				chartOptions = {
+					chart: {
+						type: 'scatterChart',
+						margin : {
+							top: 30,
+							right: 30,
+							bottom: 100,
+							left: 50
 						},
-						'tickValues': tickValues,
-						'rotateLabels': -45
-					},
-					yAxis: {
-						tickFormat: function(d){
-							return d3.format('d')(d);
+						yDomain: [0, getRange(maxY)],
+						xAxis: {
+							'tickFormat': function(d) {
+								if (d === tickValues[0] || d === tickValues[tickValues.length-1]) return '';
+								return names[d-1];
+							},
+							'tickValues': tickValues,
+							'rotateLabels': -45
+						},
+						yAxis: {
+							tickFormat: function(d){
+								return d3.format('d')(d);
+							}
+						},
+						'transitionDuration': 100,
+						'tooltip': {
+							enabled: true,
+							contentGenerator: toolTip
 						}
 					},
-					'transitionDuration': 100,
-					'tooltip': {
-						enabled: true,
-						contentGenerator: toolTip
-					},
-				}
-	    	};
+					type: 'scatter'
+				};
 
-	    	if (callback) {
-	    		callback(chartSeries, chartOptions);
-	    	}
-	    	else {
-	    		result.chartOptions = chartOptions;
-	    		result.chartData = chartSeries;
-	    	}
+
+			}
+				//No subunits, make bullet chart instead
+			else {
+
+				var toolTip = function(point) {
+
+					if (point.label === 'Range') return '';
+
+					return '<h3>' + point.label + '</h3>' +
+						'<p style="margin-bottom: 0px">' + point.value + '%</p>';
+				};
+
+
+				chartOptions = {
+					chart: {
+						margin : {
+							left: 150
+						},
+						type: 'bulletChart',
+						transitionDuration: 100,
+						'tooltip': {
+							enabled: true,
+							contentGenerator: toolTip
+						}
+					},
+					type: 'bullet'
+				};
+
+				var maxY = 100;
+				if (result.boundaryValue > maxY) maxY =  result.boundaryValue;
+				if (result.boundaryRefValue > maxY) maxY = result.boundaryRefValue;
+				if (maxY != 100) maxY = getRange(maxY);
+
+				chartSeries = {
+					"title": result.boundaryName,
+					"subtitle": result.meta.name,
+					"ranges":[0,maxY],
+					"measures":[result.boundaryRefValue],
+					"markers":[result.boundaryValue],
+					"markerLabels":['Survey'],
+					"rangeLabels":['Range'],
+					"measureLabels":['Routine']
+				};
+			}
+
+			if (callback) {
+				callback(chartSeries, chartOptions);
+			}
+			else {
+				result.chartOptions = chartOptions;
+				result.chartData = chartSeries;
+			}
+
 	    };
 
 
