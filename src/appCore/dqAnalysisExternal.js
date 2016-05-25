@@ -136,14 +136,14 @@
 
 					//Get data for boundary orgunit - routine
 					var boundaryNumerator = d2Data.value(_dataIdNumerator, _pe, _ouBoundary, null);
-					var boundaryDenominator = d2Data.value(_dataIdNumerator, _pe, _ouBoundary, null);
+					var boundaryDenominator = d2Data.value(_dataIdDenominator, _pe, _ouBoundary, null);
 					var boundaryRoutine;
 					if (d2Utils.isNumber(boundaryDenominator)) {
 						boundaryRoutine = 100*boundaryNumerator/boundaryDenominator;
 					}
 					else {
 						boundaryRoutine = null;
-						errors.push(makeError(_dataIdDenominator, _pe, _ouBoundary));
+						errors.push(makeError(_dataIdDenominator, [_pe], _ouBoundary));
 					}
 
 
@@ -154,13 +154,13 @@
 
 					//Check if we have data for boundary orgunit for external
 					if (!d2Utils.isNumber(boundaryExternal)) {
-						errors.push(makeError(_dataIdExternal, _pe, _ouBoundary));
+						errors.push(makeError(_dataIdExternal, [_pe], _ouBoundary));
 					}
 					//Check if we have data for boundary orgunit for routine
 					else if (!d2Utils.isNumber(boundaryRoutine)) {
 
 						//We already checked the denominator, so here we assume numerator is missing if there is a problem
-						errors.push(makeError(_dataIdNumerator, _pe, _ouBoundary));
+						errors.push(makeError(_dataIdNumerator, [_pe], _ouBoundary));
 					}
 					//If we have data for both, store the raw data, ratio and percentage
 					else {
@@ -356,7 +356,7 @@
 					else {
 						error.type = "Consistency over time";
 						error.msg = "Missing data: consistency analysis " + d2Data.name(_dataIdExternal) + " for " + _dataIdDenominator + " vs " +
-							_pe.join(', ') + " skipped for " + d2Data.name(ou) + " due to missing data.";
+							pe.join(', ') + " skipped for " + d2Data.name(ou) + " due to missing data.";
 					}
 
 					return error;
