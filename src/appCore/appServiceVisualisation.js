@@ -1188,32 +1188,24 @@
 			var maxY = 0;
 
 			var chartSerie = {
-				'key': "Within threshold",
-				'values': []
-			};
-			var chartSerieOutliers = {
-				'key': "Outside threshold",
-				'color': '#FF8300',
+				'key': "Orgunits",
 				'values': []
 			};
 			for (var i = 0; i < Math.min(datapoints.length, maxScatterPoints); i++) {
 				var datapoint = {
 					'x': datapoints[i].refValue,
 					'y': datapoints[i].value,
-					'z': datapoints[i].id
+					'z': datapoints[i].id,
+					'shape': datapoints[i].violation ? 'diamond' : 'circle'
 				};
 
 				if (datapoints[i].refValue > maxX) maxX = datapoints[i].refValue;
 				if (datapoints[i].value > maxY) maxY = datapoints[i].value;
 
-				if (datapoints[i].violation) chartSerieOutliers.values.push(datapoint);
-				else chartSerie.values.push(datapoint)
+				chartSerie.values.push(datapoint)
 			}
 			if (chartSerie.values.length > 0) chartSeries.push(chartSerie);
-			if (chartSerieOutliers.values.length > 0) chartSeries.push(chartSerieOutliers);
 
-			//If only one series, simply call it "Orgunits"
-			if (chartSeries.length === 1) chartSeries[0].key = 'Orgunits';
 
 			return {
 				"chartSeries": chartSeries,
@@ -1225,7 +1217,7 @@
 
 
 		function scatterLine(ratio, key, color) {
-
+			
 			return {
 				'key': key,
 				'color': color,
