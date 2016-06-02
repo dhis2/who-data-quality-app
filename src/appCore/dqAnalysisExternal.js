@@ -112,12 +112,15 @@
 					var promises = [];
 					promises.push(d2Data.fetch());										//Request data
 					promises.push(d2Meta.orgunitIDs(_ouBoundary, _ouLimit, null));	//Request list of orgunits
+					promises.push(d2Meta.objects('organisationUnitLevels', null, 'displayName,id,level', 'level:eq:' + _ouLimit, false));
 					$q.all(promises).then(function(datas) {
 						subunits = datas[1].subunits;
+						_meta.ouLimitName = datas[2][0].displayName;
 						externalConsistencyAnalysis();
 					});
 
 				}
+				
 
 
 				/**
