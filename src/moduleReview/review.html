@@ -9,10 +9,11 @@
 	</uib-progressbar>
 </div>
 
-<div ng-include="revCtrl.resultFrontpage"></div>
 
 <!--RESULT-->
 <div class="reviewResult reportPart" ng-if="revCtrl.outstandingRequests === 0 && revCtrl.totalRequests != 0">
+
+	<div ng-include="revCtrl.resultFrontpage"></div>
 
 	<!--SUMMARY-->
 	<div ng-include="revCtrl.resultSummary"></div>

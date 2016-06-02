@@ -35,7 +35,7 @@
 					<td ng-if="revCtrl.isNumber(indicator.boundaryExtreme)" class="valueCell">{{indicator.boundaryExtreme}}%</td>
 					<td ng-if="revCtrl.isNumber(indicator.boundaryExtreme)" class="valueCell">{{indicator.countExtreme}}</td>
 					<td ng-if="revCtrl.isNumber(indicator.boundaryExtreme)" class="valueCell">{{indicator.percentExtreme}}%</td>
-					<td ng-if="revCtrl.isNumber(indicator.boundaryExtreme)" class="valueCell">{{indicator.namesExtreme.join(', ')}}</td>
+					<td ng-if="revCtrl.isNumber(indicator.boundaryExtreme)">{{indicator.namesExtreme.join(', ')}}</td>
 					<td ng-if="!revCtrl.isNumber(indicator.boundaryExtreme)" colspan="5" >Not available</td>
 				</tr>
 			</tbody>
@@ -76,7 +76,7 @@
 				<td ng-if="revCtrl.isNumber(indicator.boundaryModerate)" class="valueCell">{{indicator.boundaryModerate}}%</td>
 				<td ng-if="revCtrl.isNumber(indicator.boundaryModerate)" class="valueCell">{{indicator.countModerate}}</td>
 				<td ng-if="revCtrl.isNumber(indicator.boundaryModerate)" class="valueCell">{{indicator.percentModerate}}%</td>
-				<td ng-if="revCtrl.isNumber(indicator.boundaryModerate)" class="valueCell">{{indicator.namesModerate.join(', ')}}</td>
+				<td ng-if="revCtrl.isNumber(indicator.boundaryModerate)">{{indicator.namesModerate.join(', ')}}</td>
 				<td ng-if="!revCtrl.isNumber(indicator.boundaryModerate)" colspan="4" >Not available</td>
 			</tr>
 			</tbody>
@@ -119,7 +119,7 @@
 				<td ng-if="revCtrl.isNumber(indicator.boundaryZscore)"  class="valueCell">{{indicator.boundaryZscore}}%</td>
 				<td ng-if="revCtrl.isNumber(indicator.boundaryZscore)"  class="valueCell">{{indicator.countZscore}}</td>
 				<td ng-if="revCtrl.isNumber(indicator.boundaryZscore)"  class="valueCell">{{indicator.percentZscore}}%</td>
-				<td ng-if="revCtrl.isNumber(indicator.boundaryZscore)"  class="valueCell">{{indicator.namesZscore.join(', ')}}</td>
+				<td ng-if="revCtrl.isNumber(indicator.boundaryZscore)">{{indicator.namesZscore.join(', ')}}</td>
 				<td ng-if="!revCtrl.isNumber(indicator.boundaryZscore)" colspan="4" >Not available</td>
 			</tr>
 			</tbody>

@@ -29,7 +29,7 @@
 			</tr>
 			<tr ng-repeat="dataset in revCtrl.completeness.datasets | orderBy : 'dxName'">
 				<td>{{dataset.dxName}}</td>
-				<td>{{dataset.threshold}}%</td>
+				<td>± {{dataset.threshold}}%</td>
 				<td ng-if="revCtrl.isNumber(dataset.boundaryValue)" class="valueCell">{{dataset.boundaryValue}}%</td>
 				<td ng-if="revCtrl.isNumber(dataset.boundaryValue)" class="valueCell">{{dataset.subunitsOutsideThreshold}}</td>
 				<td ng-if="revCtrl.isNumber(dataset.boundaryValue)" class="valueCell">{{dataset.subunitViolationPercentage}}%</td>
@@ -67,7 +67,7 @@
 			</tr>
 			<tr ng-repeat="indicator in revCtrl.completeness.indicators | orderBy : 'dxName'">
 				<td>{{indicator.dxName}}</td>
-				<td>{{indicator.threshold}}%</td>
+				<td>± {{indicator.threshold}}%</td>
 				<td class="valueCell">{{indicator.boundaryValue}}%</td>
 				<td class="valueCell">{{indicator.subunitsOutsideThreshold}}</td>
 				<td class="valueCell">{{indicator.subunitViolationPercentage}}%</td>
@@ -110,7 +110,7 @@
 				<td ng-if="dataset.subType === 'constant'" class="valueCell">Constant</td>
 				<td ng-if="dataset.subType === 'increasing'" class="valueCell">Increasing</td>
 				<td ng-if="dataset.subType === 'decreasing'" class="valueCell">Decreasing</td>
-				<td class="valueCell">{{dataset.criteria}}%</td>
+				<td class="valueCell">± {{dataset.criteria}}%</td>
 				<td ng-if="revCtrl.isNumber(dataset.boundaryPercentage)" class="valueCell">{{dataset.boundaryPercentage}}%</td>
 				<td ng-if="revCtrl.isNumber(dataset.boundaryPercentage)" class="valueCell">{{dataset.subunitsOutsideThreshold}}</td>
 				<td ng-if="revCtrl.isNumber(dataset.boundaryPercentage)" class="valueCell">{{dataset.subunitViolationPercentage}}%</td>

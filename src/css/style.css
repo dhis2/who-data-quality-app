@@ -8,6 +8,31 @@
 		margin: 3px
 	}
 
+	.bigChart {
+		width: 860px;
+		height: 300px;
+	}
+
+	.smallChart {
+		width: 422px;
+		height: 300px;
+	}
+
+	.tinyChart {
+		height: 150px;
+		width: 300px;
+	}
+
+	.relationChart {
+		width: 556px;
+		height: 300px;
+	}
+
+	.relationChartBig {
+		width: 556px;
+		height: 389px;
+	}
+
 
 	/* TABLES */
 	.valueCell {
@@ -115,30 +140,7 @@
 
 
 	/* CHART */
-	.bigChart {
-		height: 400px;
-		width: 100%;
-	}
 
-	.smallChart {
-		height: 300px;
-		width: 100%;
-	}
-
-	.tinyChart {
-		height: 150px;
-		width: 100%;
-	}
-
-	.relationChart {
-		height: 300px;
-		width: 100%;
-	}
-
-	.relationChartBig {
-		width: 100%;
-		height: 424px;
-	}
 
 	/* TABLES */
 	.table tbody>tr>td.vert-align {
@@ -196,34 +198,6 @@
 	.fullWidth {
 		width: 100%;
 	}
-
-
-	/* CHARTS */
-	.bigChart {
-		width: 860px;
-		height: 300px;
-	}
-
-	.smallChart {
-		width: 422px;
-		height: 300px;
-	}
-
-	.tinyChart {
-		height: 150px;
-		width: 300px;
-	}
-
-	.relationChart {
-		width: 556px;
-		height: 300px;
-	}
-
-	.relationChartBig {
-		width: 556px;
-		height: 389px;
-	}
-
 
 
 	/* TABLES */

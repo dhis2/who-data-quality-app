@@ -145,6 +145,8 @@
 										self.consistency.data[i].trendChartOptions = data.opts;
 
 										visualisationService.setChartLegend(self.consistency.data[i].trendChartOptions, false);
+										visualisationService.setChartMargins(self.consistency.data[i].trendChartOptions, null, null, null, 60);
+										self.consistency.data[i].trendChartOptions.chart.xAxis.tickValues = [0, 1, 2, 3];
 									}
 
 								}
@@ -432,7 +434,9 @@
 			interpretationToParagraph();
 
 			//Give charts time to finish animation
-			$timeout(function () { window.print(); }, 5000);
+			$timeout(function () {
+				window.print();
+			}, 1000);
 
 		}
 
