@@ -904,19 +904,18 @@
 	    	var toolTip = function(point) {
 				var data = result.subunitDatapoints;
 
-				if (!point.point.hasOwnProperty('z')) {
+				if (!point.data.hasOwnProperty('z')) {
 					return '<h3>Threshold</h3>' +
 						'<p>0 % dropout</p>';
 				}
 
-				var rate = mathService.round(100*(data[point.point.x].value-data[point.point.x].refValue)/data[point.point.x].value,1);
-				if (data[point.point.x].value === data[point.point.x].refValue) rate = 0; //Deal with cases where both are 0
+				var rate = mathService.round(100*mathService.dropOutRate(data[point.data.x].value, data[point.data.x].refValue), 2);
 				if (isFinite(rate)) {
-	    	    	return '<h3>' + data[point.point.x].name + '</h3>' +
+	    	    	return '<h3>' + data[point.data.x].name + '</h3>' +
 	    	        '<p>' +  rate  + '% dropout</p>';
 				}
 				else {
-					return '<h3>' + data[point.point.x].name + '</h3>' +
+					return '<h3>' + data[point.data.x].name + '</h3>' +
 						'<p>Full negative dropout.</p>';
 				}
 	    	};
@@ -927,70 +926,58 @@
 					'key': "Orgunits",
 					'values': []
 				};
-				var minVal = 0.9;
-				var maxVal = 2;
+				var minVal = -10;
+				var maxVal = 50;
 				var point, value;
 				for (var i = 0; i < result.subunitDatapoints.length; i++) {
 					point = result.subunitDatapoints[i];
-					value = point.value / point.refValue;
-					if (point.value === point.refValue) value = 1; //Deal with cases where both are 0
-
+					value = 100*mathService.dropOutRate(point.value, point.refValue);
 
 					if (value > maxVal) maxVal = value;
 					else if (value < minVal) minVal = value;
 
-					chartSerie.values.push({
+					var bar = {
 						'x': i,
 						'y': mathService.round(value, 2),
 						'z': point.id
-					});
+					};
+
+					if (point.violation) {
+						bar.color = 'red';
+					}
+
+					chartSerie.values.push(bar);
 				}
 
 				chartSeries.push(chartSerie);
-				chartSeries.push({
-					'key': "Threshold (0% dropout)",
-					'color': '#B0B0B0',
-					'values': [
-						{
-						'x': 0,
-						'y': 1,
-						'size': 0
-						},{
-							'x': i-1,
-							'y': 1,
-							'size': 0
-						}
-						]
-				});
 			}
 
-			//Keep max chart y axis to less than 10
-			maxVal = Math.ceil(Math.min(maxVal, 10), 1);
-	    	var chartOptions = {
-	    	   	"chart": {
-	    	        "type": "lineChart",
-	    	        "height": 300,
-	    	        "margin": {
-	    	          "top": 10,
-	    	          "right": 30,
-	    	          "bottom": 80,
-	    	          "left": 100
-	    	        },
-	    	        "xAxis": {
-	    	          "showMaxMin": false,
-	    	          'axisLabel': "Orgunits"
-	    	        },
-	    	        "yAxis": {
-	    	          "axisLabel": "Ratio"
-	    	        },
+			minVal = minVal < -100 ? -100 : getRange(minVal);
+			maxVal = maxVal >= 100 ? 100 : getRange(maxVal);
+			var chartOptions = {
+				"chart": {
+					"type": "multiBarChart",
+					"height": 300,
+					"margin": {
+						"top": 20,
+						"right": 20,
+						"bottom": 10,
+						"left": 80
+					},
+					"forceY": [getRange(minVal), getRange(maxVal)],
+					"showXAxis": false,
+					"yAxis": {
+						"axisLabel": "Dropout rate (%)",
+						"tickFormat": d3.format('d')
+					},
 					'tooltip': {
 						enabled: true,
 						contentGenerator: toolTip
 					},
-	    	        'showLegend': true,
-	    	      	'yDomain': [0,maxVal],
+					'showLegend': false,
+					'showControls': false,
 					'transitionDuration': 100
-	    	    }
+				}
 	    	};
 	    	
 	    	if (callback) {
@@ -1125,7 +1112,7 @@
 		function getRange(value) {
 
 			//Else, get number of digits
-			var digits = parseInt(value).toString().length;
+			var digits = parseInt(Math.abs(value)).toString().length;
 
 			var factor;
 			if (digits > 2) {
@@ -1217,7 +1204,7 @@
 
 
 		function scatterLine(ratio, key, color) {
-			
+
 			return {
 				'key': key,
 				'color': color,
