@@ -361,7 +361,7 @@
 					}
 
 
-					var thresholdRatio = _comparison === '_ou' ? boundaryRatio : 1;
+					var thresholdRatio = _comparison === 'ou' ? boundaryRatio : 1;
 
 					for (var j = 0; j < subunits.length; j++) {
 						var subunit = subunits[j];
