@@ -47,12 +47,12 @@
 					<td class="valueCell">{{relation.boundaryPercentage}}%</td>
 				</tr>
 				<tr >
-					<td>Number of {{revCtrl.selectedOrgunit.level.displayName}} with divergent score</td>
+					<td>Number of {{relation.meta.ouLimitName}} with divergent score</td>
 					<td ng-if="relation.subunitDatapoints.length > 0" class="valueCell">{{relation.subunitsOutsideThreshold}}</td>
 					<td ng-if="relation.subunitDatapoints.length === 0" class="valueCell">Not available</td>
 				</tr>
 				<tr>
-					<td>Percent of {{revCtrl.selectedOrgunit.level.displayName}} with divergent score</td>
+					<td>Percent of {{relation.meta.ouLimitName}} with divergent score</td>
 					<td ng-if="relation.subunitDatapoints.length > 0" class="valueCell">{{relation.subunitViolationPercentage}}%</td>
 					<td ng-if="relation.subunitDatapoints.length === 0" class="valueCell">Not available</td>
 				</tr>
