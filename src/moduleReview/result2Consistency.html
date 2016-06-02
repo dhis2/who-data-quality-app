@@ -151,7 +151,7 @@
 				</table>
 			</div>
 
-			<div class="inline relationTable halfWidth">
+			<div class="inline relationTable">
 				<table class="table tablePrint table-bordered table-condensed" style="margin-bottom: 5px">
 					<tr bgcolor="#f9f9f9"><th colspan="2">{{indicator.dxNameA}}</th></tr>
 					<tr>
@@ -182,7 +182,7 @@
 						<td>Percent of {{revCtrl.selectedOrgunit.level.displayName}} with divergent score</td>
 						<td ng-if="revCtrl.isNumber(indicator.boundaryPercentage)" class="valueCell">{{indicator.subunitViolationPercentage}}%</td>
 					</tr>
-					<tr class="bigRow">
+					<tr class="bigRow1">
 						<td colspan="2">{{indicator.subunitViolationNames.join(', ')}}</td>
 					</tr>
 				</table>
@@ -192,7 +192,7 @@
 					<nvd3 options='indicator.trendChartOptions' data='indicator.trendChartData'></nvd3>
 				</div>
 			</div>
-			<div class="halfWidth inline" style="float: right">
+			<div class="inline" style="float: right">
 				<div class="dottedBox relationChartBig">
 					<nvd3 options='indicator.chartOptions' data='indicator.chartData'></nvd3>
 				</div>
@@ -225,7 +225,7 @@
 			</table>
 		</div>
 
-		<div class="inline relationTable halfWidth" style="min-height: 300px;">
+		<div class="inline relationTable">
 			<table class="table tablePrint table-bordered table-condensed">
 				<tr bgcolor="#f9f9f9"><th colspan="2">{{revCtrl.relationName(relation.relationCode)}}</th></tr>
 				<tr>
@@ -250,12 +250,12 @@
 					<td>Percent of {{revCtrl.selectedOrgunit.level.displayName}} with divergent score</td>
 					<td ng-if="revCtrl.isNumber(relation.boundaryPercentage)" class="valueCell">{{relation.subunitViolationPercentage}}%</td>
 				</tr>
-				<tr class="bigRow">
+				<tr class="bigRow3">
 					<td colspan="2">{{relation.subunitViolationNames.join(', ')}}</td>
 				</tr>
 			</table>
 		</div>
-		<div class="halfWidth inline" style="float: right">
+		<div class="inline" style="float: right">
 			<div class="dottedBox relationChart">
 				<nvd3 options='relation.chartOptions' data='relation.chartData'></nvd3>
 			</div>

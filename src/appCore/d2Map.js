@@ -1043,7 +1043,7 @@
 							'thresholdDescription': '% that B can be greater than A.'
 						},
 						{
-							'displayName': 'Dropout from A to B',
+							'displayName': 'Dropout rate',
 							'code': 'do',
 							'description':  "Dropout rate. A should be greater than B.",
 							'thresholdDescription': 'Should not be negative'

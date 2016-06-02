@@ -245,9 +245,7 @@
 						self.outstandingRequests--;
 
 						if (data.errors) self.remarks = self.remarks.concat(data.errors);
-
-						console.log(data);
-
+						
 						self.external.push(data.result);
 						visualisationService.makeExternalConsistencyChart(null, data.result);
 
@@ -420,46 +418,15 @@
 
 		self.doPrint = function () {
 
-			//Workaround for nvd3 charts. print css does not give time for charts to update
-			angular.element('.bigChart').width('860px');
-			angular.element('.bigChart').height('300px');
-			angular.element('.smallChart').width('422px');
-			angular.element('.tinyChart').width('300px');
-			angular.element('.relationChart').width('556px');
-			angular.element('.relationChartBig').width('556px');
-
-
-			window.dispatchEvent(new Event('resize'));
-
 			interpretationToParagraph();
 
 			//Give charts time to finish animation
-			$timeout(function () {
-				window.print();
-			}, 1000);
+			window.print();
 
 		}
 
 
 		function printDone() {
-
-			//Remove the chart scaling
-			var classes = ['.bigChart', '.smallChart', '.tinyChart', '.relationTable', '.relationChart', '.relationChartBig'];
-			for (var i = 0; i < classes.length; i++) {
-				var elements = angular.element(classes[i]);
-				for (var j = 0; j < elements.length; j++) {
-					elements[j].style.width = null;
-
-					if (classes[i] === '.bigChart') {
-						elements[j].style.height = null;
-					}
-				}
-			}
-
-			angular.element('.tablePrint').addClass('table');
-			angular.element('.tablePrint').addClass('table-bordered');
-
-			window.dispatchEvent(new Event('resize'));
 
 			interpretationFromParagraph();
 		}

@@ -40,7 +40,7 @@
 				</tbody>
 			</table>
 		</div>
-		<div class="inline relationTable halfWidth" style="min-height: 300px">
+		<div class="inline relationTable" style="min-height: 300px">
 			<table class="table tablePrint table-bordered table-condensed">
 				<tr bgcolor="#f9f9f9"><th colspan="2">{{denominator.meta.relation.name}}</th></tr>
 				<tr>
@@ -59,12 +59,12 @@
 					<td>% {{revCtrl.selectedOrgunit.level.displayName}} with poor score</td>
 					<td>{{denominator.subunitViolationPercentage}}%</td>
 				</tr>
-				<tr class="biggerRow" ng-if="denominator.subunitViolationNames.length > 0">
+				<tr class="bigRow4" ng-if="denominator.subunitViolationNames.length > 0">
 					<td colspan="2">{{denominator.subunitViolationNames.join(', ')}}</td>
 				</tr>
 			</table>
 		</div>
-		<div class="halfWidth inline" style="float: right">
+		<div class="inline" style="float: right">
 			<div class="dottedBox relationChart">
 				<nvd3 options='denominator.chartOptions' data='denominator.chartData'></nvd3>
 			</div>

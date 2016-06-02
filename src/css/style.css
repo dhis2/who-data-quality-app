@@ -1,21 +1,13 @@
 @media screen,print {
 	/* CHARTS */
-	.chartTitle {
-		margin: 5px;
-	}
-
-	.chartHolder {
-		margin: 3px
-	}
-
 	.bigChart {
 		width: 860px;
 		height: 300px;
 	}
 
-	.smallChart {
-		width: 422px;
-		height: 300px;
+	.bulletChart {
+		height: 60px;
+		width: 556px;
 	}
 
 	.tinyChart {
@@ -30,7 +22,7 @@
 
 	.relationChartBig {
 		width: 556px;
-		height: 389px;
+		height: 424px;
 	}
 
 
@@ -119,10 +111,15 @@
 
 @media screen {
 
+	.reviewResult {
+		min-width: 984px;
+	}
+
 	/* MISC */
 	.onlyPrint {
 		display: none !important;
 	}
+
 
 	.mainView {
 		width: 100%;
@@ -151,12 +148,25 @@
 	  cursor: pointer
 	}
 
-	.bigRow {
+	.relationTable {
+		width: calc(100% - 560px);
+		min-height: 300px;
+	}
+
+	.bigRow1 {
 		height: 51px;
 	}
 
-	.biggerRow {
+	.bigRow2 {
 		height: 82px;
+	}
+
+	.bigRow3 {
+		height: 113px;
+	}
+
+	.bigRow4 {
+		height: 144px;
 	}
 
 
@@ -223,14 +233,24 @@
 	
 	.relationTable {
 		width: 300px;
+		min-height: 300px;
 	}
 
-	.bigRow {
-		height: 51px;
+
+	.bigRow1 {
+		height: 86px;
 	}
 
-	.biggerRow {
+	.bigRow2 {
 		height: 117px;
+	}
+
+	.bigRow3 {
+		height: 143px;
+	}
+
+	.bigRow4 {
+		height: 169px;
 	}
 
 }
