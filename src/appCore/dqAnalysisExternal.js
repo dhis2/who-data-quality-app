@@ -103,22 +103,47 @@
 					_meta = request.meta;
 					_deferred = request.deferred;
 
-					//TODO: Checking that boundary is not below level where survey data available?
+					d2Meta.object('organisationUnits', _ouBoundary, 'level,displayName').then(function(data) {
 
-					//Add request for boundary data
-					d2Data.addRequest([_dataIdExternal, _dataIdNumerator, _dataIdDenominator], [_pe], _ouBoundary, null, null);
-					d2Data.addRequest([_dataIdExternal, _dataIdNumerator, _dataIdDenominator], [_pe], _ouBoundary, _ouLimit, null);
+						if (data.level > _ouLimit) {
+							var result = {
+								"failed": true,
+								"pe": _pe,
+								"ouLimit": _ouLimit,
+								"criteria": _criteria,
+								"meta": _meta
+							};
 
-					var promises = [];
-					promises.push(d2Data.fetch());										//Request data
-					promises.push(d2Meta.orgunitIDs(_ouBoundary, _ouLimit, null));	//Request list of orgunits
-					promises.push(d2Meta.objects('organisationUnitLevels', null, 'displayName,id,level', 'level:eq:' + _ouLimit, false));
-					$q.all(promises).then(function(datas) {
-						subunits = datas[1].subunits;
-						_meta.ouLimitName = datas[2][0].displayName;
-						externalConsistencyAnalysis();
+							var error = {
+								'severity': "error",
+								'type': "External consistency",
+								'item': _meta.name,
+								'msg': "Not available within " + data.displayName
+							};
+
+							_deferred.resolve({'result': result, 'errors': [error]});
+
+
+							//Get next request
+							_pendingRequest = false;
+							requestData();
+						}
+						else {
+							//Add request for boundary data
+							d2Data.addRequest([_dataIdExternal, _dataIdNumerator, _dataIdDenominator], [_pe], _ouBoundary, null, null);
+							d2Data.addRequest([_dataIdExternal, _dataIdNumerator, _dataIdDenominator], [_pe], _ouBoundary, _ouLimit, null);
+
+							var promises = [];
+							promises.push(d2Data.fetch());									//Request data
+							promises.push(d2Meta.orgunitIDs(_ouBoundary, _ouLimit, null));	//Request list of orgunits
+							promises.push(d2Meta.objects('organisationUnitLevels', null, 'displayName,id,level', 'level:eq:' + _ouLimit, false));
+							$q.all(promises).then(function(datas) {
+								subunits = datas[1].subunits;
+								_meta.ouLimitName = datas[2][0].displayName;
+								externalConsistencyAnalysis();
+							});
+						}
 					});
-
 				}
 				
 

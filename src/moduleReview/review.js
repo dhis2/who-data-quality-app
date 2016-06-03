@@ -245,9 +245,10 @@
 						self.outstandingRequests--;
 
 						if (data.errors) self.remarks = self.remarks.concat(data.errors);
-						
-						self.external.push(data.result);
-						visualisationService.makeExternalConsistencyChart(null, data.result);
+						if (!data.result.hasOwnProperty('failed')) {
+							self.external.push(data.result);
+							visualisationService.makeExternalConsistencyChart(null, data.result);
+						}
 
 					});
 
