@@ -118,7 +118,7 @@
 								'severity': "error",
 								'type': "External consistency",
 								'item': _meta.name,
-								'msg': "Not available within " + data.displayName
+								'msg': "Not available for " + data.displayName
 							};
 
 							_deferred.resolve({'result': result, 'errors': [error]});
