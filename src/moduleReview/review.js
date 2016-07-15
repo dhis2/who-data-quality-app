@@ -186,7 +186,7 @@
 				dataAnalysisService.indicatorOutlier(receiveDataOutliers, indicator, periods, ouBoundary, ouLevel);
 				
 				indicatorIDsForConsistencyChart.push(indicator.dataID);
-				self.outstandingRequests += 4;
+				self.outstandingRequests += 4+5;
 	  		}
 
 	  		//3 Indicator relations
@@ -383,7 +383,7 @@
 			self.completeness.indicatorsDetailed.push(result);
 
 			//if (errors) self.remarks = self.remarks.concat(errors);
-			self.outstandingRequests--;
+			self.outstandingRequests -= 6;
 		}
 	  	
 

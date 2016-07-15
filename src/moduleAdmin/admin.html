@@ -169,6 +169,7 @@
 					<tr ng-class="{danger: !dataSet.threshold}" ng-repeat="dataSet in admCtrl.dataSets  | orderBy:['name']:false">
 						<td class="vert-align">{{dataSet.name}}</td>
 						<td align="middle" class="vert-align"><input ng-disabled="!admCtrl.isAdmin" style="text-align: right;" type="number" ng-model="dataSet.threshold" min="0" max="100"/></td>
+						<td align="middle" class="vert-align"><input ng-disabled="!admCtrl.isAdmin" style="text-align: right;" type="number" ng-model="dataSet.timelinessThreshold" min="0" max="100"/></td>
 						<td align="middle" class="vert-align"><input ng-disabled="!admCtrl.isAdmin" style="text-align: right;" type="number" ng-model="dataSet.consistencyThreshold" min="0" max="100"/></td>
 						<td align="middle" class="vert-align">
 							<select ng-disabled="!admCtrl.isAdmin" ng-model="dataSet.trend">
