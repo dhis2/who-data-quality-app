@@ -117,13 +117,15 @@
 			</div>
 			<div style="display: inline-block;"><label>From</label>
 			<div style="min-height:290px;">
-			        <uib-datepicker ng-model="aCtrl.date.startDate" class="well well-sm" starting-day="1" max-date="aCtrl.date.endDate"></uib-datepicker>
+			        <uib-datepicker ng-model="aCtrl.date.startDate" ng-change="aCtrl.datepickerOptionsTo.minDate = aCtrl.date.startDate;" class="well well-sm" datepicker-options="aCtrl.datepickerOptionsFrom" ></uib-datepicker>
 			</div></div>
+
 			<div style="display: inline-block;"><label>To</label>
 			<div style="min-height:290px;">
-			        <uib-datepicker ng-model="aCtrl.date.endDate" min-date="aCtrl.date.startDate" max-date="aCtrl.currentDate" class="well well-sm" starting-day="1"></uib-datepicker>
+			        <uib-datepicker ng-model="aCtrl.date.endDate" class="well well-sm" datepicker-options="aCtrl.datepickerOptionsTo"></uib-datepicker>
 			</div>
 			</div>
+
 		</div>
     </uib-accordion-group>
     

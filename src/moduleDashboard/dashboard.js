@@ -25,6 +25,7 @@
 		self.orgunitLevels = [];
 
 
+
         /** ===== ANALYSIS ===== */
         
         /** COMPLETENESS */
@@ -469,30 +470,9 @@
       	/** ===== INIT ===== */
       	function init() {
 
-			if (angular.element('.mainView').width() > 1280) {
-				self.showParameters = true;
-			}
-			else {
-				self.showParameters = false;
-			}
-
-			self.widthChanged = [];
-			for (var i = 0; i < 3; i++) {
-				self.widthChanged[i] = false;
-			}
-
-			self.setWindowWidth();
-      		$( window ).resize(function() {
-      			self.setWindowWidth();
-				$scope.$apply();
-      		});
-
-      		
       		self.group = {displayName: '[ Core ]', code: 'core'};
 			self.groups = d2Map.configuredGroups();
 			self.groups.unshift(self.group);
-
-			self.selectedTab = 0;
 
 			d2Meta.objects('organisationUnitLevels', null, 'displayName,id,level').then(function(data) {
 				self.orgunitLevels = data;
@@ -513,7 +493,6 @@
 			});
 
 
-
 			self.endDate = moment();
 			if (self.endDate.date() > 7) {
 				self.endDate.subtract(new Date().getDate(), 'days');
@@ -523,9 +502,41 @@
 				self.endDate.subtract(1, 'months');
 			}
 			self.startDate = moment(self.endDate).subtract(12, 'months').add(1, 'day');
-			self.maxDate = self.endDate;
+
+			self.datepickerOptions.maxDate = self.endDate.toDate();
       	}
 
+
+      	function uiInit() {
+			if (angular.element('.mainView').width() > 1280) {
+				self.showParameters = true;
+			}
+			else {
+				self.showParameters = false;
+			}
+
+			self.widthChanged = [];
+			for (var i = 0; i < 3; i++) {
+				self.widthChanged[i] = false;
+			}
+
+			self.setWindowWidth();
+			$( window ).resize(function() {
+				self.setWindowWidth();
+				$scope.$apply();
+			});
+
+			self.selectedTab = 0;
+
+			self.datepickerOptions = {
+				minMode: 'month',
+				datepickerMode: 'month'
+			};
+
+		}
+
+
+		uiInit();
 		if (d2Map.ready()) {
 			init();
 		}

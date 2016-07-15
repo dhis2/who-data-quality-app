@@ -55,6 +55,19 @@
 			self.status = {
 				isFirstOpen: true
 			};
+
+			//Datepicker settings
+			self.datepickerOptionsFrom = {
+				minMode: 'month',
+				datepickerMode: 'month',
+				maxDate: self.date.endDate.toDate()
+			};
+			self.datepickerOptionsTo = {
+				minMode: 'month',
+				datepickerMode: 'month',
+				minDate: self.date.startDate.toDate(),
+				maxDate: self.currentDate
+			};
 		}
 
 		/** -- PARAMETER SELECTION -- */
