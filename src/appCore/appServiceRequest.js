@@ -47,7 +47,10 @@
 				else {
 					deferred.resolve(null);
 				}
-			});
+			},
+				function(error) {
+					deferred.reject(error);
+				});
 
 			return deferred.promise;
 		};

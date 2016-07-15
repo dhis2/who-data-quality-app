@@ -15,11 +15,13 @@
 					userOrgunitsHierarchy: userOrgunitsHierarchy,
 					userAnalysisOrgunits: userAnalysisOrgunits,
 					indicatorDataElements: indicatorDataElements,
+					indicatorDataElementIDsNumerator: indicatorDataElementIDsNumerator,
 					indicatorDataSets: indicatorDataSets,
 					indicatorPeriodType: indicatorPeriodType,
 					indicatorFormulaText: indicatorFormulaText,
 					dataElementOperands: dataElementOperandsFromIDs,
-					dataElementOrIndicator: dataElementOrIndicator
+					dataElementOrIndicator: dataElementOrIndicator,
+					version: version
 				};
 
 
@@ -421,6 +423,31 @@
 						function(error){
 							console.log("d2meta error: indicatorDataElements(id)");
 							console.log(error);
+							deferred.resolve([]);
+						}
+					);
+
+					return deferred.promise;
+				}
+
+				function indicatorDataElementIDsNumerator(id) {
+					var deferred = $q.defer();
+
+					var requestURL = '/api/indicators/' + id + '.json?';
+					requestURL += 'fields=displayName,id,numerator,denominator';
+
+					requestService.getSingleData(requestURL).then(
+						function(data) {
+							var indicator = data;
+							var dataElementIDs = d2Utils.idsFromIndicatorFormula(indicator.numerator, '', true);
+
+							deferred.resolve(dataElementIDs);
+
+						},
+						function(error){
+							console.log("d2meta error: indicatorDataElements(id)");
+							console.log(error);
+							deferred.resolve([]);
 						}
 					);
 
@@ -593,6 +620,25 @@
 						},
 						function(error){
 							console.log("d2meta error: defaultCategoryOptionCombo()");
+							console.log(error);
+						}
+					);
+
+					return deferred.promise;
+				}
+
+
+				/** ===== SYSTEM ===== */
+				function version() {
+					var deferred = $q.defer();
+
+					var requestURL = '/api/system/info.json';
+					requestService.getSingleData(requestURL).then(
+						function(data) {
+							deferred.resolve(parseInt(data.version.split('.')[1]));
+						},
+						function(error){
+							console.log("d2meta error: version()");
 							console.log(error);
 						}
 					);

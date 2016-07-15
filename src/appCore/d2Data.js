@@ -38,7 +38,7 @@
 				 * @param ouLevel		Optional - level (int) for orgunit disaggregation.
 				 * @param ouGroup		Optional - group (id) for orgunit disaggregation
 				 */
-				function addRequest(dx, pe, ouBoundary, ouLevel, ouGroup) {
+				function addRequest(dx, pe, ouBoundary, ouLevel, ouGroup, aggregationType) {
 
 					_newRequests = d2Utils.arrayMerge(_newRequests,
 						makeRequestURLs(
@@ -46,7 +46,8 @@
 						d2Utils.toArray(pe),
 						d2Utils.toArray(ouBoundary),
 						ouLevel,
-						ouGroup
+						ouGroup,
+						aggregationType
 					));
 
 				};
@@ -79,7 +80,7 @@
 					if (co === undefined) co = null;
 
 					//Make it possible to work with both de and co separately, and in . format
-					if (de.length > 11) {
+					if (de.length === 23) {
 						co = de.substr(12,11);
 						de = de.substr(0,11);
 					}
@@ -187,9 +188,10 @@
 				 * @param ouBoundary	Array of boundary orgunit IDs
 				 * @param ouLevel		Orgunit level for disaggregation
 				 * @param ouGroup		Orgunit group for disaggregation
+				 * @param aggregationType Aggregation type for the request. Null = default
 				 * @returns {Array}		Array of requests
 				 */
-				function makeRequestURLs(dxAll, pe, ouBoundary, ouLevel, ouGroup) {
+				function makeRequestURLs(dxAll, pe, ouBoundary, ouLevel, ouGroup, aggregationType) {
 
 					var dx = [];
 					var dxCo = [];
@@ -199,7 +201,7 @@
 						if (!dataID) {
 							continue;
 						}
-						else if (dataID.length != 11) {
+						else if (dataID.length === 23) {
 							dxCo.push(dataID.substr(0, 11));
 						}
 						else {
@@ -220,6 +222,8 @@
 						requestURL += ouDisaggregation;
 						requestURL += '&dimension=pe:' + pe.join(';');
 						requestURL + '&displayProperty=NAME';
+						if (aggregationType) requestURL += '&aggregationType=' + aggregationType;
+
 
 						requestURLs.push(requestURL);
 					}
@@ -232,6 +236,7 @@
 						requestURL += ouDisaggregation;
 						requestURL += '&dimension=pe:' + pe.join(';');
 						requestURL + '&displayProperty=NAME';
+						if (aggregationType) requestURL += '&aggregationType=' + aggregationType;
 
 						requestURLs.push(requestURL);
 					}
