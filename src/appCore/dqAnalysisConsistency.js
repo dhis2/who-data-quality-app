@@ -295,7 +295,7 @@
 					}
 					//Check if we have data for boundary orgunit for reference periods
 					else if (!d2Utils.isNumber(boundaryValueB)) {
-						errors.push(makeError(_dxA, _pe, _ouBoundary));
+						errors.push(makeError(_dxA, _peRef, _ouBoundary));
 					}
 					//If we have data for both, store the raw data, ratio and percentage
 					else {
@@ -526,18 +526,17 @@
 				function makeError(dx, pe, ou) {
 
 					var error = {};
-
+					error.item = d2Data.name(dx);
 					error.severity = "warning";
-					error.item = d2Data.name[dx];
 
 					if (_type === 'data') {
 						error.type = "Consistency betweeen indicators";
-						error.msg = "Missing data: consistency analysis " + d2Data.name(_dxA) + "/" + d2Data.name(_dxB) +
+						error.msg = "Consistency analysis " + d2Data.name(_dxA) + "/" + d2Data.name(_dxB) +
 							" in " + pe + " skipped for " + d2Data.name(ou) + " due to missing data for " + d2Data.name(dx) + ".";
 					}
 					else {
 						error.type = "Consistency over time";
-						error.msg = "Missing data: consistency analysis " + d2Data.name(_dxA) + " for " + _pe + " vs " +
+						error.msg = "Consistency analysis for " + _pe + " vs " +
 							_peRef.join(', ') + " skipped for " + d2Data.name(ou) + " due to missing data.";
 					}
 
