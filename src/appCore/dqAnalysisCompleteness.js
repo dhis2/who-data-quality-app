@@ -122,15 +122,11 @@
 							subunits = datas[1].subunits;
 							subunitQueue = angular.copy(subunits);
 
-							d2Meta.indicatorDataElementIDsNumerator(_dataID).then(function(data) {
-								if (data && data.length > 0) completenessIDs = data;
-								else completenessIDs = [_dataID];
+							completenessIDs = [_dataID];
 
+							//Process data
+							dataCompletenessFacilityData();
 
-								//Process data
-								dataCompletenessFacilityData();
-
-							});
 
 						});
 
@@ -151,8 +147,16 @@
 
 					var boundaryValues = totalReports;
 					var boundaryExpected = d2Data.value(_dataSetID + '.EXPECTED_REPORTS', _pe, _ouBoundary, null);
-					var boundaryCompletenessRatio = boundaryValues/boundaryExpected;
-					var boundaryCompletenessPercentage = 100*boundaryCompletenessRatio;
+
+					var boundaryCompletenessRatio, boundaryCompletenessPercentage;
+					if (!d2Utils.isNumber(boundaryExpected) || !d2Utils.isNumber(boundaryValues)) {
+						boundaryCompletenessRatio = null;
+						boundaryCompletenessPercentage = null;
+					}
+					else {
+						boundaryCompletenessRatio = boundaryValues/boundaryExpected;
+						boundaryCompletenessPercentage = 100*boundaryCompletenessRatio;
+					}
 					result.boundaryValues = boundaryValues;
 					result.boundaryValuesExpected = boundaryExpected;
 					result.boundaryPercentage = mathService.round(boundaryCompletenessPercentage, 1);
@@ -256,9 +260,6 @@
 						requestURL += 'dimension=ou:' + current + ';LEVEL-' + facilityLevel;
 						requestURL += '&dimension=pe:' + _peRef.join(';');
 						requestURL += '&dimension=dx:' + completenessIDs.join(';');
-						requestURL += '&dimension=co';
-						requestURL += '&aggregationType=COUNT';
-
 
 						requestService.getSingle(requestURL).then(function(response) {
 							var facilityIDs = {};
