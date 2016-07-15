@@ -106,7 +106,7 @@
 			<tfoot>
 				<tr height="81px">
 					<td colspan="{{resultCtrl.totalColumns}}">
-						<pagination ng-if="resultCtrl.totalRows > resultCtrl.pageSize" total-items="resultCtrl.totalRows" items-per-page="resultCtrl.pageSize" max-size="5" ng-model="resultCtrl.currentPage" class="pagination-sm pull-right" boundary-links="true" rotate="true"></pagination>
+						<uib-pagination ng-if="resultCtrl.totalRows > resultCtrl.pageSize" total-items="resultCtrl.totalRows" items-per-page="resultCtrl.pageSize" max-size="5" ng-model="resultCtrl.currentPage" class="pagination-sm pull-right" boundary-links="true" rotate="true"></uib-pagination>
 					</td>
 				</tr>
 			</tfoot>
