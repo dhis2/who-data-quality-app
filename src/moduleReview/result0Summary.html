@@ -43,11 +43,49 @@
 		</div>
 
 		<div class="noBreak">
+
 			<table class="table tablePrint table-bordered table-condensed noBreak">
 				<tbody>
 				<tr bgcolor="#f9f9f9">
 					<th colspan="4">
-						1b: Completeness of indicator data
+						1b: Timeliness of facility reporting
+					</th>
+				</tr>
+				<tr>
+					<td colspan="4">
+						<em>The percentage of expected reports that have been entered and completed on time.</em>
+					</td>
+					</td>
+				<tr bgcolor="#f9f9f9">
+					<th rowspan="2" width="275">Dataset</th>
+					<th rowspan="2" width="175">Overall score</th>
+					<th colspan="2" width="175">{{revCtrl.selectedOrgunit.level.displayName}} with divergent score</th>
+				</tr>
+				<tr bgcolor="#f9f9f9">
+					<th width="175">Number</th>
+					<th width="175">Percent</th>
+				</tr>
+				<tr ng-if="revCtrl.completeness.timeliness.length > 0" ng-repeat="dataset in revCtrl.completeness.timeliness | orderBy : 'dxName'">
+					<td>{{dataset.dxName}}</td>
+					<td ng-if="revCtrl.isNumber(dataset.boundaryValue)" class="valueCell">{{dataset.boundaryValue}}%</td>
+					<td ng-if="revCtrl.isNumber(dataset.boundaryValue)" class="valueCell">{{dataset.subunitsOutsideThreshold}}</td>
+					<td ng-if="revCtrl.isNumber(dataset.boundaryValue)" class="valueCell">{{dataset.subunitViolationPercentage}}%</td>
+					<td ng-if="!revCtrl.isNumber(dataset.boundaryValue)" colspan="3">Not available</td>
+				</tr>
+				<tr ng-if="revCtrl.completeness.timeliness.length === 0">
+					<td colspan="6">Not available</td>
+				</tr>
+
+				</tbody>
+			</table>
+		</div>
+
+		<div class="noBreak" ng-if="revCtrl.completeness.indicators.length > 0">
+			<table class="table tablePrint table-bordered table-condensed noBreak">
+				<tbody>
+				<tr bgcolor="#f9f9f9">
+					<th colspan="4">
+						1c: Completeness of indicator data
 					</th>
 				</tr>
 				<tr>
@@ -75,12 +113,46 @@
 			</table>
 		</div>
 
+
+		<div class="noBreak" ng-if="revCtrl.completeness.indicatorsDetailed.length > 0">
+			<table class="table tablePrint table-bordered table-condensed noBreak">
+				<tbody>
+				<tr bgcolor="#f9f9f9">
+					<th colspan="4">
+						1c: Completeness of indicator data
+					</th>
+				</tr>
+				<tr>
+					<td colspan="4">
+						<em>Reports where values are not missing. If zeros are not stored, zeros are counted as missing.</em>
+					</td>
+				</tr>
+				<tr bgcolor="#f9f9f9">
+					<th rowspan="2" width="275">Indicator</th>
+					<th rowspan="2" width="175">Overall score</th>
+					<th colspan="2" width="175">{{revCtrl.selectedOrgunit.level.displayName}} with divergent score</th>
+				</tr>
+				<tr bgcolor="#f9f9f9">
+					<th width="175">Number</th>
+					<th width="175">Percent</th>
+				</tr>
+				<tr ng-repeat="indicator in revCtrl.completeness.indicatorsDetailed | orderBy : 'dataName'">
+					<td>{{indicator.dataName}}</td>
+					<td ng-if="revCtrl.isNumber(indicator.boundaryPercentage)" class="valueCell">{{indicator.boundaryPercentage}}%</td>
+					<td ng-if="revCtrl.isNumber(indicator.boundaryPercentage)" class="valueCell">{{indicator.subunitsOutsideThreshold}}</td>
+					<td ng-if="revCtrl.isNumber(indicator.boundaryPercentage)" class="valueCell">{{indicator.subunitViolationPercentage}}%</td>
+					<td ng-if="!revCtrl.isNumber(indicator.boundaryPercentage)" colspan="3">Not available</td>
+				</tr>
+				</tbody>
+			</table>
+		</div>
+
 		<div class="noBreak">
 			<table class="table tablePrint table-bordered table-condensed noBreak">
 				<tbody>
 				<tr bgcolor="#f9f9f9">
 					<th colspan="4">
-						1c: Consistency of dataset completeness over time
+						1d: Consistency of dataset completeness over time
 					</th>
 				</tr>
 				<tr>

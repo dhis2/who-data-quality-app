@@ -3,8 +3,8 @@
 	angular.module('review', []);
 
 	angular.module('review').controller("ReviewController",
-	['d2Meta','d2Map', 'periodService', 'dataAnalysisService', 'visualisationService', 'dqAnalysisConsistency', 'dqAnalysisExternal', '$timeout', 'd2Utils',
-	function(d2Meta, d2Map, periodService, dataAnalysisService, visualisationService, dqAnalysisConsistency, dqAnalysisExternal, $timeout, d2Utils) {
+	['d2Meta','d2Map', 'periodService', 'dataAnalysisService', 'visualisationService', 'dqAnalysisConsistency', 'dqAnalysisExternal', 'dqAnalysisCompleteness', '$timeout', 'd2Utils',
+	function(d2Meta, d2Map, periodService, dataAnalysisService, visualisationService, dqAnalysisConsistency, dqAnalysisExternal, dqAnalysisCompleteness, $timeout, d2Utils) {
 		var self = this;    
 
 		//Check if map is loaded, if not, do that before initialising
@@ -90,38 +90,60 @@
 
 	  		//1 Get dataset completeness and consistency
 	  		var datasetIDsForConsistencyChart = [];
-	  		for (var i = 0; i < datasets.length; i++) {
+
+			for (var i = 0; i < datasets.length; i++) {
+				
+				var dataSetQueryID = d2Map.dhisVersion() < 23 ? datasets[i].id : datasets[i].id + '.REPORTING_RATE';
+				
 	  			//completeness
-	  			dataAnalysisService.datasetCompleteness(receiveDatasetCompleteness, datasets[i].threshold, datasets[i].id, period, ouBoundary, ouLevel);
-	  			
+	  			dataAnalysisService.datasetCompleteness(receiveDatasetCompleteness, datasets[i].threshold, dataSetQueryID, period, ouBoundary, ouLevel);
+
+
 	  			//consistency
-				dqAnalysisConsistency.analyse(datasets[i].id, null, period, refPeriods, ouBoundary, ouLevel, null, 'time', datasets[i].trend, datasets[i].comparison, datasets[i].consistencyThreshold, null).then(
+				dqAnalysisConsistency.analyse(dataSetQueryID, null, period, refPeriods, ouBoundary, ouLevel, null, 'time', datasets[i].trend, datasets[i].comparison, datasets[i].consistencyThreshold, null).then(
 					function (data) {
 						self.completeness.consistency.push(data.result);
 						if (data.errors) self.remarks = self.remarks.concat(data.errors);
 						self.outstandingRequests--;
 					}
 				);
-	  			
-	  			datasetIDsForConsistencyChart.push(datasets[i].id);
+	  			datasetIDsForConsistencyChart.push(dataSetQueryID);
+
+				//timeliness
+				if (d2Map.dhisVersion() >= 23) {
+					self.outstandingRequests++;
+					dataSetQueryID = d2Map.dhisVersion() < 23 ? datasets[i].id : datasets[i].id + '.REPORTING_RATE_ON_TIME';
+					dataAnalysisService.datasetCompleteness(receiveDatasetTimeliness, datasets[i].threshold, dataSetQueryID, period, ouBoundary, ouLevel);
+				}
+
+
 	  			self.outstandingRequests += 2;
 	  		}
+
 	  		
 			  		
   		  	//2 Get indicator completeness, consistency, outliers
 	  		var indicatorIDsForConsistencyChart = [];
 	  		for (var i = 0; i < indicators.length; i++) {
-	  		
-	  			var indicator = indicators[i];
-	  			var periodType = d2Map.dataSetPeriodType(indicator.dataSetID);
-	  			
-	  			//periods for data completeness
-	  			var startDate = self.yearSelected.id.toString() + "-01-01";
-	  			var endDate = self.yearSelected.id.toString() + "-12-31";
-	  			var periods = periodService.getISOPeriods(startDate, endDate, periodType);
 
-	  			
-				dataAnalysisService.dataCompleteness(receiveDataCompleteness, indicator.missing, indicator.dataID, null, periods, ouBoundary, ouLevel);
+				var indicator = indicators[i];
+				var periodType = d2Map.dataSetPeriodType(indicator.dataSetID);
+
+				//periods for data completeness
+				var startDate = self.yearSelected.id.toString() + "-01-01";
+				var endDate = self.yearSelected.id.toString() + "-12-31";
+				var periods = periodService.getISOPeriods(startDate, endDate, periodType);
+
+				if (d2Map.dhisVersion() >= 23) {
+					dqAnalysisCompleteness.analyse(indicator.dataID, indicator.dataSetID, period, periods, ouBoundary, ouLevel, null, indicator.missing, 'dataCompleteness', null)
+						.then(function (data) {
+							console.log(data);
+							receiveDataCompletenessDetailed(data.result, data.errors);
+						});
+				}
+				else {
+					dataAnalysisService.dataCompleteness(receiveDataCompleteness, indicator.missing, indicator.dataID, null, periods, ouBoundary, ouLevel);
+				}
 
 				dqAnalysisConsistency.analyse(indicator.dataID, null, period, refPeriods, ouBoundary, ouLevel, null, 'time', indicator.trend, indicator.comparison, indicator.consistency, null).then(
 					function (data) {
@@ -273,8 +295,10 @@
 	  		//Structure for storing data
   			self.completeness = {
   				'datasets':	 [],
+				'timeliness': [],
   				'consistency': [],
-  				'indicators':	 []
+  				'indicators':	 [],
+				'indicatorsDetailed': []
   			};
   			
   			self.outliers = [];
@@ -341,6 +365,12 @@
 		  		self.outstandingRequests--;
 	  	}
 
+		function receiveDatasetTimeliness(result, errors) {
+	  			self.completeness.timeliness.push(result);
+	  			if (errors) self.remarks = self.remarks.concat(errors);
+		  		self.outstandingRequests--;
+	  	}
+
 	  	
 	  	function receiveDataCompleteness(result, errors) { 
 	  			self.completeness.indicators.push(result);
@@ -348,6 +378,13 @@
 	  			if (errors) self.remarks = self.remarks.concat(errors);
 		  		self.outstandingRequests--;
 	  	}
+
+		function receiveDataCompletenessDetailed(result, errors) {
+			self.completeness.indicatorsDetailed.push(result);
+
+			//if (errors) self.remarks = self.remarks.concat(errors);
+			self.outstandingRequests--;
+		}
 	  	
 
 	  	

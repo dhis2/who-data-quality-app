@@ -59,11 +59,13 @@
 
 				var level;
 				if (self.orgunitLevelSelected) level = self.orgunitLevelSelected.level;
+				
+				var dataSetQueryID = d2Map.dhisVersion() < 23 ? dataset.id : dataset.id + '.REPORTING_RATE';
 
 				var promises = [];
 				promises.push(promiseObject(dataset));
-				promises.push(visualisationService.lineChart(null, [dataset.id], periods, [ouBoundaryID], 'dataOverTime'));
-				promises.push(visualisationService.barChart(null, [dataset.id], [ouPeriod], [ouBoundaryID], 'ou', level));
+				promises.push(visualisationService.lineChart(null, [dataSetQueryID], periods, [ouBoundaryID], 'dataOverTime'));
+				promises.push(visualisationService.barChart(null, [dataSetQueryID], [ouPeriod], [ouBoundaryID], 'ou', level));
 
 				$q.all(promises).then(function(datas) {
 

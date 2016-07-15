@@ -11,6 +11,7 @@
 					save: save,
 					admin: admin,
 					versionUpgrade: versionUpgrade,
+					dhisVersion: dhisVersion,
 					groups: groups,
 					configuredGroups: configuredGroups,
 					groupDelete: deleteGroup,
@@ -59,6 +60,7 @@
 				var _map;
 				var _d2Objects = {};
 				var _dataIDs;
+				var _version;
 
 				/**
 				 * Check if mapping is "ready", e.g. has been downloaded from server
@@ -181,6 +183,16 @@
 						_map.metaDataVersion = currentVersion;
 						return save();
 					}
+
+				}
+
+
+				/**
+				 * DHIS version
+				 * TODO: does not belong here?
+				 */
+				function dhisVersion() {
+					return _version;
 
 				}
 
@@ -1121,6 +1133,8 @@
 						promises.push(d2Meta.objects('dataElementOperands', operands));
 					}
 
+					promises.push(d2Meta.version());
+
 					$q.all(promises).then(
 						function(datas) {
 							_d2Objects = {};
@@ -1129,6 +1143,9 @@
 									_d2Objects[datas[i][j].id] = datas[i][j];
 								}
 							}
+
+							_version = datas[datas.length-1];
+
 							deferred.resolve(true);
 						}
 					);
