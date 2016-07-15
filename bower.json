@@ -8,7 +8,7 @@
     "angular-animate": "~1.5.5",
     "angular-route": "~1.5.5",
     "angular-sanitize": "~1.5.5",
-    "angular-ui-select": "~0.16.1",
+    "angular-ui-select": "~0.18.1",
     "blob": "*",
     "bootstrap": "~3.3.6",
     "file-saver": "*",
