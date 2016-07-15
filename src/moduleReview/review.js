@@ -113,7 +113,7 @@
 				if (d2Map.dhisVersion() >= 23) {
 					self.outstandingRequests++;
 					dataSetQueryID = d2Map.dhisVersion() < 23 ? datasets[i].id : datasets[i].id + '.REPORTING_RATE_ON_TIME';
-					dataAnalysisService.datasetCompleteness(receiveDatasetTimeliness, datasets[i].threshold, dataSetQueryID, period, ouBoundary, ouLevel);
+					dataAnalysisService.datasetCompleteness(receiveDatasetTimeliness, datasets[i].timelinessThreshold, dataSetQueryID, period, ouBoundary, ouLevel);
 				}
 
 

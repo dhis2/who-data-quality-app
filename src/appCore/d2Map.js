@@ -761,8 +761,10 @@
 
 							//Add default parameters
 							ds.threshold =  90;
+							ds.timelinessThreshold = 75;
 							ds.consistencyThreshold = 33;
 							ds.trend = "constant";
+							ds.comparison = "ou";
 							_map.dataSets.push(ds);
 							save();
 						}
