@@ -153,10 +153,11 @@
 				<td>{{indicator.criteria}}%</td>
 				<td class="valueCell">{{indicator.boundaryValuesExpected}}</td>
 				<td class="valueCell">{{indicator.boundaryValues}}</td>
-				<td class="valueCell">{{indicator.boundaryPercentage}}%</td>
-				<td class="valueCell">{{indicator.subunitsOutsideThreshold}}</td>
-				<td class="valueCell">{{indicator.subunitViolationPercentage}}%</td>
-				<td>{{indicator.subunitViolationNames.join(', ')}}</td>
+				<td ng-if="!indicator.boundaryValuesExpected" colspan="4">Not available</td>
+				<td ng-if="indicator.boundaryValuesExpected" class="valueCell">{{indicator.boundaryPercentage}}%</td>
+				<td ng-if="indicator.boundaryValuesExpected" class="valueCell">{{indicator.subunitsOutsideThreshold}}</td>
+				<td ng-if="indicator.boundaryValuesExpected" class="valueCell">{{indicator.subunitViolationPercentage}}%</td>
+				<td ng-if="indicator.boundaryValuesExpected">{{indicator.subunitViolationNames.join(', ')}}</td>
 			</tr>
 			</tbody>
 		</table>
