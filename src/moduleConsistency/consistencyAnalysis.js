@@ -400,7 +400,7 @@
 	   	self.selectOrgunit = function(item) {
 
 	   		//Remove previous chart highlight
-	   		if (self.subType != 'do') {
+	   		if (self.result.subType != 'do') {
    				for (var j = 0; j < self.chart.data.length; j++) {
 					var data = self.chart.data[j].values;
 					for (var i = 0; i < data.length; i++) {
@@ -421,7 +421,7 @@
 	   		self.selectedObject.ratio = item.ratio;
 	   			   		
 	   		//Add new chart highlight
-			if (self.subType != 'do') {
+			if (self.result.subType != 'do') {
 				for (var j = 0; j < self.chart.data.length; j++) {
 					var data = self.chart.data[j].values;
 					for (var i = 0; i < data.length; i++) {
@@ -434,7 +434,7 @@
 				}
 
 			}
-	   		
+
 	   		dataForSelectedUnit(item.id);
 	   	};
 
