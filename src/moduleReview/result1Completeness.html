@@ -137,15 +137,16 @@
 			</tr>
 			<tr bgcolor="#f9f9f9">
 				<th rowspan="2" width="200">Indicator</th>
-				<th rowspan="2" width="100">Quality threshold</th>
-				<th rowspan="2" width="100">Expected values</th>
-				<th rowspan="2" width="100">Actual values</th>
-				<th rowspan="2" width="100">Overall score</th>
-				<th colspan="3" width="100">{{revCtrl.selectedOrgunit.level.displayName}} with divergent score</th>
+				<th rowspan="2" width="80">Quality threshold</th>
+				<th rowspan="1" colspan="2" width="100">Values</th>
+				<th rowspan="2" width="80">Overall score</th>
+				<th colspan="3" width="400">{{revCtrl.selectedOrgunit.level.displayName}} with divergent score</th>
 			</tr>
 			<tr bgcolor="#f9f9f9">
-				<th width="100">Number</th>
-				<th width="100">Percent</th>
+				<th>Expected</th>
+				<th>Actual</th>
+				<th>Number</th>
+				<th>Percent</th>
 				<th>Name</th>
 			</tr>
 			<tr ng-repeat="indicator in revCtrl.completeness.indicatorsDetailed | orderBy : 'dataName'">
