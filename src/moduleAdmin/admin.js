@@ -47,12 +47,33 @@
 			self.dataSets = d2Map.dataSets();
 
 
-			//Need to get orgunit level names
+			//Need to get orgunit levels
 			d2Meta.objects('organisationUnitLevels', null, 'displayName,level,uid').then(function (levels) {
 				d2Utils.arraySortByProperty(levels, 'level', true, true);
 				self.orgunitLevels = levels;
+				selectedLevel();
 			});
+
 	    }
+
+
+		/** ===== GENERAL ===== **/
+		function selectedLevel() {
+			for (var i = 0; i < self.orgunitLevels.length; i++) {
+				if (self.orgunitLevels[i].level == d2Map.facilityLevel()) {
+					self.levelSelected = self.orgunitLevels[i];
+					return;
+				}
+			}
+
+
+		}
+
+	    self.selectedLevel = function(level) {
+			console.log(level.level);
+			d2Map.addEditFacilityLevel(level.level);
+
+		}
 
 
 

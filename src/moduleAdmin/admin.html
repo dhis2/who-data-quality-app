@@ -4,7 +4,31 @@
 		data elements and indicators in the	DHIS 2 database. This configuration is used as the basis for the Annual
 		Report, and the numerator and numerator group configuration is also used for the Dashboard.</p>
 	<uib-tabset>
-		<uib-tab heading="Numerators" active="admCtrl.activeTab">
+		<uib-tab heading="General" active="admCtrl.activeTab">
+			<br />
+			<p>General settings</p>
+			<table class="table table-bordered table-striped table-condensed table-hover">
+				<tr>
+					<th>Variable</th>
+					<th style="width: 33%">Value</th>
+				</tr>
+				<tr>
+					<td class="vert-align">Facility level (used for calculcating data element/indicator completeness.)</td>
+					<td class="vert-align">
+						<d2-select
+							on-select="admCtrl.selectedLevel(object)"
+							ng-model="admCtrl.levelSelected"
+							placeholder="Select organisation unit level..."
+							options="admCtrl.orgunitLevels">
+						</d2-select>
+					</td>
+				</tr>
+				<tfoot>
+			</table>
+			<button ng-disabled="!admCtrl.isAdmin" class="btn btn-primary pull-right" ng-click="admCtrl.saveParameterChanges();">Save changes</button>
+
+		</uib-tab>
+		<uib-tab heading="Numerators">
 			<br />
 			<p>Please map the reference numerators to the corresponding data element/indicator in this database.</p>
 			<table class="table table-bordered table-striped table-condensed table-hover">

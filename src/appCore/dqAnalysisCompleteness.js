@@ -16,6 +16,7 @@
 				var _ouBoundary;
 				var _ouLevel;
 				var _ouGroup;
+				var _facilityLevel;
 				var _criteria;
 				var _type;
 				var _deferred;
@@ -31,7 +32,6 @@
 				var completenessIDs;
 				var subunitQueue;
 				var facilitiesReporting = {};
-				var facilityLevel = 4;
 
 
 				/**
@@ -44,7 +44,7 @@
 				/**
 				 *
 				 */
-				function analyse(dataID, dataSetID, pe, peRef, ouBoundary, ouLevel, ouGroup, criteria, type, meta) {
+				function analyse(dataID, dataSetID, pe, peRef, ouBoundary, ouLevel, ouGroup, facilityLevel, criteria, type, meta) {
 
 					//Store a new request object and queue it
 					var newRequest = {
@@ -55,6 +55,7 @@
 						'ouBoundary': ouBoundary,
 						'ouLevel': ouLevel,
 						'ouGroup': ouGroup,
+						'facilityLevel': facilityLevel,
 						'criteria': criteria,
 						'type': type,
 						'meta': meta,
@@ -107,6 +108,7 @@
 						_ouLevel = request.ouLevel;
 						_ouGroup = request.ouGroup;
 						_criteria = request.criteria;
+						_facilityLevel = request.facilityLevel;
 
 
 						var dxIDs = [_dataSetID + '.EXPECTED_REPORTS'];
@@ -257,7 +259,7 @@
 					if (!current) dataCompletenessAnalysis();
 					else {
 						var requestURL = '/api/analytics.json?';
-						requestURL += 'dimension=ou:' + current + ';LEVEL-' + facilityLevel;
+						requestURL += 'dimension=ou:' + current + ';LEVEL-' + _facilityLevel;
 						requestURL += '&dimension=pe:' + _peRef.join(';');
 						requestURL += '&dimension=dx:' + completenessIDs.join(';');
 

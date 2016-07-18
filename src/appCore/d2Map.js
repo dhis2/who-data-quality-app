@@ -45,6 +45,8 @@
 					externalRelations: externalRelations,
 					externalRelationAddEdit: addEditExternalRelation,
 					externalRelationDelete: deleteExternalRelation,
+					facilityLevel: facilityLevel,
+					addEditFacilityLevel: addEditFacilityLevel,
 					dataSets: dataSets,
 					dataSetPeriodType: dataSetPeriodType,
 					relations: relations,
@@ -1037,6 +1039,18 @@
 
 						if (!existing) return current;
 					}
+				}
+
+
+				/** GENERAL **/
+				function facilityLevel() {
+					return _map.facilityLevel ? _map.facilityLevel : 1;
+				}
+
+				function addEditFacilityLevel(level) {
+					_map.facilityLevel = level;
+
+					save();
 				}
 
 
