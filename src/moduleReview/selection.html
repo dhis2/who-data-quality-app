@@ -35,7 +35,7 @@
 	</uib-accordion>
 
 	<div class="inline pull-right" style="margin-bottom:20px">
-		<button ng-disabled="(!self.userOrgunit && !revCtrl.selectedOrgunit.level.displayName && !revCtrl.groupSelected) || revCtrl.outstandingRequests > 0" class="btn btn-primary inline" ng-click="revCtrl.doAnalysis();">Generate</button>
+		<button ng-disabled="revCtrl.selectedOrgunit.boundary === undefined || revCtrl.outstandingRequests > 0" class="btn btn-primary inline" ng-click="revCtrl.doAnalysis();">Generate</button>
 		<button ng-disabled="!(revCtrl.outstandingRequests === 0 && revCtrl.totalRequests != 0)" class="btn btn-primary inline" ng-click="revCtrl.doPrint();">Print</button>
 	</div>
 
