@@ -124,7 +124,9 @@
 				</tr>
 				<tr>
 					<td colspan="4">
-						<em>Reports where values are not missing. If zeros are not stored, zeros are counted as missing.</em>
+						<em>Reports where values are not missing. If zeros are not stored, zeros are counted as missing. Where
+							data is disaggregated (e.g. by age or sex), value is counted as not missing if data is available for
+							any disaggregation.</em>
 					</td>
 				</tr>
 				<tr bgcolor="#f9f9f9">
@@ -411,7 +413,7 @@
 					<th width="175">Overall score</th>
 				</tr>
 				<tr>
-					<td>Consistency with United Nations Population Projections for Live Births</td>
+					<td>Consistency with United Nations Population Projections</td>
 					<td ng-if="revCtrl.denominators.un">{{revCtrl.denominators.un.boundaryRatio}}%</td>
 					<td ng-if="!revCtrl.denominators.un">Not available</td>
 				</tr>

@@ -33,11 +33,13 @@
 				</tr>
 				<tr>
 					<td>Survey value</td>
-					<td class="valueCell">{{relation.boundaryValue}}%</td>
+					<td ng-if="relation.boundaryValue" class="valueCell">{{relation.boundaryValue}}%</td>
+					<td ng-if="!relation.boundaryValue" class="valueCell">Not available</td>
 				</tr>
 				<tr>
 					<td>Routine value</td>
-					<td class="valueCell">{{relation.boundaryRefValue}}%</td>
+					<td ng-if="relation.boundaryRefValue" class="valueCell">{{relation.boundaryRefValue}}%</td>
+					<td ng-if="!relation.boundaryRefValue" class="valueCell">Not available</td>
 				</tr>
 				<tr>
 					<td>Quality threshold</td>
@@ -45,7 +47,8 @@
 				</tr>
 				<tr>
 					<td>Overall score</td>
-					<td class="valueCell">{{relation.boundaryPercentage}}%</td>
+					<td ng-if="relation.boundaryPercentage" class="valueCell">{{relation.boundaryPercentage}}%</td>
+					<td ng-if="!relation.boundaryPercentage" class="valueCell">Not available</td>
 				</tr>
 				<tr >
 					<td>Number of {{relation.meta.ouLimitName}} with divergent score</td>
