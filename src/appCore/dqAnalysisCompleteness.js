@@ -267,13 +267,12 @@
 							var facilityIDs = {};
 							for (var i = 0; i < response.data.rows.length; i++) {
 								if (facilityIDs[response.data.rows[i][2]]) {
-									facilityIDs[response.data.rows[i][2]][response.data.rows[i][3]] = true;
+									facilityIDs[response.data.rows[i][2]][response.data.rows[i][1]] = true;
 								}
 								else {
 									facilityIDs[response.data.rows[i][2]] = {};
-									facilityIDs[response.data.rows[i][2]][response.data.rows[i][3]] = true;
+									facilityIDs[response.data.rows[i][2]][response.data.rows[i][1]] = true;
 								}
-
 							}
 
 							facilitiesReporting[current] = 0;
