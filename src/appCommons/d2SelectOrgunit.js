@@ -37,6 +37,7 @@
 					self.selectedOrgunit = null;
 					self.selectedLevel = null;
 					self.selectedGroup = null;
+					self.treeSelection = null;
 
 					var promises = [];
 					promises.push(d2Meta.userOrgunits());
@@ -50,8 +51,7 @@
 
 							self.selectionType = 0;
 							self.selectedOrgunit = self.userOrgunits[0];
-
-							filterLevels();
+							orgunitSelect(self.selectedOrgunit);
 						}
 					);
 				}
@@ -107,7 +107,8 @@
 
 
 				function orgunitSelect(orgunit) {
-					if (self.userOrgunits && self.selectionType === self.userOrgunits.length) {
+
+					if (self.userOrgunits && self.selectionType === (self.userOrgunits.length - 1)) {
 						if (!orgunit) orgunit = self.treeSelection;
 						self.selectedOrgunit = orgunit;
 					}
