@@ -53,7 +53,7 @@
 				self.filterDenominators = function() {
 					self.denominatorsFiltered = [];
 					for (var i = 0; i < denominators.length; i++) {
-						if (self.typeSelected && denominators[i].type === self.typeSelected.code) {
+						if (self.typeSelected && (denominators[i].type === self.typeSelected.code || self.typeSelected.code === 'un')) {
 							denominators[i].displayName = denominators[i].name;
 							self.denominatorsFiltered.push(denominators[i]);
 						}

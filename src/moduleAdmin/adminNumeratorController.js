@@ -66,7 +66,7 @@
 	    self.save = function () {
 			indicator.name = self.name;
 			indicator.core = self.core;
-			indicator.defintion = self.definition;
+			indicator.definition = self.definition;
 			indicator.dataID = self.dataSelected.id;
 			indicator.dataSetID = self.dataSetSelected.id;
 

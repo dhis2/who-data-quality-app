@@ -100,7 +100,7 @@
 					var core = result.core;
 
 					//new
-					if (indicator.code === null) {
+					if (!indicator.hasOwnProperty('code')) {
 						d2Map.numeratorAdd(indicator, groups, core);
 					}
 
