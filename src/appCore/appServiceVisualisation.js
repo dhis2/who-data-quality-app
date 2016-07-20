@@ -856,7 +856,7 @@
 				chartOptions = {
 					chart: {
 						margin : {
-							left: 150
+							left: result.meta.name.length*6 + 20
 						},
 						type: 'bulletChart',
 						transitionDuration: 100,
@@ -872,6 +872,7 @@
 				if (result.boundaryValue > maxY) maxY =  result.boundaryValue;
 				if (result.boundaryRefValue > maxY) maxY = result.boundaryRefValue;
 				if (maxY != 100) maxY = getRange(maxY);
+
 
 				chartSeries = {
 					"title": result.boundaryName,
