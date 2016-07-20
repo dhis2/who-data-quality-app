@@ -161,13 +161,21 @@
 					//Get data for boundary orgunit - external
 					var boundaryExternal = d2Data.value(_dataIdExternal, _pe, _ouBoundary, null);
 
+					//Check if we have data for boundary orgunit for external
+					if (!d2Utils.isNumber(boundaryExternal)) {
+						errors.push(makeError(_dataIdExternal, [_pe], _ouBoundary));
+					}
 
 					//Get data for boundary orgunit - routine
 					var boundaryNumerator = d2Data.value(_dataIdNumerator, _pe, _ouBoundary, null);
 					var boundaryDenominator = d2Data.value(_dataIdDenominator, _pe, _ouBoundary, null);
 					var boundaryRoutine;
-					if (d2Utils.isNumber(boundaryDenominator)) {
+					if (d2Utils.isNumber(boundaryNumerator) && d2Utils.isNumber(boundaryDenominator)) {
 						boundaryRoutine = 100*boundaryNumerator/boundaryDenominator;
+					}
+					else if (!d2Utils.isNumber(boundaryNumerator)) {
+						boundaryRoutine = null;
+						errors.push(makeError(_dataIdNumerator, [_pe], _ouBoundary));
 					}
 					else {
 						boundaryRoutine = null;
@@ -180,23 +188,12 @@
 					var boundaryPercentage = getRatioAndPercentage(boundaryRoutine, boundaryExternal).percent;
 
 
-					//Check if we have data for boundary orgunit for external
-					if (!d2Utils.isNumber(boundaryExternal)) {
-						errors.push(makeError(_dataIdExternal, [_pe], _ouBoundary));
-					}
-					//Check if we have data for boundary orgunit for routine
-					else if (!d2Utils.isNumber(boundaryRoutine)) {
 
-						//We already checked the denominator, so here we assume numerator is missing if there is a problem
-						errors.push(makeError(_dataIdNumerator, [_pe], _ouBoundary));
-					}
-					//If we have data for both, store the raw data, ratio and percentage
-					else {
-						result.boundaryValue = boundaryExternal;
-						result.boundaryRefValue = mathService.round(boundaryRoutine, 1);
-						result.boundaryRatio = mathService.round(boundaryRatio, 3);
-						result.boundaryPercentage = mathService.round(boundaryPercentage, 1);
-					}
+					result.boundaryValue = boundaryExternal;
+					result.boundaryRefValue = mathService.round(boundaryRoutine, 1);
+					result.boundaryRatio = mathService.round(boundaryRatio, 3);
+					result.boundaryPercentage = mathService.round(boundaryPercentage, 1);
+
 
 
 
@@ -374,18 +371,10 @@
 					var error = {};
 
 					error.severity = "warning";
-					error.item = d2Data.name[dx];
+					error.item = d2Data.name(_dataIdExternal);
 
-					if (_ouLimit === 'data') {
-						error.type = "Consistency betweeen indicators";
-						error.msg = "Missing data: consistency analysis " + d2Data.name(_dataIdExternal) + "/" + d2Data.name(_dataIdNumerator) +
-							" in " + pe + " skipped for " + d2Data.name(ou) + " due to missing data for " + d2Data.name(dx) + ".";
-					}
-					else {
-						error.type = "Consistency over time";
-						error.msg = "Missing data: consistency analysis " + d2Data.name(_dataIdExternal) + " for " + _dataIdDenominator + " vs " +
-							pe.join(', ') + " skipped for " + d2Data.name(ou) + " due to missing data.";
-					}
+					error.type = "External consistency";
+					error.msg = "Skipped due to missing data for " + d2Data.name(dx) + ".";
 
 					return error;
 				}
@@ -397,16 +386,16 @@
 				 * @param orunits
 				 * @returns {*}
 				 */
-				function makeSubunitError(orunits) {
+				function makeSubunitError(orgunits) {
 
 					var error;
-					if (orunits.length > 0) {
+					if (orgunits.length > 0) {
 
 						error = {
 							'severity': "warning",
 							'type': "External consistency",
 							'item': d2Data.name(_dataIdExternal),
-							'msg': "Skipped for the following units due to missing data: " + orunits.join(', ')
+							'msg': "Skipped for the following units due to missing data: " + orgunits.join(', ')
 						};
 
 
