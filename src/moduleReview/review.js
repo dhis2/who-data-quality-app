@@ -241,7 +241,7 @@
 
 						visualisationService.makeDataConsistencyChart(null, data.result);
 
-						if (denominatorPair.relation.type != 'un') {
+						if (data.result.meta.relation.type != 'un') {
 							self.denominators.relations.push(data.result);
 						}
 						else {

@@ -266,12 +266,12 @@
 						requestService.getSingle(requestURL).then(function(response) {
 							var facilityIDs = {};
 							for (var i = 0; i < response.data.rows.length; i++) {
-								if (facilityIDs[response.data.rows[i][2]]) {
-									facilityIDs[response.data.rows[i][2]][response.data.rows[i][1]] = true;
+								if (facilityIDs[response.data.rows[i][1]]) {
+									facilityIDs[response.data.rows[i][1]][response.data.rows[i][2]] = true;
 								}
 								else {
-									facilityIDs[response.data.rows[i][2]] = {};
-									facilityIDs[response.data.rows[i][2]][response.data.rows[i][1]] = true;
+									facilityIDs[response.data.rows[i][1]] = {};
+									facilityIDs[response.data.rows[i][1]][response.data.rows[i][2]] = true;
 								}
 							}
 

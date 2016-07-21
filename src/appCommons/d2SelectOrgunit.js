@@ -108,7 +108,7 @@
 
 				function orgunitSelect(orgunit) {
 
-					if (self.userOrgunits && self.selectionType === (self.userOrgunits.length - 1)) {
+					if (self.userOrgunits && self.selectionType === self.userOrgunits.length) {
 						if (!orgunit) orgunit = self.treeSelection;
 						self.selectedOrgunit = orgunit;
 					}
