@@ -898,6 +898,69 @@
 
 
 
+		/** Data consistency */
+		self.makeBulletChart = function (callback, result) {
+
+			var toolTip = function(point) {
+
+				if (point.label === 'Range') return '';
+
+				return '<h3>' + point.label + '</h3>' +
+					'<p style="margin-bottom: 0px">' + point.value + '%</p>';
+			};
+
+			var names = [];
+
+
+			var maxY = 0;
+			var chartSeries = [], tickValues = [0, 1], chartOptions = {};
+
+
+			chartOptions = {
+				chart: {
+					margin : {
+						left: result.meta.name.length*6 + 20
+					},
+					type: 'bulletChart',
+					transitionDuration: 100,
+					'tooltip': {
+						enabled: true,
+						contentGenerator: toolTip
+					}
+				},
+				type: 'bullet'
+			};
+
+			var maxY = 100;
+			if (result.boundaryValue > maxY) maxY =  result.boundaryValue;
+			if (result.boundaryRefValue > maxY) maxY = result.boundaryRefValue;
+			if (maxY != 100) maxY = getRange(maxY);
+
+
+			chartSeries = {
+				"title": result.boundaryName,
+				"subtitle": result.meta.name,
+				"ranges":[0,maxY],
+				"measures":[result.boundaryRefValue],
+				"markers":[result.boundaryValue],
+				"markerLabels":['Survey'],
+				"rangeLabels":['Range'],
+				"measureLabels":['Routine']
+			};
+
+
+			if (callback) {
+				callback(chartSeries, chartOptions);
+			}
+			else {
+				result.chartOptions = chartOptions;
+				result.chartData = chartSeries;
+			}
+
+		};
+
+
+
 	    /** Dropout */
 	    self.makeDropoutRateChart = function(callback, result) {	    		    	
 
