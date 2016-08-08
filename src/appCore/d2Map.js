@@ -45,8 +45,6 @@
 					externalRelations: externalRelations,
 					externalRelationAddEdit: addEditExternalRelation,
 					externalRelationDelete: deleteExternalRelation,
-					facilityLevel: facilityLevel,
-					addEditFacilityLevel: addEditFacilityLevel,
 					dataSets: dataSets,
 					dataSetPeriodType: dataSetPeriodType,
 					relations: relations,
@@ -57,6 +55,7 @@
 					externalRelations: externalRelations,
 					d2NameFromID: d2NameFromID
 				};
+
 
 				var _ready = false;
 				var _map;
@@ -72,10 +71,12 @@
 				function ready() {
 					return _ready;
 				}
-
+				
 
 				function load() {
 					var deferred = $q.defer();
+
+					//requestService.getSingle('/api/systemSettings/dq').then(
 					requestService.getSingle('/api/dataStore/dataQualityTool/settings').then(
 						function(response) {
 							_map = response.data;
@@ -122,6 +123,7 @@
 					return deferred.promise;
 				}
 
+
 				function editMap() {
 					
 
@@ -134,9 +136,10 @@
 					var currentIDs = d2IDs().join('');
 					var previousIDs = _dataIDs.join('');
 					if (currentIDs != previousIDs) d2CoreMeta();
-
+					//requestService.post('/api/systemSettings', {'dq': angular.toJson(_map)});
 					return requestService.put('/api/dataStore/dataQualityTool/settings', angular.toJson(_map));
 				}
+
 
 				function admin() {
 					var deferred = $q.defer();
@@ -1039,18 +1042,6 @@
 
 						if (!existing) return current;
 					}
-				}
-
-
-				/** GENERAL **/
-				function facilityLevel() {
-					return _map.facilityLevel ? _map.facilityLevel : 1;
-				}
-
-				function addEditFacilityLevel(level) {
-					_map.facilityLevel = level;
-
-					save();
 				}
 
 

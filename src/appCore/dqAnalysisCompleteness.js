@@ -16,7 +16,6 @@
 				var _ouBoundary;
 				var _ouLevel;
 				var _ouGroup;
-				var _facilityLevel;
 				var _criteria;
 				var _type;
 				var _deferred;
@@ -29,6 +28,7 @@
 
 				//Variables for getting facility-level data completeness
 				var current;
+				var components = 0;
 				var completenessIDs;
 				var subunitQueue;
 				var facilitiesReporting = {};
@@ -44,7 +44,7 @@
 				/**
 				 *
 				 */
-				function analyse(dataID, dataSetID, pe, peRef, ouBoundary, ouLevel, ouGroup, facilityLevel, criteria, type, meta) {
+				function analyse(dataID, dataSetID, pe, peRef, ouBoundary, ouLevel, ouGroup, criteria, type, meta) {
 
 					//Store a new request object and queue it
 					var newRequest = {
@@ -55,7 +55,6 @@
 						'ouBoundary': ouBoundary,
 						'ouLevel': ouLevel,
 						'ouGroup': ouGroup,
-						'facilityLevel': facilityLevel,
 						'criteria': criteria,
 						'type': type,
 						'meta': meta,
@@ -108,26 +107,79 @@
 						_ouLevel = request.ouLevel;
 						_ouGroup = request.ouGroup;
 						_criteria = request.criteria;
-						_facilityLevel = request.facilityLevel;
 
 
 						var dxIDs = [_dataSetID + '.EXPECTED_REPORTS'];
-						d2Data.addRequest(dxIDs, _pe, _ouBoundary, _ouLevel, _ouGroup, 'COUNT');
-						d2Data.addRequest(dxIDs, _pe, _ouBoundary, null, null, 'COUNT');
+						d2Data.addRequest(dxIDs, _pe, _ouBoundary, _ouLevel, _ouGroup);
+						d2Data.addRequest(dxIDs, _pe, _ouBoundary, null, null);
+						d2Data.addRequest([_dataID], _pe, _ouBoundary, _ouLevel, _ouGroup, 'COUNT');
+						d2Data.addRequest([_dataID], _pe, _ouBoundary, null, null, 'COUNT');
 
 						var promises = [];
 						promises.push(d2Data.fetch());										//Request data
 						promises.push(d2Meta.orgunitIDs(_ouBoundary, _ouLevel, _ouGroup));	//Request list of orgunits
+						promises.push(d2Meta.object('dataElements', _dataID, 'displayName,id,categoryCombo[categories[items::size]]'));
+						promises.push(d2Meta.object('indicators', _dataID, 'displayName,id,numerator'));
 						$q.all(promises).then(function(datas) {
 
 							//Store subunits
 							subunits = datas[1].subunits;
 							subunitQueue = angular.copy(subunits);
-
 							completenessIDs = [_dataID];
 
-							//Process data
-							dataCompletenessFacilityData();
+							//TODO: move this to d2Meta
+							if (datas[2] && datas[2].categoryCombo) {
+								for (var i = 0; i < datas[2].categoryCombo.categories.length; i++) {
+									components += datas[2].categoryCombo.categories[i].items;
+								}
+
+								//Process data
+								dataCompletenessAnalysis();
+							}
+							else if (datas[3] && datas[3].numerator) {
+
+								var parts = d2Utils.idsFromIndicatorFormula(datas[3].numerator, '', false);
+								var toCheck = [];
+								components = 0;
+								for (var i = 0; i < parts.length; i++) {
+									if (parts[i].length > 11) {
+										components++;
+									}
+									else {
+										toCheck.push(parts[i]);
+									}
+								}
+
+								if (toCheck.length > 1) {
+									d2Meta.objects('dataElements', toCheck, 'displayName,id,categoryCombo[categories[items::size]]', null, false).then(
+										function(dataElements) {
+											for (var i = 0; i < dataElements.length; i++) {
+												for (var j = 0; j < dataElements[i].categoryCombo.categories.length; j++) {
+													components += dataElements[i].categoryCombo.categories[j].items;
+												}
+
+											}
+
+											//Process data
+											dataCompletenessAnalysis();
+										}
+									)
+								}
+								else {
+									//Process data
+									dataCompletenessAnalysis();
+								}
+							}
+							else {
+								components = 1;
+
+								//Process data
+								dataCompletenessAnalysis();
+							}
+
+
+
+
 
 
 						});
@@ -139,16 +191,11 @@
 				function dataCompletenessAnalysis() {
 					var errors = [];
 					var result = {};
-					
-					var totalReports = 0;
-					for (var id in facilitiesReporting) {
-						if (facilitiesReporting.hasOwnProperty(id)) {
-							totalReports += facilitiesReporting[id];
-						}
-					}
 
-					var boundaryValues = totalReports;
-					var boundaryExpected = d2Data.value(_dataSetID + '.EXPECTED_REPORTS', _pe, _ouBoundary, null);
+					console.log("Variables per period for " + d2Data.name(_dataID) + ": " + components);
+
+					var boundaryValues = d2Data.value(_dataID, _pe, _ouBoundary, null, 'COUNT');
+					var boundaryExpected = d2Data.value(_dataSetID + '.EXPECTED_REPORTS', _pe, _ouBoundary, null, null)*components;
 
 					var boundaryCompletenessRatio, boundaryCompletenessPercentage;
 					if (!d2Utils.isNumber(boundaryExpected) || !d2Utils.isNumber(boundaryValues)) {
@@ -186,12 +233,12 @@
 					result.ouBoundaryName = d2Data.name(_ouBoundary);
 					result.criteria = _criteria;
 
-
 					//Resolve current promise
 					_deferred.resolve({'result': result, 'errors': errors});
 
 					//Get next request
 					_pendingRequest = false;
+					components = 0;
 					requestData();
 				}
 
@@ -216,7 +263,7 @@
 					for (var j = 0; j < subunits.length; j++) {
 						var subunit = subunits[j];
 
-						var values = facilitiesReporting[subunit];
+						var values = d2Data.value(_dataID, _pe, subunit, null, 'COUNT');
 						var expected = d2Data.value(_dataSetID + '.EXPECTED_REPORTS', _pe, subunit, null);
 
 						//If we miss data for one of the two indicators, ignore the orgunit
@@ -249,42 +296,6 @@
 					}
 					//subunitData.error = makeSubunitError(subunitData.ignored);
 					return subunitData;
-				}
-
-
-
-
-				function dataCompletenessFacilityData() {
-					current = subunitQueue.pop();
-					if (!current) dataCompletenessAnalysis();
-					else {
-						var requestURL = '/api/analytics.json?';
-						requestURL += 'dimension=ou:' + current + ';LEVEL-' + _facilityLevel;
-						requestURL += '&dimension=pe:' + _peRef.join(';');
-						requestURL += '&dimension=dx:' + completenessIDs.join(';');
-
-						requestService.getSingle(requestURL).then(function(response) {
-							var facilityIDs = {};
-							for (var i = 0; i < response.data.rows.length; i++) {
-								if (facilityIDs[response.data.rows[i][1]]) {
-									facilityIDs[response.data.rows[i][1]][response.data.rows[i][2]] = true;
-								}
-								else {
-									facilityIDs[response.data.rows[i][1]] = {};
-									facilityIDs[response.data.rows[i][1]][response.data.rows[i][2]] = true;
-								}
-							}
-
-							facilitiesReporting[current] = 0;
-							for (var id in facilityIDs) {
-								facilitiesReporting[current] += d2Utils.arrayFromKeys(facilityIDs[id]).length;
-							}
-
-							dataCompletenessFacilityData();
-
-						});
-
-					}
 				}
 
 
