@@ -246,9 +246,11 @@
 						chartData: result.result.chartData
 					};
 
+					if (result.result.subType != 'do') {
+						visualisationService.setChartLegend(dataConsistencyChart.chartOptions, true);
+					}
 
 					visualisationService.setChartHeight(dataConsistencyChart.chartOptions, 400);
-					visualisationService.setChartLegend(dataConsistencyChart.chartOptions, true);
 					visualisationService.setChartYAxis(dataConsistencyChart.chartOptions, 0, 100);
 					visualisationService.setChartMargins(dataConsistencyChart.chartOptions, 60, 20, 100, 100);
 
