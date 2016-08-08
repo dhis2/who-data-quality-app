@@ -41,6 +41,8 @@
 						function(error){
 							console.log("d2meta error: object(), type:" + object);
 							console.log(error);
+							deferred.resolve(null);
+
 						}
 					);
 
