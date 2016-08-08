@@ -19,6 +19,8 @@
 				var _currentBatch;			//Batch currently being fetched
 				var _currentBatchMeta;
 
+				var _aggregationType = false;
+
 				var receivedData = [];
 				var mergedData;
 
@@ -74,9 +76,10 @@
 				 * Look up individual data values from the current result.
 				 *
 				 * @param de, pe, ou, co	IDs
+				 * @param aggregationType
 				 * @returns float of datavalue, or null if not found
 				 */
-				function dataValue(de, pe, ou, co) {
+				function dataValue(de, pe, ou, co, at) {
 					if (co === undefined) co = null;
 
 					//Make it possible to work with both de and co separately, and in . format
@@ -95,17 +98,20 @@
 						if (header[i].name === 'pe' && !header[i].hidden) pei = i;
 						if (header[i].name === 'co' && !header[i].hidden) coi = i;
 						if (header[i].name === 'value' && !header[i].hidden) vali = i;
+						if (header[i].name === 'at') ati = i;
 					}
 
-					var data;
+					var data, v;
 					for (var i = 0; i < dataValues.length; i++) {
 						data = dataValues[i];
 						if (
 							(dxi === undefined || data[dxi] === de) &&
 							(pei === undefined || data[pei] === pe.toString()) &&
 							(oui === undefined || data[oui] === ou) &&
-							(co === undefined || coi === undefined || data[coi] === co)
-						) return parseFloat(data[vali]);
+							(co === undefined || coi === undefined || data[coi] === co) &&
+							(at === undefined || ati === undefined || data[ati] === at)
+						)
+							return parseFloat(data[vali]);
 					}
 
 					return null;
@@ -222,7 +228,10 @@
 						requestURL += ouDisaggregation;
 						requestURL += '&dimension=pe:' + pe.join(';');
 						requestURL + '&displayProperty=NAME';
-						if (aggregationType) requestURL += '&aggregationType=' + aggregationType;
+						if (aggregationType) {
+							requestURL += '&aggregationType=' + aggregationType;
+							console.log(requestURL);
+						}
 
 
 						requestURLs.push(requestURL);
@@ -261,9 +270,23 @@
 					var request = _currentBatch.request();
 					if (!request) return;
 
+					//TODO: temporary fix
+					if (request.match("aggregationType=COUNT")) {
+						_aggregationType = 'COUNT';
+					}
+					else {
+						_aggregationType = false;
+					}
 					requestService.getSingleData(request).then( function(data) {
 
-						if (data) receivedData.push(data);
+
+
+						if (data) {
+							if (_aggregationType) {
+								data = addAggregationInfo(data, _aggregationType);
+							}
+							receivedData.push(data);
+						}
 
 
 						//Current batch is done - merge the data we have so far, and fulfill the promise
@@ -278,6 +301,20 @@
 						}
 
 					});
+				}
+
+
+				/**
+				 * Add info about aggregationtype to result
+				 */
+
+				function addAggregationInfo(data, aggregationType) {
+					data.headers.push({'name': 'at'});
+					for (var i = 0; i < data.rows.length; i++) {
+						data.rows[i].push(aggregationType);
+					}
+
+					return data;
 				}
 
 
@@ -340,7 +377,8 @@
 								{name: 'co'},
 								{name: 'ou'},
 								{name: 'pe'},
-								{name: 'value'}
+								{name: 'value'},
+								{name: 'at'}
 							],
 							metaData: {
 								co: [],
@@ -358,13 +396,14 @@
 						var metaData = receivedData[i].metaData;
 						var rows = receivedData[i].rows;
 
-						var dxi = null, pei = null, oui = null, coi = null, vali = null;
+						var dxi = null, pei = null, oui = null, coi = null, vali = null, ati = null;
 						for (var j = 0; j < header.length; j++) {
 							if (header[j].name === 'dx' && !header[j].hidden) dxi = j;
 							if (header[j].name === 'ou' && !header[j].hidden) oui = j;
 							if (header[j].name === 'pe' && !header[j].hidden) pei = j;
 							if (header[j].name === 'co' && !header[j].hidden) coi = j;
 							if (header[j].name === 'value' && !header[j].hidden) vali = j;
+							if (header[j].name === 'at') ati = j;
 						}
 
 						//Transfer data to result object
@@ -373,6 +412,7 @@
 							transVal = [];
 							transVal[0] = rows[j][dxi];
 							coi ? transVal[1] = rows[j][coi] : transVal[1] = null;
+							ati ? transVal[5] = rows[j][ati] : transVal[5] = null;
 							transVal[2] = rows[j][oui];
 							transVal[3] = rows[j][pei];
 							transVal[4] = rows[j][vali];
