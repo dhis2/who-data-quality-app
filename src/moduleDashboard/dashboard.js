@@ -61,12 +61,19 @@
 				var level;
 				if (self.orgunitLevelSelected) level = self.orgunitLevelSelected.level;
 				
-				var dataSetQueryID = d2Map.dhisVersion() < 23 ? dataset.id : dataset.id + '.REPORTING_RATE';
+				var dataSetQueryID = [];
+				if (d2Map.dhisVersion() < 23) {
+					dataSetQueryID.push(dataset.id);
+				}
+				else {
+					dataSetQueryID.push(dataset.id + '.REPORTING_RATE');
+					dataSetQueryID.push(dataset.id + '.REPORTING_RATE_ON_TIME');
+				}
 
 				var promises = [];
 				promises.push(promiseObject(dataset));
-				promises.push(visualisationService.lineChart(null, [dataSetQueryID], periods, [ouBoundaryID], 'dataOverTime'));
-				promises.push(visualisationService.barChart(null, [dataSetQueryID], [ouPeriod], [ouBoundaryID], 'ou', level));
+				promises.push(visualisationService.lineChart(null, dataSetQueryID, periods, [ouBoundaryID], 'dataOverTime'));
+				promises.push(visualisationService.barChart(null, [dataSetQueryID[0]], [ouPeriod], [ouBoundaryID], 'ou', level));
 
 				$q.all(promises).then(function(datas) {
 
@@ -79,8 +86,9 @@
 						ouChartData: datas[2].data
 					};
 
-					visualisationService.setChartLegend(datasetCompletenessChart.trendChartOptions, false);
 					visualisationService.setChartYAxis(datasetCompletenessChart.trendChartOptions, 0, 100);
+					datasetCompletenessChart.trendChartData[0].key = "Completeness";
+					datasetCompletenessChart.trendChartData[1].key = "Timeliness";
 
 					visualisationService.setChartLegend(datasetCompletenessChart.ouChartOptions, false);
 					visualisationService.setChartYAxis(datasetCompletenessChart.ouChartOptions, 0, 100);
@@ -228,10 +236,11 @@
 
 				var promises = [];
 				promises.push(relation);
-				promises.push(dqAnalysisConsistency.analyse(indicatorA.dataID, indicatorB.dataID, period, null, ouBoundaryID, ouLevel, null, 'data', null, relation.type, relation.criteria, null));
+				promises.push(dqAnalysisConsistency.analyse(indicatorA.dataID, indicatorB.dataID, period, null, ouBoundaryID, ouLevel, null, 'data', relation.type, null, relation.criteria, null));
 				$q.all(promises).then(function(datas) {
 					var data = datas[0]
 					var result = datas[1];
+
 					if (result.result.subType != 'do') {
 						visualisationService.makeDataConsistencyChart(null, result.result, null);
 					}
