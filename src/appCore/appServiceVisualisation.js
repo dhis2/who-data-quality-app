@@ -740,7 +740,7 @@
 					'x': 1,
 					'y': result.boundaryValue,
 					'shape': externalShape,
-					'size': 2,
+					'size': 1,
 					'z': result.boundaryID
 				});
 				if (result.boundaryValue > maxY) maxY = result.boundaryValue;
@@ -749,7 +749,7 @@
 					'x': 1,
 					'y': result.boundaryRefValue,
 					'shape': routineShape,
-					'size': 2,
+					'size': 1,
 					'z': result.boundaryID
 				});
 				if (result.boundaryValue > maxY) maxY = result.boundaryRefValue;
@@ -777,7 +777,7 @@
 						'y': datapoints[j].value,
 						'z': datapoints[j].id,
 						'shape': externalShape,
-						'size': datapoints[j].violation ? 3 : 3
+						'size': 1
 					});
 					if (datapoints[j].value > maxY) maxY = datapoints[j].value;
 
@@ -787,13 +787,14 @@
 						'y': datapoints[j].refValue,
 						'z': datapoints[j].id,
 						'shape': routineShape,
-						'size': datapoints[j].violation ? 3 : 2,
+						'size': 1
 					});
 					if (datapoints[j].refValue > maxY) maxY = datapoints[j].refValue;
 
 					names.push(datapoints[j].name)
 					tickValues.push(i);
 				}
+
 				++i;
 				externalSeries.values.push({
 					'x': i,
