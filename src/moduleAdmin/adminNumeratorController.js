@@ -70,6 +70,11 @@
 			indicator.dataID = self.dataSelected.id;
 			indicator.dataSetID = self.dataSetSelected.id;
 
+			delete indicator.groupsSelected;
+			delete indicator.dataTypeSelected;
+			delete indicator.dataSelected;
+			delete indicator.dataSetSelected;
+
 	        $uibModalInstance.close({'indicator': indicator, 'groups': self.groupsSelected, 'core': self.core});
 	    };
 	    

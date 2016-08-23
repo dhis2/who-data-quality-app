@@ -52,7 +52,6 @@
 					relationDelete: deleteRelation,
 					dataRelationTypes: dataRelationTypes,
 					dataRelationType: dataRelationType,
-					externalRelations: externalRelations,
 					d2NameFromID: d2NameFromID
 				};
 
@@ -158,7 +157,7 @@
 									var data = response.data.userRoles;
 									for (var i = 0; !authorized && i < data.length; i++) {
 										for (var j = 0; !authorized && j < data[i].authorities.length; j++) {
-											if (data[i].authorities[j] === 'M_dhis-web-maintenance-settings') {
+											if (data[i].authorities[j] === 'F_INDICATOR_PUBLIC_ADD') {
 												authorized = true;
 											}
 											if (data[i].authorities[j] === 'ALL') {
@@ -448,6 +447,7 @@
 					indicator.consistency = 33;
 					indicator.trend = 'constant';
 					indicator.missing = 90;
+					indicator.comparison = 'ou';
 
 					//Add to map
 					_map.numerators.push(indicator);
