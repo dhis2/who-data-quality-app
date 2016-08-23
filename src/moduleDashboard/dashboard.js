@@ -90,9 +90,10 @@
 					datasetCompletenessChart.trendChartData[0].key = "Completeness";
 					datasetCompletenessChart.trendChartData[1].key = "Timeliness";
 
-					visualisationService.setChartLegend(datasetCompletenessChart.ouChartOptions, false);
+					visualisationService.setChartLegend(datasetCompletenessChart.ouChartOptions, true);
 					visualisationService.setChartYAxis(datasetCompletenessChart.ouChartOptions, 0, 100);
-
+					datasetCompletenessChart.ouChartData[0].key = periodService.shortPeriodName(ouPeriod);
+					
 					self.completenessCharts.push(datasetCompletenessChart);
 
 					if (self.completenessCharts.length === self.expectedCompletenessCharts) self.cmpLoading = false;
