@@ -299,8 +299,8 @@
 					}
 					//If we have data for both, store the raw data, ratio and percentage
 					else {
-						result.boundaryValue = boundaryValueA;
-						result.boundaryRefValue = boundaryValueB;
+						result.boundaryValue = mathService.round(boundaryValueA, 1);
+						result.boundaryRefValue = mathService.round(boundaryValueB, 1);
 						result.boundaryRatio = mathService.round(boundaryRatio, 3);
 						result.boundaryPercentage = mathService.round(boundaryPercentage, 1);
 					}
@@ -497,9 +497,7 @@
 				function outlierWeight(valueA, valueB, boundaryRatio) {
 
 					var weight = 0;
-					if (_subType === 'level') {
-
-
+					if (_type === 'time' || _subType === 'level') {
 						weight = valueB*boundaryRatio - valueA;
 					}
 					else {
