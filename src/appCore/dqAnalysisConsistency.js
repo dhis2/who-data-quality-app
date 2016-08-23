@@ -499,12 +499,8 @@
 					var weight = 0;
 					if (_subType === 'level') {
 
-						if (valueA/valueB > boundaryRatio) {
-							weight = valueB*boundaryRatio - valueA;
-						}
-						else {
-							weight = valueA*boundaryRatio - valueB;
-						}
+
+						weight = valueB*boundaryRatio - valueA;
 					}
 					else {
 						weight = Math.abs(valueA - valueB);
