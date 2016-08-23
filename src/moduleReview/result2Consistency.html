@@ -72,12 +72,13 @@
 			</tr>
 			<tr ng-repeat="indicator in revCtrl.outliers | orderBy : 'displayName'">
 				<td>{{indicator.displayName}}</td>
-				<td class="valueCell">{{indicator.moderateOutlier}} SD</td>
-				<td ng-if="revCtrl.isNumber(indicator.boundaryModerate)" class="valueCell">{{indicator.boundaryModerate}}%</td>
-				<td ng-if="revCtrl.isNumber(indicator.boundaryModerate)" class="valueCell">{{indicator.countModerate}}</td>
-				<td ng-if="revCtrl.isNumber(indicator.boundaryModerate)" class="valueCell">{{indicator.percentModerate}}%</td>
-				<td ng-if="revCtrl.isNumber(indicator.boundaryModerate)">{{indicator.namesModerate.join(', ')}}</td>
-				<td ng-if="!revCtrl.isNumber(indicator.boundaryModerate)" colspan="4" >Not available</td>
+				<td class="valueCell" ng-if="indicator.moderateOutlier >= 0">{{indicator.moderateOutlier}} SD</td>
+				<td ng-if="revCtrl.isNumber(indicator.boundaryModerate) && indicator.moderateOutlier >= 0" class="valueCell">{{indicator.boundaryModerate}}%</td>
+				<td ng-if="revCtrl.isNumber(indicator.boundaryModerate) && indicator.moderateOutlier >= 0" class="valueCell">{{indicator.countModerate}}</td>
+				<td ng-if="revCtrl.isNumber(indicator.boundaryModerate) && indicator.moderateOutlier >= 0" class="valueCell">{{indicator.percentModerate}}%</td>
+				<td ng-if="revCtrl.isNumber(indicator.boundaryModerate) && indicator.moderateOutlier >= 0">{{indicator.namesModerate.join(', ')}}</td>
+				<td ng-if="!revCtrl.isNumber(indicator.boundaryModerate) && indicator.moderateOutlier >= 0" colspan="4" >Not available</td>
+				<td ng-if="indicator.moderateOutlier == -1" colspan="5">Not applicable</td>
 			</tr>
 			</tbody>
 		</table>
@@ -115,12 +116,13 @@
 			</tr>
 			<tr ng-repeat="indicator in revCtrl.outliers | orderBy : 'displayName'">
 				<td>{{indicator.displayName}}</td>
-				<td class="valueCell">3.5</td>
-				<td ng-if="revCtrl.isNumber(indicator.boundaryZscore)"  class="valueCell">{{indicator.boundaryZscore}}%</td>
-				<td ng-if="revCtrl.isNumber(indicator.boundaryZscore)"  class="valueCell">{{indicator.countZscore}}</td>
-				<td ng-if="revCtrl.isNumber(indicator.boundaryZscore)"  class="valueCell">{{indicator.percentZscore}}%</td>
-				<td ng-if="revCtrl.isNumber(indicator.boundaryZscore)">{{indicator.namesZscore.join(', ')}}</td>
-				<td ng-if="!revCtrl.isNumber(indicator.boundaryZscore)" colspan="4" >Not available</td>
+				<td class="valueCell" ng-if="indicator.moderateOutlier >= 0">3.5</td>
+				<td ng-if="revCtrl.isNumber(indicator.boundaryZscore) && indicator.moderateOutlier >= 0"  class="valueCell">{{indicator.boundaryZscore}}%</td>
+				<td ng-if="revCtrl.isNumber(indicator.boundaryZscore) && indicator.moderateOutlier >= 0"  class="valueCell">{{indicator.countZscore}}</td>
+				<td ng-if="revCtrl.isNumber(indicator.boundaryZscore) && indicator.moderateOutlier >= 0"  class="valueCell">{{indicator.percentZscore}}%</td>
+				<td ng-if="revCtrl.isNumber(indicator.boundaryZscore) && indicator.moderateOutlier >= 0">{{indicator.namesZscore.join(', ')}}</td>
+				<td ng-if="!revCtrl.isNumber(indicator.boundaryZscore) && indicator.moderateOutlier >= 0" colspan="4" >Not available</td>
+				<td ng-if="indicator.moderateOutlier == -1" colspan="5">Not applicable</td>
 			</tr>
 			</tbody>
 		</table>

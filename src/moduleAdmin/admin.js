@@ -21,8 +21,10 @@
 	    
 	    function init() {
    		    self.activeTab = true;
-	    	self.outlierOptions = makeOutlierOptions();
-	    	
+	    	self.outlierOptionsModerate = makeOutlierOptions();
+	    	self.outlierOptionsExtreme = makeOutlierOptions();
+			self.outlierOptionsExtreme.shift();
+
 	    	self.groupSelect = {};
 
 			self.isAdmin = false;
@@ -382,6 +384,7 @@
 		/** ===== UTILITIES ===== **/
 		function makeOutlierOptions() {
 			var opts = [];
+			opts.push({'val': -1, 'label': "Ignore"});
 			for (var i = 1.5; i <= 4.05; i += 0.1) {
 				opts.push({'val': (Math.round(10*i)/10), 'label': (Math.round(10*i)/10).toString()});
 			}

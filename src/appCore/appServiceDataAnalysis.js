@@ -1,8 +1,8 @@
 (function () {
 	/**Service: Completeness*/
 	angular.module('dataQualityApp').service('dataAnalysisService',
-	['$q', 'requestService', 'mathService', 'd2Meta', 'd2Utils',
-	function ($q, requestService, mathService, d2Meta, d2Utils) {
+	['$q', 'requestService', 'mathService', 'd2Meta', 'd2Map',
+	function ($q, requestService, mathService, d2Meta, d2Map) {
 
 		var self = this;
 
@@ -163,7 +163,7 @@
 				self.og.ouCount = self.og.ouBoundary.length;
 				outlierGapRequest();
 			}
-			//If method is by level and level < 2, we assume things are okay
+			//If method is by level and level <= 2, we assume things are okay
 			else if (self.og.ouLevel && self.og.ouLevel <= 2) {
 				self.og.ouCount = Math.pow(20, self.og.ouLevel-1);
 				outlierGapRequest();
@@ -330,8 +330,29 @@
 				//Calculate and store the statistical properties of the set
 				newRow.stats = mathService.getStats(valueSet);
 
+
 				//Check if there are outliers
-				newRow.result = outlierGapAnalyseData(valueSet, newRow.stats, gaps, zScoreCriteria, sScoreCriteria, gapCriteria)
+				//If data has a pre-defined criteria for outliers we can apply that rather than the default
+				var outlierCriteria = d2Map.numeratorOutlierCriteria(dxID);
+				if (outlierCriteria) {
+					var sScore, zScore;
+
+					//-1 means ignore moderate outliers, thus we use extreme as the minimum
+					if (outlierCriteria.moderate == -1) {
+						sScore = outlierCriteria.extreme;
+						zScore = 5;
+					}
+					//else use the moderate as minimum
+					else {
+						sScore = outlierCriteria.moderate;
+						zScore = 3.5;
+					}
+					newRow.result = outlierGapAnalyseData(valueSet, newRow.stats, gaps, zScore, sScore, gapCriteria);
+				}
+				else {
+					newRow.result = outlierGapAnalyseData(valueSet, newRow.stats, gaps, zScoreCriteria, sScoreCriteria, gapCriteria);
+				}
+
 
 				//If there are results (i.e. outliers), result set
 				if (newRow.result) result.rows.push(newRow);

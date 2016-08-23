@@ -29,6 +29,7 @@
 					numeratorAdd: addIndicator,
 					numeratorDelete: numeratorDelete,
 					numeratorUpdate: updateIndicator,
+					numeratorOutlierCriteria: indicatorOutlierCriteria,
 					numeratorIsCore: numeratorIsCore,
 					numeratorMakeCore: makeIndicatorCore,
 					numeratorRemoveCore: removeIndicatorCore,
@@ -589,6 +590,23 @@
 					return dataSets(indicator.dataSetID);
 
 				}
+
+				function indicatorOutlierCriteria(dataID) {
+					var criteria = {};
+					var numerators = indicators(null);
+					for (var i = 0; i < numerators.length; i++) {
+						if (numerators[i].dataID == dataID) {
+
+							criteria.moderate = numerators[i].moderateOutlier;
+							criteria.extreme = numerators[i].extremeOutlier;
+							return criteria;
+						}
+					}
+
+					return false;
+
+				}
+
 
 
 				function indicatorGroups(code) {

@@ -128,11 +128,11 @@
 					<td class="vert-align">{{indicator.name}}</td>
 					<td class="vert-align">{{admCtrl.d2NameFromID(indicator.dataID)}}</td>
 					<td class="vert-align" align="middle">
-						<select ng-disabled="!admCtrl.isAdmin" ng-model="indicator.moderateOutlier" ng-options="opts.val as opts.label for opts in admCtrl.outlierOptions">
+						<select ng-disabled="!admCtrl.isAdmin" ng-model="indicator.moderateOutlier" ng-options="opts.val as opts.label for opts in admCtrl.outlierOptionsModerate">
 						</select>
 					</td>
 					<td class="vert-align" align="middle">
-						<select ng-disabled="!admCtrl.isAdmin" ng-model="indicator.extremeOutlier" ng-options="opts.val as opts.label for opts in admCtrl.outlierOptions">
+						<select ng-disabled="!admCtrl.isAdmin" ng-model="indicator.extremeOutlier" ng-options="opts.val as opts.label for opts in admCtrl.outlierOptionsExtreme">
 						</select>
 					</td>
 					<td align="middle" style="width: 150px;" class="vert-align"><input ng-disabled="!admCtrl.isAdmin" type="number" style="text-align: right;" ng-model="indicator.consistency" min="0" max="100"/></td>
