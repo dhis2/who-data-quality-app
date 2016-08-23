@@ -378,7 +378,9 @@
 			self.consistencyData = false;
 			self.outliers = false;
 
-			self.startDate = moment(self.endDate).subtract(12, 'months').add(1, 'day');
+			self.endDate = moment(self.endDate).date(1);
+			self.startDate = moment(self.endDate).subtract(11, 'months');
+			self.endDate = self.endDate.add(1, 'months').subtract(1, 'day');
 
 
 			switch (self.selectedTab) {
@@ -500,7 +502,7 @@
 
 
 			self.endDate = moment();
-			if (self.endDate.date() > 7) {
+			if (self.endDate.date() > 15) {
 				self.endDate.subtract(new Date().getDate(), 'days');
 			}
 			else {
