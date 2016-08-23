@@ -22,26 +22,17 @@
 
 	<hr/>
 
-	<label>Orgunit</label>
+	<label>Organisation unit</label>
 	<div style="display: inline-block; width: 300px; max-height: 400px; margin-right: 10px; vertical-align: top; overflow: scroll"
 		 class="well well-sm">
 		<ou-tree on-select="dashCtrl.boundarySelected(orgunit)"></ou-tree>
 	</div>
 
 	<div style="display: inline-block; width: 300px; margin-right: 10px; vertical-align: top">
-		<label>Organisation unit level</label><br/>
-		<span>Completeness and consistency</span>
+		<span>Disaggregation</span>
 		<d2-select
 				on-select="dashCtrl.update(object);"
 				ng-model="dashCtrl.orgunitLevelSelected"
-				options="dashCtrl.filteredOrgunitLevels"
-				placeholder="Select level...">
-		</d2-select>
-
-		<div style="margin-top: 10px">Outliers</div>
-		<d2-select
-				on-select="dashCtrl.update(object);"
-				ng-model="dashCtrl.orgunitLevelSelectedOutliers"
 				options="dashCtrl.filteredOrgunitLevels"
 				placeholder="Select level...">
 		</d2-select>

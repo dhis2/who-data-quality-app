@@ -93,7 +93,7 @@
 					visualisationService.setChartLegend(datasetCompletenessChart.ouChartOptions, true);
 					visualisationService.setChartYAxis(datasetCompletenessChart.ouChartOptions, 0, 100);
 					datasetCompletenessChart.ouChartData[0].key = periodService.shortPeriodName(ouPeriod);
-					
+
 					self.completenessCharts.push(datasetCompletenessChart);
 
 					if (self.completenessCharts.length === self.expectedCompletenessCharts) self.cmpLoading = false;
@@ -302,7 +302,7 @@
 			}
 
 			var level;
-			if (self.orgunitLevelSelectedOutliers) level = self.orgunitLevelSelectedOutliers.level;
+			if (self.orgunitLevelSelected) level = self.orgunitLevelSelected.level;
 
 
 			//Get period IDs
@@ -466,16 +466,8 @@
 				}
 			}
 
-			if (!self.ouBoundary || !self.filteredOrgunitLevelsOutliers) return;
-			var level = self.ouBoundary.level;
-			for (var i = 0; i < self.filteredOrgunitLevelsOutliers.length; i++) {
-				if (self.filteredOrgunitLevelsOutliers[i].level === (level + 2)) {
-					self.orgunitLevelSelectedOutliers = self.filteredOrgunitLevelsOutliers[i];
-				}
-			}
 
 			if (self.filteredOrgunitLevels.length === 0) self.orgunitLevelSelected = undefined;
-			if (self.filteredOrgunitLevelsOutliers.length === 0) self.orgunitLevelSelectedOutliers = undefined;
 
 		};
 
