@@ -19,15 +19,19 @@
 		</div>
 	</div>
 	<div uib-collapse="!resultCtrl.showFilter" class="well well-sm">
-		<div style="display: inline-block; margin-right: 15px;">
+		<div>
 			<label for="threshold">Display columns</label>
 			<div class="btn-group btn-group-justified" ng-click="resultCtrl.updateType();" style="margin-bottom: 5px; max-width: 400px;">
 				<label class="btn btn-default" ng-model="resultCtrl.typeFilter" uib-btn-radio="0">All</label>
 				<label class="btn btn-default" ng-model="resultCtrl.typeFilter" uib-btn-radio="1">Missing data</label>
 				<label class="btn btn-default" ng-model="resultCtrl.typeFilter" uib-btn-radio="2">Outliers</label>
 			</div>
+			<div style="display: inline-block; margin-bottom: 20px">
+				Include Z-score <input type="checkbox" ng-disabled="resultCtrl.typeFilter === 1" ng-init="resultCtrl.zScoreColumns = false" ng-model="resultCtrl.zScoreColumns"/>
+			</div>
 		</div>
-		<div style="display: inline-block; margin-right: 15px;">
+		</br>
+		<div >
 			<label for="threshold">Outlier filter</label>
 			<div class="btn-group btn-group-justified" ng-click="resultCtrl.updateFilter();" style="margin-bottom: 5px; max-width: 400px;">
 				<label class="btn btn-default" ng-model="resultCtrl.stdFilterType" uib-btn-radio="0">Off</label>
@@ -36,7 +40,7 @@
 			</div>
 		</div>
 		<div style="display: inline-block; margin-right: 15px; vertical-align: bottom;">
-			<div  class="btn-group btn-group-justified" ng-click="resultCtrl.updateFilter();" style="margin-bottom: 5px; max-width: 250px;">
+			<div  class="btn-group btn-group-justified" ng-click="resultCtrl.updateFilter();" style="margin-bottom: 5px; max-width: 400px;">
 				<label ng-disabled="resultCtrl.stdFilterType === 0" class="btn btn-warning" ng-model="resultCtrl.stdFilterDegree" uib-btn-radio="1">Moderate</label>
 				<label ng-disabled="resultCtrl.stdFilterType === 0" class="btn btn-danger" ng-model="resultCtrl.stdFilterDegree" uib-btn-radio="2">Extreme</label>
 			</div>
@@ -57,7 +61,7 @@
 				</th>
 				<th rowspan="2" ng-repeat="period in resultCtrl.periods" nowrap>{{period}}</th>
 				<th style="white-space:nowrap;" colspan="2"
-					ng-if="resultCtrl.typeFilter != 1">
+					ng-if="resultCtrl.typeFilter != 1 && resultCtrl.zScoreColumns">
 					Z-score
 									<span class="glyphicon glyphicon-info-sign"
 										  style="color: black"
@@ -81,11 +85,11 @@
 					{{levelName}}
 					<span ng-if='resultCtrl.sortCol === "metaData.ou.hierarchy[" + $index + "]"' class="glyphicon glyphicon-sort-by-attributes"></span>
 				</th>
-				<th style="white-space:nowrap;" ng-if="resultCtrl.typeFilter != 1" ng-click="resultCtrl.sortByColumn('result.maxSscore')">
+				<th style="white-space:nowrap;" ng-if="resultCtrl.typeFilter != 1 && resultCtrl.zScoreColumns" ng-click="resultCtrl.sortByColumn('result.maxSscore')">
 					Standard
 					<span ng-if="resultCtrl.sortCol === 'result.maxSscore'" class="glyphicon glyphicon-sort-by-attributes"></span>
 				</th>
-				<th style="white-space:nowrap;" ng-if="resultCtrl.typeFilter != 1" ng-click="resultCtrl.sortByColumn('result.maxZscore')">
+				<th style="white-space:nowrap;" ng-if="resultCtrl.typeFilter != 1 && resultCtrl.zScoreColumns" ng-click="resultCtrl.sortByColumn('result.maxZscore')">
 					Modified
 					<span ng-if="resultCtrl.sortCol === 'result.maxZscore'" class="glyphicon glyphicon-sort-by-attributes"></span>
 				</th>
@@ -120,8 +124,8 @@
 				<td ng-repeat="value in row.data track by $index" class="valueCell"
 					ng-class="{warning: value==='', danger: resultCtrl.isOutlier(value, row.stats)}">
 					{{value}}</td>
-				<td ng-if="resultCtrl.typeFilter != 1" class="valueCell">{{row.result.maxSscore}}</td>
-				<td ng-if="resultCtrl.typeFilter != 1" class="valueCell"><span ng-if="row.result.maxZscore != 0">{{row.result.maxZscore}}</span></td>
+				<td ng-if="resultCtrl.typeFilter != 1 && resultCtrl.zScoreColumns" class="valueCell">{{row.result.maxSscore}}</td>
+				<td ng-if="resultCtrl.typeFilter != 1 && resultCtrl.zScoreColumns" class="valueCell"><span ng-if="row.result.maxZscore != 0">{{row.result.maxZscore}}</span></td>
 				<td ng-if="resultCtrl.typeFilter != 2" class="valueCell">{{row.result.gapWeight}}</td>
 				<td ng-if="resultCtrl.typeFilter != 1" class="valueCell">{{row.result.outWeight}}</td>
 				<td ng-if="resultCtrl.typeFilter === 0" class="valueCell">{{row.result.totalWeight}}</td>
