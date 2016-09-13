@@ -83,5 +83,6 @@
 
 	<div class="modal-footer" style="clear: both;">
 		<button type="button" class="btn btn-default" data-ng-click="addCtrl.cancel()">Cancel</button>
-		<button type="button" class="btn btn-default" data-ng-click="addCtrl.save()" ng-disabled="addCtrl.dataTypeSelected === undefined || addCtrl.externalDataSelected === undefined || addCtrl.numeratorSelected === undefined || addCtrl.denominatorSelected === undefined || addCtrl.criteria === undefined">Save</button>
+		<button type="button" class="btn btn-default" data-ng-click="addCtrl.save()"
+				ng-disabled="!addCtrl.externalDataSelected || !addCtrl.numeratorSelected || !addCtrl.denominatorSelected || !addCtrl.criteria || !addCtrl.name || !addCtrl.levelSelected">Save</button>
 	</div>
