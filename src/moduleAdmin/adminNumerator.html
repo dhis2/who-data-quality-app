@@ -41,7 +41,7 @@
 			<d2-select-data-element
 					multiple="false"
 					ng-model="mapCtrl.dataSelected"
-					on-select="mapCtrl.updateDataSetList(object);">
+					on-select="mapCtrl.updateDataSetList(object); mapCtrl.updateDataElementOperandList();">
 			</d2-select-data-element>
 		</div>
 
@@ -50,7 +50,7 @@
 			<d2-select-indicator
 					ng-model="mapCtrl.dataSelected"
 					multiple="false"
-					on-select="mapCtrl.updateDataSetList(object);">
+					on-select="mapCtrl.updateDataSetList(object); mapCtrl.updateDataElementOperandList();">
 			</d2-select-indicator>
 		</div>
 	</div>
@@ -62,6 +62,13 @@
 				placeholder="Select data set...">
 	</d2-select>
 
+	<label>Variable for completeness</label>
+	<d2-select multiple="false"
+			   ng-model="mapCtrl.dataCompletenessSelected"
+			   options="mapCtrl.dataCompleteness"
+			   placeholder="Select variable...">
+	</d2-select>
+
 <span ng-if="mapCtrl.dataSelected && mapCtrl.name && mapCtrl.name.length > 0">
 	<hr />
 	<p >"<em>{{mapCtrl.name}}</em>" will be mapped to "{{mapCtrl.dataSelected.displayName}}".</em></p>
@@ -70,5 +77,5 @@
 </div>
 <div class="modal-footer" style="clear: both;">     
     <button type="button" class="btn btn-default" data-ng-click="mapCtrl.cancel()">Cancel</button>
-    <button type="button" class="btn btn-default" data-ng-click="mapCtrl.save()" ng-disabled="!mapCtrl.name || mapCtrl.name === '' || !mapCtrl.dataSelected || !mapCtrl.dataSetSelected || mapCtrl.groupsSelected.length === 0">Save</button>
+    <button type="button" class="btn btn-default" data-ng-click="mapCtrl.save()" ng-disabled="!mapCtrl.name || mapCtrl.name === '' || !mapCtrl.dataSelected || !mapCtrl.dataSetSelected || !mapCtrl.dataCompletenessSelected || mapCtrl.groupsSelected.length === 0">Save</button>
 </div>

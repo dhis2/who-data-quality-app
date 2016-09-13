@@ -59,6 +59,38 @@
 	    	}
   	    }
 
+  	    self.updateDataElementOperandList = function () {
+			self.dataCompletenessSelected = undefined;
+
+			//If data element, get operands
+			if (self.dataTypeSelected === 'dataElements') {
+				d2Meta.objects('dataElementOperands', null, 'displayName,id', 'dataElementId:eq:' + self.dataSelected.id.substr(0,11), false).then(
+					function (data) {
+						self.dataCompleteness = data;
+					}
+				);
+			}
+
+			//If indicator, get data elements, then operands
+			else {
+				d2Meta.indicatorDataElements(self.dataSelected.id).then(
+					function (data) {
+
+						var ids = [];
+						for (var i = 0; i < data.length; i++) {
+							ids.push(data[i].id);
+						}
+
+						d2Meta.objects('dataElementOperands', null, 'displayName,id', 'dataElementId:in:[' + ids.join(',') + ']', false).then(
+							function (data) {
+								self.dataCompleteness = data;
+							}
+						);
+					}
+				);
+			}
+		}
+
 	    self.cancel = function () {
 	        $uibModalInstance.close();
 	    };
@@ -69,11 +101,13 @@
 			indicator.definition = self.definition;
 			indicator.dataID = self.dataSelected.id;
 			indicator.dataSetID = self.dataSetSelected.id;
+			indicator.dataElementOperandID = self.dataCompletenessSelected.id;
 
 			delete indicator.groupsSelected;
 			delete indicator.dataTypeSelected;
 			delete indicator.dataSelected;
 			delete indicator.dataSetSelected;
+			delete indicator.dataCompletenessSelected;
 
 	        $uibModalInstance.close({'indicator': indicator, 'groups': self.groupsSelected, 'core': self.core});
 	    };

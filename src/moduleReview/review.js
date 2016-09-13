@@ -137,7 +137,7 @@
 
 				if (d2Map.dhisVersion() >= 23) {
 
-					dqAnalysisCompleteness.analyse(indicator.dataID, indicator.dataSetID, period, periods, ouBoundary, ouLevel, null, indicator.missing, 'dataCompleteness', null)
+					dqAnalysisCompleteness.analyse(indicator.dataElementOperandID, indicator.dataSetID, period, periods, ouBoundary, ouLevel, null, indicator.missing, 'dataCompleteness', null)
 						.then(function (data) {
 							console.log(data);
 							receiveDataCompletenessDetailed(data.result, data.errors);

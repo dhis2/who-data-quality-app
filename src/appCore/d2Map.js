@@ -182,9 +182,16 @@
 					var currentVersion = 0.9;
 					if (_map.metaDataVersion != currentVersion) {
 
+
 						//Do whatever upgrades are needed here
-						delete _map.externalComparison;
-						_map.externalRelations = [];
+						for (var i = 0; i < _map.numerators.length; i++) {
+							if (_map.numerators[i].dataElementOperand) {
+								_map.numerators[i].dataElementOperandID = _map.numerators[i].dataElementOperand;
+								delete _map.numerators[i].dataElementOperand;
+							}
+						}
+
+
 						_map.metaDataVersion = currentVersion;
 						return save();
 					}
