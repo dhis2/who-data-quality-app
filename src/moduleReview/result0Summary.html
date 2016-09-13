@@ -383,6 +383,9 @@
 						<th width="175">Number</th>
 						<th width="175">Percent</th>
 					</tr>
+					<tr ng-if="revCtrl.external.length === 0">
+						<td colspan="6">Not available</td>
+					</tr>
 					<tr ng-repeat="relation in revCtrl.external | orderBy:'meta.name' track by $index">
 						<td>{{relation.meta.name}}</td>
 						<td ng-if="revCtrl.isNumber(relation.boundaryPercentage)" class="valueCell">{{relation.boundaryPercentage}}%</td>
@@ -443,7 +446,7 @@
 					<td class="valueCell">{{denominator.subunitsOutsideThreshold}}</td>
 					<td class="valueCell">{{denominator.subunitViolationPercentage}}%</td>
 				</tr>
-				<tr ng-if="!revCtrl.denominators.relations || revCtrl.denominator.relations.length === 0">
+				<tr ng-if="revCtrl.denominators.relations.length === 0">
 					<td colspan="4">Not available</td>
 				</tr>
 

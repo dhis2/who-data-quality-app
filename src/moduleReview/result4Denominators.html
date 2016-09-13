@@ -7,7 +7,7 @@
 		<table class="table tablePrint table-bordered table-condensed ">
 			<tr bgcolor="#f9f9f9">
 				<th colspan="2">
-					3a: Consistency with UN population projection.
+					4a: Consistency with UN population projection.
 				</th>
 			</tr>
 			<tr>
@@ -19,27 +19,30 @@
 	</div>
 
 
+
+	<div class="inline fullWidth">
+		<table class="table tablePrint table-bordered table-condensed" style="margin-bottom: 5px">
+			<tbody>
+			<tr bgcolor="#f9f9f9">
+				<th>
+					4b: Consistency of denominators
+				</th>
+			</tr>
+			<tr>
+				<td>
+					<em>Consistency of denominators within the same year.</em>
+				</td>
+			</tr>
+			<tr ng-if="revCtrl.denominators.relations.length === 0">
+				<td>Not available</td>
+			</tr>
+			</tbody>
+		</table>
+	</div>
+
 	<div class="noBreak inline fullWidth"
 		 style="margin-bottom: 10px;"
 		 ng-repeat="denominator in revCtrl.denominators.relations | orderBy:'meta.relation.name' track by $index">
-
-
-		<div ng-if="$index === 0" class="inline fullWidth">
-			<table class="table tablePrint table-bordered table-condensed" style="margin-bottom: 5px">
-				<tbody>
-				<tr bgcolor="#f9f9f9">
-					<th>
-						3b: Consistency of denominators
-					</th>
-				</tr>
-				<tr>
-					<td>
-						<em>Consistency of denominators within the same year.</em>
-					</td>
-				</tr>
-				</tbody>
-			</table>
-		</div>
 		<div class="inline relationTable" style="min-height: 300px">
 			<table class="table tablePrint table-bordered table-condensed">
 				<tr bgcolor="#f9f9f9"><th colspan="2">{{denominator.meta.relation.name}}</th></tr>

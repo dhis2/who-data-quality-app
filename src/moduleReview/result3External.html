@@ -17,11 +17,14 @@
 					<em>Consistency of routine data with data from external source, e.g. population-based surveys.</em>
 				</td>
 			</tr>
+			<tr ng-if="revCtrl.external.length === 0">
+				<td>Not available</td>
+			</tr>
 			</tbody>
 		</table>
 	</div>
 
-	<div ng-if="revCtrl.external.length === 0"><p>Not available</p></div>
+
 	<div class="noBreak inline fullWidth"
 		 style="margin-bottom: 10px;"
 		 ng-repeat="relation in revCtrl.external | orderBy:'meta.name' track by $index">
