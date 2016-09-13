@@ -489,6 +489,8 @@
 					var header = textAreas[i].previousElementSibling;
 					header.classList.remove('no-print');
 				}
+				//Make sure we keep line break
+				text = text.replace(/\n/g, "<br/>");
 				parent.innerHTML += '<p class="interpretationText">' + text + '</p>';
 			}
 
@@ -502,6 +504,7 @@
 			for (var i = 0; i < textAreas.length; i++) {
 				var text = textAreas[i].innerHTML;
 				var parent = textAreas[i].parentElement;
+				text = text.replace(/\<br\>/g, "\n");
 				parent.innerHTML += '<textarea class="interpretation">' + text + '</textarea>';
 			}
 
