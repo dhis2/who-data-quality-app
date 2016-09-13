@@ -179,7 +179,7 @@
 				 * Upgrade metadata version
 				 */
 				function versionUpgrade() {
-					var currentVersion = 0.7;
+					var currentVersion = 0.9;
 					if (_map.metaDataVersion != currentVersion) {
 
 						//Do whatever upgrades are needed here
