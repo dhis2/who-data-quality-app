@@ -502,7 +502,7 @@
 
 
 			self.endDate = moment();
-			if (self.endDate.date() > 15) {
+			if (self.endDate.date() > 7) {
 				self.endDate.subtract(new Date().getDate(), 'days');
 			}
 			else {
@@ -511,7 +511,8 @@
 			}
 			self.startDate = moment(self.endDate).subtract(12, 'months').add(1, 'day');
 
-			self.datepickerOptions.maxDate = self.endDate.toDate();
+			self.datepickerOptions.maxDate = moment().subtract(1, 'month').toDate();
+
       	}
 
 
