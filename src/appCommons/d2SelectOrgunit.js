@@ -8,7 +8,9 @@
 				'ngModel': '=',
 				'onSelect': '&',
 				'defaultLevel': '=',
-				'maxLevel': '='
+				'maxLevel': '=',
+				'hideGroup': '=',
+				'hideLevel': '='
 			},
 			bindToController: true,
 			controller: "d2SelectOUController",
@@ -131,7 +133,9 @@
 						group: self.selectedGroup
 					};
 
-					if (self.selectedOrgunit) self.onSelect({orgunit: self.ngModel});
+					if (self.selectedOrgunit) {
+						self.onSelect({'object': self.ngModel});
+					}
 
 				}
 
