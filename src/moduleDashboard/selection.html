@@ -1,5 +1,5 @@
 	<div style="height: auto;">
-		<label>Data</label>
+		<h4>Data</h4>
 		<d2-select on-select="dashCtrl.update(object);"
 				   ng-model="dashCtrl.group"
 				   options="dashCtrl.groups">
@@ -8,7 +8,7 @@
 
 	<hr/>
 
-	<label>Period</label>
+	<h4>Period</h4>
 	<div style="width: 290px">
 		<uib-datepicker
 					ng-change="dashCtrl.update();"
@@ -22,19 +22,6 @@
 
 	<hr/>
 
-	<label>Organisation unit</label>
-	<div style="display: inline-block; width: 300px; max-height: 400px; margin-right: 10px; vertical-align: top; overflow: scroll"
-		 class="well well-sm">
-		<ou-tree on-select="dashCtrl.boundarySelected(orgunit)"></ou-tree>
-	</div>
-
-	<div style="display: inline-block; width: 300px; margin-right: 10px; vertical-align: top">
-		<span>Disaggregation</span>
-		<d2-select
-				on-select="dashCtrl.update(object);"
-				ng-model="dashCtrl.orgunitLevelSelected"
-				options="dashCtrl.filteredOrgunitLevels"
-				placeholder="Select level...">
-		</d2-select>
-	</div>
+	<h4>Organisation unit</h4>
+	<d2-select-orgunit style="width: 300px;" default-level="1" max-level="2" hide-group="true" hide-level="false" ng-model="dashCtrl.selectedOrgunit" on-select="dashCtrl.update();"></d2-select-orgunit>
 

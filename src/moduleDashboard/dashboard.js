@@ -21,7 +21,6 @@
 		self.consistency = false;
 		self.consistencyData = false;
 		self.outliers = false;
-		self.orgunitLevelSelected;
 		self.orgunitLevels = [];
 
 
@@ -48,7 +47,7 @@
 			var datasets = d2Map.groupDataSets(self.group.code);
 			self.completenessCharts = [];
 			self.expectedCompletenessCharts = datasets.length;
-			var ouBoundaryID = self.ouBoundary.id;
+			var ouBoundaryID = self.selectedOrgunit.boundary.id;
 
         	var dataset, periods, ouPeriod;
 			if (datasets.length > 0) self.cmpLoading = true;
@@ -59,7 +58,7 @@
         		ouPeriod = periods[periods.length - 1];
 
 				var level;
-				if (self.orgunitLevelSelected) level = self.orgunitLevelSelected.level;
+				if (self.selectedOrgunit.level) level = self.selectedOrgunit.level.level;
 				
 				var dataSetQueryID = [];
 				if (d2Map.dhisVersion() < 23) {
@@ -125,9 +124,9 @@
       		self.consistencyCharts = [];
       		self.yyReceived = 0;
 
-      		var ouBoundaryID = self.ouBoundary.id;
+      		var ouBoundaryID = self.selectedOrgunit.boundary.id;
 			var ouLevel;
-			if (self.orgunitLevelSelected) ouLevel = self.orgunitLevelSelected.level;
+			if (self.selectedOrgunit.level) ouLevel = self.selectedOrgunit.level.level;
       		var data, endDate, startDate, periodType, yyPeriods, period, refPeriods; 	
    			var datas = d2Map.groupNumerators(self.group.code, true);
 			self.expectedConsistencyCharts = datas.length;
@@ -213,9 +212,9 @@
 
 			self.dataConsistencyCharts = [];
 
-			var ouBoundaryID = self.ouBoundary.id;
+			var ouBoundaryID = self.selectedOrgunit.boundary.id;
 			var ouLevel;
-			if (self.orgunitLevelSelected) ouLevel = self.orgunitLevelSelected.level;
+			if (self.selectedOrgunit.level) ouLevel = self.selectedOrgunit.level.level;
 
 
 			var period;
@@ -302,7 +301,7 @@
 			}
 
 			var level;
-			if (self.orgunitLevelSelected) level = self.orgunitLevelSelected.level;
+			if (self.selectedOrgunit.level) level = self.selectedOrgunit.level.level;
 
 
 			//Get period IDs
@@ -317,7 +316,7 @@
 			}
 
 			self.outLoading = true;
-			dataAnalysisService.outlierGap(receiveResult, dataIDs, null, null, periods, [self.ouBoundary.id], level, null, 2, 3.5, 1);
+			dataAnalysisService.outlierGap(receiveResult, dataIDs, null, null, periods, [self.selectedOrgunit.boundary.id], level, null, 2, 3.5, 1);
 		}
 
 
@@ -378,6 +377,9 @@
 			self.consistencyData = false;
 			self.outliers = false;
 
+			if (self.selectedOrgunit && self.selectedOrgunit.boundary) self.ready = true;
+
+
 			self.endDate = moment(self.endDate).date(1);
 			self.startDate = moment(self.endDate).subtract(11, 'months');
 			self.endDate = self.endDate.add(1, 'months').subtract(1, 'day');
@@ -422,58 +424,6 @@
 		/** ===== SELECTION ===== */
 		self.selectionURL='moduleDashboard/selection.html';
 
-		self.boundarySelected = function(orgunit) {
-			if (self.ouBoundary && self.ouBoundary.id === orgunit.id) return;
-
-			self.ouBoundary = orgunit;
-			self.filterLevels();
-			self.orgunitUserDefaultLevel();
-
-			if (self.orgunitLevels) self.update();
-		}
-
-
-		self.filterLevels = function () {
-			self.filteredOrgunitLevels = [];
-			self.filteredOrgunitLevelsOutliers = [];
-
-			if (!self.orgunitLevels || !self.ouBoundary) return;
-			for (var i = 0; i < self.orgunitLevels.length; i++) {
-				var belowSelectedUnit = self.orgunitLevels[i].level > self.ouBoundary.level;
-				var belowMaxDepth = self.orgunitLevels[i].level > (self.ouBoundary.level + 2);
-
-				if (belowSelectedUnit && !belowMaxDepth) {
-					self.filteredOrgunitLevels.push(self.orgunitLevels[i]);
-				}
-			}
-			for (var i = 0; i < self.orgunitLevels.length; i++) {
-				var belowSelectedUnit = self.orgunitLevels[i].level > self.ouBoundary.level;
-				var belowMaxDepth = self.orgunitLevels[i].level > (self.ouBoundary.level + 3);
-
-				if (belowSelectedUnit && !belowMaxDepth) {
-					self.filteredOrgunitLevelsOutliers.push(self.orgunitLevels[i]);
-				}
-			}
-		};
-
-
-		self.orgunitUserDefaultLevel = function () {
-
-			if (!self.ouBoundary || !self.filteredOrgunitLevels) return;
-
-			var level = self.ouBoundary.level;
-			for (var i = 0; i < self.filteredOrgunitLevels.length; i++) {
-				if (self.filteredOrgunitLevels[i].level === (level + 1)) {
-					self.orgunitLevelSelected = self.filteredOrgunitLevels[i];
-				}
-			}
-
-
-			if (self.filteredOrgunitLevels.length === 0) self.orgunitLevelSelected = undefined;
-
-		};
-
-
 
       	/** ===== INIT ===== */
       	function init() {
@@ -481,25 +431,6 @@
       		self.group = {displayName: '[ Core ]', code: 'core'};
 			self.groups = d2Map.configuredGroups();
 			self.groups.unshift(self.group);
-
-			d2Meta.objects('organisationUnitLevels', null, 'displayName,id,level').then(function(data) {
-				self.orgunitLevels = data;
-
-				self.lowestLevel = 0;
-				for (var i = 0; i < self.orgunitLevels.length; i++) {
-					var level = self.orgunitLevels[i].level;
-					if (level > self.lowestLevel) self.lowestLevel = level;
-				}
-
-				self.filterLevels();
-				self.orgunitUserDefaultLevel();
-
-				self.ready = true;
-
-				//Completeness is the default tab
-				if (self.ouBoundary) self.makeCompletenessCharts();
-			});
-
 
 			self.endDate = moment();
 			if (self.endDate.date() > 7) {
