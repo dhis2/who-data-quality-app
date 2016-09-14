@@ -192,8 +192,6 @@
 					var errors = [];
 					var result = {};
 
-					console.log("Variables per period for " + d2Data.name(_dataID) + ": " + components);
-
 					var boundaryValues = d2Data.value(_dataID, _pe, _ouBoundary, null, 'COUNT');
 					var boundaryExpected = d2Data.value(_dataSetID + '.EXPECTED_REPORTS', _pe, _ouBoundary, null, null)*components;
 

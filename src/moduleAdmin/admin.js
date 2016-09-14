@@ -40,6 +40,10 @@
 				}
 			});
 
+			d2Meta.objects('organisationUnitLevels', null, 'displayName,id,level', null, false).then(function(data) {
+				self.orgunitLevels = data;
+			});
+
 			self.numerators = d2Map.numerators();
 			self.denominators = d2Map.denominators();
 			self.denominatorRelations = d2Map.denominatorRelations();
