@@ -482,12 +482,16 @@
 				}
 
 	    		var toolTipHTML = '<h3>' + ouName + '</h3>';
-    			toolTipHTML += '<p style="margin-bottom: 0px">' + periodService.shortPeriodName(result.pe) + ': ' + point.point.y + '</p>';
+
+				var yVal = point.point.y != null ? point.point.y : 'No data';
+				var xVal = point.point.x != null ? point.point.x : 'No data';
+
+    			toolTipHTML += '<p style="margin-bottom: 0px">' + periodService.shortPeriodName(result.pe) + ': ' + yVal + '</p>';
 	    		if (result.subType === 'constant') {
-	    			toolTipHTML += '<p>Average: ' + point.point.x + '</p>';
+	    			toolTipHTML += '<p>Average: ' + xVal + '</p>';
 	    		}
 	    		else {
-	    			toolTipHTML += '<p>Forecasted: ' + point.point.x + '</p>';
+	    			toolTipHTML += '<p>Forecasted: ' + xVal + '</p>';
 	    		}
 	    	    return toolTipHTML;
 	    	};
