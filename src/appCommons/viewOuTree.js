@@ -89,9 +89,9 @@
 							}
 						);
 					}
-
-					self.onSelect({orgunit: orgunit.data.ou});
 					self.ngModel = orgunit.data.ou;
+					self.onSelect({'object': orgunit.data.ou});
+
 				}
 
 				ouTreeInit();
