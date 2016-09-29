@@ -87,7 +87,7 @@
 
 					visualisationService.setChartYAxis(datasetCompletenessChart.trendChartOptions, 0, 100);
 					datasetCompletenessChart.trendChartData[0].key = "Completeness";
-					datasetCompletenessChart.trendChartData[1].key = "Timeliness";
+					if (d2Map.dhisVersion() >= 23) datasetCompletenessChart.trendChartData[1].key = "Timeliness";
 
 					visualisationService.setChartLegend(datasetCompletenessChart.ouChartOptions, true);
 					visualisationService.setChartYAxis(datasetCompletenessChart.ouChartOptions, 0, 100);
