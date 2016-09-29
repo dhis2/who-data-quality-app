@@ -94,7 +94,6 @@ module.exports = function(grunt) {
 							'about.js': 'build/moduleAbout/about.js',
 							'admin.js': 'build/moduleAdmin/admin.js',
 							'consistency.js': 'build/moduleConsistency/consistency.js',
-							'dictionary.js': 'build/moduleDictionary/dictionary.js',
 							'outlierGap.js': 'build/moduleOutlierGap/outlierGap.js',
 							'dashboard.js': 'build/moduleDashboard/dashboard.js',
 							'export.js': 'build/moduleExport/export.js',

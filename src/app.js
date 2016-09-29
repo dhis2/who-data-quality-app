@@ -1,9 +1,8 @@
 
 (function(){
 	var app = angular.module('dataQualityApp',
-	['ngAnimate', 'ngSanitize', 'ngRoute', 'ui.bootstrap', 'ui.select', 'nvd3', 'angularBootstrapNavTree',
-		'd2',  'dqAnalysis', 'dashboard', 'review', 'consistencyAnalysis', 'outlierGapAnalysis', 'about',
-		'dictionary', 'dataExport', 'admin']);
+	['ngAnimate', 'ngSanitize', 'ngRoute', 'ui.bootstrap', 'ui.select', 'nvd3', 'angularBootstrapNavTree', 'd2',
+		'dqAnalysis', 'dashboard', 'review', 'consistencyAnalysis', 'outlierGapAnalysis', 'about', 'dataExport', 'admin']);
 	
 	/**Bootstrap*/
 	angular.element(document).ready( 
@@ -54,11 +53,6 @@
 					templateUrl: 'moduleAbout/about.html',
 					controller: 'AboutController',
 					controllerAs: 'aCtrl'
-				}).
-				when('/dictionary', {
-					templateUrl: 'moduleDictionary/dictionary.html',
-					controller: 'DictController',
-					controllerAs: 'dCtrl'
 				}).
 				when('/export', {
 					templateUrl: 'moduleExport/export.html',
