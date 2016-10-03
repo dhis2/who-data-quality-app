@@ -20,6 +20,11 @@
 		height: 300px;
 	}
 
+	.relationChartMid {
+		width: 556px;
+		height: 372px;
+	}
+
 	.relationChartBig {
 		width: 556px;
 		height: 424px;
@@ -162,7 +167,7 @@
 	}
 
 	.bigRow3 {
-		height: 113px;
+		height: 123px;
 	}
 
 	.bigRow4 {

@@ -47,22 +47,30 @@
 			<table class="table tablePrint table-bordered table-condensed">
 				<tr bgcolor="#f9f9f9"><th colspan="2">{{denominator.meta.relation.name}}</th></tr>
 				<tr>
+					<td>Denominator A</td>
+					<td class="valueCell">{{denominator.dxNameA}}</td>
+				</tr>
+				<tr>
+					<td>Denominator B</td>
+					<td class="valueCell">{{denominator.dxNameB}}</td>
+				</tr>
+				<tr>
 					<td>Quality threshold</td>
-					<td>± {{denominator.criteria}}%</td>
+					<td class="valueCell">± {{denominator.criteria}}%</td>
 				</tr>
 				<tr>
 					<td>Overall score</td>
-					<td>{{denominator.boundaryPercentage}}%</td>
+					<td class="valueCell">{{denominator.boundaryPercentage}}%</td>
 				</tr>
 				<tr>
 					<td># {{revCtrl.selectedOrgunit.level.displayName}} with poor score</td>
-					<td>{{denominator.subunitsOutsideThreshold}}</td>
+					<td class="valueCell">{{denominator.subunitsOutsideThreshold}}</td>
 				</tr>
 				<tr>
 					<td>% {{revCtrl.selectedOrgunit.level.displayName}} with poor score</td>
-					<td>{{denominator.subunitViolationPercentage}}%</td>
+					<td class="valueCell">{{denominator.subunitViolationPercentage}}%</td>
 				</tr>
-				<tr class="bigRow4" ng-if="denominator.subunitViolationNames.length > 0">
+				<tr class="bigRow2" ng-if="denominator.subunitViolationNames.length > 0">
 					<td colspan="2">{{denominator.subunitViolationNames.join(', ')}}</td>
 				</tr>
 			</table>

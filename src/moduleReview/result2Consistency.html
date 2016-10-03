@@ -15,7 +15,7 @@
 				<tr >
 					<td colspan="6">
 						<em>Extreme outliers, using the standard method. Threshold denotes the number of standard deviations
-						from the mean.</em>
+						from the mean. {{revCtrl.selectedOrgunit.level.displayName}} are counted as divergent if they have one or more extreme outliers for an indicator.</em>
 					</td>
 				</tr>
 				<tr bgcolor="#f9f9f9">
@@ -56,7 +56,7 @@
 			<tr >
 				<td colspan="6">
 					<em>Moderate outliers, using the standard method. Threshold denotes the number of standard deviations
-						from the mean.</em>
+						from the mean. {{revCtrl.selectedOrgunit.level.displayName}} are counted as divergent if they have two or more moderate outliers for an indicator.</em>
 				</td>
 			</tr>
 			<tr bgcolor="#f9f9f9">
@@ -100,7 +100,7 @@
 			<tr >
 				<td colspan="6">
 					<em>Moderate outliers, based on median (modified Z score). Threshold denotes the number of standard deviations
-						from the mean.</em>
+						from the mean. {{revCtrl.selectedOrgunit.level.displayName}} are counted as divergent if they have two or more moderate outliers for an indicator.</em>
 				</td>
 			</tr>
 			<tr bgcolor="#f9f9f9">
@@ -231,6 +231,14 @@
 			<table class="table tablePrint table-bordered table-condensed">
 				<tr bgcolor="#f9f9f9"><th colspan="2">{{revCtrl.relationName(relation.relationCode)}}</th></tr>
 				<tr>
+					<td>Indicator A</td>
+					<td class="valueCell">{{relation.dxNameA}}</td>
+				</tr>
+				<tr>
+					<td>Indicator B</td>
+					<td class="valueCell">{{relation.dxNameB}}</td>
+				</tr>
+				<tr>
 					<td>Expected relationship</td>
 					<td class="valueCell">{{revCtrl.relationType(relation.subType).displayName}}</td>
 				</tr>
@@ -258,7 +266,7 @@
 			</table>
 		</div>
 		<div class="inline" style="float: right">
-			<div class="dottedBox relationChart">
+			<div class="dottedBox relationChartMid">
 				<nvd3 options='relation.chartOptions' data='relation.chartData'></nvd3>
 			</div>
 		</div>

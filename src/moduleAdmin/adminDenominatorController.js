@@ -35,7 +35,7 @@
 
 				//Add
 				if (denominator === null) {
-					self.title = "Add denominator check";
+					self.title = "Add denominator";
 				}
 
 				//Edit
