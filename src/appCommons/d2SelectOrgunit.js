@@ -132,22 +132,31 @@
 						group: self.selectedGroup
 					};
 
-					if (self.selectedOrgunit) {
-						self.onSelect({'object': self.ngModel});
-					}
+					triggerOnSelect();
 
 				}
 
 				function selectLevel(object) {
 					self.selectedLevel = object;
 					self.ngModel.level = self.selectedLevel;
+
+					triggerOnSelect();
 				}
+
 
 				function selectGroup(object) {
 					self.selectedGroup = object;
 					self.ngModel.group = self.selectedGroup;
+
+					triggerOnSelect();
 				}
 
+
+				function triggerOnSelect() {
+					if (self.ngModel && self.ngModel.boundary) {
+						self.onSelect({'object': self.ngModel});
+					}
+				}
 
 				init();
 
