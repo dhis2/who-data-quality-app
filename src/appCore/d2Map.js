@@ -134,9 +134,10 @@
 
 					//Check if we have new DHIS 2 ids to fetch;
 					var currentIDs = d2IDs().join('');
-					var previousIDs = _dataIDs.join('');
+					var previousIDs = _dataIDs ? _dataIDs.join('') : '';
 					if (currentIDs != previousIDs) d2CoreMeta();
-					//requestService.post('/api/systemSettings', {'dq': angular.toJson(_map)});
+
+					//Save
 					return requestService.put('/api/dataStore/dataQualityTool/settings', angular.toJson(_map));
 				}
 
