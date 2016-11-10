@@ -29,7 +29,7 @@
 		</uib-accordion-group>
 
 		<uib-accordion-group heading="Organisation unit">
-			<d2-select-orgunit default-level="1" max-level="2" ng-model="revCtrl.selectedOrgunit"></d2-select-orgunit>
+			<d2-select-orgunit default-level="1" max-level="2" ng-model="revCtrl.selectedOrgunit" on-select="revCtrl.selectedOrgunit = object;"></d2-select-orgunit>
 		</uib-accordion-group>
 
 	</uib-accordion>

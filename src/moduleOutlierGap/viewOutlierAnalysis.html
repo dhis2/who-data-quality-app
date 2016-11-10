@@ -132,7 +132,7 @@
     <!-- ORGUNIT -->
     <uib-accordion-group heading="Orgunit" is-open="status.open">
 		<div style="max-width: 600px;">
-    		<d2-select-orgunit default-level="2" ng-model="aCtrl.selectedOrgunit"></d2-select-orgunit>
+    		<d2-select-orgunit default-level="2" ng-model="aCtrl.selectedOrgunit" on-select="aCtrl.selectedOrgunit = object;"></d2-select-orgunit>
 		</div>
     </uib-accordion-group>
   </uib-accordion>

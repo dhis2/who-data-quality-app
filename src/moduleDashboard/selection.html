@@ -23,5 +23,6 @@
 	<hr/>
 
 	<h4>Organisation unit</h4>
-	<d2-select-orgunit style="width: 300px;" default-level="1" max-level="2" hide-group="true" hide-level="false" ng-model="dashCtrl.selectedOrgunit" on-select="dashCtrl.update();"></d2-select-orgunit>
+	{{dashCtrl.selectedOrgunit.boundary.displayName}}<br/>
+	<d2-select-orgunit style="width: 300px;" default-level="1" max-level="2" hide-group="true" hide-level="false" ng-model="dashCtrl.selectedOrgunit" on-select="dashCtrl.selectedOrgunit = object; dashCtrl.update();"></d2-select-orgunit>
 
