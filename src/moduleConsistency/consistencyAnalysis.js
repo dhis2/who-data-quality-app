@@ -288,12 +288,6 @@
 				if( Object.prototype.toString.call(item) === '[object Object]' ) {
 					if (item.hasOwnProperty('series') && item.hasOwnProperty('point')) {
 						itemClicked(item.data.point[4].z);
-
-						//TODO: Workaround for tooltip getting re-created rather than re-used
-						var elements = angular.element('.nvtooltip');
-						for (var i = 0; i < elements.length; i++) {
-							elements[i].remove(); //Keep under 2 - rest is old
-						}
 					}
 				}
 			});

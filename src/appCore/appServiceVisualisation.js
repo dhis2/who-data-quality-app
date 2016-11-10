@@ -470,7 +470,6 @@
 	    	var consistency = result.criteria;
 	    		    	
 	    	var toolTip = function(point) {
-
 	    		var data = result.subunitDatapoints;
 				var ouID = point.point.z;
 				var ouName;
@@ -592,7 +591,6 @@
 	    	var consistency = result.criteria;
 
 	    	var toolTip = function(point) {
-
 	    		var data = result.subunitDatapoints;
 				var ouID = point.point.z;
 				var ouName;
