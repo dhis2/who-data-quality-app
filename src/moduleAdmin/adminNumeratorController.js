@@ -6,8 +6,8 @@
 	    	    
 	    var self = this; 
 
-		self.groups = d2Map.groups();
-		//TODO: decide what to use
+		self.groups = angular.copy(d2Map.groups());
+
 		for (var i = 0; i < self.groups.length; i++) {
 			self.groups[i]['displayName'] = self.groups[i]['name']
 		}
@@ -32,9 +32,14 @@
 		self.name = indicator.name;
 		self.definition = indicator.definition;
 		self.groupsSelected = d2Map.numeratorGroups(indicator.code);
+		for (var i = 0; i < self.groupsSelected.length; i++) {
+			self.groupsSelected[i]['displayName'] = self.groupsSelected[i]['name']
+		}
 		self.dataTypeSelected = 'dataElements';
 		self.dataSelected = null;
 		self.dataSetSelected = null;
+
+
 
 
 		self.updateDataSetList = function (data) {

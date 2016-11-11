@@ -139,7 +139,6 @@
 
 					dqAnalysisCompleteness.analyse(indicator.dataElementOperandID, indicator.dataSetID, period, periods, ouBoundary, ouLevel, null, indicator.missing, 'dataCompleteness', null)
 						.then(function (data) {
-							console.log(data);
 							receiveDataCompletenessDetailed(data.result, data.errors);
 						});
 					
@@ -199,6 +198,7 @@
 	  			var indicatorA = d2Map.numerators(relation.A);
 	  			var indicatorB = d2Map.numerators(relation.B);
 
+				if (!indicatorA.dataID || !indicatorB.dataID) continue;
 				dqAnalysisConsistency.analyse(indicatorA.dataID, indicatorB.dataID, period, null, ouBoundary, ouLevel, null, 'data', relation.type, null, relation.criteria, relation).then(
 					function(data) {
 						var errors = data.errors;
@@ -232,8 +232,12 @@
 				var denominatorPair = d2Map.denominatorRelationDenominators(denominatorRelations[i].code);
 
 				denominatorPair.relation = denominatorRelations[i];
+				if (!denominatorPair.a.dataID || !denominatorPair.b.dataID) continue;
 
-				dqAnalysisConsistency.analyse(denominatorPair.a.dataID, denominatorPair.b.dataID, period, null, ouBoundary, ouLevel, null, 'data', 'eq', null, denominatorRelations[i].criteria, denominatorPair)
+				//Need to make sure we don't try to get population at lower level than what is available
+				var denomMinLevel = denominatorPair.a.lowLevel < denominatorPair.b.lowLevel ? denominatorPair.a.lowLevel : denominatorPair.b.lowLevel;
+				denomMinLevel = denomMinLevel < ouLevel ? denomMinLevel : ouLevel;
+				dqAnalysisConsistency.analyse(denominatorPair.a.dataID, denominatorPair.b.dataID, period, null, ouBoundary, denomMinLevel, null, 'data', 'eq', null, denominatorRelations[i].criteria, denominatorPair)
 					.then(function(data) {
 
 						self.outstandingRequests--;
@@ -263,6 +267,8 @@
 				var dataIdExternal = externalRelation.externalData;
 				var dataIdNumerator = d2Map.numerators(externalRelation.numerator).dataID;
 				var dataIdDenominator = d2Map.denominators(externalRelation.denominator).dataID;
+
+				if (!dataIdExternal || !dataIdNumerator || !dataIdDenominator) continue;
 
 				dqAnalysisExternal.analyse(dataIdExternal, dataIdNumerator, dataIdDenominator, period, ouBoundary, externalRelation.level, externalRelation.criteria, externalRelation)
 					.then(function(data) {

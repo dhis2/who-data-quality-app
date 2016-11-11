@@ -897,10 +897,12 @@
 						{'displayName': 'Live births', 'code': 'lb'},
 						{'displayName': 'Children < 1 year', 'code': 'lt1'},
 						{'displayName': 'Expected pregnancies', 'code': 'ep'},
+						{'displayName': 'People living with HIV', 'code': 'plhiv'},
 						{'displayName': 'Other', 'code': 'other'},
 						{'displayName': 'UN population projection', 'code': 'un'}
 					];
 				}
+
 
 				function denominatorType(code) {
 					var types = denominatorTypes();
