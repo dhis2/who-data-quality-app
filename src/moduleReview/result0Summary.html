@@ -124,9 +124,7 @@
 				</tr>
 				<tr>
 					<td colspan="4">
-						<em>Reports where values are not missing. If zeros are not stored, zeros are counted as missing. Where
-							data is disaggregated (e.g. by age or sex), value is counted as not missing if data is available for
-							any disaggregation.</em>
+						<em>Reports where values are not missing. If zeros are not stored, zeros are counted as missing.</em>
 					</td>
 				</tr>
 				<tr bgcolor="#f9f9f9">
@@ -196,8 +194,8 @@
 				</tr>
 				<tr>
 					<td colspan="4">
-						<em>Extreme outliers, using the standard method. Threshold denotes the number of standard deviations
-							from the mean.</em>
+						<em>Extreme outliers, using the standard method. {{revCtrl.selectedOrgunit.level.displayName}} are counted as divergent if they
+							have one or more extreme outliers for an indicator.</em>
 					</td>
 				</tr>
 				<tr bgcolor="#f9f9f9">
@@ -232,8 +230,9 @@
 				</tr>
 				<tr>
 					<td colspan="4">
-						<em>Moderate outliers, using the standard method. Threshold denotes the number of standard deviations
-							from the mean.</em>
+						<em>Moderate outliers, using the standard method. {{revCtrl.selectedOrgunit.level.displayName}} are counted as divergent if they
+							have two or more moderate outliers for an indicator.
+						</em>
 					</td>
 				</tr>
 				<tr bgcolor="#f9f9f9">
@@ -268,8 +267,9 @@
 				</tr>
 				<tr>
 					<td colspan="4">
-						<em>Moderate outliers, based on median (modified Z score). Threshold denotes the number of standard deviations
-							from the mean.</em>
+						<em>Moderate outliers, based on median (modified Z score). {{revCtrl.selectedOrgunit.level.displayName}}
+							are counted as divergent if they have two or more moderate outliers for an indicator.
+						</em>
 					</td>
 				</tr>
 				<tr bgcolor="#f9f9f9">
@@ -370,7 +370,7 @@
 					<tbody>
 					<tr>
 						<td colspan="4">
-							<em>3a: Comparison of routine data with survey values.</em>
+							<em>3a: Consistency of routine data with data from external source, e.g. population-based surveys.</em>
 						</td>
 					</tr>
 					<tr bgcolor="#f9f9f9">
@@ -410,7 +410,7 @@
 			<table class="table tablePrint table-bordered table-condensed noBreak">
 				<tr bgcolor="#f9f9f9">
 					<th colspan="2">
-						<em>4a: Consistency with UN projections.</em>
+						<em>4a: Consistency with UN population projections.</em>
 					</th>
 				</tr>
 				<tr bgcolor="#f9f9f9">
@@ -428,7 +428,7 @@
 			<table class="table tablePrint table-bordered table-condensed noBreak">
 				<tr bgcolor="#f9f9f9">
 					<th colspan="4">
-						<em>4b: Consistency of population/denominator data.</em>
+						<em>4b: Consistency of denominators</em>
 					</th>
 				</tr>
 				<tr bgcolor="#f9f9f9">
