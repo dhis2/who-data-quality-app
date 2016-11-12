@@ -36,7 +36,7 @@
 
 		<uib-tab heading="Numerator groups">
 			<br />
-			<p>Use this page to add and remove numerators to groups, and to add new groups.</p>
+			<p>Add and remove numerators to/from groups, and to add new groups.</p>
 			<div ng-repeat="group in admCtrl.groups |orderBy: 'name'">
 				<h4>{{group.name}}</h4>
 				<table class="table table-bordered table-striped table-condensed table-hover" style="max-width: 600px;">
@@ -99,16 +99,19 @@
 
 		<uib-tab heading="Numerator quality parameters">
 			<h4>Numerator parameters</h4>
-			<p>Modify parameters for each data element/indicator in the table below. Only data elements/indicators mapped to the database are displayed.</p>
+			<p>Modify parameters for each numerator. Only data elements/indicators mapped to the database are displayed.</p>
 			<ul>
-				<li><em>Moderate outliers</em> is the threshold on the number of standard deviations (SD) from the mean a value can be before it is flagged as a moderate outlier.</li>
-				<li><em>Extreme outliers</em> is the threshold on the number of standard deviations (SD) from the mean a value can be before it is flagged as a moderate outlier.</li>
-				<li><em>Consistency:</em>
-					<ul>
-						<li>For values expected to be constant over time: Percent difference between the ratio of current year indicator value and the average of the preceding three years and the same national level ratio (for indicators expected to remain constant).</li>
-						<li>For values expected to increase/decrease over time: Percent difference between the ratio of current year indicator value and the predicted value for the year based on the trend in the preceding three years and the same national level ratio.</li>
-					</ul></li>
-				<li><em>Missing/zero values.</em> Units with fewer non-zero/non-missing values will be flagged.</li>
+				<li><em>Moderate outliers:</em> Number of standard deviations (SD) from the mean for a values to quality
+					as a moderate outlier.</li>
+				<li><em>Extreme outliers:</em> Number of standard deviations (SD) from the mean for a values to quality
+					as an extreme outlier.</li>
+				<li><em>Consistency:</em> Threshold for consistency over time (percentage change over time).</li>
+				<li><em>Expected trend:</em> Whether the numerator value is expected to be constant over time or
+					increase/decrease.</li>
+				<li><em>Missing/zero values:</em> Whether to compare consistency over time across organisation units,
+					or to the expected change (e.g. constant or increasing/decreasing).</li>
+				<li><em>Missing/zero values:</em> Threshold for missing/zero values for variable completeness.
+					Note: when zero values are not stored for a data element, zeros and missing are not differentiated.</li>
 			</ul>
 			<table class="table table-bordered table-striped table-condensed table-hover minimized">
 				<tr>
@@ -153,9 +156,14 @@
 			<div style="max-width: 1000px;">
 				<p>Set the thresholds for various completeness in the table below. Only dataset linked to indicators are displayed.</p>
 				<ul>
-					<li><em>Completeness</em> is the reporting completeness threshold. Units with a lower score will be flagged as poor performers.</li>
-					<li><em>Consistency</em> indicates the quality threshold (in percent) for consistency over time, i.e. when comparing the average completeness for previous years with the current year. Units with a difference of ± the given value will be flagged as poor performers.</li>
-					<li><em>Expected trend</em> is used when looking at consistency over time. If the completeness is expected to increase/decrease, this can be taken into account when comparing the current year with previous years.</li>
+					<li><em>Completeness:</em> Threshold for completeness of reporting.</li>
+					<li><em>Timeliness:</em> Threshold for timeliness of reporting.</li>
+					<li><em>Consistency:</em> Threshold for consistency of completeness of reporting over time
+						(percentage change over time).</li>
+					<li><em>Expected trend:</em> Whether the completeness is expected to be constant over time or
+						increase/decrease.</li>
+					<li><em>Compare orgunit consistency with:</em> Whether to compare consistency over time across
+						organisation units, or to the expected change (e.g. constant or increasing/decreasing).</li>
 				</ul>
 				<table class="table table-bordered table-striped table-condensed table-hover minimized">
 					<tr>
