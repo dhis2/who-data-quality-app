@@ -15,6 +15,7 @@
 					userOrgunitsHierarchy: userOrgunitsHierarchy,
 					userAnalysisOrgunits: userAnalysisOrgunits,
 					indicatorDataElements: indicatorDataElements,
+					indicatorDataElementOperands: indicatorDataElementOperands,
 					indicatorDataElementIDsNumerator: indicatorDataElementIDsNumerator,
 					indicatorDataSets: indicatorDataSets,
 					indicatorPeriodType: indicatorPeriodType,
@@ -407,6 +408,8 @@
 				function indicatorDataElements(id) {
 					var deferred = $q.defer();
 
+					indicatorDataElementOperands(id);
+
 					var requestURL = '/api/indicators/' + id + '.json?';
 					requestURL += 'fields=displayName,id,numerator,denominator';
 
@@ -418,6 +421,67 @@
 							objects('dataElements', dataElementIDs).then(function (data) {
 
 								deferred.resolve(data);
+
+							});
+
+						},
+						function(error){
+							console.log("d2meta error: indicatorDataElements(id)");
+							console.log(error);
+							deferred.resolve([]);
+						}
+					);
+
+					return deferred.promise;
+				}
+
+
+				function indicatorDataElementOperands(id) {
+					var deferred = $q.defer();
+
+					var requestURL = '/api/indicators/' + id + '.json?';
+					requestURL += 'fields=displayName,id,numerator,denominator';
+
+					requestService.getSingleData(requestURL).then(
+						function(data) {
+							var indicator = data;
+							var dataElementIDs = d2Utils.idsFromIndicatorFormula(indicator.numerator, indicator.denominator, true);
+							var dataElementAndOperandIDs = d2Utils.idsFromIndicatorFormula(indicator.numerator, indicator.denominator, false);
+
+							objects('dataElements', dataElementIDs).then(function (data) {
+
+								var ids = [];
+								for (var i = 0; i < data.length; i++) {
+									ids.push(data[i].id);
+								}
+
+								objects('dataElementOperands', null, 'displayName,id', 'dataElementId:in:[' + ids.join(',') + ']', false).then(
+									function (data) {
+
+										console.log(data);
+										console.log(dataElementAndOperandIDs);
+
+										var included = [];
+										for (var i = 0; i < data.length; i++) {
+											for (var j = 0; j < dataElementAndOperandIDs.length; j++) {
+												var op = dataElementAndOperandIDs[j];
+												if (op.indexOf('.') > 0) {
+													if (data[i].id === op) {
+														included.push(data[i])
+													}
+												}
+												else {
+													if (data[i].id.startsWith(op)) {
+														included.push(data[i])
+													}
+												}
+;											}
+
+										}
+
+										deferred.resolve(included);
+									}
+								);
 
 							});
 

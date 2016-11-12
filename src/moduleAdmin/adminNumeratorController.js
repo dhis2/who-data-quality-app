@@ -78,19 +78,9 @@
 
 			//If indicator, get data elements, then operands
 			else {
-				d2Meta.indicatorDataElements(self.dataSelected.id).then(
+				d2Meta.indicatorDataElementOperands(self.dataSelected.id).then(
 					function (data) {
-
-						var ids = [];
-						for (var i = 0; i < data.length; i++) {
-							ids.push(data[i].id);
-						}
-
-						d2Meta.objects('dataElementOperands', null, 'displayName,id', 'dataElementId:in:[' + ids.join(',') + ']', false).then(
-							function (data) {
-								self.dataCompleteness = data;
-							}
-						);
+						self.dataCompleteness = data;
 					}
 				);
 			}
