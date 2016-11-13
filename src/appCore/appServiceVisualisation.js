@@ -528,7 +528,7 @@
 			}
 
 			var xAxisLabel;
-			if (result.subType === "constant") xAxisLabel = "Average of previous periods";
+			if (result.subType === "constant") xAxisLabel = "Average of " + result.peRef.length  + " previous periods";
 			else xAxisLabel = "Forecasted value";
 
 

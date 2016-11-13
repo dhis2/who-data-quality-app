@@ -1,8 +1,8 @@
 (function() {
 
 	angular.module('outlierGapAnalysis').controller("OutlierGapAnalysisController",
-	['d2Meta', 'd2Utils', 'periodService', 'requestService', 'dataAnalysisService', '$scope', '$uibModal',
-	function(d2Meta, d2Utils, periodService, requestService, dataAnalysisService, $scope, $uibModal) {
+	['d2Meta', 'd2Utils', 'd2Map', 'periodService', 'requestService', 'dataAnalysisService', '$scope', '$uibModal',
+	function(d2Meta, d2Utils, d2Map, periodService, requestService, dataAnalysisService, $scope, $uibModal) {
 
 		var self = this;
 
@@ -15,7 +15,10 @@
 
 		self.processStatus = dataAnalysisService.status;
 
-		init();
+		d2Map.load().then(function(status) {
+
+			init();
+		});
 
 		function init() {
 			self.showFilter = false;

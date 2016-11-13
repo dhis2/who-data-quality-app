@@ -138,7 +138,7 @@
       			periodType = d2Map.dataSets(data.dataSetID).periodType;
 
       			refPeriods = periodService.getISOPeriods(self.startDate, self.endDate, periodType);
-				period = refPeriods.pop();
+				period = refPeriods[refPeriods.length-1];
 
       			yyPeriods = [];
 				startDate = self.startDate;

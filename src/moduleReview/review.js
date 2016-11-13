@@ -237,6 +237,7 @@
 				//Need to make sure we don't try to get population at lower level than what is available
 				var denomMinLevel = denominatorPair.a.lowLevel < denominatorPair.b.lowLevel ? denominatorPair.a.lowLevel : denominatorPair.b.lowLevel;
 				denomMinLevel = denomMinLevel < ouLevel ? denomMinLevel : ouLevel;
+				if (self.selectedOrgunit.boundary.level > denomMinLevel) continue;
 				dqAnalysisConsistency.analyse(denominatorPair.a.dataID, denominatorPair.b.dataID, period, null, ouBoundary, denomMinLevel, null, 'data', 'eq', null, denominatorRelations[i].criteria, denominatorPair)
 					.then(function(data) {
 

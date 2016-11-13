@@ -169,7 +169,6 @@
 				outlierGapRequest();
 			}
 			else {
-				console.log("Checking if requests needs to be partitioned");
 				d2Meta.orgunitCountEstimate(self.og.ouBoundary, self.og.ouLevel ? self.og.ouLevel : null, self.og.ouGroup ? self.og.ouGroup : null).then(
 					function(ouCount) {
 
@@ -211,7 +210,6 @@
 							)
 						}
 						else {
-							console.log("Estimated " + ouCount + " orgunits");
 							outlierGapRequest();
 						}
 					}
@@ -224,8 +222,6 @@
 			var noDisaggregation = !self.og.ouLevel && !self.og.ouGroup;
 			var boundary = noDisaggregation ? self.og.ouBoundary.splice(0, self.og.ouBoundary.length) : self.og.ouBoundary.splice(0, 1);
 			if (boundary.length === 0) {
-				console.log(self.requests.queue.length + " requests in queue for outlier and gap analysis");
-
 				if (self.requests.queue.length === 0) {
 					self.inProgress = false;
 					reset(true);
@@ -506,19 +502,16 @@
 				}
 			}
 
-			console.log("Weight histogram:");
+			/*console.log("Weight histogram:");
 			var key;
 			for (key in weights) {
 				console.log(key + ": " + weights[key]);
-			}
+			}*/
 		}
 
 
 		/**Called when outlier and gap analysis is done. Save metadata and calls callback method*/
 		function outlierGapAnalysisDone(result) {
-
-			console.log(result.metaData)
-
 			result.metaData.dataIDs = self.og.dataIDs;
 			result.metaData.coAll = self.og.coAll;
 			result.metaData.coFilter = self.og.coIDs;
