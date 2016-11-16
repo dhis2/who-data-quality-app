@@ -60,7 +60,7 @@
 						'dxA': dxA,
 						'dxB': dxB,
 						'pe': pe,
-						'peRef': d2Utils.toArray(peRef),
+						'peRef': peRef ? d2Utils.toArray(peRef) : null,
 						'ouBoundary': ouBoundary,
 						'ouLevel': ouLevel,
 						'ouGroup': ouGroup,
@@ -120,7 +120,9 @@
 					_deferred = request.deferred;
 
 					//Make sure we include all periods in our request
-					var pe = d2Utils.arrayMerge(_pe, _peRef);
+					var pe;
+					if (_peRef != null) pe = d2Utils.arrayMerge(_pe, _peRef);
+					else pe = _pe;
 
 					//Add request for boundary data
 					d2Data.addRequest([_dxA, _dxB], pe, _ouBoundary, null, null);
@@ -144,7 +146,6 @@
 							timeConsistencyAnalysis();
 						}
 					});
-
 				}
 
 
@@ -158,8 +159,8 @@
 					var result = {};					//The actual result
 
 					//Get data for boundary orgunit
-					var boundaryValueA = d2Data.value(_dxA, _pe, _ouBoundary, null);
-					var boundaryValueB = d2Data.value(_dxB, _pe, _ouBoundary, null);
+					var boundaryValueA = dataConsistencySumDatavalues(_dxA, _pe, _ouBoundary);
+					var boundaryValueB = dataConsistencySumDatavalues(_dxB, _pe, _ouBoundary);
 					var boundaryRatio = getRatioAndPercentage(boundaryValueA, boundaryValueB).ratio;
 					var boundaryPercentage = getRatioAndPercentage(boundaryValueA, boundaryValueB).percent;
 
@@ -205,7 +206,6 @@
 					result.subType = _subType;
 					result.criteria = _criteria;
 					result.meta = _meta;
-					//result.relationCode = relationCode;
 
 
 					//Resolve current promise
@@ -237,8 +237,8 @@
 					for (var j = 0; j < subunits.length; j++) {
 						var subunit = subunits[j];
 
-						var valueA = d2Data.value(_dxA, _pe, subunit, null);
-						var valueB = d2Data.value(_dxB, _pe, subunit, null);
+						var valueA = dataConsistencySumDatavalues(_dxA, _pe, subunit);
+						var valueB = dataConsistencySumDatavalues(_dxB, _pe, subunit);
 
 						//If we miss data for one of the two indicators, ignore the orgunit
 						if (!d2Utils.isNumber(valueA) || !d2Utils.isNumber(valueB)) {
@@ -408,6 +408,25 @@
 
 
 				/** ===== UTILITIES ===== **/
+
+				/**
+				 * Pull data from d2Data for dataConsistency checks, in cases where values for multiple periods must be added up
+				 * @param _dxA
+				 * @param _pe
+				 * @param _ouBoundary
+				 * @returns {*}
+				 */
+				function dataConsistencySumDatavalues(dx, pe, ou) {
+					var values = d2Data.values(dx, pe, ou, null);
+					var sum = 0;
+					for (var i = 0; i < values.length; i++) {
+						if (values[i]) sum += values[i];
+					}
+
+					if (sum === 0) return null;
+					else return sum;
+				}
+
 
 				/**
 				 * Calculates the ratio and percentage based on the given analysis type and criteria

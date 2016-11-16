@@ -138,7 +138,7 @@
       			periodType = d2Map.dataSets(data.dataSetID).periodType;
 
       			refPeriods = periodService.getISOPeriods(self.startDate, self.endDate, periodType);
-				period = refPeriods[refPeriods.length-1];
+				period = refPeriods.pop();
 
       			yyPeriods = [];
 				startDate = self.startDate;
@@ -217,15 +217,6 @@
 			if (self.selectedOrgunit.level) ouLevel = self.selectedOrgunit.level.level;
 
 
-			var period;
-			var endDate = moment(self.endDate);
-			if (endDate.month() <= 3) {
-				period = endDate.subtract(12, 'months').year();
-			}
-			else {
-				period = endDate.year();
-			}
-
 			var relations = d2Map.groupRelations(self.group.code, false);
 			self.expectedDataConsistencyCharts = relations.length;
 			if (relations.length > 0) self.dcLoading = true;
@@ -233,6 +224,11 @@
 				var relation = relations[i];
 				var indicatorA = d2Map.numerators(relation.A);
 				var indicatorB = d2Map.numerators(relation.B);
+
+				
+				var periodType = periodService.longestPeriod([d2Map.dataSets(indicatorA.dataSetID).periodType,
+					d2Map.dataSets(indicatorB.dataSetID).periodType]);
+				var period = periodService.getISOPeriods(self.startDate, self.endDate, periodType);
 
 				var promises = [];
 				promises.push(relation);
@@ -250,7 +246,8 @@
 
 					var dataConsistencyChart = {
 						name: data.name,
-						period: result.result.pe,
+						period: periodService.shortPeriodName(result.result.pe[0]) + ' to ' +
+							periodService.shortPeriodName(result.result.pe[result.result.pe.length - 1]),
 						chartOptions: result.result.chartOptions,
 						chartData: result.result.chartData
 					};
