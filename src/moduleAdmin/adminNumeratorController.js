@@ -51,9 +51,18 @@
   	    	if (self.dataTypeSelected === 'dataElements') {
 
 				var id = self.dataSelected.id.substr(0,11);
-				d2Meta.object('dataElements', id, 'dataSets[displayName,id,periodType]')
+				d2Meta.object('dataElements', id, 'dataSets[displayName,id,periodType],dataSetElements[dataSet[displayName,id,periodType]')
 		    		.then(function(data) {
-	    			   	self.dataSets = data.dataSets;
+
+						if (data.hasOwnProperty('dataSets')) self.dataSets = data.dataSets;
+						else {
+							var dataset = [];
+							for (var i = 0; i < data.dataSetElements.length; i++) {
+								dataset.push(data.dataSetElements[i].dataSet);
+							}
+
+							self.dataSets = dataset;
+						}
 	    			});
 	    	}
 	    	else {

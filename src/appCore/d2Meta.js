@@ -345,6 +345,7 @@
 
 					var requestURL = '/api/dataElements.json?';
 					requestURL += 'fields=displayName,id,dataSets[displayName,id,periodType,organisationUnits::size]';
+					requestURL += ',dataSetElements[dataSet[displayName,id,periodType,organisationUnits::size]';
 					requestURL += '&filter=id:in:[' + ids.join(',') + ']';
 					requestURL += '&paging=false';
 
@@ -355,8 +356,16 @@
 							var dataElements = data.dataElements;
 							for (var i = 0; i < dataElements.length; i++) {
 								var de = dataElements[i];
-								for (var j = 0; j < de.dataSets.length; j++) {
-									datasets.push(de.dataSets[j]);
+
+								if (de.hasOwnProperty('dataSets')) {
+									for (var j = 0; j < de.dataSets.length; j++) {
+										datasets.push(de.dataSets[j]);
+									}
+								}
+								else if (de.hasOwnProperty('dataSetElements')) {
+									for (var i = 0; i < de.dataSetElements.length; i++) {
+										datasets.push(de.dataSetElements[i].dataSet);
+									}
 								}
 							}
 							d2Utils.arraySortByProperty(datasets, 'name', false);
@@ -457,9 +466,6 @@
 
 								objects('dataElementOperands', null, 'displayName,id', 'dataElementId:in:[' + ids.join(',') + ']', false).then(
 									function (data) {
-
-										console.log(data);
-										console.log(dataElementAndOperandIDs);
 
 										var included = [];
 										for (var i = 0; i < data.length; i++) {
