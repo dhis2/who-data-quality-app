@@ -105,15 +105,15 @@
 		function includeRow(row) {
 
 			if (self.stdFilterType === 0) return true;
-
+			
 			if (self.stdFilterType === 1) {
-				if (self.stdFilterDegree === 2) return row.result.maxSscore > 3;
-				else return row.result.maxSscore > 2;
+				if (self.stdFilterDegree === 2) return row.result.maxSscore > row.criteria.extreme.s;
+				else return row.result.maxSscore > row.criteria.moderate.s;
 			}
 
 			if (self.stdFilterType === 2) {
-				if (self.stdFilterDegree === 2) return row.result.maxZscore > 5;
-				else return row.result.maxZscore > 3.5;
+				if (self.stdFilterDegree === 2) return row.result.maxZscore > row.criteria.extreme.z;
+				else return row.result.maxZscore > row.criteria.moderate.z;
 			}
 
 			return false;
