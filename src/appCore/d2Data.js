@@ -81,6 +81,7 @@
 				 */
 				function dataValue(de, pe, ou, co, at) {
 					if (co === undefined) co = null;
+					if (at === undefined) at = null;
 
 					//Make it possible to work with both de and co separately, and in . format
 					if (de.length === 23) {
