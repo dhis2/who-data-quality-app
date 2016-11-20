@@ -10,8 +10,17 @@
 			//"Fixed" variables
 			var maxPendingRequests = 1;
 			var processIndex = 0;
-			var resultLimit = 200000;
-			var maxValues = 100000;
+			var resultLimit = 500000;
+			var maxValues = 50000;
+
+			//TODO: looking into ranges
+			var ranges = {
+				"0-5": 0,
+				"5-20": 0,
+				"20-100": 0,
+				"100-1000": 0,
+				"1000+": 0
+			}
 
 			self.status = {
 				'done': 0,
@@ -85,6 +94,7 @@
 					indicatorOutlierAnalysis(queueItem.parameters);
 				}
 				else if (queueItem.type === 'outlierGap') {
+					console.log('outlierGapAnalysis')
 					outlierGapAnalysis(queueItem.parameters);
 				}
 			}
@@ -324,8 +334,17 @@
 						}
 					}
 
+
 					//Calculate and store the statistical properties of the set
 					newRow.stats = mathService.getStats(valueSet);
+
+
+					//TODO: checking ranges
+					if (newRow.stats.mean < 5) ranges["0-5"]++;
+					else if (newRow.stats.mean < 20) ranges["5-20"]++;
+					else if (newRow.stats.mean < 100) ranges["20-100"]++;
+					else if (newRow.stats.mean < 1000) ranges["100-1000"]++;
+					else ranges["1000+"]++;
 
 
 					//Check if there are outliers
@@ -357,10 +376,6 @@
 					}
 					newRow.result = outlierGapAnalyseData(valueSet, newRow.stats, gaps, zScore, sScore, gapCriteria);
 
-
-					//should store whether non, mod, ext outlier for standard or modified, use for filtering
-					if (i === 0) console.log(newRow);
-
 					//If there are results (i.e. outliers), result set
 					if (newRow.result) result.rows.push(newRow);
 				}
@@ -373,6 +388,8 @@
 				processingSucceeded(data.id);
 
 				if (processingDone('outlierGap')) {
+					console.log("Number of average values by range:");
+					console.log(ranges);
 					outlierGapAnalysisDone(result);
 				}
 				else {
