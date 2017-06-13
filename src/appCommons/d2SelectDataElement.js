@@ -1,3 +1,11 @@
+/**
+ © Copyright 2017 the World Health Organization (WHO).
+
+ This software is distributed under the terms of the GNU General Public License version 3 (GPL Version 3),
+ copied verbatim in the file “COPYING”.  In applying this license, WHO does not waive any of the privileges and
+ immunities enjoyed by WHO under national or international law or submit to any national court jurisdiction.
+ */
+
 (function() {
 
 	var app = angular.module('dataQualityApp');
@@ -18,8 +26,8 @@
 	});
 
 	app.controller("d2SelectDEController",
-		['d2Meta', 'd2Utils', '$scope',
-			function(d2Meta, d2Utils, $scope) {
+		['d2Meta', 'd2Map', 'd2Utils', '$scope',
+			function(d2Meta, d2Map, d2Utils, $scope) {
 				var self = this;
 
 				self.groups = [];
@@ -70,9 +78,6 @@
 						self.onSelect({'object': self.ngModel});
 
 					});
-
-
-
 				}
 
 
@@ -83,15 +88,35 @@
 
 
 					if (self.disaggregation === 0) {
-						var fields = 'dataElements[displayName,id]';
+						var fields;
+						if (self.dataset && d2Map.dhisVersion() >= 25) {
+							fields = 'dataSetElements[dataElement[displayName,id]]';
+						}
+						else {
+							fields = 'dataElements[displayName,id]';
+						}
 						var object = self.dataset ? 'dataSets' : 'dataElementGroups';
-						d2Meta.object(object, self.group.id, fields).then(function(data) {saveElements(data.dataElements);});
+						d2Meta.object(object, self.group.id, fields).then(function(data) {
+							if (self.dataset && d2Map.dhisVersion() >= 25) {
+								var elements = [];
+								for (var i = 0; i < data.dataSetElements.length; i++) {
+									elements.push(data.dataSetElements[i].dataElement);
+								}
+								saveElements(elements);
+							}
+							else {
+								saveElements(data.dataElements);
+							}
+						});
 
 					}
 					else {
 						var filter;
-						if (self.dataset) {
+						if (self.dataset && d2Map.dhisVersion() < 25) {
 							filter = 'dataElement.dataSets.id:eq:' + self.group.id;
+						}
+						else if (self.dataset && d2Map.dhisVersion() >= 25) {
+							filter = 'dataElement.dataSetElements.dataSet.id:eq:' + self.group.id;
 						}
 						else {
 							filter = 'dataElement.dataElementGroups.id:eq:' + self.group.id;

@@ -1,5 +1,5 @@
-// generatePeriods config object: { boolean offset, boolean filterFuturePeriods, boolean reversePeriods }
 
+// generatePeriods config object: { boolean offset, boolean filterFuturePeriods, boolean reversePeriods }
 function PeriodType()
 {
     var monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
