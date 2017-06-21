@@ -25,7 +25,7 @@ immunities enjoyed by WHO under national or international law or submit to any n
 
 		<uib-accordion-group heading="Period">
 			<label>Year</label><br/>
-			<ui-select ng-model="revCtrl.yearSelected" theme="bootstrap" style="width: 100px; display: inline-block;">
+			<ui-select ng-model="revCtrl.yearSelected" theme="bootstrap" style="width: 150px; display: inline-block;">
 				<ui-select-match placeholder="Select year...">
 					{{revCtrl.yearSelected.name}}
 				</ui-select-match>
@@ -34,6 +34,14 @@ immunities enjoyed by WHO under national or international law or submit to any n
 					<div ng-bind-html="obj.name | highlight: $select.search"></div>
 				</ui-select-choices>
 			</ui-select>
+
+			<br />
+
+			<label>Preceding years for reference</label><br />
+			<div style="display: inline-block;">
+				<input class="form-control" type="number" style="text-align: right; width: 150px; display: inline-block;"
+					   ng-model="revCtrl.selectedRefPeriod" ng-default="revCtrl.selectedRefPeriod = 3" min="1" max="5">
+			</div>
 		</uib-accordion-group>
 
 		<uib-accordion-group heading="Organisation unit">

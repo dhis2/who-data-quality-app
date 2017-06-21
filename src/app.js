@@ -25,7 +25,8 @@ immunities enjoyed by WHO under national or international law or submit to any n
 			);
 		}
 	);
-	 
+
+
 	/**Config*/
 	app.config(['uiSelectConfig', function(uiSelectConfig) {
 		uiSelectConfig.theme = 'bootstrap';

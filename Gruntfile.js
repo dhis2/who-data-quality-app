@@ -71,7 +71,7 @@ module.exports = function(grunt) {
 			dev: {
 				options: {
 					src: "build/",
-					dest: "/Users/Olav/DHIS\ instances/tomcat_reference/dhis2_home/apps/dataQualityTool",
+					dest: "/Users/Olav/DHIS\ instances/tomcat_stable/dhis2_home/apps/dataQualityTool",
 					delete: true
 				}
 			}
@@ -124,7 +124,7 @@ module.exports = function(grunt) {
 
 	grunt.registerTask(
 		'build',
-		'Builds app, with minimsed resources',
+		'Builds app, with minimised resources',
 		[
 			'clean',
 			'copy-build',
@@ -137,7 +137,7 @@ module.exports = function(grunt) {
 
 	grunt.registerTask(
 		'build-dev',
-		'Builds app, wihtout minimising js or css',
+		'Compiles app folder, without minimising js or css and without zipping',
 		[
 			'clean',
 			'copy-build',
@@ -148,7 +148,7 @@ module.exports = function(grunt) {
 
 	grunt.registerTask(
 		'build-dev-zip',
-		'Builds app, wihtout minimising js or css',
+		'Builds app, without minimising js or css',
 		[
 			'build-dev',
 			'zip',

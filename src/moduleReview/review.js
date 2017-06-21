@@ -53,6 +53,7 @@
 	    	self.years = periodService.getYears();
 	    	self.years.shift();
 	    	self.yearSelected = self.years[0];
+			self.selectedRefPeriod = 3;
 	    	
 	    	self.groups = [];
 	    	self.groupSelected = undefined;
@@ -88,7 +89,7 @@
 
 	  		
 	  		var period = self.yearSelected.id;
-	  		var refPeriods = precedingYears(self.yearSelected.id, 3);
+	  		var refPeriods = precedingYears(self.yearSelected.id, self.selectedRefPeriod);
 			var allYears = angular.copy(refPeriods);
 			allYears.push(period);
 	  		
@@ -164,7 +165,6 @@
 							visualisationService.makeTimeConsistencyChart(null, result, null);
 
 							self.consistency.data.push(result);
-
 
 							visualisationService.lineChart(null, [result.dxIDa], allYears, ouBoundary, 'dataOverTime').then(function (data) {
 

@@ -28,12 +28,12 @@
 		"members": ["D5", "D30", "D34", "D37"]
 	},
 	{
-	  "code": "G5",
+	  "code": "G6",
 	  "name": "TB/HIV",
 	  "members": ["D31", "D32"]
 	},
 	{
-		"code": "G6",
+		"code": "G7",
 		"name": "Malaria",
 		"members": ["D8", "D9", "D35", "D23", "D41", "D36"]
 	}		
