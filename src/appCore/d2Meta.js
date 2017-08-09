@@ -66,7 +66,7 @@
 
 					if (fieldString && fieldString.indexOf("name") > -1) {
 						console.log("Warning: Used name property");
-						fieldString += ';displayName';
+						fieldString += ',displayName';
 					}
 					
 
