@@ -157,7 +157,7 @@
 		"code": "D5"
 	},
 	  {
-		"definition": "TB cases registered (for treated), e.g. as reported in treatment outcome reporting forms.",
+		"definition": "TB cases registered (for treatment), e.g. as reported in treatment outcome reporting forms.",
 		"extremeOutlier": 3,
 		"dataID": null,
 		"moderateOutlier": 2,
@@ -469,10 +469,10 @@
 	},
 	  {
 		"A": "D5",
-		"B": "D36",
+		"B": "D37",
 		"type": "eq",
 		"criteria": 10,
-		"name": "TB cases notified to TB cases registered/treated",
+		"name": "TB cases notified to TB cases registered for treatment",
 		"code": "R5"
 
 	  },
