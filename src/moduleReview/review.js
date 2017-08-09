@@ -102,7 +102,7 @@
 
 			for (var i = 0; i < datasets.length; i++) {
 				
-				var dataSetQueryID = d2Map.dhisVersion() < 23 ? datasets[i].id : datasets[i].id + '.REPORTING_RATE';
+				var dataSetQueryID = datasets[i].id + '.REPORTING_RATE';
 				
 	  			//completeness
 	  			dataAnalysisService.datasetCompleteness(receiveDatasetCompleteness, datasets[i].threshold, dataSetQueryID, period, ouBoundary, ouLevel);
@@ -119,11 +119,9 @@
 	  			datasetIDsForConsistencyChart.push(dataSetQueryID);
 
 				//timeliness
-				if (d2Map.dhisVersion() >= 23) {
-					self.outstandingRequests++;
-					dataSetQueryID = d2Map.dhisVersion() < 23 ? datasets[i].id : datasets[i].id + '.REPORTING_RATE_ON_TIME';
-					dataAnalysisService.datasetCompleteness(receiveDatasetTimeliness, datasets[i].timelinessThreshold, dataSetQueryID, period, ouBoundary, ouLevel);
-				}
+				self.outstandingRequests++;
+				dataSetQueryID = datasets[i].id + '.REPORTING_RATE_ON_TIME';
+				dataAnalysisService.datasetCompleteness(receiveDatasetTimeliness, datasets[i].timelinessThreshold, dataSetQueryID, period, ouBoundary, ouLevel);
 
 
 	  			self.outstandingRequests += 2;
@@ -144,17 +142,11 @@
 				var periods = periodService.getISOPeriods(startDate, endDate, periodType);
 
 
-				if (d2Map.dhisVersion() >= 23) {
-
 					dqAnalysisCompleteness.analyse(indicator.dataElementOperandID, indicator.dataSetID, period, periods, ouBoundary, ouLevel, null, indicator.missing, 'dataCompleteness', null)
 						.then(function (data) {
 							receiveDataCompletenessDetailed(data.result, data.errors);
 						});
-					
-				}
-				else {
-					dataAnalysisService.dataCompleteness(receiveDataCompleteness, indicator.missing, indicator.dataID, null, periods, ouBoundary, ouLevel);
-				}
+
 
 				dqAnalysisConsistency.analyse(indicator.dataID, null, period, refPeriods, ouBoundary, ouLevel, null, 'time', indicator.trend, indicator.comparison, indicator.consistency, null).then(
 					function (data) {
@@ -389,13 +381,6 @@
 		  		self.outstandingRequests--;
 	  	}
 
-	  	
-	  	function receiveDataCompleteness(result, errors) { 
-	  			self.completeness.indicators.push(result);
-	  			
-	  			if (errors) self.remarks = self.remarks.concat(errors);
-		  		self.outstandingRequests--;
-	  	}
 
 		function receiveDataCompletenessDetailed(result, errors) {
 			self.completeness.indicatorsDetailed.push(result);

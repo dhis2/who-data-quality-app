@@ -91,45 +91,6 @@ immunities enjoyed by WHO under national or international law or submit to any n
 	</div>
 
 
-	<div class="noBreak" ng-if="revCtrl.completeness.indicators.length > 0">
-		<table class="table tablePrint table-bordered table-condensed ">
-			<tbody>
-			<tr bgcolor="#f9f9f9">
-				<th colspan="6">
-					1c: Completeness of indicator data
-				</th>
-			</tr>
-			<tr>
-				<td colspan="6">
-					<em>Missing or zero values</em>
-				</td>
-			</tr>
-			<tr bgcolor="#f9f9f9">
-				<th rowspan="2" width="200">Indicator</th>
-				<th rowspan="2" width="100">Quality threshold</th>
-				<th rowspan="2" width="100">Overall score</th>
-				<th colspan="3" width="100">{{revCtrl.selectedOrgunit.level.displayName}} with divergent score</th>
-			</tr>
-			<tr bgcolor="#f9f9f9">
-				<th width="100">Number</th>
-				<th width="100">Percent</th>
-				<th>Name</th>
-			</tr>
-			<tr ng-repeat="indicator in revCtrl.completeness.indicators | orderBy : 'dxName'">
-				<td>{{indicator.dxName}}</td>
-				<td>{{indicator.threshold}}%</td>
-				<td class="valueCell">{{indicator.boundaryValue}}%</td>
-				<td class="valueCell">{{indicator.subunitsOutsideThreshold}}</td>
-				<td class="valueCell">{{indicator.subunitViolationPercentage}}%</td>
-				<td>{{indicator.subunitViolationNames.join(', ')}}</td>
-			</tr>
-			</tbody>
-		</table>
-
-		<h5>Interpretations</h5>
-		<textarea class="interpretation"></textarea>
-	</div>
-
 	<div class="noBreak" ng-if="revCtrl.completeness.indicatorsDetailed.length > 0">
 		<table class="table tablePrint table-bordered table-condensed ">
 			<tbody>
