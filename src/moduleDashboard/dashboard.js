@@ -13,8 +13,8 @@
 
 	//Define DashboardController
 	angular.module('dashboard').controller("DashboardController",
-	['periodService', 'visualisationService', 'dataAnalysisService', '$q', '$scope', 'd2Map', 'd2Meta', 'dqAnalysisConsistency',
-	function(periodService, visualisationService, dataAnalysisService, $q, $scope, d2Map, d2Meta, dqAnalysisConsistency) {
+	['periodService', 'visualisationService', 'dataAnalysisService', 'notificationService', '$q', '$scope', 'd2Map', 'd2Meta', 'dqAnalysisConsistency',
+	function(periodService, visualisationService, dataAnalysisService, notificationService, $q, $scope, d2Map, d2Meta, dqAnalysisConsistency) {
 
 	    var self = this;
 
@@ -435,6 +435,13 @@
       		self.group = {displayName: '[ Core ]', code: 'core'};
 			self.groups = d2Map.configuredGroups();
 			self.groups.unshift(self.group);
+
+			//Assume no groups means not configured
+			if (self.groups.length === 1) {
+				notificationService.notify('Info', "The data quality tool has not been configured. " +
+					"Contact your system administrator.\n\n If you are an administrator select " +
+					"More > Administration from the top menu to get started.");
+			}
 
 			self.endDate = moment();
 			if (self.endDate.date() > 7) {
