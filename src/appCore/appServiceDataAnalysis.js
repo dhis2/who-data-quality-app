@@ -257,7 +257,7 @@
 				var dxPerRequest = Math.min(Math.max(Math.floor(maxValues/(ouCount * peCount)), 1), 20);
 
 				var baseRequest;
-				baseRequest = '/api/analytics.json?';
+				baseRequest = '/analytics.json?';
 				baseRequest += 'hideEmptyRows=true&ignoreLimit=true&hierarchyMeta=true';
 				baseRequest += '&tableLayout=true&columns=pe&rows=dx;ou'
 				baseRequest += '&dimension=pe:' + self.og.periods.join(';');
@@ -664,7 +664,7 @@
 
 
 				//1 request boundary completeness data
-				var requestURL = '/api/analytics.json?dimension=dx:' + self.dsco.dsID + '&dimension=ou:' + self.dsco.ouBoundary + '&dimension=pe:' + self.dsco.pe + '&displayProperty=NAME';
+				var requestURL = '/analytics.json?dimension=dx:' + self.dsco.dsID + '&dimension=ou:' + self.dsco.ouBoundary + '&dimension=pe:' + self.dsco.pe + '&displayProperty=NAME';
 
 				requestService.getSingle(requestURL).then(
 					//success
@@ -684,7 +684,7 @@
 				if (self.dsco.ouBoundary) ou = self.dsco.ouBoundary + ';LEVEL-' + self.dsco.ouLevel;
 				else ou = LEVEL - self.dsco.ouLevel;
 
-				var requestURL = '/api/analytics.json?dimension=dx:' + self.dsco.dsID + '&dimension=ou:' + ou + '&dimension=pe:' + self.dsco.pe + '&displayProperty=NAME';
+				var requestURL = '/analytics.json?dimension=dx:' + self.dsco.dsID + '&dimension=ou:' + ou + '&dimension=pe:' + self.dsco.pe + '&displayProperty=NAME';
 
 				requestService.getSingle(requestURL).then(
 					//success
@@ -815,7 +815,7 @@
 			function dataCompletenessAnalysis(parameters) {
 				self.dco = parameters;
 
-				var requestURL = '/api/analytics.json?dimension=dx:' + self.dco.dxID + '&dimension=ou:' + self.dco.ouBoundary + ';LEVEL-' + self.dco.ouLevel + '&dimension=pe:' + self.dco.pe.join(';') + '&displayProperty=NAME';
+				var requestURL = '/analytics.json?dimension=dx:' + self.dco.dxID + '&dimension=ou:' + self.dco.ouBoundary + ';LEVEL-' + self.dco.ouLevel + '&dimension=pe:' + self.dco.pe.join(';') + '&displayProperty=NAME';
 
 				requestService.getSingle(requestURL).then(
 					//success
@@ -942,7 +942,7 @@
 			function indicatorOutlierAnalysis(parameters) {
 				self.io = parameters;
 
-				var requestURL = '/api/analytics.json?dimension=dx:' + self.io.indicator.dataID + '&dimension=ou:' + self.io.boundaryOrgunit + ';LEVEL-' + self.io.level + '&dimension=pe:' + self.io.periods.join(';') + '&displayProperty=NAME';
+				var requestURL = '/analytics.json?dimension=dx:' + self.io.indicator.dataID + '&dimension=ou:' + self.io.boundaryOrgunit + ';LEVEL-' + self.io.level + '&dimension=pe:' + self.io.periods.join(';') + '&displayProperty=NAME';
 
 				requestService.getSingle(requestURL).then(
 					//success

@@ -84,8 +84,7 @@
 				function load() {
 					var deferred = $q.defer();
 
-					//requestService.getSingle('/api/systemSettings/dq').then(
-					requestService.getSingle('/api/dataStore/dataQualityTool/settings').then(
+					requestService.getSingle('/dataStore/dataQualityTool/settings').then(
 						function(response) {
 							_map = response.data;
 							if (_map && _map != '') {
@@ -146,13 +145,13 @@
 					if (currentIDs != previousIDs) d2CoreMeta();
 
 					//Save
-					return requestService.put('/api/dataStore/dataQualityTool/settings', angular.toJson(_map));
+					return requestService.put('/dataStore/dataQualityTool/settings', angular.toJson(_map));
 				}
 
 
 				function admin() {
 					var deferred = $q.defer();
-					requestService.getSingle('/api/currentUser.json?fields=userCredentials[userRoles]').then(
+					requestService.getSingle('/me.json?fields=userCredentials[userRoles]').then(
 						function(response) { //success
 							var data = response.data.userCredentials.userRoles;
 							var IDs = [];
@@ -160,7 +159,7 @@
 								IDs.push(data[i].id);
 							}
 
-							requestService.getSingle('/api/userRoles.json?fields=authorities&filter=id:in:[' + IDs.join(',') + ']')
+							requestService.getSingle('/userRoles.json?fields=authorities&filter=id:in:[' + IDs.join(',') + ']')
 								.then(function(response) {
 									var authorized = false;
 
@@ -232,7 +231,7 @@
 									_map = response.data;
 
 									//Save template to systemSettings
-									requestService.post('/api/dataStore/dataQualityTool/settings', angular.toJson(_map)).then(
+									requestService.post('/dataStore/dataQualityTool/settings', angular.toJson(_map)).then(
 										function (data) {
 											_ready = true;
 											deferred.resolve(true);

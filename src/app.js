@@ -20,12 +20,12 @@ immunities enjoyed by WHO under national or international law or submit to any n
 			$http.get('manifest.webapp').then(
 				function(response) {
 					app.constant("BASE_URL", response.data.activities.dhis.href);
+					app.constant("API_VERSION", "25");
 					angular.bootstrap(document, ['dataQualityApp']);
 				}
 			);
 		}
 	);
-
 
 	/**Config*/
 	app.config(['uiSelectConfig', function(uiSelectConfig) {

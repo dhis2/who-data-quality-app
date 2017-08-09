@@ -8,8 +8,8 @@
 
 (function(){
 	angular.module('dataQualityApp').service('requestService',
-	['BASE_URL', '$http', '$q', 'notificationService',
-	function (BASE_URL, $http, $q, notificationService) {
+	['BASE_URL', 'API_VERSION', '$http', '$q', 'notificationService',
+	function (BASE_URL, API_VERSION, $http, $q, notificationService) {
 	
 		var self = this;
 		      
@@ -21,7 +21,7 @@
 				var cache = false;
 //				if (request.indexOf("api/analytics") > -1); cache = true;
 
-				var fullURL = BASE_URL + request;
+				var fullURL = BASE_URL + '/api/' + API_VERSION + request;
 		    	return $http.get(fullURL, {"cache": cache});
 		    });
 		  	
@@ -35,7 +35,7 @@
 			var cache = false;
 //			if (requestURL.indexOf("api/analytics") > -1); cache = true;
 		
-			var fullURL = BASE_URL + requestURL;	  	
+			var fullURL = BASE_URL + '/api/' + API_VERSION + requestURL;
 		  	return $http.get(fullURL, {"cache": cache});
 		};
 
@@ -47,7 +47,7 @@
 			var cache = false;
 			//if (requestURL.indexOf("api/analytics") > -1); cache = true;
 
-			var fullURL = BASE_URL + requestURL;
+			var fullURL = BASE_URL + '/api/' + API_VERSION + requestURL;
 			$http.get(fullURL, {"cache": cache}).then(function(response) {
 				if (self.validResponse(response)) {
 					deferred.resolve(response.data);
@@ -71,13 +71,13 @@
 		
 		
 		self.post = function(postURL, data) {
-			var fullURL = BASE_URL + postURL;	  	
+			var fullURL = BASE_URL + '/api/' + API_VERSION + postURL;
 		  	
 		  	return $http.post(fullURL, data);
 		};
 
 		self.put = function(postURL, data) {
-			var fullURL = BASE_URL + postURL;
+			var fullURL = BASE_URL + '/api/' + API_VERSION + postURL;
 
 			return $http.put(fullURL, data);
 		};

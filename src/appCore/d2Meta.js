@@ -38,7 +38,7 @@
 				function object(object, id, fieldString) {
 					var deferred = $q.defer();
 
-					var requestURL = '/api/' + object + '/' + id + '.json?';
+					var requestURL = '/' + object + '/' + id + '.json?';
 					if (fieldString) requestURL += 'fields=' + fieldString;
 
 					if (fieldString && fieldString.indexOf("name") > -1) console.log("Used name");
@@ -72,11 +72,11 @@
 
 					var requestURL;
 					if (ids) {
-						requestURL = '/api/' + object + '.json?';
+						requestURL = '/' + object + '.json?';
 						requestURL += 'filter=id:in:[' + ids.join(',') + ']&';
 					}
 					else {
-						requestURL = '/api/' + object + '.json?';
+						requestURL = '/' + object + '.json?';
 					}
 
 					if (fieldString) requestURL += 'fields=' + fieldString;
@@ -122,7 +122,7 @@
 					if (ouLevel) ouDisaggregation += ';LEVEL-' + ouLevel;
 					else if (ouGroup) ouDisaggregation += ';OU_GROUP-' + ouGroup;
 
-					var requestURL = '/api/analytics.json?dimension=pe:2000W01'; //Period is not important
+					var requestURL = '/analytics.json?dimension=pe:2000W01'; //Period is not important
 					requestURL += '&filter=ou:' + d2Utils.toArray(ouBoundary).join(';');
 					requestURL += ouDisaggregation;
 					requestURL += '&displayProperty=NAME&skipData=true';
@@ -170,7 +170,7 @@
 						if (ouLevel) filterString += '&filter=level:eq:' + ouLevel;
 						if (ouGroup) filterString += '&filter=organisationUnitGroups.id:eq:' + ouGroup;
 
-						var requestURL = '/api/organisationUnits.json?';
+						var requestURL = '/organisationUnits.json?';
 						requestURL += filterString;
 
 						requestService.getSingleData(requestURL).then(
@@ -199,7 +199,7 @@
 				function userOrgunit() {
 					var deferred = $q.defer();
 
-					var requestURL = '/api/organisationUnits.json?';
+					var requestURL = '/organisationUnits.json?';
 					requestURL += 'userOnly=true&fields=id,displayName,level&paging=false';
 
 					requestService.getSingleData(requestURL).then(
@@ -234,7 +234,7 @@
 				function userOrgunits() {
 					var deferred = $q.defer();
 
-					var requestURL = '/api/organisationUnits.json?';
+					var requestURL = '/organisationUnits.json?';
 					requestURL += 'userOnly=true&fields=id,displayName,level&paging=false';
 
 					requestService.getSingleData(requestURL).then(
@@ -261,7 +261,7 @@
 				function userOrgunitsHierarchy() {
 					var deferred = $q.defer();
 
-					var requestURL = '/api/organisationUnits.json?';
+					var requestURL = '/organisationUnits.json?';
 					requestURL += 'userOnly=true&fields=id,displayName,level,children[displayName,level,id,children[displayName,level,id]]&paging=false';
 
 					requestService.getSingleData(requestURL).then(
@@ -290,7 +290,7 @@
 				function userAnalysisOrgunits() {
 					var deferred = $q.defer();
 
-					var requestURL = '/api/organisationUnits.json?';
+					var requestURL = '/organisationUnits.json?';
 					requestURL += 'userDataViewFallback=true&fields=id,displayName,level,children[displayName,level,id,children::isNotEmpty]&paging=false';
 
 					requestService.getSingleData(requestURL).then(
@@ -325,9 +325,9 @@
 						if (parts.length > 1) categoryOptionCombos.push(parts[1]);
 					}
 
-					var requestURL = '/api/dataElementOperands.json?';
-					requestURL += 'filter=dataElementId:in:[' + dataElements.join(',') + ']';
-					if (categoryOptionCombos.length > 0) requestURL += '&filter=optionComboId:in:[' + categoryOptionCombos.join(',') + ']';
+					var requestURL = '/dataElementOperands.json?';
+					requestURL += 'filter=dataElement.id:in:[' + dataElements.join(',') + ']';
+					if (categoryOptionCombos.length > 0) requestURL += '&filter=categoryOptionCombo.id:in:[' + categoryOptionCombos.join(',') + ']';
 					requestURL += '&paging=false';
 					requestService.getSingleData(requestURL).then(
 						function(data) {
@@ -351,7 +351,7 @@
 				function dataElementDataSets(ids) {
 					var deferred = $q.defer();
 
-					var requestURL = '/api/dataElements.json?';
+					var requestURL = '/dataElements.json?';
 					requestURL += 'fields=displayName,id,dataSets[displayName,id,periodType,organisationUnits::size]';
 					requestURL += ',dataSetElements[dataSet[displayName,id,periodType,organisationUnits::size]';
 					requestURL += '&filter=id:in:[' + ids.join(',') + ']';
@@ -393,7 +393,7 @@
 				function dataElementOrIndicator(id) {
 					var deferred = $q.defer();
 
-					requestService.getSingleData('/api/dataElements.json?fields=displayName,id&filter=id:eq:' + id).then(
+					requestService.getSingleData('/dataElements.json?fields=displayName,id&filter=id:eq:' + id).then(
 						function(data) { //success
 							data = data.dataElements;
 							if (data && data.length === 1) {
@@ -401,7 +401,7 @@
 							}
 							else {
 
-								requestService.getSingleData('/api/indicators.json?fields=displayName,id&filter=id:eq:' + id)
+								requestService.getSingleData('/indicators.json?fields=displayName,id&filter=id:eq:' + id)
 									.then(function(data) {
 										data = data.indicators;
 										if (data && data.length === 1) {
@@ -427,7 +427,7 @@
 
 					indicatorDataElementOperands(id);
 
-					var requestURL = '/api/indicators/' + id + '.json?';
+					var requestURL = '/indicators/' + id + '.json?';
 					requestURL += 'fields=displayName,id,numerator,denominator';
 
 					requestService.getSingleData(requestURL).then(
@@ -456,7 +456,7 @@
 				function indicatorDataElementOperands(id) {
 					var deferred = $q.defer();
 
-					var requestURL = '/api/indicators/' + id + '.json?';
+					var requestURL = '/indicators/' + id + '.json?';
 					requestURL += 'fields=displayName,id,numerator,denominator';
 
 					requestService.getSingleData(requestURL).then(
@@ -472,7 +472,7 @@
 									ids.push(data[i].id);
 								}
 
-								objects('dataElementOperands', null, 'displayName,id', 'dataElementId:in:[' + ids.join(',') + ']', false).then(
+								objects('dataElementOperands', null, 'displayName,id', 'dataElement.id:in:[' + ids.join(',') + ']', false).then(
 									function (data) {
 
 										var included = [];
@@ -513,7 +513,7 @@
 				function indicatorDataElementIDsNumerator(id) {
 					var deferred = $q.defer();
 
-					var requestURL = '/api/indicators/' + id + '.json?';
+					var requestURL = '/indicators/' + id + '.json?';
 					requestURL += 'fields=displayName,id,numerator,denominator';
 
 					requestService.getSingleData(requestURL).then(
@@ -690,7 +690,7 @@
 				function defaultCategoryOptionCombo() {
 					var deferred = $q.defer();
 
-					var requestURL = '/api/categoryOptionCombos.json?';
+					var requestURL = '/categoryOptionCombos.json?';
 					requestURL += 'filter=name:in:[default,(default)]';
 					requestURL  += '&fields=displayName,id';
 					requestURL  += '&paging=false';
@@ -712,7 +712,7 @@
 				function version() {
 					var deferred = $q.defer();
 
-					var requestURL = '/api/system/info.json';
+					var requestURL = '/system/info.json';
 					requestService.getSingleData(requestURL).then(
 						function(data) {
 							deferred.resolve(parseInt(data.version.split('.')[1]));

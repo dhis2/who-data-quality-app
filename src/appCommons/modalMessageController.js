@@ -28,9 +28,8 @@
 	    
 	    getInformation();
 	    
-	    
 	    function getInformation() {
-	    	var requestURL = '/api/organisationUnits/' + orgunitID + '.json?';
+	    	var requestURL = '/organisationUnits/' + orgunitID + '.json?';
 	    	requestURL += 'fields=displayName,id,contactPerson,address,email,phoneNumber,users[displayName,id,phoneNumber],';
 	    	requestURL += 'parent[displayName,id,users[displayName,id,phoneNumber],parent[displayName,id,users[displayName,id,phoneNumber]]]';
 	    	
@@ -153,7 +152,7 @@
 	    		message.organisationUnits = ids;
 	    	}
 	    	
-	    	var postURL = '/api/messageConversations';
+	    	var postURL = '/messageConversations';
 	    	
 	    	requestService.post(postURL, message).
 	    	  success(function(data, status, headers, config) {

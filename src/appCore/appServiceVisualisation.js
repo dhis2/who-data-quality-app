@@ -36,6 +36,7 @@
 
 						if (orgunitIDs.length > 1) console.log("Warning: more than one orgunit for dataOverTime chart");
 
+
 						var yLen = 0, xLen = 0;
 						for (var i = 0; i < dataIDs.length; i++) {
 							var chartSerie = {
@@ -128,7 +129,7 @@
 		*/
 		self.multiBarChart = function (callback, dataIDs, periodIDs, orgunitIDs, type) {
 			var deferred = $q.defer();
-			var requestURL = '/api/analytics.json?';
+			var requestURL = '/analytics.json?';
 			requestURL += "dimension=dx:" + dataIDs.join(';');
 			requestURL += "&dimension=pe:" + periodIDs.join(";");
 			requestURL += "&dimension=ou:" + orgunitIDs.join(";");

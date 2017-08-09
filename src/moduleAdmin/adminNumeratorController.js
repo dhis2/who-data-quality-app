@@ -86,7 +86,7 @@
 
 			//If data element, get operands
 			if (self.dataTypeSelected === 'dataElements') {
-				d2Meta.objects('dataElementOperands', null, 'displayName,id', 'dataElementId:eq:' + self.dataSelected.id.substr(0,11), false).then(
+				d2Meta.objects('dataElementOperands', null, 'displayName,id', 'dataElement.id:eq:' + self.dataSelected.id.substr(0,11), false).then(
 					function (data) {
 						self.dataCompleteness = data;
 					}

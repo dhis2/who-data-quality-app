@@ -231,7 +231,7 @@
 					var requestURLs = [];
 					if (dx.length > 0) {
 
-						var requestURL = '/api/analytics.json';
+						var requestURL = '/analytics.json';
 						requestURL += '?dimension=dx:' + dx.join(';');
 						requestURL += '&dimension=ou:' + ouBoundary.join(';');
 						requestURL += ouDisaggregation;
@@ -247,7 +247,7 @@
 					}
 
 					if (dxCo.length > 0) {
-						var requestURL = '/api/analytics.json';
+						var requestURL = '/analytics.json';
 						requestURL += '?dimension=dx:' + dxCo.join(';');
 						requestURL += '&dimension=co';
 						requestURL += '&dimension=ou:' + ouBoundary.join(';');
