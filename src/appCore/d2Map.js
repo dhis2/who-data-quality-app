@@ -19,7 +19,6 @@
 					save: save,
 					admin: admin,
 					versionUpgrade: versionUpgrade,
-					dhisVersion: dhisVersion,
 					groups: groups,
 					configuredGroups: configuredGroups,
 					groupDelete: deleteGroup,
@@ -203,16 +202,6 @@
 						_map.metaDataVersion = currentVersion;
 						return save();
 					}
-
-				}
-
-
-				/**
-				 * DHIS version
-				 * TODO: does not belong here?
-				 */
-				function dhisVersion() {
-					return _version;
 
 				}
 

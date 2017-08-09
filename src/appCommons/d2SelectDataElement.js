@@ -89,7 +89,7 @@
 
 					if (self.disaggregation === 0) {
 						var fields;
-						if (self.dataset && d2Map.dhisVersion() >= 25) {
+						if (self.dataset) {
 							fields = 'dataSetElements[dataElement[displayName,id]]';
 						}
 						else {
@@ -97,7 +97,7 @@
 						}
 						var object = self.dataset ? 'dataSets' : 'dataElementGroups';
 						d2Meta.object(object, self.group.id, fields).then(function(data) {
-							if (self.dataset && d2Map.dhisVersion() >= 25) {
+							if (self.dataset) {
 								var elements = [];
 								for (var i = 0; i < data.dataSetElements.length; i++) {
 									elements.push(data.dataSetElements[i].dataElement);
@@ -112,10 +112,7 @@
 					}
 					else {
 						var filter;
-						if (self.dataset && d2Map.dhisVersion() < 25) {
-							filter = 'dataElement.dataSets.id:eq:' + self.group.id;
-						}
-						else if (self.dataset && d2Map.dhisVersion() >= 25) {
+						if (self.dataset) {
 							filter = 'dataElement.dataSetElements.dataSet.id:eq:' + self.group.id;
 						}
 						else {

@@ -68,13 +68,9 @@
 				if (self.selectedOrgunit.level) level = self.selectedOrgunit.level.level;
 				
 				var dataSetQueryID = [];
-				if (d2Map.dhisVersion() < 23) {
-					dataSetQueryID.push(dataset.id);
-				}
-				else {
-					dataSetQueryID.push(dataset.id + '.REPORTING_RATE');
-					dataSetQueryID.push(dataset.id + '.REPORTING_RATE_ON_TIME');
-				}
+				dataSetQueryID.push(dataset.id + '.REPORTING_RATE');
+				dataSetQueryID.push(dataset.id + '.REPORTING_RATE_ON_TIME');
+
 
 				var promises = [];
 				promises.push(promiseObject(dataset));
@@ -94,7 +90,7 @@
 
 					visualisationService.setChartYAxis(datasetCompletenessChart.trendChartOptions, 0, 100);
 					datasetCompletenessChart.trendChartData[0].key = "Completeness";
-					if (d2Map.dhisVersion() >= 23) datasetCompletenessChart.trendChartData[1].key = "Timeliness";
+					datasetCompletenessChart.trendChartData[1].key = "Timeliness";
 
 					visualisationService.setChartLegend(datasetCompletenessChart.ouChartOptions, true);
 					visualisationService.setChartYAxis(datasetCompletenessChart.ouChartOptions, 0, 100);
