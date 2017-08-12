@@ -474,6 +474,9 @@
 					if (type != 'constant') {
 						value = mathService.forecast(values);
 						if (maxVal && value > maxVal) value = maxVal;
+
+						//Set negative forecasts to 0
+						if (value < 0) value = 0;
 					}
 					else {
 						value = mathService.getMean(values);
