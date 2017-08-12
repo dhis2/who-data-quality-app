@@ -11,8 +11,8 @@
 	angular.module('review', []);
 
 	angular.module('review').controller("ReviewController",
-	['d2Meta','d2Map', 'periodService', 'dataAnalysisService', 'visualisationService', 'dqAnalysisConsistency', 'dqAnalysisExternal', 'dqAnalysisCompleteness', '$timeout', 'd2Utils',
-	function(d2Meta, d2Map, periodService, dataAnalysisService, visualisationService, dqAnalysisConsistency, dqAnalysisExternal, dqAnalysisCompleteness, $timeout, d2Utils) {
+	['d2Meta','d2Map', 'periodService', 'dataAnalysisService', 'visualisationService', 'dqAnalysisConsistency', 'dqAnalysisExternal', 'dqAnalysisCompleteness', '$timeout', 'd2Utils', '$scope',
+	function(d2Meta, d2Map, periodService, dataAnalysisService, visualisationService, dqAnalysisConsistency, dqAnalysisExternal, dqAnalysisCompleteness, $timeout, d2Utils, $scope) {
 		var self = this;    
 
 		//Check if map is loaded, if not, do that before initialising
@@ -26,7 +26,6 @@
 		else {
 			init();
 		}
-		
 		
 		//HTML partials
 		self.selection = 'moduleReview/selection.html';
@@ -67,6 +66,27 @@
 			self.groups = d2Map.configuredGroups();
 			self.groups.unshift({'name': '[ Core ]', 'code': 'core'});
 			self.groupSelected = self.groups[0];
+
+			//Warning if closing window
+			window.onbeforeunload = function (event) {
+				var message = 'Are you sure you want to leave this page? Any interpretations will be lost.';
+				if (typeof event == 'undefined') {
+					event = window.event;
+				}
+				if (event) {
+					event.returnValue = message;
+				}
+				return message;
+			}
+
+			//Warning if navigating away from report
+			$scope.$on('$locationChangeStart', function( event ) {
+				var answer = confirm("Are you sure you want to leave this page? Any interpretations will be lost.")
+				if (!answer) {
+					event.preventDefault();
+				}
+			});
+
 		}
 
 
@@ -430,6 +450,7 @@
 			return Math.round(100-100*self.outstandingRequests/self.totalRequests);
 
 		};
+
 
 		self.isNumber = function(number) {
 			return d2Utils.isNumber(number);
