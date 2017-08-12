@@ -162,7 +162,6 @@
 				return 0;
 			}
 			else if (stats.MAD === 0) {
-				console.log(self.round((self.zM*(value-stats.median))/stats.MeanAD, 2));
 				return self.round((self.zM*(value-stats.median))/stats.MeanAD, 2);
 			}
 			else {

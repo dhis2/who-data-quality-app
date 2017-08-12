@@ -609,16 +609,6 @@
 			}
 
 
-			function getObjectWithID(array, id) {
-
-				for (var i = 0; i < array.length; i++) {
-					if (array[i].id === id) return array[i];
-				}
-
-			}
-
-
-
 			/** DATASET COMPLETENESS ANALYSIS*/
 			/*
 			 Completeness analysis used by Annual Review
@@ -972,10 +962,9 @@
 				var totalModerateOutliers = 0;
 				var totalZscoreOutliers = 0;
 
-				var totalDistricts = subunits.length;
 				var subunitsExtreme = 0;
-				var subunitsModerate = 0;
 				var subunitExtremeNames = [];
+				var subunitsModerate = 0;
 				var subunitModerateNames = [];
 				var subunitsZscore = 0;
 				var subunitZscoreNames = [];
