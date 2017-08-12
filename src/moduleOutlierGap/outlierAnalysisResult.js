@@ -99,13 +99,14 @@
 		};
 
 
-		self.isOutlier = function (value, stats) {
+		self.isOutlier = function (value, stats, criteria) {
 			if (value === null || value === '') return false;
 
 			var standardScore = Math.abs(mathService.calculateStandardScore(value, stats));
 			var zScore = Math.abs(mathService.calculateZScore(value, stats));
 
-			if (standardScore > 2 || zScore > 3.5) return true;
+			//Use specific criteria here
+			if (standardScore > criteria.moderate.s || zScore > criteria.moderate.z) return true;
 			else return false;
 		};
 

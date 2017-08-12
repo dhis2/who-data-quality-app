@@ -129,7 +129,7 @@ immunities enjoyed by WHO under national or international law or submit to any n
 				<td>{{row.metaData.ou.name}}</td>
 				<td>{{row.metaData.dx.name}}</td>
 				<td ng-repeat="value in row.data track by $index" class="valueCell"
-					ng-class="{warning: value==='', danger: resultCtrl.isOutlier(value, row.stats)}">
+					ng-class="{warning: value==='', danger: resultCtrl.isOutlier(value, row.stats, row.criteria)}">
 					{{value}}</td>
 				<td ng-if="resultCtrl.typeFilter != 1 && resultCtrl.zScoreColumns" class="valueCell">{{row.result.maxSscore}}</td>
 				<td ng-if="resultCtrl.typeFilter != 1 && resultCtrl.zScoreColumns" class="valueCell"><span ng-if="row.result.maxZscore != 0">{{row.result.maxZscore}}</span></td>
