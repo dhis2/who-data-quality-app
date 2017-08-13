@@ -41,7 +41,9 @@
 					var requestURL = '/' + object + '/' + id + '.json?';
 					if (fieldString) requestURL += 'fields=' + fieldString;
 
-					if (fieldString && fieldString.indexOf("name") > -1) console.log("Used name");
+					if (fieldString && fieldString.indexOf("name") > -1) {
+						console.log("Used name");
+					}
 
 					requestService.getSingleData(requestURL).then(
 						function(data) {
@@ -365,16 +367,10 @@
 							for (var i = 0; i < dataElements.length; i++) {
 								var de = dataElements[i];
 
-								if (de.hasOwnProperty('dataSets')) {
-									for (var j = 0; j < de.dataSets.length; j++) {
-										datasets.push(de.dataSets[j]);
-									}
+								for (var j = 0; j < de.dataSetElements.length; j++) {
+									datasets.push(de.dataSetElements[j].dataSet);
 								}
-								else if (de.hasOwnProperty('dataSetElements')) {
-									for (var i = 0; i < de.dataSetElements.length; i++) {
-										datasets.push(de.dataSetElements[i].dataSet);
-									}
-								}
+
 							}
 							d2Utils.arraySortByProperty(datasets, 'name', false);
 							datasets = d2Utils.arrayRemoveDuplicates(datasets, 'id');
@@ -425,7 +421,7 @@
 				function indicatorDataElements(id) {
 					var deferred = $q.defer();
 
-					indicatorDataElementOperands(id);
+					//indicatorDataElementOperands(id);
 
 					var requestURL = '/indicators/' + id + '.json?';
 					requestURL += 'fields=displayName,id,numerator,denominator';
@@ -545,6 +541,7 @@
 							for (var i = 0; i < data.length; i++) {
 								ids.push(data[i].id);
 							}
+
 
 							dataElementDataSets(ids).then(
 								function(data) {
