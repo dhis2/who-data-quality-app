@@ -1,5 +1,5 @@
 {
-	"metaDataVersion": 0.7,
+	"metaDataVersion": "1.0",
 	"coreIndicators": ["D1", "D3", "D27", "D5", "D8"],
 	"groups": [
 	{
