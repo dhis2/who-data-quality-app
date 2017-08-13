@@ -84,13 +84,23 @@
   	    self.updateDataElementOperandList = function () {
 			self.dataCompletenessSelected = undefined;
 
-			//If data element, get operands
+			//data element
 			if (self.dataTypeSelected === 'dataElements') {
-				d2Meta.objects('dataElementOperands', null, 'displayName,id', 'dataElement.id:eq:' + self.dataSelected.id.substr(0,11), false).then(
-					function (data) {
-						self.dataCompleteness = data;
-					}
-				);
+
+				//If detail has been selected, variable for completeness is given
+				if (self.dataSelected.id.length === 23) {
+					self.dataCompleteness = [self.dataSelected];
+					self.dataCompletenessSelected = self.dataSelected;
+				}
+
+				//Else, get possible variables
+				else {
+					d2Meta.objects('dataElementOperands', null, 'displayName,id', 'dataElement.id:eq:' + self.dataSelected.id.substr(0,11), false).then(
+						function (data) {
+							self.dataCompleteness = data;
+						}
+					);
+				}
 			}
 
 			//If indicator, get data elements, then operands
