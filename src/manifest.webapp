@@ -1,5 +1,5 @@
 {
-    "version": "0.5.8",
+    "version": "1.0.0",
     "name": "WHO Data Quality Tool",
     "description": "WHO Data Quality Tool",
     "icons": {
@@ -7,9 +7,9 @@
     },
     "developer": {
         "url": "http://who.int",
-        "name": "Olav Poppe",
+        "name": "WHO",
         "company": "WHO",
-        "email": "poppeo@who.int"
+        "email": "olavpo@ifi.uio.no"
     },
     "activities": {
         "dhis": {
