@@ -421,8 +421,6 @@
 				function indicatorDataElements(id) {
 					var deferred = $q.defer();
 
-					//indicatorDataElementOperands(id);
-
 					var requestURL = '/indicators/' + id + '.json?';
 					requestURL += 'fields=displayName,id,numerator,denominator';
 
@@ -468,7 +466,7 @@
 									ids.push(data[i].id);
 								}
 
-								objects('dataElementOperands', null, 'displayName,id', 'dataElement.id:in:[' + ids.join(',') + ']', false).then(
+								objects('dataElementOperands', null, 'displayName,id,dimensionItem', 'dataElement.id:in:[' + ids.join(',') + ']', false).then(
 									function (data) {
 
 										var included = [];
@@ -476,7 +474,7 @@
 											for (var j = 0; j < dataElementAndOperandIDs.length; j++) {
 												var op = dataElementAndOperandIDs[j];
 												if (op.indexOf('.') > 0) {
-													if (data[i].id === op) {
+													if (data[i].dimensionItem === op) {
 														included.push(data[i])
 													}
 												}
