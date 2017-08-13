@@ -393,6 +393,11 @@
 						}
 					}
 
+					//Remove from core
+					for (var i = 0; i < _map.coreIndicators.length; i++) {
+						if (_map.coreIndicators[i] === code) _map.coreIndicators.splice(i, 1);
+					}
+
 					return save();
 				}
 
