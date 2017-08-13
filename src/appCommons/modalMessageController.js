@@ -143,7 +143,7 @@
 	    	var ids = [];  
 	    	if (self.selectedUsers.length > 0) {
 	    		for (var i = 0; i < self.selectedUsers.length; i++) {
-	    			ids.push({'id': self.selectedUsers[i]});
+	    			ids.push({'id': self.selectedUsers[i].id});
 	    		}
 	    		message.users = ids;
 	    	}
@@ -153,6 +153,8 @@
 	    	}
 	    	
 	    	var postURL = '/messageConversations';
+
+	    	console.log(message);
 	    	
 	    	requestService.post(postURL, message).
 	    	  success(function(data, status, headers, config) {
