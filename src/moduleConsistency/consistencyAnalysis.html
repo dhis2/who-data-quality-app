@@ -67,8 +67,7 @@ immunities enjoyed by WHO under national or international law or submit to any n
 			<div ng-if="aCtrl.dataTypeSelectedA === 'dataElements'" style="max-width: 600px" >
 				<d2-select-data-element
 						multiple="false"
-						ng-model="aCtrl.dataSelectedA"
-						on-select="aCtrl.updatePeriodType(object);">
+						ng-model="aCtrl.dataSelectedA">
 				</d2-select-data-element>
 			</div>
 
@@ -76,8 +75,7 @@ immunities enjoyed by WHO under national or international law or submit to any n
 			<div ng-if="aCtrl.dataTypeSelectedA === 'indicators'" style="max-width: 600px">
 				<d2-select-indicator
 						multiple="false"
-						ng-model="aCtrl.dataSelectedA"
-						on-select="aCtrl.updatePeriodType(object);">
+						ng-model="aCtrl.dataSelectedA">
 				</d2-select-indicator>
 				</div>
 		</div>

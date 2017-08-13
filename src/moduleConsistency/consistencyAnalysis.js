@@ -84,29 +84,6 @@
 		/** PARAMETER SELECTION **/
 
 	    /** Periods */
-		self.updatePeriodType = function (selectedItem) {
-
-			var id = selectedItem.id;
-
-			if (self.dataTypeSelectedA === 'dataElements') {
-
-				d2Meta.object('dataElements', id.substring(0,11), 'dataSets[periodType]').then(
-					function (data) {
-						if (!data.dataSets && data.dataSets.length > 1) return;
-						self.currentPeriodType = data.dataSets[0].periodType;
-					}
-				);
-			}
-			else {
-				d2Meta.indicatorPeriodType(id).then(
-					function (data) {
-						self.currentPeriodType = data;
-					}
-				);
-			}
-		};
-
-
 		self.getPeriodsInYear = function() {
     		self.periodsInYear = [];
     		var isoPeriods = periodService.getISOPeriods(self.yearSelected.name.toString() + '-01-01', self.yearSelected.name.toString() + '-12-31', self.periodTypeSelected.id);
