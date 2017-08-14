@@ -1,4 +1,4 @@
-# WHO Data Wuality Tool
+# WHO Data Quality Tool
 ---
 
 © Copyright 2017 the World Health Organization (WHO).
