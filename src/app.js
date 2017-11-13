@@ -123,7 +123,6 @@ immunities enjoyed by WHO under national or international law or submit to any n
 	app.run(['BASE_URL', '$http', function(BASE_URL, $http) {
 		$http.get( BASE_URL + '/api/me/profile.json').then(function (response) {
 			if (response.data && response.data.settings && response.data.settings.keyUiLocale) {
-				console.log('UI LOCALE: ' + response.data.settings.keyUiLocale);
 				i18next.changeLanguage(response.data.settings.keyUiLocale);
 			}
 		});
