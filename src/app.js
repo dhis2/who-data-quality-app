@@ -14,7 +14,7 @@ immunities enjoyed by WHO under national or international law or submit to any n
 	    fallbackLng: false,
 	    keySeparator: '|',
 	    backend: {
-	      loadPath: '/api/apps/dataQualityTool/i18n/{{lng}}.json'
+	      loadPath: './i18n/{{lng}}.json'
 	    }
 	});
 
