@@ -3,6 +3,9 @@
   "version": "0.3.0",
   "description": "WHO Data Quality Tool",
   "main": "grunt.js",
+  "scripts": {
+    "extractor": "node extractor.js"
+  },
   "dependencies": {
     "grunt": "^0.4.5",
     "grunt-cli": "^0.1.13",
