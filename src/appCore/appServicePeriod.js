@@ -102,11 +102,11 @@
 			//, {'name': 'Bimonthly', 'id':'BiMonthly'} <= Waiting for fix
 
 			var periodTypes = [
-				{'name': $i18next.t('Weeks'), 'id':'Weekly'}, 
+				{'name': $i18next.t('Weeks'), 'id':'Weekly'},
 				{'name': $i18next.t('Months'), 'id':'Monthly'},
-				{'name': 'Quarters', 'id':'Quarterly'},
-				{'name': 'Six-months', 'id':'SixMonthly'},
-				{'name': 'Years', 'id':'Yearly'}
+				{'name': $i18next.t('Quarters'), 'id':'Quarterly'},
+				{'name': $i18next.t('Six-months'), 'id':'SixMonthly'},
+				{'name': $i18next.t('Years'), 'id':'Yearly'}
 			];
 
 			return periodTypes;
