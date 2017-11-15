@@ -6,7 +6,7 @@ copied verbatim in the file “COPYING”.  In applying this license, WHO does n
 immunities enjoyed by WHO under national or international law or submit to any national court jurisdiction.
 -->
 
-<label>Boundary</label><br />
+<label>{{ 'Boundary' | i18next }}</label><br />
 <div class="btn-group" ng-click="d2sCtrl.orgunitSelect();">
 	<label
 			ng-repeat="orgunit in d2sCtrl.userOrgunits track by $index"
@@ -19,7 +19,7 @@ immunities enjoyed by WHO under national or international law or submit to any n
 			class="btn btn-default"
 			ng-model="d2sCtrl.selectionType"
 			uib-btn-radio="d2sCtrl.userOrgunits.length">
-		Other
+		{{ 'Other' | i18next }}
 	</label>
 </div>
 
@@ -32,7 +32,7 @@ immunities enjoyed by WHO under national or international law or submit to any n
 </div>
 
 <!-- DISAGGREGATION -->
-<label style="margin-top: 10px;" for="orgunitSelect" ng-if="!(d2sCtrl.hideLevel && d2sCtrl.hideGroup)">Disaggregation</label>
+<label style="margin-top: 10px;" for="orgunitSelect" ng-if="!(d2sCtrl.hideLevel && d2sCtrl.hideGroup)">{{ 'Disaggregation' | i18next }}</label>
 <div>
 
 	<d2-select
@@ -56,7 +56,7 @@ immunities enjoyed by WHO under national or international law or submit to any n
 
 
 <!-- CURRENT SELECTION -->
-<label style="margin-top: 10px" for="orgunitSelected">Selected </label>
+<label style="margin-top: 10px" for="orgunitSelected">{{ 'Selected' | i18next }} </label>
 <div id="orgunitSelected">
 	<p>
 		<span style="font-size: 100%;" class="label label-primary">{{d2sCtrl.selectedOrgunit.displayName}}</span>

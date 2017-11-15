@@ -10,7 +10,7 @@ immunities enjoyed by WHO under national or international law or submit to any n
 
 <!-- PARAMETERS -->
 <uib-accordion close-others="aCtrl.oneAtATime">
-	
+
 	<!-- OPTIONS -->
 	<uib-accordion-group heading="Analysis Type" is-open="aCtrl.status.isFirstOpen">
 		<label>Consistency analysis type</label><br />
@@ -18,7 +18,7 @@ immunities enjoyed by WHO under national or international law or submit to any n
 				<label class="btn btn-default" ng-model="aCtrl.type" uib-btn-radio="'data'">Between Indicators</label>
 		  		<label class="btn btn-default" ng-model="aCtrl.type" uib-btn-radio="'time'">Over Time</label>
 		</div>
-		
+
 		<div ng-if="aCtrl.type === 'data'">
 			<label>Compare organisation units to</label><br />
 			<div class="btn-group btn-group-justified" style="width: 330px; margin-bottom: 10px;" ng-init="aCtrl.comparisonType = 'level'">
@@ -32,7 +32,7 @@ immunities enjoyed by WHO under national or international law or submit to any n
 					<label ng-disabled="aCtrl.comparisonType != 'relationship'" class="btn btn-default" ng-model="aCtrl.subType" uib-btn-radio="'do'">Dropout</label>
 			</div>
 		</div>
-		
+
 		<div ng-if="aCtrl.type === 'time'">
 			<label>Compare organisation units to</label><br />
 			<div class="btn-group btn-group-justified" style="width: 330px; margin-bottom: 10px;" ng-init="aCtrl.comparisonType = 'level'">
@@ -45,8 +45,8 @@ immunities enjoyed by WHO under national or international law or submit to any n
 					<label class="btn btn-default" ng-model="aCtrl.trendType" uib-btn-radio="'increase'">Increasing/decreasing</label>
 			</div>
 		</div>
-		
-		<div style="margin-bottom: 10px;" ng-if="aCtrl.subType != 'do' || aCtrl.type === 'time'">		
+
+		<div style="margin-bottom: 10px;" ng-if="aCtrl.subType != 'do' || aCtrl.type === 'time'">
 		<label>Criteria</label><br />
 		<input ng-init="aCtrl.consistencyCriteria = 33" class="form-control" type="number" style="text-align: right; width: 150px; display: inline-block;" ng-model="aCtrl.consistencyCriteria" min="0" max="50"> <span style="display: inline-block;">%</span>
 		</div>
@@ -106,11 +106,11 @@ immunities enjoyed by WHO under national or international law or submit to any n
 
 
     </uib-accordion-group>
-    
-    
+
+
     <!-- PERIOD -->
     <uib-accordion-group heading="Period">
-    	
+
     	<h4 ng-if="aCtrl.type === 'time'">Period</h4>
     	<div style="display: inline-block;">
     		<label>Period type</label><br />
@@ -119,14 +119,14 @@ immunities enjoyed by WHO under national or international law or submit to any n
     		  <ui-select-match placeholder="Select period type...">
     		  	{{aCtrl.periodTypeSelected.name}}
     		  </ui-select-match>
-    		  <ui-select-choices 
+    		  <ui-select-choices
     		  	repeat="obj in aCtrl.filteredPeriodTypes | filter: $select.search">
     		   		<div ng-bind-html="obj.name | highlight: $select.search"></div>
     		  </ui-select-choices>
     		</ui-select>
     		</div>
     	</div>
-    	
+
     	<div style="display: inline-block;">
     		<label>Year</label><br />
     		<div style="display: inline-block;">
@@ -134,15 +134,15 @@ immunities enjoyed by WHO under national or international law or submit to any n
     		  <ui-select-match placeholder="Select year...">
     		  	{{aCtrl.yearSelected.name}}
     		  </ui-select-match>
-    		  <ui-select-choices 
+    		  <ui-select-choices
     		  	repeat="obj in aCtrl.years | filter: $select.search">
     		   		<div ng-bind-html="obj.name | highlight: $select.search"></div>
     		  </ui-select-choices>
     		</ui-select>
     		</div>
-    	
+
     	</div>
-    	
+
     	<div ng-if="aCtrl.periodTypeSelected.id != 'Yearly'" style="display: inline-block;">
     		<label>Period</label><br />
     		<div style="display: inline-block;">
@@ -150,37 +150,37 @@ immunities enjoyed by WHO under national or international law or submit to any n
     		  <ui-select-match placeholder="Select period...">
     		  	{{aCtrl.periodSelected.name}}
     		  </ui-select-match>
-    		  <ui-select-choices 
+    		  <ui-select-choices
     		  	repeat="obj in aCtrl.periodsInYear | filter: $select.search">
     		   		<div ng-bind-html="obj.name | highlight: $select.search"></div>
     		  </ui-select-choices>
     		</ui-select>
     		</div>
-    	
+
     	</div>
-    	
+
     	<div ng-if="aCtrl.type === 'time'">
-    		
+
     			<h4>Reference periods</h4>
     		<label>No. of Preceding periods</label><br />
     		<div style="display: inline-block;">
 				<input class="form-control" type="number" style="text-align: right; width: 150px; display: inline-block;" ng-model="aCtrl.periodCountSelected" min="0" max="52">
-    		</div>    	
+    		</div>
     	</div>
-    	
+
     </uib-accordion-group>
-    
+
     <!-- ORGUNIT -->
     <uib-accordion-group heading="Orgunit" is-open="status.open">
 		<d2-select-orgunit default-level="1" max-level="3" ng-model="aCtrl.selectedOrgunit" on-select="aCtrl.selectedOrgunit = object;"></d2-select-orgunit>
     </uib-accordion-group>
   </uib-accordion>
-  
-<button type="button" class="btn btn-primary pull-right" ng-click="aCtrl.doAnalysis(null, null); aCtrl.updateCharts();" 
+
+<button type="button" class="btn btn-primary pull-right" ng-click="aCtrl.doAnalysis(null, null); aCtrl.updateCharts();"
 	ng-disabled="(!aCtrl.periodSelected && aCtrl.periodTypeSelected.id != 'Yearly') ||
 					!aCtrl.dataSelectedA ||
 					(aCtrl.type === 'data' && !aCtrl.dataSelectedB)"
-		style="margin-bottom:20px">Analyze</button>
+		style="margin-bottom:20px">{{ 'Analyze' | i18next }}</button>
 
 <hr / style="clear: both;">
 
@@ -215,7 +215,7 @@ immunities enjoyed by WHO under national or international law or submit to any n
 	<table class="table table-bordered table-striped table-condensed table-hover">
 		<thead>
 		    <tr>
-		    
+
 		    	<th style="white-space:nowrap;" ng-click="aCtrl.sortByColumn('name')">
 					Unit
 					<span ng-if="aCtrl.sortCol === 'name'" class="glyphicon glyphicon-sort-by-attributes"></span>
@@ -257,13 +257,13 @@ immunities enjoyed by WHO under national or international law or submit to any n
 				</th>
 		    </tr>
 		</thead>
-		
+
 		<tfoot>
 		    <td colspan="5">
 		        <uib-pagination total-items="aCtrl.totalRows" items-per-page="aCtrl.pageSize" max-size="5" ng-model="aCtrl.currentPage" class="pagination-sm pull-right" boundary-links="true" rotate="true"></uib-pagination>
 		    </td>
 		</tfoot>
-		
+
 		<tbody>
 			<tr	class="info"
 				valign="middle">
@@ -280,10 +280,10 @@ immunities enjoyed by WHO under national or international law or submit to any n
 				</td>
 				<td></td>
 			</tr>
-	    	<tr 
-	    		ng-click="aCtrl.selectOrgunit(row);" 
-	    		ng-class="{warning: row.id === aCtrl.selectedObject.id}" 
-	    		valign="middle" 
+	    	<tr
+	    		ng-click="aCtrl.selectOrgunit(row);"
+	    		ng-class="{warning: row.id === aCtrl.selectedObject.id}"
+	    		valign="middle"
 	    		ng-repeat="row in aCtrl.tableData | orderBy:aCtrl.sortCol:aCtrl.reverse | startFrom:(aCtrl.currentPage-1)*aCtrl.pageSize | limitTo:aCtrl.pageSize">
 	            <td >{{row.name}}</td>
 	            <td class="valueCell">{{row.value}}</td>
@@ -307,7 +307,7 @@ immunities enjoyed by WHO under national or international law or submit to any n
 <h4>Selected</h4>
 <table class="table table-bordered table-striped table-condensed table-hover">
 	<thead>
-	    <tr>	
+	    <tr>
 	    	<th nowrap>Unit</th>
 	    	<th>
 	    		<span ng-if="aCtrl.result.type === 'data'">{{aCtrl.result.dxNameA}}</span>
@@ -325,7 +325,7 @@ immunities enjoyed by WHO under national or international law or submit to any n
 	    	<th></th>
 	    </tr>
 	</thead>
-	
+
 	<tbody>
     	<tr ng-if="aCtrl.selectedObject.hasOwnProperty('name')">
             <td>{{aCtrl.selectedObject.name}}</td>
@@ -349,7 +349,7 @@ immunities enjoyed by WHO under national or international law or submit to any n
                     <li><a href ng-click="aCtrl.drillDown(aCtrl.selectedObject);">Drill down</a></li>
                   </ul>
                   </span>
-            </td>    
+            </td>
         </tr>
         <tr ng-if="!aCtrl.selectedObject.hasOwnProperty('name')">
         	<td colspan="5">Click on the graph or in the table see details.</td>
