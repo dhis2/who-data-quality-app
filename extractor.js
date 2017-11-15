@@ -5,8 +5,8 @@ const recursive = require("recursive-readdir");
 const argv = require('minimist')(process.argv.slice(2));
 const filename = argv['o'] || 'en.pot';
 
-const HTML_FUNCTION_REGEX = new RegExp("{{'(.*)'\s*|\s*i18next\s*}}", 'g');
-const JS_FUNCTION_REGEX = new RegExp("\\\$i18next\\.t\\('(.*)'\\)", 'g');
+const HTML_FUNCTION_REGEX = new RegExp("{{ *'([^']*)' *| *i18next *}}", 'g');
+const JS_FUNCTION_REGEX = new RegExp("\\$i18next\\.t\\('([^']*)'\\)", 'g');
 
 const getFileExtension = (filename) => {
   return filename.split('.').pop();
