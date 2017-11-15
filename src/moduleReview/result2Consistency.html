@@ -8,7 +8,7 @@ immunities enjoyed by WHO under national or international law or submit to any n
 
 <div class="reportPart">
 	<div class="fullWidth headerPart">
-		DOMAIN 2: INTERNAL CONSISTENCY OF REPORTED DATA
+		{{ 'DOMAIN 2: INTERNAL CONSISTENCY OF REPORTED DATA' | i18next }}
 	</div>
 
 	<div class="noBreak">
@@ -17,25 +17,24 @@ immunities enjoyed by WHO under national or international law or submit to any n
 			<tbody>
 				<tr bgcolor="#f9f9f9">
 					<th colspan="6">
-						2a: Extreme outliers
+						{{ '2a: Extreme outliers' | i18next }
 					</th>
 				</tr>
 				<tr >
 					<td colspan="6">
-						<em>Extreme outliers, using the standard method. Threshold denotes the number of standard deviations
-						from the mean. {{revCtrl.selectedOrgunit.level.displayName}} are counted as divergent if they have one or more extreme outliers for an indicator.</em>
+						<em>{{ 'Extreme outliers, using the standard method. Threshold denotes the number of standard deviations from the mean.' | i18next}} {{revCtrl.selectedOrgunit.level.displayName}} {{ 'are counted as divergent if they have one or more extreme outliers for an indicator.' | i18next }}</em>
 					</td>
 				</tr>
 				<tr bgcolor="#f9f9f9">
-					<th rowspan="2" width="200">Indicator</th>
-					<th rowspan="2" width="80">Threshold</th>
-					<th rowspan="2" width="80">Overall score (%)</th>
-					<th colspan="3">{{revCtrl.selectedOrgunit.level.displayName}} with divergent score</th>
+					<th rowspan="2" width="200">{{ 'Indicator' | i18next }}</th>
+					<th rowspan="2" width="80">{{ 'Threshold' | i18next }}</th>
+					<th rowspan="2" width="80">{{ 'Overall score' | i18next }} (%)</th>
+					<th colspan="3">{{revCtrl.selectedOrgunit.level.displayName}} {{ 'with divergent score' | i18next }}</th>
 				</tr>
 				<tr bgcolor="#f9f9f9">
-					<th width="110">Number</th>
-					<th width="110">Percent</th>
-					<th>Names</th>
+					<th width="110">{{ 'Number' | i18next }}</th>
+					<th width="110">{{ 'Percent' | i18next }}</th>
+					<th>{{ 'Names' | i18next }}</th>
 				</tr>
 				<tr ng-repeat="indicator in revCtrl.outliers | orderBy : 'displayName'">
 					<td>{{indicator.displayName}}</td>
@@ -44,12 +43,12 @@ immunities enjoyed by WHO under national or international law or submit to any n
 					<td ng-if="revCtrl.isNumber(indicator.boundaryExtreme)" class="valueCell">{{indicator.countExtreme}}</td>
 					<td ng-if="revCtrl.isNumber(indicator.boundaryExtreme)" class="valueCell">{{indicator.percentExtreme}}%</td>
 					<td ng-if="revCtrl.isNumber(indicator.boundaryExtreme)">{{indicator.namesExtreme.join(', ')}}</td>
-					<td ng-if="!revCtrl.isNumber(indicator.boundaryExtreme)" colspan="5" >Not available</td>
+					<td ng-if="!revCtrl.isNumber(indicator.boundaryExtreme)" colspan="5" >{{ 'Not available' | i18next }}</td>
 				</tr>
 			</tbody>
 		</table>
 
-		<h5>Interpretations</h5>
+		<h5>{{ 'Interpretations' | i18next }}</h5>
 		<textarea class="interpretation"></textarea>
 	</div>
 
@@ -58,26 +57,24 @@ immunities enjoyed by WHO under national or international law or submit to any n
 			<tbody>
 			<tr bgcolor="#f9f9f9">
 				<th colspan="6">
-					<em>2b: Moderate outliers.</em>
+					<em>{{ '2b: Moderate outliers.' | i18next }}</em>
 				</th>
 			</tr>
 			<tr >
 				<td colspan="6">
-					<em>Moderate outliers, using the standard method. Threshold denotes the number of standard deviations
-						from the mean. {{revCtrl.selectedOrgunit.level.displayName}} are counted as divergent if they
-						have two or more moderate outliers for an indicator.</em>
+					<em>{{ 'Moderate outliers, using the standard method. Threshold denotes the number of standard deviations from the mean.' | i18next }} {{revCtrl.selectedOrgunit.level.displayName}} {{ 'are counted as divergent if they have two or more moderate outliers for an indicator.' | i18next }}</em>
 				</td>
 			</tr>
 			<tr bgcolor="#f9f9f9">
-				<th rowspan="2" width="200">Indicator</th>
-				<th rowspan="2" width="80">Threshold</th>
-				<th rowspan="2" width="80">Overall score (%)</th>
-				<th colspan="3">{{revCtrl.selectedOrgunit.level.displayName}} with divergent score</th>
+				<th rowspan="2" width="200">{{ 'Indicator' | i18next }}</th>
+				<th rowspan="2" width="80">{{ 'Threshold' | i18next }}</th>
+				<th rowspan="2" width="80">{{ 'Overall score' | i18next }} (%)</th>
+				<th colspan="3">{{revCtrl.selectedOrgunit.level.displayName}} {{ 'with divergent score' | i18next }}</th>
 			</tr>
 			<tr bgcolor="#f9f9f9">
-				<th width="110">Number</th>
-				<th width="110">Percent</th>
-				<th>Names</th>
+				<th width="110">{{ 'Number' | i18next }}</th>
+				<th width="110">{{ 'Percent' | i18next }}</th>
+				<th>{{ 'Names' | i18next }}</th>
 			</tr>
 			<tr ng-repeat="indicator in revCtrl.outliers | orderBy : 'displayName'">
 				<td>{{indicator.displayName}}</td>
@@ -86,14 +83,14 @@ immunities enjoyed by WHO under national or international law or submit to any n
 				<td ng-if="revCtrl.isNumber(indicator.boundaryModerate) && indicator.moderateOutlier >= 0" class="valueCell">{{indicator.countModerate}}</td>
 				<td ng-if="revCtrl.isNumber(indicator.boundaryModerate) && indicator.moderateOutlier >= 0" class="valueCell">{{indicator.percentModerate}}%</td>
 				<td ng-if="revCtrl.isNumber(indicator.boundaryModerate) && indicator.moderateOutlier >= 0">{{indicator.namesModerate.join(', ')}}</td>
-				<td ng-if="!revCtrl.isNumber(indicator.boundaryModerate) && indicator.moderateOutlier >= 0" colspan="4" >Not available</td>
-				<td ng-if="indicator.moderateOutlier == -1" colspan="5">Not applicable</td>
+				<td ng-if="!revCtrl.isNumber(indicator.boundaryModerate) && indicator.moderateOutlier >= 0" colspan="4" >{{ 'Not available' | i18next }}</td>
+				<td ng-if="indicator.moderateOutlier == -1" colspan="5">{{ 'Not applicable' | i18next }}</td>
 			</tr>
 			</tbody>
 		</table>
 
 
-		<h5>Interpretations</h5>
+		<h5>{{ 'Interpretations' | i18next }}</h5>
 		<textarea class="interpretation"></textarea>
 	</div>
 
@@ -103,25 +100,24 @@ immunities enjoyed by WHO under national or international law or submit to any n
 			<tbody>
 			<tr bgcolor="#f9f9f9">
 				<th colspan="6">
-					2c: Moderate outliers
+					{{ '2c: Moderate outliers' | i18next }}
 				</th>
 			</tr>
 			<tr >
 				<td colspan="6">
-					<em>Moderate outliers, based on median (modified Z score). {{revCtrl.selectedOrgunit.level.displayName}}
-						are counted as divergent if they have two or more moderate outliers for an indicator.</em>
+					<em>{{ 'Moderate outliers, based on median (modified Z score).' | i18next }} {{revCtrl.selectedOrgunit.level.displayName}} {{ 'are counted as divergent if they have two or more moderate outliers for an indicator.' | i18next }}</em>
 				</td>
 			</tr>
 			<tr bgcolor="#f9f9f9">
-				<th rowspan="2" width="200">Indicator</th>
-				<th rowspan="2" width="80">Threshold</th>
-				<th rowspan="2" width="80">Overall score (%)</th>
-				<th colspan="3">{{revCtrl.selectedOrgunit.level.displayName}} with divergent score</th>
+				<th rowspan="2" width="200">{{ 'Indicator' | i18next }}</th>
+				<th rowspan="2" width="80">{{ 'Threshold' | i18next }}</th>
+				<th rowspan="2" width="80">{{ 'Overall score' | i18next }} (%)</th>
+				<th colspan="3">{{revCtrl.selectedOrgunit.level.displayName}} {{ 'with divergent score' | i18next }}</th>
 			</tr>
 			<tr bgcolor="#f9f9f9">
-				<th width="110">Number</th>
-				<th width="110">Percent</th>
-				<th>Names</th>
+				<th width="110">{{ 'Number' | i18next }}</th>
+				<th width="110">{{ 'Percent' | i18next }}</th>
+				<th>{{ 'Names' || i18next }}</th>
 			</tr>
 			<tr ng-repeat="indicator in revCtrl.outliers | orderBy : 'displayName'">
 				<td>{{indicator.displayName}}</td>
@@ -130,13 +126,13 @@ immunities enjoyed by WHO under national or international law or submit to any n
 				<td ng-if="revCtrl.isNumber(indicator.boundaryZscore) && indicator.moderateOutlier >= 0"  class="valueCell">{{indicator.countZscore}}</td>
 				<td ng-if="revCtrl.isNumber(indicator.boundaryZscore) && indicator.moderateOutlier >= 0"  class="valueCell">{{indicator.percentZscore}}%</td>
 				<td ng-if="revCtrl.isNumber(indicator.boundaryZscore) && indicator.moderateOutlier >= 0">{{indicator.namesZscore.join(', ')}}</td>
-				<td ng-if="!revCtrl.isNumber(indicator.boundaryZscore) && indicator.moderateOutlier >= 0" colspan="4" >Not available</td>
-				<td ng-if="indicator.moderateOutlier == -1" colspan="5">Not applicable</td>
+				<td ng-if="!revCtrl.isNumber(indicator.boundaryZscore) && indicator.moderateOutlier >= 0" colspan="4" >{{ 'Not available' | i18next }}</td>
+				<td ng-if="indicator.moderateOutlier == -1" colspan="5">{{ 'Not applicable' | i18next }}</td>
 			</tr>
 			</tbody>
 		</table>
 
-		<h5>Interpretations</h5>
+		<h5>{{ 'Interpretations' | i18next }}</h5>
 		<textarea class="interpretation"></textarea>
 	</div>
 
@@ -149,13 +145,12 @@ immunities enjoyed by WHO under national or international law or submit to any n
 					<tbody>
 					<tr bgcolor="#f9f9f9">
 						<th>
-							2d: Consistency of indicator values over time
+							{{ '2d: Consistency of indicator values over time' | i18next }}
 						</th>
 					</tr>
 					<tr >
 						<td>
-							<em>Difference between the current year and either the average of the 3 preceding years
-								(if expected trend is constant), or the forecasted value.</em>
+							<em>{{ 'Difference between the current year and either the average of the 3 preceding years (if expected trend is constant), or the forecasted value.' | i18next }}</em>
 						</td>
 					</tr>
 					</tbody>
@@ -166,31 +161,31 @@ immunities enjoyed by WHO under national or international law or submit to any n
 				<table class="table tablePrint table-bordered table-condensed" style="margin-bottom: 5px">
 					<tr bgcolor="#f9f9f9"><th colspan="2">{{indicator.dxNameA}}</th></tr>
 					<tr>
-						<td>Expected trend</td>
-						<td ng-if="indicator.subType === 'constant'" class="valueCell">Constant</td>
-						<td ng-if="indicator.subType === 'increasing'" class="valueCell">Increasing</td>
-						<td ng-if="indicator.subType === 'decreasing'" class="valueCell">Decreasing</td>
+						<td>{{ 'Expected trend' | i18next }}</td>
+						<td ng-if="indicator.subType === 'constant'" class="valueCell">{{ 'Constant' | i18next }}</td>
+						<td ng-if="indicator.subType === 'increasing'" class="valueCell">{{ 'Increasing' | i18next }}</td>
+						<td ng-if="indicator.subType === 'decreasing'" class="valueCell">{{ 'Decreasing' | i18next }}</td>
 					</tr>
 					<tr>
-						<td>Compare {{revCtrl.selectedOrgunit.level.displayName}} to</td>
+						<td>{{ 'Compare' | i18next } {{revCtrl.selectedOrgunit.level.displayName}} {{ 'to' | i18next }}</td>
 						<td ng-if="indicator.comparison === 'ou'" class="valueCell">{{revCtrl.selectedOrgunit.boundary.displayName}}</td>
-						<td ng-if="indicator.comparison === 'th' && indicator.subType === constant" class="valueCell">Current vs average</td>
-						<td ng-if="indicator.comparison === 'th'" class="valueCell">Current vs forecast</td>
+						<td ng-if="indicator.comparison === 'th' && indicator.subType === constant" class="valueCell">{{ 'Current vs average' | i18next }}</td>
+						<td ng-if="indicator.comparison === 'th'" class="valueCell">{{ 'Current vs forecast' | i18next }}</td>
 					</tr>
 					<tr>
-						<td>Quality threshold</td>
+						<td>{{ 'Quality threshold' | i18next }}</td>
 						<td class="valueCell">± {{indicator.criteria}}%</td>
 					</tr>
 					<tr>
-						<td>Overall score (%)</td>
+						<td>{{ 'Overall score' | i18next }} (%)</td>
 						<td ng-if="revCtrl.isNumber(indicator.boundaryPercentage)" class="valueCell">{{indicator.boundaryPercentage}}%</td>
 					</tr>
 					<tr>
-						<td>Number of {{revCtrl.selectedOrgunit.level.displayName}} with divergent score</td>
+						<td>{{ 'Number of' | i18next }} {{revCtrl.selectedOrgunit.level.displayName}} {{ 'with divergent score' | i18next }}</td>
 						<td ng-if="revCtrl.isNumber(indicator.boundaryPercentage)" class="valueCell">{{indicator.subunitsOutsideThreshold}}</td>
 					</tr>
 					<tr>
-						<td>Percent of {{revCtrl.selectedOrgunit.level.displayName}} with divergent score</td>
+						<td>{{ 'Percent of' | i18next }} {{revCtrl.selectedOrgunit.level.displayName}} {{ 'with divergent score' | i18next }}</td>
 						<td ng-if="revCtrl.isNumber(indicator.boundaryPercentage)" class="valueCell">{{indicator.subunitViolationPercentage}}%</td>
 					</tr>
 					<tr class="bigRow1">
@@ -209,7 +204,7 @@ immunities enjoyed by WHO under national or international law or submit to any n
 				</div>
 			</div>
 
-			<h5 style="margin-top: 10px;">Interpretations</h5>
+			<h5 style="margin-top: 10px;">{{ 'Interpretations' | i18next }}</h5>
 			<textarea class="interpretation"></textarea>
 		</div>
 	</div>
@@ -224,12 +219,12 @@ immunities enjoyed by WHO under national or international law or submit to any n
 				<tbody>
 				<tr bgcolor="#f9f9f9">
 					<th>
-						2e: Consistency between related indicators
+						{{ '2e: Consistency between related indicators' | i18next }}
 					</th>
 				</tr>
 				<tr >
 					<td>
-						<em>Consistency between reported values for two related indicators within the same year.</em>
+						<em>{{ 'Consistency between reported values for two related indicators within the same year.' | i18next }</em>
 					</td>
 				</tr>
 				</tbody>
@@ -240,33 +235,33 @@ immunities enjoyed by WHO under national or international law or submit to any n
 			<table class="table tablePrint table-bordered table-condensed">
 				<tr bgcolor="#f9f9f9"><th colspan="2">{{revCtrl.relationName(relation.relationCode)}}</th></tr>
 				<tr>
-					<td>Indicator A</td>
+					<td>{{ 'Indicator A' | i18next }}</td>
 					<td class="valueCell">{{relation.dxNameA}}</td>
 				</tr>
 				<tr>
-					<td>Indicator B</td>
+					<td>{{ 'Indicator B' | i18next }}</td>
 					<td class="valueCell">{{relation.dxNameB}}</td>
 				</tr>
 				<tr>
-					<td>Expected relationship</td>
+					<td>{{ 'Expected relationship' | i18next }}</td>
 					<td class="valueCell">{{revCtrl.relationType(relation.subType).displayName}}</td>
 				</tr>
 				<tr>
-					<td>Quality threshold</td>
+					<td>{{ 'Quality threshold' | i18next }}</td>
 					<td class="valueCell"  ng-if="relation.subType != 'do'">± {{relation.criteria}} %</td>
-					<td class="valueCell" ng-if="relation.subType === 'do'">Not negative</td>
+					<td class="valueCell" ng-if="relation.subType === 'do'">{{ 'Not negative' | i18next }}</td>
 				</tr>
 				<tr>
-					<td>Overall score</td>
+					<td>{{ 'Overall score' | i18next }}</td>
 					<td ng-if="revCtrl.isNumber(relation.boundaryPercentage)" class="valueCell">{{relation.boundaryPercentage}}%</td>
-					<td class="valueCell" rowspan="3" ng-if="!revCtrl.isNumber(relation.boundaryPercentage)">Not available</td>
+					<td class="valueCell" rowspan="3" ng-if="!revCtrl.isNumber(relation.boundaryPercentage)">{{ 'Not available' | i18next }}</td>
 				</tr>
 				<tr>
-					<td>Number of {{revCtrl.selectedOrgunit.level.displayName}} with divergent score</td>
+					<td>{{ 'Number of' | i18next }} {{revCtrl.selectedOrgunit.level.displayName}} {{ 'with divergent score' | i18next }}</td>
 					<td ng-if="revCtrl.isNumber(relation.boundaryPercentage)" class="valueCell">{{relation.subunitsOutsideThreshold}}</td>
 				</tr>
 				<tr>
-					<td>Percent of {{revCtrl.selectedOrgunit.level.displayName}} with divergent score</td>
+					<td>{{ 'Percent of' | i18next }} {{revCtrl.selectedOrgunit.level.displayName}} {{ 'with divergent score' | i18next }}</td>
 					<td ng-if="revCtrl.isNumber(relation.boundaryPercentage)" class="valueCell">{{relation.subunitViolationPercentage}}%</td>
 				</tr>
 				<tr class="bigRow3">
@@ -280,7 +275,7 @@ immunities enjoyed by WHO under national or international law or submit to any n
 			</div>
 		</div>
 
-		<h5 style="margin-top: 10px;">Interpretations</h5>
+		<h5 style="margin-top: 10px;">{{ 'Interpretations' | i18next }}</h5>
 		<textarea class="interpretation"></textarea>
 	</div>
 </div>

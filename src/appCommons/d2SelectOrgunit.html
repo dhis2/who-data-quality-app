@@ -40,7 +40,7 @@ immunities enjoyed by WHO under national or international law or submit to any n
 			ng-disabled="d2sCtrl.selectedGroup"
 			ng-model="d2sCtrl.selectedLevel"
 			options="d2sCtrl.filteredLevels"
-			placeholder="Organisation unit level"
+			placeholder="{{ 'Organisation unit level' | i18next }}"
 			on-select="d2sCtrl.selectLevel(object)">
 	</d2-select>
 
@@ -49,7 +49,7 @@ immunities enjoyed by WHO under national or international law or submit to any n
 			ng-disabled="d2sCtrl.selectedLevel"
 			ng-model="d2sCtrl.selectedGroup"
 			options="d2sCtrl.orgunitGroups"
-			placeholder="Organisation unit group"
+			placeholder="{{ 'Organisation unit group' | i18next }}"
 			on-select="d2sCtrl.selectGroup(object)">
 	</d2-select>
 </div>
