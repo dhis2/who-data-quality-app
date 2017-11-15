@@ -12,9 +12,7 @@
     "grunt-contrib-jshint": "*",
     "grunt-contrib-watch": "*",
     "grunt-rsync": "^0.6.2",
-    "grunt-zip": "^0.16.2",
-    "i18next-conv": "^5.0.0",
-    "save-dev": "^2.0.0"
+    "grunt-zip": "^0.16.2"
   },
   "devDependencies": {
     "grunt-cache-breaker": "^2.0.1",
@@ -26,6 +24,7 @@
     "grunt-filerev": "^2.3.1",
     "grunt-usemin": "^3.0.0",
     "grunt-zip": "^0.16.2",
+    "i18next-conv": "^5.0.0",
     "recursive-readdir": "^2.2.1"
   },
   "repository": {
