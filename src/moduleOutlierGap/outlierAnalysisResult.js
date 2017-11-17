@@ -17,8 +17,8 @@
 			},
 			bindToController: true,
 			controller: "OutlierResultController",
-			controllerAs: 'resultCtrl',
-			templateUrl: 'moduleOutlierGap/viewOutlierAnalysisResult.html'
+			controllerAs: "resultCtrl",
+			template: require("./viewOutlierAnalysisResult.html")
 		};
 	});
 
@@ -212,7 +212,7 @@
 			};
 
 			var modalInstance = $uibModal.open({
-				templateUrl: "moduleOutlierGap/modalOutlierAnalysisGraph.html",
+						template: require("./modalOutlierAnalysisGraph.html"),
 				controller: "ModalGraphController",
 				controllerAs: 'mgCtrl',
 				resolve: {
@@ -239,7 +239,7 @@
 		self.sendMessage = function (metaData) {
 
 			var modalInstance = $uibModal.open({
-				templateUrl: "appCommons/modalMessage.html",
+						template: require("../appCommons/modalMessage.html"),
 				controller: "ModalMessageController",
 				controllerAs: 'mmCtrl',
 				resolve: {
@@ -294,7 +294,7 @@
 		self.exportCSV = function () {
 			var fileContent = getFileContent();
 			var modalInstance = $uibModal.open({
-				templateUrl: "appCommons/modalExport.html",
+						template: require("../appCommons/modalExport.html"),
 				controller: "ModalExportController",
 				controllerAs: 'exportCtrl',
 				resolve: {
@@ -355,7 +355,7 @@
 		function notification(title, message) {
 			//TODO
 			var modalInstance = $uibModal.open({
-				templateUrl: "appCommons/modalNotification.html",
+						template: require("../appCommons/modalNotification.html"),
 				controller: "ModalNotificationController",
 				controllerAs: 'nCtrl',
 				resolve: {

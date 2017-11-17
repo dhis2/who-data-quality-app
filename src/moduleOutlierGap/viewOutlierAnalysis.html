@@ -12,7 +12,7 @@ immunities enjoyed by WHO under national or international law or submit to any n
 
 
 	<!-- DATA -->
-    <uib-accordion-group heading="Data" is-open="aCtrl.status.isFirstOpen">
+    <div uib-accordion-group class="panel-default" heading="Data" is-open="aCtrl.status.isFirstOpen">
 
 		<!-- DATA SETS -->
 		<div style="max-width: 600px">
@@ -43,11 +43,11 @@ immunities enjoyed by WHO under national or international law or submit to any n
 					multiple="true">
 			</d2-select-indicator>
 		</div>
-    </uib-accordion-group>
+    </div>
            
            
     <!-- PERIOD -->
-    <uib-accordion-group heading="Period">
+    <div uib-accordion-group class="panel-default" heading="Period">
 		<div class="btn-group btn-group-justified" style="margin-bottom: 10px; width: 306px;">
 			  <label class="btn btn-default" ng-model="aCtrl.periodOption" uib-btn-radio="'last'">Recent</label>
 			  <label class="btn btn-default" ng-model="aCtrl.periodOption" uib-btn-radio="'year'">By year</label>
@@ -125,24 +125,24 @@ immunities enjoyed by WHO under national or international law or submit to any n
 			</div>
 			<div style="display: inline-block;"><label>From</label>
 			<div style="min-height:290px;">
-			        <uib-datepicker ng-model="aCtrl.date.startDate" ng-change="aCtrl.datepickerOptionsTo.minDate = aCtrl.date.startDate;" class="well well-sm" datepicker-options="aCtrl.datepickerOptionsFrom" ></uib-datepicker>
+			        <div uib-datepicker ng-model="aCtrl.date.startDate" ng-change="aCtrl.datepickerOptionsTo.minDate = aCtrl.date.startDate;" class="well well-sm" datepicker-options="aCtrl.datepickerOptionsFrom" ></div>
 			</div></div>
 
 			<div style="display: inline-block;"><label>To</label>
 			<div style="min-height:290px;">
-			        <uib-datepicker ng-model="aCtrl.date.endDate" class="well well-sm" datepicker-options="aCtrl.datepickerOptionsTo"></uib-datepicker>
+			        <div uib-datepicker ng-model="aCtrl.date.endDate" class="well well-sm" datepicker-options="aCtrl.datepickerOptionsTo"></div>
 			</div>
 			</div>
 
 		</div>
-    </uib-accordion-group>
+    </div
     
     <!-- ORGUNIT -->
-    <uib-accordion-group heading="Orgunit" is-open="status.open">
+    <div uib-accordion-group class="panel-default" heading="Orgunit" is-open="status.open">
 		<div style="max-width: 600px;">
     		<d2-select-orgunit default-level="2" ng-model="aCtrl.selectedOrgunit" on-select="aCtrl.selectedOrgunit = object;"></d2-select-orgunit>
 		</div>
-    </uib-accordion-group>
+    </div>
   </uib-accordion>
   
 <button type="button" class="btn btn-primary pull-right" ng-click="aCtrl.doAnalysis();" style="margin-bottom:20px"

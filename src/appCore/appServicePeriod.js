@@ -6,11 +6,11 @@
  immunities enjoyed by WHO under national or international law or submit to any national court jurisdiction.
  */
 
-(function(){
-	/**Service: Completeness*/
-	angular.module('dataQualityApp').service('periodService',
-	[
-	function () {
+import PeriodType from "../libs/periodTypeNoDep.js";
+const moment = require('moment');
+
+/**Service: Completeness*/
+export default function () {
 		
 		var self = this;
 		var periodTool = new PeriodType();

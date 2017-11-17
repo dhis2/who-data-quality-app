@@ -12,7 +12,7 @@ immunities enjoyed by WHO under national or international law or submit to any n
 <uib-accordion close-others="aCtrl.oneAtATime">
 	
 	<!-- OPTIONS -->
-	<uib-accordion-group heading="Analysis Type" is-open="aCtrl.status.isFirstOpen">
+	<div uib-accordion-group class="panel-default" heading="Analysis Type" is-open="aCtrl.status.isFirstOpen">
 		<label>Consistency analysis type</label><br />
 		<div class="btn-group btn-group-justified" style="width: 330px; margin-bottom: 10px;" ng-init="aCtrl.type = 'data'">
 				<label class="btn btn-default" ng-model="aCtrl.type" uib-btn-radio="'data'">Between Indicators</label>
@@ -50,11 +50,11 @@ immunities enjoyed by WHO under national or international law or submit to any n
 		<label>Criteria</label><br />
 		<input ng-init="aCtrl.consistencyCriteria = 33" class="form-control" type="number" style="text-align: right; width: 150px; display: inline-block;" ng-model="aCtrl.consistencyCriteria" min="0" max="50"> <span style="display: inline-block;">%</span>
 		</div>
-	</uib-accordion-group>
+	</div>
 
 
 	<!-- DATA -->
-    <uib-accordion-group heading="Data">
+    <div uib-accordion-group class="panel-default" heading="Data">
 
 		<div ng-init="aCtrl.dataTypeSelectedA = 'dataElements'">
 			<h4>Select data element/indicator</h4>
@@ -105,11 +105,11 @@ immunities enjoyed by WHO under national or international law or submit to any n
 		</div>
 
 
-    </uib-accordion-group>
+    </div>
     
     
     <!-- PERIOD -->
-    <uib-accordion-group heading="Period">
+    <div uib-accordion-group class="panel-default" heading="Period">
     	
     	<h4 ng-if="aCtrl.type === 'time'">Period</h4>
     	<div style="display: inline-block;">
@@ -168,12 +168,12 @@ immunities enjoyed by WHO under national or international law or submit to any n
     		</div>    	
     	</div>
     	
-    </uib-accordion-group>
+    </div>
     
     <!-- ORGUNIT -->
-    <uib-accordion-group heading="Orgunit" is-open="status.open">
+    <div uib-accordion-group class="panel-default" heading="Orgunit" is-open="status.open">
 		<d2-select-orgunit default-level="1" max-level="3" ng-model="aCtrl.selectedOrgunit" on-select="aCtrl.selectedOrgunit = object;"></d2-select-orgunit>
-    </uib-accordion-group>
+    </div>
   </uib-accordion>
   
 <button type="button" class="btn btn-primary pull-right" ng-click="aCtrl.doAnalysis(null, null); aCtrl.updateCharts();" 
@@ -260,7 +260,7 @@ immunities enjoyed by WHO under national or international law or submit to any n
 		
 		<tfoot>
 		    <td colspan="5">
-		        <uib-pagination total-items="aCtrl.totalRows" items-per-page="aCtrl.pageSize" max-size="5" ng-model="aCtrl.currentPage" class="pagination-sm pull-right" boundary-links="true" rotate="true"></uib-pagination>
+		        <div uib-pagination total-items="aCtrl.totalRows" items-per-page="aCtrl.pageSize" max-size="5" ng-model="aCtrl.currentPage" class="pagination-sm pull-right" boundary-links="true" rotate="true"></div>
 		    </td>
 		</tfoot>
 		

@@ -8,24 +8,24 @@
 
 (function() {
 
-	var app = angular.module('dataQualityApp');
+	var app = angular.module("appCommons");
 
-	app.directive('ouTree', function () {
+	app.directive("ouTree", function () {
 		return {
 			scope: {
-				'onSelect': '&',
-				'ngModel': '=?'
+				"onSelect": "&",
+				"ngModel": "=?"
 			},
 			bindToController: true,
 			controller: "ouTreeController",
-			controllerAs: 'ouCtrl',
-			templateUrl: 'appCommons/viewOuTree.html'
+			controllerAs: "ouCtrl",
+			template: require("./viewOuTree.html")
 		};
 	});
 
 
 	app.controller("ouTreeController",
-		['d2Meta', 'd2Utils',
+		["d2Meta", "d2Utils",
 			function(d2Meta, d2Utils) {
 				var self = this;
 
@@ -49,7 +49,7 @@
 							};
 
 
-							d2Utils.arraySortByProperty(ou.children, 'displayName', false);
+							d2Utils.arraySortByProperty(ou.children, "displayName", false);
 
 							for (var j = 0; ou.children && j < ou.children.length; j++) {
 
@@ -78,10 +78,10 @@
 					if (orgunit.noLeaf && orgunit.children.length < 1) {
 
 						//Get children
-						d2Meta.object('organisationUnits', orgunit.data.ou.id, 'children[displayName,id,level,children::isNotEmpty]').then(
+						d2Meta.object("organisationUnits", orgunit.data.ou.id, "children[displayName,id,level,children::isNotEmpty]").then(
 							function (data) {
 								var children = data.children;
-								d2Utils.arraySortByProperty(children, 'displayName', false);
+								d2Utils.arraySortByProperty(children, "displayName", false);
 								for (var i = 0; i < children.length; i++) {
 									var child = children[i];
 									if (!orgunit.children) orgunit.children = [];
@@ -98,9 +98,9 @@
 						);
 					}
 					self.ngModel = orgunit.data.ou;
-					self.onSelect({'object': orgunit.data.ou});
+					self.onSelect({"object": orgunit.data.ou});
 
-				}
+				};
 
 				ouTreeInit();
 

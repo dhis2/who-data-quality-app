@@ -8,9 +8,9 @@
 
 (function(){
 	/**Controller: Parameters*/
-	angular.module('dataQualityApp').controller("ModalMessageController",
-	['$uibModalInstance', 'requestService', 'orgunitID', 'orgunitName',
-	function($uibModalInstance, requestService, orgunitID, orgunitName) {
+	angular.module("appCommons").controller("ModalMessageController",
+		["$uibModalInstance", "requestService", "orgunitID", "orgunitName",
+			function($uibModalInstance, requestService, orgunitID, orgunitName) {
 	    
 	    var self = this; 
 	    
@@ -29,14 +29,14 @@
 	    getInformation();
 	    
 	    function getInformation() {
-	    	var requestURL = '/organisationUnits/' + orgunitID + '.json?';
-	    	requestURL += 'fields=displayName,id,contactPerson,address,email,phoneNumber,users[displayName,id,phoneNumber],';
-	    	requestURL += 'parent[displayName,id,users[displayName,id,phoneNumber],parent[displayName,id,users[displayName,id,phoneNumber]]]';
+	    	var requestURL = "/organisationUnits/" + orgunitID + ".json?";
+	    	requestURL += "fields=displayName,id,contactPerson,address,email,phoneNumber,users[displayName,id,phoneNumber],";
+	    	requestURL += "parent[displayName,id,users[displayName,id,phoneNumber],parent[displayName,id,users[displayName,id,phoneNumber]]]";
 	    	
 	    	
 	    	requestService.getSingle(requestURL).then(function (response) {
-				self.metaData = response.data;
-				setInformation();
+						self.metaData = response.data;
+						setInformation();
 	    	});
 	    }
 	    
@@ -44,23 +44,23 @@
 	    function setInformation() {
 	    	var data = self.metaData;
 		    var attribute, attributes = [{ 
-		    	attr: 'contactPerson',
-		    	label: 'Contact person'
+		    	attr: "contactPerson",
+		    	label: "Contact person"
 		    	},{
-		    	attr: 'address',
-		    	label: 'Adress'
+		    	attr: "address",
+		    	label: "Adress"
 		    	},{
-		    	attr: 'email',
-		    	label: 'Email'
+		    	attr: "email",
+		    	label: "Email"
 		    	},{
-		    	attr: 'phoneNumber',
-		    	label: 'Phone number'
+		    	attr: "phoneNumber",
+		    	label: "Phone number"
 		    	},{
-		    	attr: 'users',
-		    	label: 'Users'
+		    	attr: "users",
+		    	label: "Users"
 		    	},{
-		    	attr: 'parent',
-		    	label: 'Hieararchy'
+		    	attr: "parent",
+		    	label: "Hieararchy"
 		    	}];	  
 		    	  
 	    	for (var i = 0; i < attributes.length; i++) {
@@ -68,28 +68,28 @@
 	    		if (data[attribute.attr]) {
 	    			
 	    			
-	    			if (attribute.attr === 'users') {
+	    			if (attribute.attr === "users") {
 	    				var user, users = [];
-						for (var j = 0; j < data[attribute.attr].length; j++) {
-							user = data[attribute.attr][j].displayName;
-							if (data[attribute.attr][j].phoneNumber) {
-								user += ' (' + data[attribute.attr][j].phoneNumber + ')';
-							}
-							users.push(user);
-						}
+								for (var j = 0; j < data[attribute.attr].length; j++) {
+									user = data[attribute.attr][j].displayName;
+									if (data[attribute.attr][j].phoneNumber) {
+										user += " (" + data[attribute.attr][j].phoneNumber + ")";
+									}
+									users.push(user);
+								}
 						
-						if (users.length > 0) {
-							self.info.push({
-								label: attribute.label,
-								value: users.join(', ')
-							});
-						}
+								if (users.length > 0) {
+									self.info.push({
+										label: attribute.label,
+										value: users.join(", ")
+									});
+								}
 	    			}
 	    			
-	    			else if (attribute.attr === 'parent') {
+	    			else if (attribute.attr === "parent") {
 	    				var parents = data[attribute.attr].displayName;
 	    				if (data[attribute.attr].parent) {
-	    					parents = data[attribute.attr].parent.displayName + ' - ' + parents;
+	    					parents = data[attribute.attr].parent.displayName + " - " + parents;
 	    				}
 	    				
 	    				
@@ -120,16 +120,16 @@
 	    		var orgunit = potentialRecipients[i];
 	    		if (orgunit.users && orgunit.users.length > 0) {
 	    			self.recipients.push({
-						'displayName': orgunit.displayName,
-	    				'orgunit': orgunit.displayName,
-	    				'id': orgunit.id,
-	    				'users': orgunit.users
+								"displayName": orgunit.displayName,
+	    				"orgunit": orgunit.displayName,
+	    				"id": orgunit.id,
+	    				"users": orgunit.users
 	    			});
 	    		}
 	    	}
 	    	
 	    	if (self.recipients.length === 0) {
-	    		self.alerts.push({type: 'warning', msg: 'No users to send to!'});
+	    		self.alerts.push({type: "warning", msg: "No users to send to!"});
 	    	}
 	    }
 	    	 
@@ -143,25 +143,25 @@
 	    	var ids = [];  
 	    	if (self.selectedUsers.length > 0) {
 	    		for (var i = 0; i < self.selectedUsers.length; i++) {
-	    			ids.push({'id': self.selectedUsers[i].id});
+	    			ids.push({"id": self.selectedUsers[i].id});
 	    		}
 	    		message.users = ids;
 	    	}
 	    	else {
-	    		ids.push({'id': self.selectedRecipient.id});
+	    		ids.push({"id": self.selectedRecipient.id});
 	    		message.organisationUnits = ids;
 	    	}
 	    	
-	    	var postURL = '/messageConversations';
+	    	var postURL = "/messageConversations";
 
 	    	console.log(message);
 	    	
 	    	requestService.post(postURL, message).
 	    	  success(function(data, status, headers, config) {
-	    	    self.alerts.push({type: 'success', msg: 'Message sent!'});
+	    	    self.alerts.push({type: "success", msg: "Message sent!"});
 	    	  }).
 	    	  error(function(data, status, headers, config) {
-	    	    self.alerts.push({type: 'danger', msg: 'Error sending message!'});
+	    	    self.alerts.push({type: "danger", msg: "Error sending message!"});
 	    	 });
 	    		    
 	    };
@@ -179,5 +179,5 @@
 	        $uibModalInstance.close(self.text);
 	    };
 	    
-	}]);
+			}]);
 })();

@@ -6,18 +6,14 @@
  immunities enjoyed by WHO under national or international law or submit to any national court jurisdiction.
  */
 
-angular.module("appCommons").controller("ModalNotificationController",
-	["$uibModalInstance", "title", "message",
-		function($uibModalInstance, title, message) {
-	    
-	    var self = this; 
-	    
-	    self.title = title;
-	    self.message = message;
-	    
-	    self.close = function () {
-	        $uibModalInstance.close(true);
-	    };
 
-			return self;
-		}]);
+angular.module("appCommons", ["ui.bootstrap", "angularBootstrapNavTree"]);
+
+require("./d2Select.js");
+require("./d2SelectDataElement.js");
+require("./d2SelectIndicator.js");
+require("./d2SelectOrgunit.js");
+require("./modalExportController.js");
+require("./modalMessageController.js");
+require("./modalNotificationController.js");
+require("./viewOuTree.js");

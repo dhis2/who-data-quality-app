@@ -8,9 +8,9 @@
 
 (function(){
 	/**Controller: Parameters*/
-	angular.module('outlierGapAnalysis').controller("ModalGraphController",
-	['$uibModalInstance', 'requestService', 'ouName', 'dxName', 'chartOptions', 'chartData',
-	function($uibModalInstance, requestService, ouName, dxName, chartOptions, chartData) {
+	angular.module("outlierGapAnalysis").controller("ModalGraphController",
+		["$uibModalInstance", "requestService", "ouName", "dxName", "chartOptions", "chartData",
+			function($uibModalInstance, requestService, ouName, dxName, chartOptions, chartData) {
 	    
 	    var self = this; 
 	    
@@ -25,5 +25,5 @@
 	        $uibModalInstance.close(self.text);
 	    };
 	    
-	}]);
+			}]);
 })();

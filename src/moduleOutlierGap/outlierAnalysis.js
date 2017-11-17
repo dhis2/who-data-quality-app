@@ -6,9 +6,9 @@
  immunities enjoyed by WHO under national or international law or submit to any national court jurisdiction.
  */
 
-(function(){
 	
-	angular.module('outlierGapAnalysis', []);
-
-})();
-
+angular.module("outlierGapAnalysis", []);
+	
+require("./outlierAnalysisParameters.js");
+require("./outlierAnalysisResult.js");
+require("./modalOutlierAnalysisGraphController.js")

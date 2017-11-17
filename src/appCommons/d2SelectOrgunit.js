@@ -8,7 +8,7 @@
 
 (function() {
 
-	var app = angular.module('dataQualityApp');
+	var app = angular.module("appCommons");
 
 	app.directive('d2SelectOrgunit', function () {
 		return {
@@ -22,8 +22,8 @@
 			},
 			bindToController: true,
 			controller: "d2SelectOUController",
-			controllerAs: 'd2sCtrl',
-			templateUrl: 'appCommons/d2SelectOrgunit.html'
+			controllerAs: "d2sCtrl",
+			template: require("./d2SelectOrgunit.html")
 		};
 	});
 	

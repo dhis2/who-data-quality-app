@@ -10,7 +10,7 @@ immunities enjoyed by WHO under national or international law or submit to any n
 	<uib-accordion class="no-print" close-others="revCtrl.oneAtATime">
 
 		<!-- DATA -->
-		<uib-accordion-group heading="Data" is-open="revCtrl.status.isFirstOpen">
+		<div uib-accordion-group class="panel-default" heading="Data" is-open="revCtrl.status.isFirstOpen">
 			<label>Group</label><br/>
 			<ui-select ng-model="revCtrl.groupSelected" theme="bootstrap" style="min-width: 200px; display: inline-block;">
 				<ui-select-match placeholder="Select group...">
@@ -21,9 +21,9 @@ immunities enjoyed by WHO under national or international law or submit to any n
 					<div ng-bind-html="obj.name | highlight: $select.search"></div>
 				</ui-select-choices>
 			</ui-select>
-		</uib-accordion-group>
+		</div>
 
-		<uib-accordion-group heading="Period">
+		<div uib-accordion-group class="panel-default" heading="Period">
 			<label>Year</label><br/>
 			<ui-select ng-model="revCtrl.yearSelected" theme="bootstrap" style="width: 150px; display: inline-block;">
 				<ui-select-match placeholder="Select year...">
@@ -42,13 +42,13 @@ immunities enjoyed by WHO under national or international law or submit to any n
 				<input class="form-control" type="number" style="text-align: right; width: 150px; display: inline-block;"
 					   ng-model="revCtrl.selectedRefPeriod" ng-default="revCtrl.selectedRefPeriod = 3" min="1" max="5">
 			</div>
-		</uib-accordion-group>
+		</div>
 
-		<uib-accordion-group heading="Organisation unit">
+		<div uib-accordion-group class="panel-default" heading="Organisation unit">
 			<div style="width: 400px">
 				<d2-select-orgunit default-level="1" max-level="2" ng-model="revCtrl.selectedOrgunit" on-select="revCtrl.selectedOrgunit = object;"></d2-select-orgunit>
 			</div>
-		</uib-accordion-group>
+		</div>
 
 	</uib-accordion>
 

@@ -6,6 +6,8 @@
  immunities enjoyed by WHO under national or international law or submit to any national court jurisdiction.
  */
 
+const moment = require("moment");
+
 (function(){
 	
 	angular.module('consistencyAnalysis', []);
@@ -460,7 +462,7 @@
 		self.exportCSV = function() {
 			var fileContent = getFileContent();
 			var modalInstance = $uibModal.open({
-				templateUrl: "appCommons/modalExport.html",
+						template: require("../appCommons/modalExport.html"),
 				controller: "ModalExportController",
 				controllerAs: 'exportCtrl',
 				resolve: {
@@ -483,7 +485,7 @@
 		self.sendMessage = function(item) {
 
 			var modalInstance = $uibModal.open({
-				templateUrl: "appCommons/modalMessage.html",
+						template: require("../appCommons/modalMessage.html"),
 				controller: "ModalMessageController",
 				controllerAs: 'mmCtrl',
 				resolve: {

@@ -8,22 +8,22 @@
 
 (function() {
 
-	var app = angular.module('dataQualityApp');
+	var app = angular.module("appCommons");
 
-	app.directive('d2Select', function () {
+	app.directive("d2Select", function () {
 		return {
 			scope: {
-				'ngModel': '=',
-				'options': '=',
-				'multiple': '=',
-				'ngDisabled': '=',
-				'placeholder': '@',
-				'onSelect': '&'
+				"ngModel": "=",
+				"options": "=",
+				"multiple": "=",
+				"ngDisabled": "=",
+				"placeholder": "@",
+				"onSelect": "&"
 			},
 			bindToController: true,
 			controller: "d2SelectController",
-			controllerAs: 'd2sCtrl',
-			templateUrl: 'appCommons/d2Select.html'
+			controllerAs: "d2sCtrl",
+			template: require("./d2Select.html")
 		};
 	});
 

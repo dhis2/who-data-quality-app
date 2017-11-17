@@ -117,7 +117,7 @@ immunities enjoyed by WHO under national or international law or submit to any n
 			<tfoot>
 				<tr height="81px">
 					<td colspan="{{resultCtrl.totalColumns}}">
-						<uib-pagination ng-if="resultCtrl.totalRows > resultCtrl.pageSize" total-items="resultCtrl.totalRows" items-per-page="resultCtrl.pageSize" max-size="5" ng-model="resultCtrl.currentPage" class="pagination-sm pull-right" boundary-links="true" rotate="true"></uib-pagination>
+						<div uib-pagination ng-if="resultCtrl.totalRows > resultCtrl.pageSize" total-items="resultCtrl.totalRows" items-per-page="resultCtrl.pageSize" max-size="5" ng-model="resultCtrl.currentPage" class="pagination-sm pull-right" boundary-links="true" rotate="true"></div>
 					</td>
 				</tr>
 			</tfoot>

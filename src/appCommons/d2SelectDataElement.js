@@ -8,7 +8,7 @@
 
 (function() {
 
-	var app = angular.module('dataQualityApp');
+	var app = angular.module("appCommons");
 
 	app.directive('d2SelectDataElement', function () {
 		return {
@@ -20,8 +20,8 @@
 			},
 			bindToController: true,
 			controller: "d2SelectDEController",
-			controllerAs: 'd2sCtrl',
-			templateUrl: 'appCommons/d2SelectDataElement.html'
+			controllerAs: "d2sCtrl",
+			template: require("./d2SelectDataElement.html")
 		};
 	});
 
