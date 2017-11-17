@@ -8,20 +8,20 @@ immunities enjoyed by WHO under national or international law or submit to any n
 
 <div class="reportPart">
 	<div class="fullWidth headerPart">
-		DOMAIN 4: CONSISTENCY OF POPULATION DATA
+		{{ 'DOMAIN 4: CONSISTENCY OF POPULATION DATA' | i18next }}
 	</div>
 	<div class="noBreak">
 
 		<table class="table tablePrint table-bordered table-condensed ">
 			<tr bgcolor="#f9f9f9">
 				<th colspan="2">
-					4a: Consistency with UN population projection.
+					{{ '4a: Consistency with UN population projection.' | i18next }}
 				</th>
 			</tr>
 			<tr>
-				<td>Ratio of population projection from the Bureau of Statistics to a UN projection</td>
+				<td>{{ 'Ratio of population projection from the Bureau of Statistics to a UN projection' | i18next }}</td>
 				<td ng-if="revCtrl.denominators.un">{{revCtrl.denominators.un.boundaryRatio}}</td>
-				<td ng-if="!revCtrl.denominators.un">Not available</td>
+				<td ng-if="!revCtrl.denominators.un">{{ 'Not available' | i18next }}</td>
 			</tr>
 		</table>
 	</div>
@@ -33,16 +33,16 @@ immunities enjoyed by WHO under national or international law or submit to any n
 			<tbody>
 			<tr bgcolor="#f9f9f9">
 				<th>
-					4b: Consistency of denominators
+					{{ '4b: Consistency of denominators' | i18next }}
 				</th>
 			</tr>
 			<tr>
 				<td>
-					<em>Consistency of denominators within the same year.</em>
+					<em>{{ 'Consistency of denominators within the same year.' | i18next }}</em>
 				</td>
 			</tr>
 			<tr ng-if="revCtrl.denominators.relations.length === 0">
-				<td>Not available</td>
+				<td>{{ 'Not available' | i18next }}</td>
 			</tr>
 			</tbody>
 		</table>
@@ -55,27 +55,27 @@ immunities enjoyed by WHO under national or international law or submit to any n
 			<table class="table tablePrint table-bordered table-condensed">
 				<tr bgcolor="#f9f9f9"><th colspan="2">{{denominator.meta.relation.name}}</th></tr>
 				<tr>
-					<td>Denominator A</td>
+					<td>{{ 'Denominator A' | i18next }}</td>
 					<td class="valueCell">{{denominator.dxNameA}}</td>
 				</tr>
 				<tr>
-					<td>Denominator B</td>
+					<td>{{ 'Denominator B' | i18next }}</td>
 					<td class="valueCell">{{denominator.dxNameB}}</td>
 				</tr>
 				<tr>
-					<td>Quality threshold</td>
+					<td>{{ 'Quality threshold' | i18next }}</td>
 					<td class="valueCell">± {{denominator.criteria}}%</td>
 				</tr>
 				<tr>
-					<td>Overall score</td>
+					<td>{{ 'Overall score' | i18next }}</td>
 					<td class="valueCell">{{denominator.boundaryPercentage}}%</td>
 				</tr>
 				<tr>
-					<td># {{revCtrl.selectedOrgunit.level.displayName}} with poor score</td>
+					<td># {{revCtrl.selectedOrgunit.level.displayName}} {{ 'with poor score' | i18next }}</td>
 					<td class="valueCell">{{denominator.subunitsOutsideThreshold}}</td>
 				</tr>
 				<tr>
-					<td>% {{revCtrl.selectedOrgunit.level.displayName}} with poor score</td>
+					<td>% {{revCtrl.selectedOrgunit.level.displayName}} {{ 'with poor score' | i18next }}</td>
 					<td class="valueCell">{{denominator.subunitViolationPercentage}}%</td>
 				</tr>
 				<tr class="bigRow2" ng-if="denominator.subunitViolationNames.length > 0">
@@ -89,7 +89,7 @@ immunities enjoyed by WHO under national or international law or submit to any n
 			</div>
 		</div>
 
-		<h5 style="margin-top: 10px;">Interpretations</h5>
+		<h5 style="margin-top: 10px;">{{ 'Interpretations' | i18next }}</h5>
 		<textarea class="interpretation"></textarea>
 	</div>
 </div>

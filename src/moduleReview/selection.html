@@ -10,10 +10,10 @@ immunities enjoyed by WHO under national or international law or submit to any n
 	<uib-accordion class="no-print" close-others="revCtrl.oneAtATime">
 
 		<!-- DATA -->
-		<uib-accordion-group heading="Data" is-open="revCtrl.status.isFirstOpen">
-			<label>Group</label><br/>
+		<uib-accordion-group heading="{{ 'Data' | i18next }}" is-open="revCtrl.status.isFirstOpen">
+			<label>{{ 'Group' | i18next }}</label><br/>
 			<ui-select ng-model="revCtrl.groupSelected" theme="bootstrap" style="min-width: 200px; display: inline-block;">
-				<ui-select-match placeholder="Select group...">
+				<ui-select-match placeholder="{{ 'Select group...' | i18next }}">
 					{{revCtrl.groupSelected.name}}
 				</ui-select-match>
 				<ui-select-choices
@@ -23,10 +23,10 @@ immunities enjoyed by WHO under national or international law or submit to any n
 			</ui-select>
 		</uib-accordion-group>
 
-		<uib-accordion-group heading="Period">
-			<label>Year</label><br/>
+		<uib-accordion-group heading="{{ 'Period' | i18next }}">
+			<label>{{ 'Year' | i18next }}</label><br/>
 			<ui-select ng-model="revCtrl.yearSelected" theme="bootstrap" style="width: 150px; display: inline-block;">
-				<ui-select-match placeholder="Select year...">
+				<ui-select-match placeholder="{{ 'Select year...' | i18next }}">
 					{{revCtrl.yearSelected.name}}
 				</ui-select-match>
 				<ui-select-choices
@@ -37,7 +37,7 @@ immunities enjoyed by WHO under national or international law or submit to any n
 
 			<br />
 
-			<label>Preceding years for reference</label><br />
+			<label>{{ 'Preceding years for reference' | i18next }}</label><br />
 			<div style="display: inline-block;">
 				<input class="form-control" type="number" style="text-align: right; width: 150px; display: inline-block;"
 					   ng-model="revCtrl.selectedRefPeriod" ng-default="revCtrl.selectedRefPeriod = 3" min="1" max="5">
@@ -53,8 +53,8 @@ immunities enjoyed by WHO under national or international law or submit to any n
 	</uib-accordion>
 
 	<div class="inline pull-right" style="margin-bottom:20px">
-		<button ng-disabled="revCtrl.selectedOrgunit.boundary === undefined || revCtrl.outstandingRequests > 0" class="btn btn-primary inline" ng-click="revCtrl.doAnalysis();">Generate</button>
-		<button ng-disabled="!(revCtrl.outstandingRequests === 0 && revCtrl.totalRequests != 0)" class="btn btn-primary inline" ng-click="revCtrl.doPrint();">Print</button>
+		<button ng-disabled="revCtrl.selectedOrgunit.boundary === undefined || revCtrl.outstandingRequests > 0" class="btn btn-primary inline" ng-click="revCtrl.doAnalysis();">{{ 'Generate' | i18next }}</button>
+		<button ng-disabled="!(revCtrl.outstandingRequests === 0 && revCtrl.totalRequests != 0)" class="btn btn-primary inline" ng-click="revCtrl.doPrint();">{{ 'Print' | i18next }}</button>
 	</div>
 
 	<hr style="clear: both;" />

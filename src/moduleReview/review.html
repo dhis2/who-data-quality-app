@@ -6,12 +6,12 @@ copied verbatim in the file “COPYING”.  In applying this license, WHO does n
 immunities enjoyed by WHO under national or international law or submit to any national court jurisdiction.
 -->
 
-<h3 class="no-print" style="margin-top: 20px;">Annual Data Quality Report</h3>
+<h3 class="no-print" style="margin-top: 20px;">{{ 'Annual Data Quality Report' | i18next }}</h3>
 
 <div ng-include="revCtrl.selection"></div>
 
 <div ng-if="revCtrl.outstandingRequests != 0">
-	<h5>Loading data...</h5>
+	<h5>{{ 'Loading data...' | i18next }}</h5>
 	<uib-progressbar animate="false" value="revCtrl.progress()" type="default">
 		<b>{{revCtrl.progress()}}%</b>
 	</uib-progressbar>
@@ -37,15 +37,15 @@ immunities enjoyed by WHO under national or international law or submit to any n
 
 	<!--DENOMINATOR CONSISTENCY-->
 	<div ng-include="revCtrl.result4Denominators"></div>
-	
+
 	<!--ALERTS-->
 	<div class="reportPart" ng-if="revCtrl.remarks.length > 0">
-		<h3>Remarks</h3>
+		<h3>{{ 'Remarks' | i18next }}</h3>
 		<table class="table tablePrint table-bordered" style=" margin-top: 20px;">
 			<tr>
-				<th>Analysis type</th>
-				<th>Item</th>
-				<th>Remarks</th></tr>
+				<th>{{ 'Analysis type' | i18next }}</th>
+				<th>{{ 'Item' | i18next }}</th>
+				<th>{{ 'Remarks' | i18next }}</th></tr>
 			<tr ng-repeat="alert in revCtrl.remarks track by $index">
 				<td>{{alert.type}}</td>
 				<td>{{alert.item}}</td>

@@ -7,9 +7,7 @@ immunities enjoyed by WHO under national or international law or submit to any n
 -->
 
 <div class="reportPart">
-	<div class="fullWidth headerPart">
-		DOMAIN 3: EXTERNAL COMPARISON
-	</div>
+	<div class="fullWidth headerPart">{{ 'DOMAIN 3: EXTERNAL COMPARISON' | i18next }}</div>
 
 
 	<div class="inline fullWidth">
@@ -17,16 +15,16 @@ immunities enjoyed by WHO under national or international law or submit to any n
 			<tbody>
 			<tr bgcolor="#f9f9f9">
 				<th>
-					3a: Comparison with external/survey data
+					{{ '3a: Comparison with external/survey data' | i18next }}
 				</th>
 			</tr>
 			<tr>
 				<td>
-					<em>Consistency of routine data with data from external source, e.g. population-based surveys.</em>
+					<em>{{ 'Consistency of routine data with data from external source, e.g. population-based surveys.' | i18next }}</em>
 				</td>
 			</tr>
 			<tr ng-if="revCtrl.external.length === 0">
-				<td>Not available</td>
+				<td>{{ 'Not available' | i18next }}</td>
 			</tr>
 			</tbody>
 		</table>
@@ -43,33 +41,33 @@ immunities enjoyed by WHO under national or international law or submit to any n
 					<th colspan="2">{{relation.meta.name}}</th>
 				</tr>
 				<tr>
-					<td>Survey value</td>
+					<td>{{ 'Survey value' | i18next }}</td>
 					<td ng-if="relation.boundaryValue" class="valueCell">{{relation.boundaryValue}}%</td>
-					<td ng-if="!relation.boundaryValue" class="valueCell">Not available</td>
+					<td ng-if="!relation.boundaryValue" class="valueCell">{{ 'Not available' | i18next }}</td>
 				</tr>
 				<tr>
-					<td>Routine value</td>
+					<td>{{ 'Routine value' | i18next }</td>
 					<td ng-if="relation.boundaryRefValue" class="valueCell">{{relation.boundaryRefValue}}%</td>
-					<td ng-if="!relation.boundaryRefValue" class="valueCell">Not available</td>
+					<td ng-if="!relation.boundaryRefValue" class="valueCell">{{ 'Not available' | i18next }}</td>
 				</tr>
 				<tr>
-					<td>Quality threshold</td>
+					<td>{{ 'Quality threshold' | i18next }}</td>
 					<td class="valueCell">± {{relation.criteria}}%</td>
 				</tr>
 				<tr>
-					<td>Overall score</td>
+					<td>{{ 'Overall score' | i18next }}</td>
 					<td ng-if="relation.boundaryPercentage" class="valueCell">{{relation.boundaryPercentage}}%</td>
-					<td ng-if="!relation.boundaryPercentage" class="valueCell">Not available</td>
+					<td ng-if="!relation.boundaryPercentage" class="valueCell">{{ 'Not available' | i18next }}</td>
 				</tr>
 				<tr >
-					<td>Number of {{relation.meta.ouLimitName}} with divergent score</td>
+					<td>{{ 'Number of' | i18next}} {{relation.meta.ouLimitName}} {{ 'with divergent score' | i18next }}</td>
 					<td ng-if="relation.subunitDatapoints.length > 0" class="valueCell">{{relation.subunitsOutsideThreshold}}</td>
-					<td ng-if="relation.subunitDatapoints.length === 0" class="valueCell">Not available</td>
+					<td ng-if="relation.subunitDatapoints.length === 0" class="valueCell">{{ 'Not available' | i18next }}</td>
 				</tr>
 				<tr>
-					<td>Percent of {{relation.meta.ouLimitName}} with divergent score</td>
+					<td>{{ 'Percent of' | i18next }} {{relation.meta.ouLimitName}} {{ 'with divergent score' | i18next }}</td>
 					<td ng-if="relation.subunitDatapoints.length > 0" class="valueCell">{{relation.subunitViolationPercentage}}%</td>
-					<td ng-if="relation.subunitDatapoints.length === 0" class="valueCell">Not available</td>
+					<td ng-if="relation.subunitDatapoints.length === 0" class="valueCell">{{ 'Not available' | i18next }}</td>
 				</tr>
 				<tr class="bigRow2" ng-if="relation.subunitViolationNames.length > 0 && relation.subunitDatapoints.length > 0">
 					<td colspan="2">{{relation.subunitViolationNames.join(', ')}}</td>
@@ -87,7 +85,7 @@ immunities enjoyed by WHO under national or international law or submit to any n
 			</div>
 		</div>
 
-		<h5 style="margin-top: 10px;">Interpretations</h5>
+		<h5 style="margin-top: 10px;">{{ 'Interpretations' | i18next }}</h5>
 		<textarea class="interpretation"></textarea>
 	</div>
 

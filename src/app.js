@@ -7,12 +7,23 @@ immunities enjoyed by WHO under national or international law or submit to any n
 */
 
 (function(){
+	i18next
+	  .use(i18nextXHRBackend)
+	  .init({
+	    returnEmptyString: false,
+	    fallbackLng: false,
+	    keySeparator: '|',
+	    backend: {
+	      loadPath: './i18n/{{lng}}.json'
+	    }
+	});
+
 	var app = angular.module('dataQualityApp',
 	['ngAnimate', 'ngSanitize', 'ngRoute', 'ui.bootstrap', 'ui.select', 'nvd3', 'angularBootstrapNavTree', 'd2',
-		'dqAnalysis', 'dashboard', 'review', 'consistencyAnalysis', 'outlierGapAnalysis', 'about', 'dataExport', 'admin']);
-	
+		'dqAnalysis', 'dashboard', 'review', 'consistencyAnalysis', 'outlierGapAnalysis', 'about', 'dataExport', 'admin', 'jm.i18next']);
+
 	/**Bootstrap*/
-	angular.element(document).ready( 
+	angular.element(document).ready(
 		function() {
 			var initInjector = angular.injector(['ng']);
 			var $http = initInjector.get('$http');
@@ -32,7 +43,7 @@ immunities enjoyed by WHO under national or international law or submit to any n
 		uiSelectConfig.theme = 'bootstrap';
 		uiSelectConfig.resetSearchInput = true;
 	}]);
-	
+
 	app.config(['$routeProvider',
 		function($routeProvider) {
 			$routeProvider.
@@ -78,7 +89,6 @@ immunities enjoyed by WHO under national or international law or submit to any n
 		}]
 	);
 
-
 	/**Controller: Navigation*/
 	app.controller("NavigationController",
 	['BASE_URL', '$location', '$window', 'notificationService',
@@ -93,16 +103,16 @@ immunities enjoyed by WHO under national or international law or submit to any n
 			"Google Chrome or Mozilla Firefox.");
 
 
-		self.isCollapsed = true;	
+		self.isCollapsed = true;
 		self.navClass = function (page) {
 			var currentRoute = $location.path().substring(1) || 'dashboard';
 			return page === currentRoute ? 'active' : '';
 		};
-		
+
 		self.collapse = function() {
 			this.isCollapsed = !this.isCollapsed;
 		};
-		
+
 		self.exit = function() {
 			$window.open(BASE_URL, '_self');
 		};
@@ -110,6 +120,12 @@ immunities enjoyed by WHO under national or international law or submit to any n
 		return self;
 	}]);
 
+	app.run(['BASE_URL', '$http', function(BASE_URL, $http) {
+		$http.get( BASE_URL + '/api/me/profile.json').then(function (response) {
+			if (response.data && response.data.settings && response.data.settings.keyUiLocale) {
+				i18next.changeLanguage(response.data.settings.keyUiLocale);
+			}
+		});
+	}]);
+
 })();
-
-

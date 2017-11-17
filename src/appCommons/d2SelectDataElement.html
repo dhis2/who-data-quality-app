@@ -16,8 +16,8 @@ immunities enjoyed by WHO under national or international law or submit to any n
 		</d2-select>
 	</div>
 	<div class="btn-group btn-group-justified" ng-click='d2sCtrl.getElements();' style="width: 120px; display: inline-block; vertical-align: top;">
-		<label class="btn btn-default" ng-model="d2sCtrl.disaggregation" uib-btn-radio="0">Totals</label>
-		<label class="btn btn-default" ng-model="d2sCtrl.disaggregation" uib-btn-radio="1">Details</label>
+		<label class="btn btn-default" ng-model="d2sCtrl.disaggregation" uib-btn-radio="0">{{ 'Totals' | i18next }}</label>
+		<label class="btn btn-default" ng-model="d2sCtrl.disaggregation" uib-btn-radio="1">{{ 'Details' | i18next }}</label>
 	</div>
 
 	<d2-select

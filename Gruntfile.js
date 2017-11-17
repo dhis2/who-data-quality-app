@@ -3,15 +3,21 @@ module.exports = function(grunt) {
 	// Project configuration.
 	grunt.initConfig({
 		copy: {
-      		core: {
-	        	cwd: 'src',
-	    	    src: [ 'index.html', 'manifest.webapp' ],
-    	    	dest: 'build',
-        		expand: true
-      		},
+      core: {
+	    	cwd: 'src',
+	    	src: [ 'index.html', 'manifest.webapp' ],
+    	  dest: 'build',
+        expand: true
+      },
 			content: {
 				cwd: 'src',
 				src: [ 'module*/*.html', 'app*/*.html', 'img/icons/*', 'data/**', 'fonts/**'],
+				dest: 'build',
+				expand: true
+			},
+			i18n: {
+				cwd: '.',
+				src: [ 'i18n/**'],
 				dest: 'build',
 				expand: true
 			},
@@ -108,7 +114,7 @@ module.exports = function(grunt) {
 			}
 		}
 	});
-	
+
 	// Load the Grunt plugins.
 	grunt.loadNpmTasks('grunt-contrib-watch');
 	grunt.loadNpmTasks('grunt-contrib-copy');
@@ -160,7 +166,8 @@ module.exports = function(grunt) {
 		'Copies resources (except js and css), move to build',
 		[
 			'copy:core',
-			'copy:content'
+			'copy:content',
+			'copy:i18n'
 		]
 	);
 
