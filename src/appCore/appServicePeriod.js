@@ -336,9 +336,4 @@ export default function () {
 
 		return self;
 	
-	}]);
-	
-	
-	
-	
-})();
+	};

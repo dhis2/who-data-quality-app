@@ -6,6 +6,8 @@
  immunities enjoyed by WHO under national or international law or submit to any national court jurisdiction.
  */
 
+const moment = require("moment");
+
 (function() {
 
 	angular.module('outlierGapAnalysis').controller("OutlierGapAnalysisController",

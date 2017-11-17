@@ -377,7 +377,7 @@ angular.module("dashboard", ["d2", "dqAnalysis", "ui.bootstrap"]);
 				self.consistencyData = false;
 				self.outliers = false;
 
-			if (self.selectedOrgunit && self.selectedOrgunit.boundary) self.ready = true;
+			if (self.selectedOrgunit && self.selectedOrgunit.boundary && self.group) self.ready = true;
 
 
 				self.endDate = moment(self.endDate).date(1);
