@@ -6,39 +6,40 @@
  immunities enjoyed by WHO under national or international law or submit to any national court jurisdiction.
  */
 
+
 import PeriodType from "../libs/periodTypeNoDep.js";
 const moment = require('moment');
 
 /**Service: Completeness*/
-export default function () {
+export default function ($i18next) {
 		
 		var self = this;
 		var periodTool = new PeriodType();
-		
+
 		self.getISOPeriods = function(startDate, endDate, periodType) {
-				
+
 			startDate = dateToISOdate(startDate);
 			endDate = dateToISOdate(endDate);
-			
+
 			var startYear = parseInt(moment(startDate).format("YYYY"));
 			var endYear = parseInt(moment(endDate).format("YYYY"));
 			var thisYear = parseInt(moment().format("YYYY"));
-			  		
+
 			var current = startYear;
 			var periods = [];
 			var periodsInYear;
-						
+
 			while (current <=  endYear && periodType != "Yearly") {
 
 				var pTypeTool = periodTool.get(periodType);
 				periodsInYear = pTypeTool.generatePeriods({'offset': current - thisYear, 'filterFuturePeriods': true, 'reversePeriods': false});
-								  			
+
 				for (var i = 0; i < periodsInYear.length; i++) {
 					if (periodsInYear[i].endDate >= startDate && periodsInYear[i].endDate <= endDate) {
 						periods.push(periodsInYear[i]);
 					}
 				}
-				
+
 				current++;
 			}
 			var isoPeriods = [];
@@ -50,23 +51,23 @@ export default function () {
 			for (var i = 0; i < periods.length; i++) {
 				isoPeriods.push(periods[i].iso);
 			}
-			
+
 			return isoPeriods;
 		};
-		
-		
+
+
 		self.shortPeriodName = function(periodISO) {
 			var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 			periodISO = periodISO.toString();
-			
+
 			var periodType = self.periodTypeFromPeriod(periodISO);
-						
+
 			var year, part;
 			if (periodType === 'Yearly') {
 				return periodISO.substring(0, 4);
 			}
 			year = periodISO.substring(2, 4);
-			
+
 			switch (periodType) {
 				case 'Quarterly':
 					part = 'Q' + periodISO.substring(5);
@@ -85,71 +86,77 @@ export default function () {
 					break;
 				case 'BiMonthly':
 					var startMonth = parseInt((periodISO.substring(4,6)*2)-1);
-					part = monthNames[startMonth] + '-' + monthNames[startMonth + 1];					
+					part = monthNames[startMonth] + '-' + monthNames[startMonth + 1];
 					break;
 				case 'Monthly':
 					part = monthNames[parseInt(periodISO.substring(4, 6))-1];
 					break;
 			}
-			
-					
+
+
 			return part + " " + year;
 		};
-		
-		
+
+
 		//Should be sorted from shortest to longest
 		self.getPeriodTypes = function() {
 			//, {'name': 'Bimonthly', 'id':'BiMonthly'} <= Waiting for fix
-			
-			var periodTypes = [{'name': 'Weeks', 'id':'Weekly'}, {'name': 'Months', 'id':'Monthly'}, {'name': 'Quarters', 'id':'Quarterly'}, {'name': 'Six-months', 'id':'SixMonthly'}, {'name': 'Years', 'id':'Yearly'}];
-			
+
+			var periodTypes = [
+				{'name': $i18next.t('Weeks'), 'id':'Weekly'},
+				{'name': $i18next.t('Months'), 'id':'Monthly'},
+				{'name': $i18next.t('Quarters'), 'id':'Quarterly'},
+				{'name': $i18next.t('Six-months'), 'id':'SixMonthly'},
+				{'name': $i18next.t('Years'), 'id':'Yearly'}
+			];
+
 			return periodTypes;
 		};
-		
-		
+
+
 		self.getPeriodCount = function() {
 				var objects = [];
 				for (var i = 1; i <= 12; i++) {
 					objects.push({'name': i.toString(), 'value': i});
 				}
-				
+
 				return objects;
 		};
-		
-		
+
+
 		self.getYears = function () {
-		
+
 			var objects = [];
 			for (var i = parseInt(moment().format('YYYY')); i >= 1990; i--) {
 				objects.push({'name': i, 'id': i});
 			}
-			
+
 			return objects;
-		
+
 		};
-		
-		
+
+
 		self.epochFromPeriod = function (period) {
-		
+
 			//TODO: Deal with half-years etc
-			return moment(period, ["YYYYMM", "YYYYWww", "YYYYQQ", "YYYY"]).format('X');		
-		
+			return moment(period, ["YYYYMM", "YYYYWww", "YYYYQQ", "YYYY"]).format('X');
+
 		};
-		
-		
+
+
 		self.periodFromEpoch = function (epoch, periodType) {
-			
+
 			if (periodType === 'Monthly') {
 				return moment.unix(epoch).format('YYYYMM');
 			}
 			else if (periodType === 'Yearly') {
 				return moment.unix(epoch).format('YYYY');
 			}
-			
+
 			//TODO
 		};
-		
-		
+
+
 		self.periodTypeFromPeriod = function(periodISO) {
 			periodISO = periodISO.toString();
 			var periodType = '';
@@ -171,9 +178,9 @@ export default function () {
 			else {
 				periodType = 'Monthly';
 			}
-			
+
 			return periodType;
-		
+
 		};
 
 
@@ -199,16 +206,16 @@ export default function () {
 						break;
 				}
 			}
-			
+
 			if (w) return 'Weekly';
 			if (m) return 'Monthly';
 			if (q) return 'Quarterly';
 			if (s) return 'SixMonthly';
 			if (y) return 'Yearly';
-			
+
 		};
-		
-		
+
+
 		self.longestPeriod = function (periodTypes) {
 			var w = false, m = false, q = false, s = false, y = false, pt;
 			for (var i = 0; i < periodTypes.length; i++) {
@@ -231,25 +238,25 @@ export default function () {
 						break;
 				}
 			}
-			if (y) return 'Yearly';			
+			if (y) return 'Yearly';
 			if (s) return 'SixMonthly';
 			if (q) return 'Quarterly';
 			if (m) return 'Monthly';
 			if (w) return 'Weekly';
 		};
-		  	
-		
+
+
 		self.getSubPeriods = function(period, periodType) {
-			
+
 			var pt = self.periodTypeFromPeriod(period);
 			if (pt === periodType) return [period];
-			
-			
+
+
 			//Need start and end date of the given period
 			var year = yearFromISOPeriod(period);
 			var thisYear = parseInt(moment().format("YYYY"));
 			var sourcePeriods = periodTool.get(pt).generatePeriods({'offset': year-thisYear, 'filterFuturePeriods': true, 'reversePeriods': false});
-			
+
 			var startDate, endDate;
 			for (var i = 0; i < sourcePeriods.length; i++) {
 				if (sourcePeriods[i].iso === period) {
@@ -258,28 +265,28 @@ export default function () {
 					break;
 				}
 			}
-			
+
 			return self.getISOPeriods(startDate, endDate, periodType);
 		};
-		
-		
+
+
 		self.precedingPeriods = function(periodISO, number) {
 			if (typeof(periodISO) != "string") periodISO = periodISO.toString();
-		
+
 			var period = periodObjectFromISOPeriod(periodISO);
 			var pType = self.periodTypeFromPeriod(periodISO);
-			
-			
+
+
 			var startDate = reverseDateByPeriod(period.startDate, number, pType);
 			var endDate = moment(period.startDate).subtract(1, 'd');
-			
+
 			return self.getISOPeriods(dateToISOdate(startDate), dateToISOdate(endDate), pType);
-			
+
 		};
-		
-		
+
+
 		function reverseDateByPeriod(ISOdate, noPeriods, periodType) {
-			
+
 			var code;
 			switch (periodType) {
 				case 'Quarterly':
@@ -299,19 +306,19 @@ export default function () {
 					code = 'M';
 					break;
 			}
-			
+
 			return moment(ISOdate).subtract(noPeriods, code);
-			
-		
-		
+
+
+
 		}
-		
-		
+
+
 		function periodObjectFromISOPeriod(period) {
 			var pType = self.periodTypeFromPeriod(period);
 			var year = yearFromISOPeriod(period);
 			var thisYear = parseInt(moment().format("YYYY"));
-			
+
 			var periodsInYear = periodTool.get(pType).generatePeriods({'offset': year-thisYear, 'filterFuturePeriods': true, 'reversePeriods': false});
 			for (var i = 0; i < periodsInYear.length; i++) {
 				if (periodsInYear[i].iso === period) {
@@ -319,21 +326,23 @@ export default function () {
 				}
 			}
 		}
-		
-		
+
+
 		function yearFromISOPeriod(period) {
-		
+
 			if (typeof(period) != "string") period = period.toString();
 			return parseInt(period.substring(0, 4));
-		
+
 		}
-		
-		
+
+
 		function dateToISOdate(date) {
 			return moment(new Date(date)).format('YYYY-MM-DD');
 		}
 
 
 		return self;
+
 	
 	};
+

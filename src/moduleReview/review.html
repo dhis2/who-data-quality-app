@@ -6,12 +6,66 @@ copied verbatim in the file “COPYING”.  In applying this license, WHO does n
 immunities enjoyed by WHO under national or international law or submit to any national court jurisdiction.
 -->
 
-<h3 class="no-print" style="margin-top: 20px;">Annual Data Quality Report</h3>
+<h3 class="no-print" style="margin-top: 20px;">{{ 'Annual Data Quality Report' | i18next }}</h3>
 
-<div ng-include="revCtrl.selection"></div>
+
+<div class="no-print" ng-if="!revCtrl.notPossible">
+	<uib-accordion class="no-print" close-others="revCtrl.oneAtATime">
+
+		<!-- DATA -->
+
+		<div uib-accordion-group class="panel-default" heading="{{ 'Data' | i18next }}" is-open="revCtrl.status.isFirstOpen">
+			<label>Group</label><br/>
+			<ui-select ng-model="revCtrl.groupSelected" theme="bootstrap" style="min-width: 200px; display: inline-block;">
+				<ui-select-match placeholder="{{ 'Select group...' | i18next }}">
+					{{revCtrl.groupSelected.name}}
+				</ui-select-match>
+				<ui-select-choices
+						repeat="obj in revCtrl.groups | filter: $select.search">
+					<div ng-bind-html="obj.name | highlight: $select.search"></div>
+				</ui-select-choices>
+			</ui-select>
+		</div>
+
+		<div uib-accordion-group class="panel-default" heading="Period">
+			<label>{{ 'Year' | i18next }}</label><br/>
+			<ui-select ng-model="revCtrl.yearSelected" theme="bootstrap" style="width: 150px; display: inline-block;">
+				<ui-select-match placeholder="{{ 'Select year...' | i18next }}">
+					{{revCtrl.yearSelected.name}}
+				</ui-select-match>
+				<ui-select-choices
+						repeat="obj in revCtrl.years | filter: $select.search">
+					<div ng-bind-html="obj.name | highlight: $select.search"></div>
+				</ui-select-choices>
+			</ui-select>
+
+			<br />
+
+			<label>{{ 'Preceding years for reference' | i18next }}</label><br />
+			<div style="display: inline-block;">
+				<input class="form-control" type="number" style="text-align: right; width: 150px; display: inline-block;"
+					   ng-model="revCtrl.selectedRefPeriod" ng-default="revCtrl.selectedRefPeriod = 3" min="1" max="5">
+			</div>
+		</div>
+
+		<div uib-accordion-group class="panel-default" heading="Organisation unit">
+			<div style="width: 400px">
+				<d2-select-orgunit default-level="1" max-level="2" ng-model="revCtrl.selectedOrgunit" on-select="revCtrl.selectedOrgunit = object;"></d2-select-orgunit>
+			</div>
+		</div>
+
+	</uib-accordion>
+
+	<div class="inline pull-right" style="margin-bottom:20px">
+		<button ng-disabled="revCtrl.selectedOrgunit.boundary === undefined || revCtrl.outstandingRequests > 0" class="btn btn-primary inline" ng-click="revCtrl.doAnalysis();">{{ 'Generate' | i18next }}</button>
+		<button ng-disabled="!(revCtrl.outstandingRequests === 0 && revCtrl.totalRequests != 0)" class="btn btn-primary inline" ng-click="revCtrl.doPrint();">{{ 'Print' | i18next }}</button>
+	</div>
+
+	<hr style="clear: both;" />
+</div>
 
 <div ng-if="revCtrl.outstandingRequests != 0">
-	<h5>Loading data...</h5>
+	<h5>{{ 'Loading data...' | i18next }}</h5>
 	<uib-progressbar animate="false" value="revCtrl.progress()" type="default">
 		<b>{{revCtrl.progress()}}%</b>
 	</uib-progressbar>
@@ -21,31 +75,1136 @@ immunities enjoyed by WHO under national or international law or submit to any n
 <!--RESULT-->
 <div class="reviewResult reportPart" ng-if="revCtrl.outstandingRequests === 0 && revCtrl.totalRequests != 0">
 
-	<div ng-include="revCtrl.resultFrontpage"></div>
+	<div class="onlyPrint reportPart noBreak" style="display: inline-block; height: 1262px;">
+	<div style="width: 205px; height: 205px; display: inline-block; vertical-align: top; ">
+		<svg width="205px" height="205px">
+			<rect width="205px" height="205px" style="fill:green;"/>
+		</svg>
+		<svg width="205px" height="205px">
+			<rect width="205px" height="205px" style="fill:yellow;"/>
+		</svg>
+		<svg width="205px" height="205px">
+			<rect width="205px" height="205px" style="fill:red;"/>
+		</svg>
+		<svg width="205px" height="205px">
+			<rect width="205px" height="205px" style="fill:green;"/>
+		</svg>
+		<svg width="205px" height="205px">
+			<rect width="205px" height="205px" style="fill:yellow;"/>
+		</svg>
+		<svg width="205px" height="205px">
+			<rect width="205px" height="205px" style="fill:red;"/>
+		</svg>
+	</div>
+	<div style="display: inline-block; width: 650px; vertical-align: top; ">
+		<h2 style="text-align: center; margin-top: 500px; margin-left: 100px; width: 400px;">{{ 'Assessment of Health Facility Data Quality' | i18next }}</h2>
+		<h3 style="text-align: center; margin-top: 100px; margin-left: 100px; width: 400px;">{{ 'WHO Data Quality Review' | i18next }}</h3>
+		<h3 style="text-align: center; margin-left: 100px; width: 400px;">{{revCtrl.selectedOrgunit.boundary.displayName}} - {{revCtrl.yearSelected.id}}</h3>
+	</div>
+</div>
 
 	<!--SUMMARY-->
-	<div ng-include="revCtrl.resultSummary"></div>
+	<div class="reportPart">
+	<div class="fullWidth headerPart">
+		{{ 'SUMMARY' | i18next }}
+	</div>
+	<div>
+		<div class="noBreak">
+
+			<div class="fullWidth headerSection">
+				{{ 'Domain 1: Completeness' | i18next }}
+			</div>
+
+			<table class="table tablePrint table-bordered table-condensed noBreak">
+				<tbody>
+				<tr bgcolor="#f9f9f9">
+					<th colspan="4">
+						{{ '1a: Completeness of facility reporting' | i18next }}
+					</th>
+				</tr>
+				<tr>
+					<td colspan="4">
+						<em>{{ 'The percentage of expected reports that have been entered and completed.' | i18next }}</em>
+					</td>
+				</td>
+				<tr bgcolor="#f9f9f9">
+					<th rowspan="2" width="275">{{ 'Data set' | i18next }}</th>
+					<th rowspan="2" width="175">{{ 'Overall score' | i18next }}</th>
+					<th colspan="2" width="175">{{revCtrl.selectedOrgunit.level.displayName}} {{ 'with divergent score' | i18next }}</th>
+				</tr>
+				<tr bgcolor="#f9f9f9">
+					<th width="175">{{ 'Number' | i18next }}</th>
+					<th width="175">{{ 'Percent' | i18next }}</th>
+				</tr>
+				<tr ng-repeat="dataset in revCtrl.completeness.datasets | orderBy : 'dxName'">
+					<td>{{dataset.dxName}}</td>
+					<td ng-if="revCtrl.isNumber(dataset.boundaryValue)" class="valueCell">{{dataset.boundaryValue}}%</td>
+					<td ng-if="revCtrl.isNumber(dataset.boundaryValue)" class="valueCell">{{dataset.subunitsOutsideThreshold}}</td>
+					<td ng-if="revCtrl.isNumber(dataset.boundaryValue)" class="valueCell">{{dataset.subunitViolationPercentage}}%</td>
+					<td ng-if="!revCtrl.isNumber(dataset.boundaryValue)" colspan="3">{{ 'Not available' | i18next }}</td>
+				</tr>
+				</tbody>
+			</table>
+		</div>
+
+		<div class="noBreak">
+
+			<table class="table tablePrint table-bordered table-condensed noBreak">
+				<tbody>
+				<tr bgcolor="#f9f9f9">
+					<th colspan="4">
+						{{ '1b: Timeliness of facility reporting' | i18next }}
+					</th>
+				</tr>
+				<tr>
+					<td colspan="4">
+						<em>{{ 'The percentage of expected reports that have been entered and completed on time.' | i18next }}</em>
+					</td>
+					</td>
+				<tr bgcolor="#f9f9f9">
+					<th rowspan="2" width="275">{{ 'Data set' | i18next }}</th>
+					<th rowspan="2" width="175">{{ 'Overall score' | i18next }}</th>
+					<th colspan="2" width="175">{{revCtrl.selectedOrgunit.level.displayName}} {{ 'with divergent score' | i18next }}</th>
+				</tr>
+				<tr bgcolor="#f9f9f9">
+					<th width="175">{{ 'Number' | i18next }}</th>
+					<th width="175">{{ 'Percent' | i18next }}</th>
+				</tr>
+				<tr ng-if="revCtrl.completeness.timeliness.length > 0" ng-repeat="dataset in revCtrl.completeness.timeliness | orderBy : 'dxName'">
+					<td>{{dataset.dxName}}</td>
+					<td ng-if="revCtrl.isNumber(dataset.boundaryValue)" class="valueCell">{{dataset.boundaryValue}}%</td>
+					<td ng-if="revCtrl.isNumber(dataset.boundaryValue)" class="valueCell">{{dataset.subunitsOutsideThreshold}}</td>
+					<td ng-if="revCtrl.isNumber(dataset.boundaryValue)" class="valueCell">{{dataset.subunitViolationPercentage}}%</td>
+					<td ng-if="!revCtrl.isNumber(dataset.boundaryValue)" colspan="3">{{ 'Not available' | i18next }}</td>
+				</tr>
+				<tr ng-if="revCtrl.completeness.timeliness.length === 0">
+					<td colspan="6">{{ 'Not available' | i18next }}</td>
+				</tr>
+
+				</tbody>
+			</table>
+		</div>
+
+		<div class="noBreak" ng-if="revCtrl.completeness.indicators.length > 0">
+			<table class="table tablePrint table-bordered table-condensed noBreak">
+				<tbody>
+				<tr bgcolor="#f9f9f9">
+					<th colspan="4">
+						{{ '1c: Completeness of indicator data' | i18next }}
+					</th>
+				</tr>
+				<tr>
+					<td colspan="4">
+						<em>{{ 'Missing or zero values' | i18next }}</em>
+					</td>
+				</tr>
+				<tr bgcolor="#f9f9f9">
+					<th rowspan="2" width="275">{{ 'Indicator' | i18next }}</th>
+					<th rowspan="2" width="175">{{ 'Overall score' | i18next }}</th>
+					<th colspan="2" width="175">{{revCtrl.selectedOrgunit.level.displayName}} {{ 'with divergent score' | i18next }}</th>
+				</tr>
+				<tr bgcolor="#f9f9f9">
+					<th width="175">{{ 'Number' | i18next }}</th>
+					<th width="175">{{ 'Percent' | i18next }}</th>
+				</tr>
+				<tr ng-repeat="indicator in revCtrl.completeness.indicators | orderBy : 'dxName'">
+					<td>{{indicator.dxName}}</td>
+					<td ng-if="revCtrl.isNumber(indicator.boundaryValue)" class="valueCell">{{indicator.boundaryValue}}%</td>
+					<td ng-if="revCtrl.isNumber(indicator.boundaryValue)" class="valueCell">{{indicator.subunitsOutsideThreshold}}</td>
+					<td ng-if="revCtrl.isNumber(indicator.boundaryValue)" class="valueCell">{{indicator.subunitViolationPercentage}}%</td>
+					<td ng-if="!revCtrl.isNumber(indicator.boundaryValue)" colspan="3">{{ 'Not available' | i18next }}</td>
+				</tr>
+				</tbody>
+			</table>
+		</div>
+
+
+		<div class="noBreak" ng-if="revCtrl.completeness.indicatorsDetailed.length > 0">
+			<table class="table tablePrint table-bordered table-condensed noBreak">
+				<tbody>
+				<tr bgcolor="#f9f9f9">
+					<th colspan="4">
+						{{ '1c: Completeness of indicator data' | i18next }}
+					</th>
+				</tr>
+				<tr>
+					<td colspan="4">
+						<em>{{ 'Reports where values are not missing. If zeros are not stored, zeros are counted as missing.' | i18next }}</em>
+					</td>
+				</tr>
+				<tr bgcolor="#f9f9f9">
+					<th rowspan="2" width="275">{{ 'Indicator' | i18next }}</th>
+					<th rowspan="2" width="175">{{ 'Overall score' | i18next }}</th>
+					<th colspan="2" width="175">{{revCtrl.selectedOrgunit.level.displayName}} {{ 'with divergent score' | i18next }}</th>
+				</tr>
+				<tr bgcolor="#f9f9f9">
+					<th width="175">{{ 'Number' | i18next }}</th>
+					<th width="175">{{ 'Percent' | i18next }}</th>
+				</tr>
+				<tr ng-repeat="indicator in revCtrl.completeness.indicatorsDetailed | orderBy : 'dataName'">
+					<td>{{indicator.dataName}}</td>
+					<td ng-if="revCtrl.isNumber(indicator.boundaryPercentage)" class="valueCell">{{indicator.boundaryPercentage}}%</td>
+					<td ng-if="revCtrl.isNumber(indicator.boundaryPercentage)" class="valueCell">{{indicator.subunitsOutsideThreshold}}</td>
+					<td ng-if="revCtrl.isNumber(indicator.boundaryPercentage)" class="valueCell">{{indicator.subunitViolationPercentage}}%</td>
+					<td ng-if="!revCtrl.isNumber(indicator.boundaryPercentage)" colspan="3">{{ 'Not available' | i18next }}</td>
+				</tr>
+				</tbody>
+			</table>
+		</div>
+
+		<div class="noBreak">
+			<table class="table tablePrint table-bordered table-condensed noBreak">
+				<tbody>
+				<tr bgcolor="#f9f9f9">
+					<th colspan="4">
+						{{ '1d: Consistency of dataset completeness over time' | i18next }}
+					</th>
+				</tr>
+				<tr>
+					<td colspan="4">
+						<em>{{ 'Completeness of datasets in' | i18next }} {{revCtrl.yearSelected.id}} {{ 'compared to previous' | i18next }} {{revCtrl.selectedRefPeriod}} {{ 'years.' | i18next }}</em>
+					</td>
+				</tr>
+				<tr bgcolor="#f9f9f9">
+					<th rowspan="2" width="275">{{ 'Data set' | i18next }}</th>
+					<th rowspan="2" width="175">{{ 'Overall score' | i18next }}</th>
+					<th colspan="2" width="175">{{revCtrl.selectedOrgunit.level.displayName}} {{ 'with divergent score' | i18next }}</th>
+				</tr>
+				<tr bgcolor="#f9f9f9">
+					<th width="175">{{ 'Number' | i18next }}</th>
+					<th width="175">{{ 'Percent' | i18next }}</th>
+				</tr>
+				<tr ng-repeat="dataset in revCtrl.completeness.consistency | orderBy:'dxNameA'">
+					<td>{{dataset.dxNameA}}</td>
+					<td ng-if="revCtrl.isNumber(dataset.boundaryPercentage)" class="valueCell">{{dataset.boundaryPercentage}}%</td>
+					<td ng-if="revCtrl.isNumber(dataset.boundaryPercentage)" class="valueCell">{{dataset.subunitsOutsideThreshold}}</td>
+					<td ng-if="revCtrl.isNumber(dataset.boundaryPercentage)" class="valueCell">{{dataset.subunitViolationPercentage}}%</td>
+					<td ng-if="!revCtrl.isNumber(dataset.boundaryPercentage)" colspan="3">{{ 'Not available' || i18next }}</td>
+				</tr>
+				</tbody>
+			</table>
+		</div>
+
+		<div class="noBreak">
+			<div class="fullWidth headerSection">
+				{{ 'Domain 2: Internal consistency' | i18next }}
+			</div>
+
+			<table class="table tablePrint table-bordered table-condensed noBreak">
+				<tbody>
+				<tr bgcolor="#f9f9f9">
+					<th colspan="4">
+						<em>{{ '2a: Extreme outliers.' | i18next }}</em>
+					</th>
+				</tr>
+				<tr>
+					<td colspan="4">
+						<em>{{ 'Extreme outliers, using the standard method.' | i18next }} {{revCtrl.selectedOrgunit.level.displayName}} {{ 'are counted as divergent if they have one or more extreme outliers for an indicator.' | i18next }</em>
+					</td>
+				</tr>
+				<tr bgcolor="#f9f9f9">
+					<th rowspan="2" width="275">{{ 'Indicator' | i18next }}</th>
+					<th rowspan="2" width="175">{{ 'Overall score' | i18next }}</th>
+					<th colspan="2" width="175">{{revCtrl.selectedOrgunit.level.displayName}} {{ 'with divergent score' | i18next }}</th>
+				</tr>
+				<tr bgcolor="#f9f9f9">
+					<th width="175">{{ 'Number' | i18next }}</th>
+					<th width="175">{{ 'Percent' | i18next }}</th>
+				</tr>
+				<tr ng-repeat="indicator in revCtrl.outliers | orderBy:'displayName'">
+					<td>{{indicator.displayName}}</td>
+					<td ng-if="revCtrl.isNumber(indicator.boundaryExtreme)" class="valueCell">{{indicator.boundaryExtreme}}%</td>
+					<td ng-if="revCtrl.isNumber(indicator.boundaryExtreme)" class="valueCell">{{indicator.countExtreme}}</td>
+					<td ng-if="revCtrl.isNumber(indicator.boundaryExtreme)" class="valueCell">{{indicator.percentExtreme}}%</td>
+					<td ng-if="!revCtrl.isNumber(indicator.boundaryExtreme)" colspan="3">{{ 'Not available' | i18next }}</td>
+				</tr>
+				</tbody>
+			</table>
+		</div>
+
+		<div class="noBreak">
+
+			<table class="table tablePrint table-bordered table-condensed noBreak">
+				<tbody>
+				<tr bgcolor="#f9f9f9">
+					<th colspan="4">
+						<em>{{ '2b: Moderate outliers.' | i18next }}</em>
+						{{ 'Outliers relative to the mean.' | i18next }}
+					</th>
+				</tr>
+				<tr>
+					<td colspan="4">
+						<em>{{ 'Moderate outliers, using the standard method.' | i18next }} {{revCtrl.selectedOrgunit.level.displayName}} {{ 'are counted as divergent if they have two or more moderate outliers for an indicator.' | i18next }}</em>
+					</td>
+				</tr>
+				<tr bgcolor="#f9f9f9">
+					<th rowspan="2" width="275">{{ 'Indicator' | i18next }}</th>
+					<th rowspan="2" width="175">{{ 'Overall score' | i18next }}</th>
+					<th colspan="2" width="175">{{revCtrl.selectedOrgunit.level.displayName}} {{ 'with divergent score' | i18next }}</th>
+				</tr>
+				<tr bgcolor="#f9f9f9">
+					<th width="175">{{ 'Number' | i18next }</th>
+					<th width="175">{{ 'Percent' | i18next }</th>
+				</tr>
+				<tr ng-repeat="indicator in revCtrl.outliers | orderBy:'displayName'">
+					<td>{{indicator.displayName}}</td>
+					<td ng-if="revCtrl.isNumber(indicator.boundaryModerate) && indicator.moderateOutlier >= 0" class="valueCell">{{indicator.boundaryModerate}}%</td>
+					<td ng-if="revCtrl.isNumber(indicator.boundaryModerate) && indicator.moderateOutlier >= 0" class="valueCell">{{indicator.countModerate}}</td>
+					<td ng-if="revCtrl.isNumber(indicator.boundaryModerate) && indicator.moderateOutlier >= 0" class="valueCell">{{indicator.percentModerate}}%</td>
+					<td ng-if="!revCtrl.isNumber(indicator.boundaryModerate) && indicator.moderateOutlier >= 0" colspan="3">{{ 'Not available' | i18next }}</td>
+					<td ng-if="indicator.moderateOutlier == -1" colspan="3">{{ 'Not applicable' | i18next }}</td>
+				</tr>
+				</tbody>
+			</table>
+		</div>
+
+		<div class="noBreak">
+
+			<table class="table tablePrint table-bordered table-condensed noBreak">
+				<tbody>
+				<tr bgcolor="#f9f9f9">
+					<th colspan="4">
+						<em>{{ '2c: Moderate outliers.' | i18next }}</em>
+					</th>
+				</tr>
+				<tr>
+					<td colspan="4">
+						<em>{{ 'Moderate outliers, based on median (modified Z score).' | i18next }} {{revCtrl.selectedOrgunit.level.displayName}} {{ 'are counted as divergent if they have two or more moderate outliers for an indicator.' | i18next }}</em>
+					</td>
+				</tr>
+				<tr bgcolor="#f9f9f9">
+					<th rowspan="2" width="275">{{ 'Indicator' | i18next }}</th>
+					<th rowspan="2" width="175">{{ 'Overall score' | i18next }}</th>
+					<th colspan="2" width="175">{{revCtrl.selectedOrgunit.level.displayName}} {{ 'with divergent score' | i18next }}</th>
+				</tr>
+				<tr bgcolor="#f9f9f9">
+					<th width="175">{{ 'Number' | i18next }}</th>
+					<th width="175">{{ 'Percent' | i18next }}</th>
+				</tr>
+				<tr ng-repeat="indicator in revCtrl.outliers | orderBy:'displayName'">
+					<td>{{indicator.displayName}}</td>
+					<td ng-if="revCtrl.isNumber(indicator.boundaryZscore) && indicator.moderateOutlier >= 0" class="valueCell">{{indicator.boundaryZscore}}%</td>
+					<td ng-if="revCtrl.isNumber(indicator.boundaryZscore) && indicator.moderateOutlier >= 0"class="valueCell">{{indicator.countZscore}}</td>
+					<td ng-if="revCtrl.isNumber(indicator.boundaryZscore) && indicator.moderateOutlier >= 0"class="valueCell">{{indicator.percentZscore}}%</td>
+					<td ng-if="!revCtrl.isNumber(indicator.boundaryZscore) && indicator.moderateOutlier >= 0" colspan="3">{{ 'Not available' | i18next }}</td>
+					<td ng-if="indicator.moderateOutlier == -1" colspan="3">{{ 'Not applicable' | i18next }}</td>
+				</tr>
+				</tbody>
+			</table>
+		</div>
+
+		<div class="noBreak">
+			<table class="table tablePrint table-bordered table-condensed noBreak">
+				<tbody>
+				<tr bgcolor="#f9f9f9">
+					<th colspan="4">
+						<em>{{ '2d: Consistency over time.' | i18next }}</em>
+					</th>
+				</tr>
+				<tr>
+					<td colspan="4">
+						<em>{{ 'Difference between the current year and either the average of the 3 preceding years (if expected trend is constant), or the forecasted value.' | i18next }}</em>
+					</td>
+				</tr>
+				<tr bgcolor="#f9f9f9">
+					<th rowspan="2" width="275">{{ 'Indicator' | i18next }}</th>
+					<th rowspan="2" width="175">{{ 'Overall score' | i18next }}</th>
+					<th colspan="2" width="175">{{revCtrl.selectedOrgunit.level.displayName}} {{ 'with divergent score' | i18next }}</th>
+				</tr>
+				<tr bgcolor="#f9f9f9">
+					<th width="175">{{ 'Number' | i18next }}</th>
+					<th width="175">{{ 'Percent' | i18next }}</th>
+				</tr>
+				<tr ng-repeat="indicator in revCtrl.consistency.data | orderBy:'dxNameA'">
+					<td>{{indicator.dxNameA}}</td>
+					<td ng-if="revCtrl.isNumber(indicator.boundaryPercentage)" class="valueCell">{{indicator.boundaryPercentage}}%</td>
+					<td ng-if="revCtrl.isNumber(indicator.boundaryPercentage)" class="valueCell">{{indicator.subunitsOutsideThreshold}}</td>
+					<td ng-if="revCtrl.isNumber(indicator.boundaryPercentage)" class="valueCell">{{indicator.subunitViolationPercentage}}%</td>
+					<td ng-if="!revCtrl.isNumber(indicator.boundaryPercentage)" colspan="3">{{ 'Not available' | i18next }}</td>
+				</tr>
+				</tbody>
+			</table>
+		</div>
+
+		<div class="noBreak">
+
+			<table class="table tablePrint table-bordered table-condensed ">
+				<tbody>
+				<tr bgcolor="#f9f9f9">
+					<th colspan="4">
+						<em>{{ '2e: Consistency between related indicators.' | i18next }}'</em>
+					</th>
+				</tr>
+				<tr>
+					<td colspan="4">
+						<em>{{ 'Consistency between reported values for two related indicators within the same year.' | i18next }}'</em>
+					</td>
+				</tr>
+				<tr bgcolor="#f9f9f9">
+					<th rowspan="2" width="275">{{ 'Indicator' | i18next }}</th>
+					<th rowspan="2" width="175">{{ 'Overall score' | i18next }}</th>
+					<th colspan="2" width="175">{{revCtrl.selectedOrgunit.level.displayName}} {{ 'with divergent score' | i18next }}</th>
+				</tr>
+				<tr bgcolor="#f9f9f9">
+					<th width="175">{{ 'Number' | i18next }}</th>
+					<th width="175">{{ 'Percent' | i18next }}</th>
+				</tr>
+				<tr ng-repeat="relation in revCtrl.consistency.relations | orderBy:'meta.name'">
+					<td>{{revCtrl.relationName(relation.relationCode)}}</td>
+					<td ng-if="revCtrl.isNumber(relation.boundaryPercentage)" class="valueCell">{{relation.boundaryPercentage}}%</td>
+					<td ng-if="revCtrl.isNumber(relation.boundaryPercentage)" class="valueCell">{{relation.subunitsOutsideThreshold}}</td>
+					<td ng-if="revCtrl.isNumber(relation.boundaryPercentage)" class="valueCell">{{relation.subunitViolationPercentage}}%</td>
+					<td ng-if="!revCtrl.isNumber(relation.boundaryPercentage)" colspan="3">{{ 'Not available' | i18next  }}</td>
+				</tr>
+				</tbody>
+			</table>
+		</div>
+
+
+		<div class="noBreak">
+			<div class="fullWidth headerSection">
+				{{ 'Domain 3: External Comparison' | i18next }}
+			</div>
+				<table class="table tablePrint table-bordered table-condensed ">
+					<tbody>
+					<tr>
+						<td colspan="4">
+							<em>{{ '3a: Consistency of routine data with data from external source, e.g. population-based surveys.' | i18next }}</em>
+						</td>
+					</tr>
+					<tr bgcolor="#f9f9f9">
+						<th rowspan="2" width="275">{{ 'Indicator' | i18next }}</th>
+						<th rowspan="2" width="175">{{ 'Overall score' | i18next }}</th>
+						<th colspan="3" width="175">{{ 'Subunits with divergent score' | i18next }}</th>
+					</tr>
+					<tr bgcolor="#f9f9f9">
+						<th width="175">{{ 'Level' | i18next }}</th>
+						<th width="175">{{ 'Number' | i18next }}</th>
+						<th width="175">{{ 'Percent' | i18next }}</th>
+					</tr>
+					<tr ng-if="revCtrl.external.length === 0">
+						<td colspan="6">{{ 'Not available' | i18next }}</td>
+					</tr>
+					<tr ng-repeat="relation in revCtrl.external | orderBy:'meta.name' track by $index">
+						<td>{{relation.meta.name}}</td>
+						<td ng-if="revCtrl.isNumber(relation.boundaryPercentage)" class="valueCell">{{relation.boundaryPercentage}}%</td>
+						<td ng-if="revCtrl.isNumber(relation.boundaryPercentage) && relation.ouLimit > 1" class="valueCell">{{relation.meta.ouLimitName}}</td>
+						<td ng-if="revCtrl.isNumber(relation.boundaryPercentage) && relation.ouLimit > 1" class="valueCell">{{relation.subunitsOutsideThreshold}}</td>
+						<td ng-if="revCtrl.isNumber(relation.boundaryPercentage) && relation.ouLimit > 1" class="valueCell">{{relation.subunitViolationPercentage}}%</td>
+						<td ng-if="!revCtrl.isNumber(relation.boundaryPercentage) || relation.ouLimit <= 1" colspan="3">{{ 'Not available' | i18next }}</td>
+					</tr>
+					</tbody>
+				</table>
+			</div>
+
+
+		</div>
+
+
+		<div class="noBreak">
+			<div class="fullWidth headerSection">
+				{{ 'Domain 4: Consistency of Population Data' | i18next }}
+			</div>
+
+			<table class="table tablePrint table-bordered table-condensed noBreak">
+				<tr bgcolor="#f9f9f9">
+					<th colspan="2">
+						<em>{{ '4a: Consistency with UN population projections.' | i18next }}</em>
+					</th>
+				</tr>
+				<tr bgcolor="#f9f9f9">
+					<th width="275">{{ 'Indicator' | i18next }}</th>
+					<th width="175">{{ 'Overall score' | i18next }}</th>
+				</tr>
+				<tr>
+					<td>{{ 'Consistency with United Nations Population Projections' | i18next }}</td>
+					<td ng-if="revCtrl.denominators.un">{{revCtrl.denominators.un.boundaryRatio}}%</td>
+					<td ng-if="!revCtrl.denominators.un">{{ 'Not available' | i18next }}</td>
+				</tr>
+			</table>
+		</div>
+		<div class="noBreak">
+			<table class="table tablePrint table-bordered table-condensed noBreak">
+				<tr bgcolor="#f9f9f9">
+					<th colspan="4">
+						<em>{{ '4b: Consistency of denominators' | i18next }}</em>
+					</th>
+				</tr>
+				<tr bgcolor="#f9f9f9">
+					<th rowspan="2" width="275">{{ 'Indicator' | i18next }}</th>
+					<th rowspan="2" width="175">{{ 'Overall score' | i18next }}</th>
+					<th colspan="2" width="175">{{revCtrl.selectedOrgunit.level.displayName}} {{ 'with divergent score' | i18next }}</th>
+				</tr>
+				<tr bgcolor="#f9f9f9">
+					<th width="175">{{ 'Number' | i18next }}</th>
+					<th width="175">{{ 'Percent' | i18next }}</th>
+				</tr>
+				<tr ng-repeat="denominator in revCtrl.denominators.relations | orderBy:'name'">
+					<td>{{denominator.meta.relation.name}}</td>
+					<td class="valueCell">{{denominator.boundaryPercentage}}%</td>
+					<td class="valueCell">{{denominator.subunitsOutsideThreshold}}</td>
+					<td class="valueCell">{{denominator.subunitViolationPercentage}}%</td>
+				</tr>
+				<tr ng-if="revCtrl.denominators.relations.length === 0">
+					<td colspan="4">{{ 'Not available' | i18next }}</td>
+				</tr>
+
+			</table>
+		</div>
+	</div>
+</div>
+
 
 	<!--COMPLETENESS-->
-	<div ng-include="revCtrl.result1Completeness"></div>
+<div class="reportPart">
+	<div class="fullWidth headerPart">
+		{{ 'DOMAIN 1: COMPLETENESS OF REPORTING' | i18next }}
+	</div>
+
+	<div class="noBreak">
+		<table class="table tablePrint table-bordered table-condensed ">
+			<tr bgcolor="#f9f9f9">
+				<th colspan="6">
+					{{ '1a: Completeness of facility reporting' | i18next }}
+				</th>
+			</tr>
+			<tr>
+				<td colspan="6">
+					<em>{{ 'The percentage of expected reports that have been entered and completed.' | i18next }}</em>
+				</td>
+			</tr>
+
+			<tr bgcolor="#f9f9f9">
+				<th rowspan="2" width="200">{{ 'Data set' | i18next }}</th>
+				<th rowspan="2" width="100">{{ 'Quality threshold' | i18next }}</th>
+				<th rowspan="2" width="100">{{ 'Overall score' | i18next }}</th>
+				<th colspan="3" width="100">{{revCtrl.selectedOrgunit.level.displayName}} {{ 'with divergent score' | i18next }}</th>
+			</tr>
+			<tr bgcolor="#f9f9f9">
+				<th width="100">{{ 'Number' | i18next }}</th>
+				<th width="100">{{ 'Percent' | i18next }}</th>
+				<th>{{ 'Name' | i18next }}</th>
+			</tr>
+			<tr ng-repeat="dataset in revCtrl.completeness.datasets | orderBy : 'dxName'">
+				<td>{{dataset.dxName}}</td>
+				<td>{{dataset.threshold}}%</td>
+				<td ng-if="revCtrl.isNumber(dataset.boundaryValue)" class="valueCell">{{dataset.boundaryValue}}%</td>
+				<td ng-if="revCtrl.isNumber(dataset.boundaryValue)" class="valueCell">{{dataset.subunitsOutsideThreshold}}</td>
+				<td ng-if="revCtrl.isNumber(dataset.boundaryValue)" class="valueCell">{{dataset.subunitViolationPercentage}}%</td>
+				<td ng-if="revCtrl.isNumber(dataset.boundaryValue)">{{dataset.subunitViolationNames.join(', ')}}</td>
+				<td ng-if="!revCtrl.isNumber(dataset.boundaryValue)" colspan="4">{{ 'Not available' | i18next }}</td>
+			</tr>
+		</table>
+		<h5>{{ 'Interpretations' | i18next }}</h5>
+		<textarea class="interpretation"></textarea>
+	</div>
+
+	<div class="noBreak">
+		<table class="table tablePrint table-bordered table-condensed ">
+			<tr bgcolor="#f9f9f9">
+				<th colspan="6">
+					{{ '1b: Timeliness of facility reporting' | i18next }}
+				</th>
+			</tr>
+			<tr>
+				<td colspan="6">
+					<em>{{ 'The percentage of expected reports that have been entered and completed on time.' | i18next }}</em>
+				</td>
+			</tr>
+
+			<tr bgcolor="#f9f9f9">
+				<th rowspan="2" width="200">{{ 'Data set' | i18next }}</th>
+				<th rowspan="2" width="100">{{ 'Quality threshold' | i18next }}</th>
+				<th rowspan="2" width="100">{{ 'Overall score' | i18next }}</th>
+				<th colspan="3" width="100">{{revCtrl.selectedOrgunit.level.displayName}} {{ 'with divergent score' | i18next }}</th>
+			</tr>
+			<tr bgcolor="#f9f9f9">
+				<th width="100">{{ 'Number' | i18next }}</th>
+				<th width="100">{{ 'Percent' | i18next }}</th>
+				<th>{{ 'Name' | i18next }}</th>
+			</tr>
+			<tr ng-if="revCtrl.completeness.timeliness.length > 0" ng-repeat="dataset in revCtrl.completeness.timeliness | orderBy : 'dxName'">
+				<td>{{dataset.dxName}}</td>
+				<td>{{dataset.threshold}}%</td>
+				<td ng-if="revCtrl.isNumber(dataset.boundaryValue)" class="valueCell">{{dataset.boundaryValue}}%</td>
+				<td ng-if="revCtrl.isNumber(dataset.boundaryValue)" class="valueCell">{{dataset.subunitsOutsideThreshold}}</td>
+				<td ng-if="revCtrl.isNumber(dataset.boundaryValue)" class="valueCell">{{dataset.subunitViolationPercentage}}%</td>
+				<td ng-if="revCtrl.isNumber(dataset.boundaryValue)">{{dataset.subunitViolationNames.join(', ')}}</td>
+				<td ng-if="!revCtrl.isNumber(dataset.boundaryValue)" colspan="4">{{ 'Not available' | i18next }}</td>
+			</tr>
+			<tr ng-if="revCtrl.completeness.timeliness.length === 0">
+				<td colspan="6">{{ 'Not available' | i18next }}</td>
+			</tr>
+		</table>
+		<h5>{{ 'Interpretations' | i18next }}</h5>
+		<textarea class="interpretation"></textarea>
+	</div>
+
+
+	<div class="noBreak" ng-if="revCtrl.completeness.indicatorsDetailed.length > 0">
+		<table class="table tablePrint table-bordered table-condensed ">
+			<tbody>
+			<tr bgcolor="#f9f9f9">
+				<th colspan="8">
+					{{ '1c: Completeness of indicator data' | i18next }}
+				</th>
+			</tr>
+			<tr>
+			<tr>
+				<td colspan="8">
+					<em>{{ 'Reports where values are not missing. If zeros are not stored, zeros are counted as missing.' | i18next }}'</em>
+				</td>
+			</tr>
+			<tr bgcolor="#f9f9f9">
+				<th rowspan="2" width="200">{{ 'Indicator' | i18next }}</th>
+				<th rowspan="2" width="80">{{ 'Quality threshold' | i18next }}</th>
+				<th rowspan="1" colspan="2" width="100">{{ 'Values' | i18next }}</th>
+				<th rowspan="2" width="80">{{ 'Overall score' | i18next }}</th>
+				<th colspan="3" width="400">{{revCtrl.selectedOrgunit.level.displayName}} {{ 'with divergent score' | i18next }}</th>
+			</tr>
+			<tr bgcolor="#f9f9f9">
+				<th>{{ 'Expected' | i18next }}</th>
+				<th>{{ 'Actual' | i18next }}</th>
+				<th>{{ 'Number' | i18next }}</th>
+				<th>{{ 'Percent' | i18next }}</th>
+				<th>{{ 'Name' | i18next }}</th>
+			</tr>
+			<tr ng-repeat="indicator in revCtrl.completeness.indicatorsDetailed | orderBy : 'dataName'">
+				<td>{{indicator.dataName}}</td>
+				<td>{{indicator.criteria}}%</td>
+				<td class="valueCell">{{indicator.boundaryValuesExpected}}</td>
+				<td class="valueCell">{{indicator.boundaryValues}}</td>
+				<td ng-if="!indicator.boundaryValuesExpected" colspan="4">{{ 'Not available' | i18next }}</td>
+				<td ng-if="indicator.boundaryValuesExpected" class="valueCell">{{indicator.boundaryPercentage}}%</td>
+				<td ng-if="indicator.boundaryValuesExpected" class="valueCell">{{indicator.subunitsOutsideThreshold}}</td>
+				<td ng-if="indicator.boundaryValuesExpected" class="valueCell">{{indicator.subunitViolationPercentage}}%</td>
+				<td ng-if="indicator.boundaryValuesExpected">{{indicator.subunitViolationNames.join(', ')}}</td>
+			</tr>
+			</tbody>
+		</table>
+
+		<h5>{{ 'Interpretations' | i18next }}</h5>
+		<textarea class="interpretation"></textarea>
+	</div>
+
+	<div class="noBreak">
+
+		<table class="table tablePrint table-bordered table-condensed ">
+			<tr bgcolor="#f9f9f9">
+				<th colspan="8">
+					{{ '1d: Consistency of dataset completeness over time' | i18next }}
+				</th>
+			</tr>
+			<tr>
+				<td colspan="8">
+					<em>{{ 'Completeness of datasets in' | i18next }} {{revCtrl.yearSelected.id}} {{ 'compared to previous' | i18next }} {{revCtrl.selectedRefPeriod}} years.</em>
+				</td>
+			</tr>
+			<tr bgcolor="#f9f9f9">
+				<th rowspan="2" width="200">{{ 'Data set' | i18next }}</th>
+				<th rowspan="2" width="100">{{ 'Expected trend' | i18next }}</th>
+				<th rowspan="2">{{ 'Compare' | i18next }} {{revCtrl.selectedOrgunit.level.displayName}} {{ 'to' | i18next }}</th>
+				<th rowspan="2" width="100">{{ 'Quality threshold' | i18next }}</th>
+				<th rowspan="2" width="100">{{ 'Overall score' | i18next }}</th>
+				<th colspan="3" width="100">{{revCtrl.selectedOrgunit.level.displayName}} {{ 'with divergent score' | i18next }}</th>
+			</tr>
+			<tr bgcolor="#f9f9f9">
+				<th width="100">{{ 'Number' | i18next }}</th>
+				<th width="100">{{ 'Percent' | i18next }}</th>
+				<th>{{ 'Name' | i18next }}</th>
+			</tr>
+			<tr ng-repeat="dataset in revCtrl.completeness.consistency| orderBy:'dxNameA':false">
+				<td>{{dataset.dxNameA}}</td>
+				<td ng-if="dataset.subType === 'constant'" class="valueCell">{{ 'Constant' | i18next }}</td>
+				<td ng-if="dataset.subType === 'increasing'" class="valueCell">{{ 'Increasing' | i18next }}</td>
+				<td ng-if="dataset.subType === 'decreasing'" class="valueCell">{{ 'Decreasing' | i18next }}</td>
+				<td ng-if="dataset.comparison === 'ou'" class="valueCell">{{revCtrl.selectedOrgunit.boundary.displayName}}</td>
+				<td ng-if="dataset.comparison === 'th' && dataset.subType === constant" class="valueCell">{{ 'Current vs average' | i18next }}</td>
+				<td ng-if="dataset.comparison === 'th'" class="valueCell">{{ 'Current vs forecast' | i18next }}</td>
+				<td class="valueCell">± {{dataset.criteria}}%</td>
+				<td ng-if="revCtrl.isNumber(dataset.boundaryPercentage)" class="valueCell">{{dataset.boundaryPercentage}}%</td>
+				<td ng-if="revCtrl.isNumber(dataset.boundaryPercentage)" class="valueCell">{{dataset.subunitsOutsideThreshold}}</td>
+				<td ng-if="revCtrl.isNumber(dataset.boundaryPercentage)" class="valueCell">{{dataset.subunitViolationPercentage}}%</td>
+				<td ng-if="revCtrl.isNumber(dataset.boundaryPercentage)" >{{dataset.subunitViolationNames.join(', ')}}</td>
+				<td ng-if="!revCtrl.isNumber(dataset.boundaryPercentage)" colspan="4">{{ 'Not available' | i18next }}</td>
+			</tr>
+		</table>
+
+		<h5>{{ 'Interpretations' | i18next }}</h5>
+		<textarea class="interpretation"></textarea>
+	</div>
+
+
+	<div style="border: 1px dashed gray" class="noBreak" >
+		<h5 class="chartTitle">{{ 'Reporting completeness over time' | i18next }}</h5>
+		<div class="bigChart">
+			<nvd3 options='revCtrl.datasetConsistencyChart.options' data='revCtrl.datasetConsistencyChart.data'></nvd3>
+		</div>
+	</div>
+</div>
+
 
 	<!--INTERNAL CONSISTENCY-->
-	<div ng-include="revCtrl.result2Consistency"></div>
+	<div class="reportPart">
+	<div class="fullWidth headerPart">
+		{{ 'DOMAIN 2: INTERNAL CONSISTENCY OF REPORTED DATA' | i18next }}
+	</div>
+
+	<div class="noBreak">
+
+		<table class="table tablePrint table-bordered table-condensed ">
+			<tbody>
+				<tr bgcolor="#f9f9f9">
+					<th colspan="6">
+						{{ '2a: Extreme outliers' | i18next }
+					</th>
+				</tr>
+				<tr >
+					<td colspan="6">
+						<em>{{ 'Extreme outliers, using the standard method. Threshold denotes the number of standard deviations from the mean.' | i18next}} {{revCtrl.selectedOrgunit.level.displayName}} {{ 'are counted as divergent if they have one or more extreme outliers for an indicator.' | i18next }}</em>
+					</td>
+				</tr>
+				<tr bgcolor="#f9f9f9">
+					<th rowspan="2" width="200">{{ 'Indicator' | i18next }}</th>
+					<th rowspan="2" width="80">{{ 'Threshold' | i18next }}</th>
+					<th rowspan="2" width="80">{{ 'Overall score' | i18next }} (%)</th>
+					<th colspan="3">{{revCtrl.selectedOrgunit.level.displayName}} {{ 'with divergent score' | i18next }}</th>
+				</tr>
+				<tr bgcolor="#f9f9f9">
+					<th width="110">{{ 'Number' | i18next }}</th>
+					<th width="110">{{ 'Percent' | i18next }}</th>
+					<th>{{ 'Names' | i18next }}</th>
+				</tr>
+				<tr ng-repeat="indicator in revCtrl.outliers | orderBy : 'displayName'">
+					<td>{{indicator.displayName}}</td>
+					<td class="valueCell">{{indicator.extremeOutlier}} SD</td>
+					<td ng-if="revCtrl.isNumber(indicator.boundaryExtreme)" class="valueCell">{{indicator.boundaryExtreme}}%</td>
+					<td ng-if="revCtrl.isNumber(indicator.boundaryExtreme)" class="valueCell">{{indicator.countExtreme}}</td>
+					<td ng-if="revCtrl.isNumber(indicator.boundaryExtreme)" class="valueCell">{{indicator.percentExtreme}}%</td>
+					<td ng-if="revCtrl.isNumber(indicator.boundaryExtreme)">{{indicator.namesExtreme.join(', ')}}</td>
+					<td ng-if="!revCtrl.isNumber(indicator.boundaryExtreme)" colspan="5" >{{ 'Not available' | i18next }}</td>
+				</tr>
+			</tbody>
+		</table>
+
+		<h5>{{ 'Interpretations' | i18next }}</h5>
+		<textarea class="interpretation"></textarea>
+	</div>
+
+	<div class="noBreak">
+		<table class="table tablePrint table-bordered table-condensed ">
+			<tbody>
+			<tr bgcolor="#f9f9f9">
+				<th colspan="6">
+					<em>{{ '2b: Moderate outliers.' | i18next }}</em>
+				</th>
+			</tr>
+			<tr >
+				<td colspan="6">
+					<em>{{ 'Moderate outliers, using the standard method. Threshold denotes the number of standard deviations from the mean.' | i18next }} {{revCtrl.selectedOrgunit.level.displayName}} {{ 'are counted as divergent if they have two or more moderate outliers for an indicator.' | i18next }}</em>
+				</td>
+			</tr>
+			<tr bgcolor="#f9f9f9">
+				<th rowspan="2" width="200">{{ 'Indicator' | i18next }}</th>
+				<th rowspan="2" width="80">{{ 'Threshold' | i18next }}</th>
+				<th rowspan="2" width="80">{{ 'Overall score' | i18next }} (%)</th>
+				<th colspan="3">{{revCtrl.selectedOrgunit.level.displayName}} {{ 'with divergent score' | i18next }}</th>
+			</tr>
+			<tr bgcolor="#f9f9f9">
+				<th width="110">{{ 'Number' | i18next }}</th>
+				<th width="110">{{ 'Percent' | i18next }}</th>
+				<th>{{ 'Names' | i18next }}</th>
+			</tr>
+			<tr ng-repeat="indicator in revCtrl.outliers | orderBy : 'displayName'">
+				<td>{{indicator.displayName}}</td>
+				<td class="valueCell" ng-if="indicator.moderateOutlier >= 0">{{indicator.moderateOutlier}} SD</td>
+				<td ng-if="revCtrl.isNumber(indicator.boundaryModerate) && indicator.moderateOutlier >= 0" class="valueCell">{{indicator.boundaryModerate}}%</td>
+				<td ng-if="revCtrl.isNumber(indicator.boundaryModerate) && indicator.moderateOutlier >= 0" class="valueCell">{{indicator.countModerate}}</td>
+				<td ng-if="revCtrl.isNumber(indicator.boundaryModerate) && indicator.moderateOutlier >= 0" class="valueCell">{{indicator.percentModerate}}%</td>
+				<td ng-if="revCtrl.isNumber(indicator.boundaryModerate) && indicator.moderateOutlier >= 0">{{indicator.namesModerate.join(', ')}}</td>
+				<td ng-if="!revCtrl.isNumber(indicator.boundaryModerate) && indicator.moderateOutlier >= 0" colspan="4" >{{ 'Not available' | i18next }}</td>
+				<td ng-if="indicator.moderateOutlier == -1" colspan="5">{{ 'Not applicable' | i18next }}</td>
+			</tr>
+			</tbody>
+		</table>
+
+
+		<h5>{{ 'Interpretations' | i18next }}</h5>
+		<textarea class="interpretation"></textarea>
+	</div>
+
+	<div class="noBreak">
+
+		<table class="table tablePrint table-bordered table-condensed ">
+			<tbody>
+			<tr bgcolor="#f9f9f9">
+				<th colspan="6">
+					{{ '2c: Moderate outliers' | i18next }}
+				</th>
+			</tr>
+			<tr >
+				<td colspan="6">
+					<em>{{ 'Moderate outliers, based on median (modified Z score).' | i18next }} {{revCtrl.selectedOrgunit.level.displayName}} {{ 'are counted as divergent if they have two or more moderate outliers for an indicator.' | i18next }}</em>
+				</td>
+			</tr>
+			<tr bgcolor="#f9f9f9">
+				<th rowspan="2" width="200">{{ 'Indicator' | i18next }}</th>
+				<th rowspan="2" width="80">{{ 'Threshold' | i18next }}</th>
+				<th rowspan="2" width="80">{{ 'Overall score' | i18next }} (%)</th>
+				<th colspan="3">{{revCtrl.selectedOrgunit.level.displayName}} {{ 'with divergent score' | i18next }}</th>
+			</tr>
+			<tr bgcolor="#f9f9f9">
+				<th width="110">{{ 'Number' | i18next }}</th>
+				<th width="110">{{ 'Percent' | i18next }}</th>
+				<th>{{ 'Names' || i18next }}</th>
+			</tr>
+			<tr ng-repeat="indicator in revCtrl.outliers | orderBy : 'displayName'">
+				<td>{{indicator.displayName}}</td>
+				<td class="valueCell" ng-if="indicator.moderateOutlier >= 0">3.5</td>
+				<td ng-if="revCtrl.isNumber(indicator.boundaryZscore) && indicator.moderateOutlier >= 0"  class="valueCell">{{indicator.boundaryZscore}}%</td>
+				<td ng-if="revCtrl.isNumber(indicator.boundaryZscore) && indicator.moderateOutlier >= 0"  class="valueCell">{{indicator.countZscore}}</td>
+				<td ng-if="revCtrl.isNumber(indicator.boundaryZscore) && indicator.moderateOutlier >= 0"  class="valueCell">{{indicator.percentZscore}}%</td>
+				<td ng-if="revCtrl.isNumber(indicator.boundaryZscore) && indicator.moderateOutlier >= 0">{{indicator.namesZscore.join(', ')}}</td>
+				<td ng-if="!revCtrl.isNumber(indicator.boundaryZscore) && indicator.moderateOutlier >= 0" colspan="4" >{{ 'Not available' | i18next }}</td>
+				<td ng-if="indicator.moderateOutlier == -1" colspan="5">{{ 'Not applicable' | i18next }}</td>
+			</tr>
+			</tbody>
+		</table>
+
+		<h5>{{ 'Interpretations' | i18next }}</h5>
+		<textarea class="interpretation"></textarea>
+	</div>
+
+	<div class="fullWidth">
+		<div class="noBreak" style="margin-bottom: 10px;"
+			 ng-repeat="indicator in revCtrl.consistency.data | orderBy:'dxNameA' track by $index">
+
+			<div ng-if="$index === 0" class="inline fullWidth">
+				<table class="table tablePrint table-bordered table-condensed" style="margin-bottom: 5px">
+					<tbody>
+					<tr bgcolor="#f9f9f9">
+						<th>
+							{{ '2d: Consistency of indicator values over time' | i18next }}
+						</th>
+					</tr>
+					<tr >
+						<td>
+							<em>{{ 'Difference between the current year and either the average of the 3 preceding years (if expected trend is constant), or the forecasted value.' | i18next }}</em>
+						</td>
+					</tr>
+					</tbody>
+				</table>
+			</div>
+
+			<div class="inline relationTable">
+				<table class="table tablePrint table-bordered table-condensed" style="margin-bottom: 5px">
+					<tr bgcolor="#f9f9f9"><th colspan="2">{{indicator.dxNameA}}</th></tr>
+					<tr>
+						<td>{{ 'Expected trend' | i18next }}</td>
+						<td ng-if="indicator.subType === 'constant'" class="valueCell">{{ 'Constant' | i18next }}</td>
+						<td ng-if="indicator.subType === 'increasing'" class="valueCell">{{ 'Increasing' | i18next }}</td>
+						<td ng-if="indicator.subType === 'decreasing'" class="valueCell">{{ 'Decreasing' | i18next }}</td>
+					</tr>
+					<tr>
+						<td>{{ 'Compare' | i18next }} {{revCtrl.selectedOrgunit.level.displayName}} {{ 'to' | i18next }}</td>
+						<td ng-if="indicator.comparison === 'ou'" class="valueCell">{{revCtrl.selectedOrgunit.boundary.displayName}}</td>
+						<td ng-if="indicator.comparison === 'th' && indicator.subType === constant" class="valueCell">{{ 'Current vs average' | i18next }}</td>
+						<td ng-if="indicator.comparison === 'th'" class="valueCell">{{ 'Current vs forecast' | i18next }}</td>
+					</tr>
+					<tr>
+						<td>{{ 'Quality threshold' | i18next }}</td>
+						<td class="valueCell">± {{indicator.criteria}}%</td>
+					</tr>
+					<tr>
+						<td>{{ 'Overall score' | i18next }} (%)</td>
+						<td ng-if="revCtrl.isNumber(indicator.boundaryPercentage)" class="valueCell">{{indicator.boundaryPercentage}}%</td>
+					</tr>
+					<tr>
+						<td>{{ 'Number of' | i18next }} {{revCtrl.selectedOrgunit.level.displayName}} {{ 'with divergent score' | i18next }}</td>
+						<td ng-if="revCtrl.isNumber(indicator.boundaryPercentage)" class="valueCell">{{indicator.subunitsOutsideThreshold}}</td>
+					</tr>
+					<tr>
+						<td>{{ 'Percent of' | i18next }} {{revCtrl.selectedOrgunit.level.displayName}} {{ 'with divergent score' | i18next }}</td>
+						<td ng-if="revCtrl.isNumber(indicator.boundaryPercentage)" class="valueCell">{{indicator.subunitViolationPercentage}}%</td>
+					</tr>
+					<tr class="bigRow1">
+						<td colspan="2">{{indicator.subunitViolationNames.join(', ')}}</td>
+					</tr>
+				</table>
+
+				<!--Line chart with last 4 years of data-->
+				<div class="tinyChart" style="border: 1px dashed gray;">
+					<nvd3 options='indicator.trendChartOptions' data='indicator.trendChartData'></nvd3>
+				</div>
+			</div>
+			<div class="inline" style="float: right">
+				<div class="dottedBox relationChartBig">
+					<nvd3 options='indicator.chartOptions' data='indicator.chartData'></nvd3>
+				</div>
+			</div>
+
+			<h5 style="margin-top: 10px;">{{ 'Interpretations' | i18next }}</h5>
+			<textarea class="interpretation"></textarea>
+		</div>
+	</div>
+
+
+	<div class="noBreak inline fullWidth"
+		 style="margin-bottom: 10px;"
+		 ng-repeat="relation in revCtrl.consistency.relations | orderBy:'meta.name' track by $index">
+
+		<div ng-if="$index === 0" class="inline fullWidth">
+			<table class="table tablePrint table-bordered table-condensed" style="margin-bottom: 5px">
+				<tbody>
+				<tr bgcolor="#f9f9f9">
+					<th>
+						{{ '2e: Consistency between related indicators' | i18next }}
+					</th>
+				</tr>
+				<tr >
+					<td>
+						<em>{{ 'Consistency between reported values for two related indicators within the same year.' | i18next }</em>
+					</td>
+				</tr>
+				</tbody>
+			</table>
+		</div>
+
+		<div class="inline relationTable">
+			<table class="table tablePrint table-bordered table-condensed">
+				<tr bgcolor="#f9f9f9"><th colspan="2">{{revCtrl.relationName(relation.relationCode)}}</th></tr>
+				<tr>
+					<td>{{ 'Indicator A' | i18next }}</td>
+					<td class="valueCell">{{relation.dxNameA}}</td>
+				</tr>
+				<tr>
+					<td>{{ 'Indicator B' | i18next }}</td>
+					<td class="valueCell">{{relation.dxNameB}}</td>
+				</tr>
+				<tr>
+					<td>{{ 'Expected relationship' | i18next }}</td>
+					<td class="valueCell">{{revCtrl.relationType(relation.subType).displayName}}</td>
+				</tr>
+				<tr>
+					<td>{{ 'Quality threshold' | i18next }}</td>
+					<td class="valueCell"  ng-if="relation.subType != 'do'">± {{relation.criteria}} %</td>
+					<td class="valueCell" ng-if="relation.subType === 'do'">{{ 'Not negative' | i18next }}</td>
+				</tr>
+				<tr>
+					<td>{{ 'Overall score' | i18next }}</td>
+					<td ng-if="revCtrl.isNumber(relation.boundaryPercentage)" class="valueCell">{{relation.boundaryPercentage}}%</td>
+					<td class="valueCell" rowspan="3" ng-if="!revCtrl.isNumber(relation.boundaryPercentage)">{{ 'Not available' | i18next }}</td>
+				</tr>
+				<tr>
+					<td>{{ 'Number of' | i18next }} {{revCtrl.selectedOrgunit.level.displayName}} {{ 'with divergent score' | i18next }}</td>
+					<td ng-if="revCtrl.isNumber(relation.boundaryPercentage)" class="valueCell">{{relation.subunitsOutsideThreshold}}</td>
+				</tr>
+				<tr>
+					<td>{{ 'Percent of' | i18next }} {{revCtrl.selectedOrgunit.level.displayName}} {{ 'with divergent score' | i18next }}</td>
+					<td ng-if="revCtrl.isNumber(relation.boundaryPercentage)" class="valueCell">{{relation.subunitViolationPercentage}}%</td>
+				</tr>
+				<tr class="bigRow3">
+					<td colspan="2">{{relation.subunitViolationNames.join(', ')}}</td>
+				</tr>
+			</table>
+		</div>
+		<div class="inline" style="float: right">
+			<div class="dottedBox relationChartMid">
+				<nvd3 options='relation.chartOptions' data='relation.chartData'></nvd3>
+			</div>
+		</div>
+
+		<h5 style="margin-top: 10px;">{{ 'Interpretations' | i18next }}</h5>
+		<textarea class="interpretation"></textarea>
+	</div>
+</div>
+
 
 	<!--EXTERNAL CONSISTENCY-->
-	<div ng-include="revCtrl.result3External"></div>
+	<div class="reportPart">
+	<div class="fullWidth headerPart">{{ 'DOMAIN 3: EXTERNAL COMPARISON' | i18next }}</div>
+
+
+	<div class="inline fullWidth">
+		<table class="table tablePrint table-bordered table-condensed" style="margin-bottom: 5px">
+			<tbody>
+			<tr bgcolor="#f9f9f9">
+				<th>
+					{{ '3a: Comparison with external/survey data' | i18next }}
+				</th>
+			</tr>
+			<tr>
+				<td>
+					<em>{{ 'Consistency of routine data with data from external source, e.g. population-based surveys.' | i18next }}</em>
+				</td>
+			</tr>
+			<tr ng-if="revCtrl.external.length === 0">
+				<td>{{ 'Not available' | i18next }}</td>
+			</tr>
+			</tbody>
+		</table>
+	</div>
+
+
+	<div class="noBreak inline fullWidth"
+		 style="margin-bottom: 10px;"
+		 ng-repeat="relation in revCtrl.external | orderBy:'meta.name' track by $index">
+
+		<div class="inline relationTable halfWidth" style="min-height: 300px">
+			<table class="table tablePrint table-bordered table-condensed">
+				<tr bgcolor="#f9f9f9">
+					<th colspan="2">{{relation.meta.name}}</th>
+				</tr>
+				<tr>
+					<td>{{ 'Survey value' | i18next }}</td>
+					<td ng-if="relation.boundaryValue" class="valueCell">{{relation.boundaryValue}}%</td>
+					<td ng-if="!relation.boundaryValue" class="valueCell">{{ 'Not available' | i18next }}</td>
+				</tr>
+				<tr>
+					<td>{{ 'Routine value' | i18next }</td>
+					<td ng-if="relation.boundaryRefValue" class="valueCell">{{relation.boundaryRefValue}}%</td>
+					<td ng-if="!relation.boundaryRefValue" class="valueCell">{{ 'Not available' | i18next }}</td>
+				</tr>
+				<tr>
+					<td>{{ 'Quality threshold' | i18next }}</td>
+					<td class="valueCell">± {{relation.criteria}}%</td>
+				</tr>
+				<tr>
+					<td>{{ 'Overall score' | i18next }}</td>
+					<td ng-if="relation.boundaryPercentage" class="valueCell">{{relation.boundaryPercentage}}%</td>
+					<td ng-if="!relation.boundaryPercentage" class="valueCell">{{ 'Not available' | i18next }}</td>
+				</tr>
+				<tr >
+					<td>{{ 'Number of' | i18next}} {{relation.meta.ouLimitName}} {{ 'with divergent score' | i18next }}</td>
+					<td ng-if="relation.subunitDatapoints.length > 0" class="valueCell">{{relation.subunitsOutsideThreshold}}</td>
+					<td ng-if="relation.subunitDatapoints.length === 0" class="valueCell">{{ 'Not available' | i18next }}</td>
+				</tr>
+				<tr>
+					<td>{{ 'Percent of' | i18next }} {{relation.meta.ouLimitName}} {{ 'with divergent score' | i18next }}</td>
+					<td ng-if="relation.subunitDatapoints.length > 0" class="valueCell">{{relation.subunitViolationPercentage}}%</td>
+					<td ng-if="relation.subunitDatapoints.length === 0" class="valueCell">{{ 'Not available' | i18next }}</td>
+				</tr>
+				<tr class="bigRow2" ng-if="relation.subunitViolationNames.length > 0 && relation.subunitDatapoints.length > 0">
+					<td colspan="2">{{relation.subunitViolationNames.join(', ')}}</td>
+				</tr>
+			</table>
+		</div>
+		<div class="inline" style="float: right" ng-if="relation.chartOptions.type === 'scatter'">
+			<div class="dottedBox relationChart">
+				<nvd3 options='relation.chartOptions' data='relation.chartData'></nvd3>
+			</div>
+		</div>
+		<div class="inline" style="float: right" ng-if="relation.chartOptions.type === 'bullet'">
+			<div class="dottedBox bulletChart">
+				<nvd3 options='relation.chartOptions' data='relation.chartData'></nvd3>
+			</div>
+		</div>
+
+		<h5 style="margin-top: 10px;">{{ 'Interpretations' | i18next }}</h5>
+		<textarea class="interpretation"></textarea>
+	</div>
+
+
+</div>
+
 
 	<!--DENOMINATOR CONSISTENCY-->
-	<div ng-include="revCtrl.result4Denominators"></div>
-	
+	<div class="reportPart">
+	<div class="fullWidth headerPart">
+		{{ 'DOMAIN 4: CONSISTENCY OF POPULATION DATA' | i18next }}
+	</div>
+	<div class="noBreak">
+
+		<table class="table tablePrint table-bordered table-condensed ">
+			<tr bgcolor="#f9f9f9">
+				<th colspan="2">
+					{{ '4a: Consistency with UN population projection.' | i18next }}
+				</th>
+			</tr>
+			<tr>
+				<td>{{ 'Ratio of population projection from the Bureau of Statistics to a UN projection' | i18next }}</td>
+				<td ng-if="revCtrl.denominators.un">{{revCtrl.denominators.un.boundaryRatio}}</td>
+				<td ng-if="!revCtrl.denominators.un">{{ 'Not available' | i18next }}</td>
+			</tr>
+		</table>
+	</div>
+
+
+
+	<div class="inline fullWidth">
+		<table class="table tablePrint table-bordered table-condensed" style="margin-bottom: 5px">
+			<tbody>
+			<tr bgcolor="#f9f9f9">
+				<th>
+					{{ '4b: Consistency of denominators' | i18next }}
+				</th>
+			</tr>
+			<tr>
+				<td>
+					<em>{{ 'Consistency of denominators within the same year.' | i18next }}</em>
+				</td>
+			</tr>
+			<tr ng-if="revCtrl.denominators.relations.length === 0">
+				<td>{{ 'Not available' | i18next }}</td>
+			</tr>
+			</tbody>
+		</table>
+	</div>
+
+	<div class="noBreak inline fullWidth"
+		 style="margin-bottom: 10px;"
+		 ng-repeat="denominator in revCtrl.denominators.relations | orderBy:'meta.relation.name' track by $index">
+		<div class="inline relationTable" style="min-height: 300px">
+			<table class="table tablePrint table-bordered table-condensed">
+				<tr bgcolor="#f9f9f9"><th colspan="2">{{denominator.meta.relation.name}}</th></tr>
+				<tr>
+					<td>{{ 'Denominator A' | i18next }}</td>
+					<td class="valueCell">{{denominator.dxNameA}}</td>
+				</tr>
+				<tr>
+					<td>{{ 'Denominator B' | i18next }}</td>
+					<td class="valueCell">{{denominator.dxNameB}}</td>
+				</tr>
+				<tr>
+					<td>{{ 'Quality threshold' | i18next }}</td>
+					<td class="valueCell">± {{denominator.criteria}}%</td>
+				</tr>
+				<tr>
+					<td>{{ 'Overall score' | i18next }}</td>
+					<td class="valueCell">{{denominator.boundaryPercentage}}%</td>
+				</tr>
+				<tr>
+					<td># {{revCtrl.selectedOrgunit.level.displayName}} {{ 'with poor score' | i18next }}</td>
+					<td class="valueCell">{{denominator.subunitsOutsideThreshold}}</td>
+				</tr>
+				<tr>
+					<td>% {{revCtrl.selectedOrgunit.level.displayName}} {{ 'with poor score' | i18next }}</td>
+					<td class="valueCell">{{denominator.subunitViolationPercentage}}%</td>
+				</tr>
+				<tr class="bigRow2" ng-if="denominator.subunitViolationNames.length > 0">
+					<td colspan="2">{{denominator.subunitViolationNames.join(', ')}}</td>
+				</tr>
+			</table>
+		</div>
+		<div class="inline" style="float: right">
+			<div class="dottedBox relationChart">
+				<nvd3 options='denominator.chartOptions' data='denominator.chartData'></nvd3>
+			</div>
+		</div>
+
+		<h5 style="margin-top: 10px;">{{ 'Interpretations' | i18next }}</h5>
+		<textarea class="interpretation"></textarea>
+	</div>
+</div>
+
 	<!--ALERTS-->
 	<div class="reportPart" ng-if="revCtrl.remarks.length > 0">
-		<h3>Remarks</h3>
+		<h3>{{ 'Remarks' | i18next }}</h3>
 		<table class="table tablePrint table-bordered" style=" margin-top: 20px;">
 			<tr>
-				<th>Analysis type</th>
-				<th>Item</th>
-				<th>Remarks</th></tr>
+				<th>{{ 'Analysis type' | i18next }}</th>
+				<th>{{ 'Item' | i18next }}</th>
+				<th>{{ 'Remarks' | i18next }}</th></tr>
 			<tr ng-repeat="alert in revCtrl.remarks track by $index">
 				<td>{{alert.type}}</td>
 				<td>{{alert.item}}</td>

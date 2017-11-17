@@ -6,38 +6,38 @@ copied verbatim in the file “COPYING”.  In applying this license, WHO does n
 immunities enjoyed by WHO under national or international law or submit to any national court jurisdiction.
 -->
 
-<h4 style="margin-top: 20px;">Outliers and Missing Data</h4>
+<h4 style="margin-top: 20px;">{{ 'Outliers and Missing Data' | i18next }}</h4>
 <!-- PARAMETERS -->
 <uib-accordion close-others="aCtrl.oneAtATime">
 
 
 	<!-- DATA -->
-    <div uib-accordion-group class="panel-default" heading="Data" is-open="aCtrl.status.isFirstOpen">
+    <div uib-accordion-group class="panel-default" heading="{{ 'Data' | i18next }}" is-open="aCtrl.status.isFirstOpen">
 
 		<!-- DATA SETS -->
 		<div style="max-width: 600px">
-		<label>Data set</label><br />
+		<label>{{ 'Data set' | i18next }}</label><br />
 			<d2-select-data-element
 					multiple="true"
 					ng-model="aCtrl.selectedData.ds"
 					dataset="true">
 			</d2-select-data-element>
 		</div>
-		
-		
+
+
 		<!-- DATA ELEMENTS -->
 		<div style="max-width: 600px">
-    	<label>Data elements</label><br />
+    	<label>{{ 'Data elements' | i18next }}</label><br />
 		<d2-select-data-element
 				multiple="true"
 				ng-model="aCtrl.selectedData.deg">
 		</d2-select-data-element>
 		</div>
-		
-		
+
+
 		<!-- INDICATORS -->
 		<div style="max-width: 600px">
-    	<label>Indicators</label><br />
+    	<label>{{ 'Indicators' | i18next }}</label><br />
 			<d2-select-indicator
 					ng-model="aCtrl.selectedData.ig"
 					multiple="true">
@@ -47,22 +47,22 @@ immunities enjoyed by WHO under national or international law or submit to any n
            
            
     <!-- PERIOD -->
-    <div uib-accordion-group class="panel-default" heading="Period">
+    <div uib-accordion-group class="panel-default" heading="{{ 'Period' | i18next }}">
 		<div class="btn-group btn-group-justified" style="margin-bottom: 10px; width: 306px;">
-			  <label class="btn btn-default" ng-model="aCtrl.periodOption" uib-btn-radio="'last'">Recent</label>
-			  <label class="btn btn-default" ng-model="aCtrl.periodOption" uib-btn-radio="'year'">By year</label>
-			  <label class="btn btn-default" ng-model="aCtrl.periodOption" uib-btn-radio="'custom'">Custom</label>
+			  <label class="btn btn-default" ng-model="aCtrl.periodOption" uib-btn-radio="'last'">{{ 'Recent' | i18next }}</label>
+			  <label class="btn btn-default" ng-model="aCtrl.periodOption" uib-btn-radio="'year'">{{ 'By year' | i18next }}</label>
+			  <label class="btn btn-default" ng-model="aCtrl.periodOption" uib-btn-radio="'custom'">{{ 'Custom' | i18next }}</label>
 			</div>
-			
-		
+
+
 		<!-- RECENT -->
 		<div style="margin-bottom: 15px;" ng-show="aCtrl.periodOption === 'last'">
 			<div style="display: inline-block;">
 				<ui-select ng-model="aCtrl.periodCountSelected"  style="margin-bottom: 10px; width: 106px;">
-				  <ui-select-match placeholder="Select number of periods...">
+				  <ui-select-match placeholder="{{ 'Select number of periods...' | i18next }}">
 				  	{{aCtrl.periodCountSelected.name}}
 				  </ui-select-match>
-				  <ui-select-choices 
+				  <ui-select-choices
 				  	repeat="obj in aCtrl.periodCounts | filter: $select.search">
 				   		<div ng-bind-html="obj.name | highlight: $select.search"></div>
 				  </ui-select-choices>
@@ -70,65 +70,65 @@ immunities enjoyed by WHO under national or international law or submit to any n
 			</div>
 			<div style="display: inline-block;">
 				<ui-select ng-model="aCtrl.periodTypeSelected"  style="margin-bottom: 10px; width: 196px;">
-				  <ui-select-match placeholder="Select period type...">
+				  <ui-select-match placeholder="{{ 'Select period type...' | i18next }}">
 				  	{{aCtrl.periodTypeSelected.name}}
 				  </ui-select-match>
-				  <ui-select-choices 
+				  <ui-select-choices
 				  	repeat="obj in aCtrl.periodTypes | filter: $select.search">
 				   		<div ng-bind-html="obj.name | highlight: $select.search"></div>
 				  </ui-select-choices>
 				</ui-select>
 			</div>
 		</div>
-		
-		
+
+
 		<!-- BY YEAR -->
 		<div style="margin-bottom: 15px;" ng-show="aCtrl.periodOption === 'year'">
 			<div style="display: inline-block;">
 			<ui-select ng-model="aCtrl.periodTypeSelected"  style="margin-bottom: 10px; width: 196px;">
-			  <ui-select-match placeholder="Select period type...">
+			  <ui-select-match placeholder="{{ 'Select period type...' | i18next }}">
 			  	{{aCtrl.periodTypeSelected.name}}
 			  </ui-select-match>
-			  <ui-select-choices 
+			  <ui-select-choices
 			  	repeat="obj in aCtrl.periodTypes | filter: $select.search">
 			   		<div ng-bind-html="obj.name | highlight: $select.search"></div>
 			  </ui-select-choices>
 			</ui-select>
 			</div>
-					
+
 			<div style="display: inline-block;">
 			<ui-select ng-model="aCtrl.yearSelected"  style="margin-bottom: 10px; width: 106px;">
-			  <ui-select-match placeholder="Select year...">
+			  <ui-select-match placeholder="{{ 'Select year...' | i18next }}">
 			  	{{aCtrl.yearSelected.name}}
 			  </ui-select-match>
-			  <ui-select-choices 
+			  <ui-select-choices
 			  	repeat="obj in aCtrl.years | filter: $select.search">
 			   		<div ng-bind-html="obj.name | highlight: $select.search"></div>
 			  </ui-select-choices>
 			</ui-select>
 			</div>
-		</div>		
-		
+		</div>
+
 		<!-- CUSTOM -->
 		<div ng-show="aCtrl.periodOption === 'custom'">
 		<div style="margin-bottom: 10px;">
 		<ui-select ng-model="aCtrl.periodTypeSelected"  style="margin-bottom: 10px; width: 306px;">
-		  <ui-select-match placeholder="Select period type...">
+		  <ui-select-match placeholder="{{ 'Select period type...' | i18next }}">
 		  	{{aCtrl.periodTypeSelected.name}}
 		  </ui-select-match>
-		  <ui-select-choices 
+		  <ui-select-choices
 		  	repeat="obj in aCtrl.periodTypes | filter: $select.search">
 		   		<div ng-bind-html="obj.name | highlight: $select.search"></div>
 		  </ui-select-choices>
 		</ui-select>
-		
+
 			</div>
-			<div style="display: inline-block;"><label>From</label>
+			<div style="display: inline-block;"><label>{{ 'From' | i18next }}</label>
 			<div style="min-height:290px;">
 			        <div uib-datepicker ng-model="aCtrl.date.startDate" ng-change="aCtrl.datepickerOptionsTo.minDate = aCtrl.date.startDate;" class="well well-sm" datepicker-options="aCtrl.datepickerOptionsFrom" ></div>
 			</div></div>
 
-			<div style="display: inline-block;"><label>To</label>
+			<div style="display: inline-block;"><label>{{ 'To' | i18next }}</label>
 			<div style="min-height:290px;">
 			        <div uib-datepicker ng-model="aCtrl.date.endDate" class="well well-sm" datepicker-options="aCtrl.datepickerOptionsTo"></div>
 			</div>
@@ -138,21 +138,22 @@ immunities enjoyed by WHO under national or international law or submit to any n
     </div
     
     <!-- ORGUNIT -->
-    <div uib-accordion-group class="panel-default" heading="Orgunit" is-open="status.open">
+    <div uib-accordion-group class="panel-default" heading="{{ 'Orgunit' | i18next }}" is-open="status.open">
+
 		<div style="max-width: 600px;">
     		<d2-select-orgunit default-level="2" ng-model="aCtrl.selectedOrgunit" on-select="aCtrl.selectedOrgunit = object;"></d2-select-orgunit>
 		</div>
     </div>
   </uib-accordion>
-  
+
 <button type="button" class="btn btn-primary pull-right" ng-click="aCtrl.doAnalysis();" style="margin-bottom:20px"
 	ng-disabled="!(aCtrl.selectedData.ds.length > 0 || aCtrl.selectedData.deg.length > 0 || aCtrl.selectedData.ig.length > 0) || !(aCtrl.selectedOrgunit.boundary)"
->Analyze</button>
+>{{ 'Analyze' | i18next }}</button>
 
 <hr style="clear: both;" />
 
 <div ng-if="aCtrl.processStatus.total > 0 && aCtrl.processStatus.progress != 100">
-<h5>Loading data...</h5>
+<h5>{{ 'Loading data...' | i18next }}</h5>
 <uib-progressbar animate="false" value="aCtrl.processStatus.progress" type="default"><b>{{aCtrl.processStatus.progress}}%</b></uib-progressbar>
 </div>
 
