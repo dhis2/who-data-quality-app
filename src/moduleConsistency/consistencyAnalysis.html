@@ -5,361 +5,223 @@ This software is distributed under the terms of the GNU General Public License v
 copied verbatim in the file “COPYING”.  In applying this license, WHO does not waive any of the privileges and
 immunities enjoyed by WHO under national or international law or submit to any national court jurisdiction.
 -->
-
-<h4 style="margin-top: 20px;">{{ 'Consistency' | i18next }}</h4>
+<h4 style="margin-top: 20px;">
+	{{ 'Consistency' | i18next }}
+</h4>
 
 <!-- PARAMETERS -->
-<uib-accordion close-others="aCtrl.oneAtATime">
-
-	<!-- OPTIONS -->
-	<div uib-accordion-group class="panel-default" heading="Analysis Type" is-open="aCtrl.status.isFirstOpen">
-		<label>{{ 'Consistency analysis type' | i18next }}</label><br />
-
-		<div class="btn-group btn-group-justified" style="width: 330px; margin-bottom: 10px;" ng-init="aCtrl.type = 'data'">
-				<label class="btn btn-default" ng-model="aCtrl.type" uib-btn-radio="'data'">{{ 'Between Indicators' | i18next }}</label>
-		  		<label class="btn btn-default" ng-model="aCtrl.type" uib-btn-radio="'time'">{{ 'Over Time' | i18next }}</label>
+<uib-accordion close-others="aCtrl.oneAtATime"> 
+<!-- OPTIONS -->
+<div uib-accordion-group class="panel-default" heading="Analysis Type" is-open="aCtrl.status.isFirstOpen">
+	<label>{{ 'Consistency analysis type' | i18next }}</label><br />
+	<div class="btn-group btn-group-justified" style="width: 330px; margin-bottom: 10px;" ng-init="aCtrl.type = 'data'">
+		<label class="btn btn-default" ng-model="aCtrl.type" uib-btn-radio="'data'">{{ 'Between Indicators' | i18next }}</label> <label class="btn btn-default" ng-model="aCtrl.type" uib-btn-radio="'time'">{{ 'Over Time' | i18next }}</label> 
+	</div>
+	<div ng-if="aCtrl.type === 'data'">
+		<label>{{ 'Compare organisation units to' | i18next }}</label><br />
+		<div class="btn-group btn-group-justified" style="width: 330px; margin-bottom: 10px;" ng-init="aCtrl.comparisonType = 'level'">
+			<label class="btn btn-default" ng-model="aCtrl.comparisonType" uib-btn-radio="'level'">{{ 'Overall result' | i18next }}</label> <label class="btn btn-default" ng-model="aCtrl.comparisonType" uib-btn-radio="'relationship'">{{ 'Expected result' | i18next }}</label> 
 		</div>
-
-		<div ng-if="aCtrl.type === 'data'">
-			<label>{{ 'Compare organisation units to' | i18next }}</label><br />
-			<div class="btn-group btn-group-justified" style="width: 330px; margin-bottom: 10px;" ng-init="aCtrl.comparisonType = 'level'">
-				<label class="btn btn-default" ng-model="aCtrl.comparisonType" uib-btn-radio="'level'">{{ 'Overall result' | i18next }}</label>
-				<label class="btn btn-default" ng-model="aCtrl.comparisonType" uib-btn-radio="'relationship'">{{ 'Expected result' | i18next }}</label>
-			</div>
-			<label>{{ 'Expected relationship' | i18next }}</label><br />
-			<div class="btn-group btn-group-justified" style="width: 330px; margin-bottom: 10px;" ng-init="aCtrl.subType = 'eq'">
-					<label ng-disabled="aCtrl.comparisonType != 'relationship'" class="btn btn-default" ng-model="aCtrl.subType" uib-btn-radio="'eq'">A ≈ B</label>
-					<label ng-disabled="aCtrl.comparisonType != 'relationship'" class="btn btn-default" ng-model="aCtrl.subType" uib-btn-radio="'aGTb'">A > B</label>
-					<label ng-disabled="aCtrl.comparisonType != 'relationship'" class="btn btn-default" ng-model="aCtrl.subType" uib-btn-radio="'do'">{{ 'Dropout' | i18next }}</label>
-			</div>
-		</div>
-
-		<div ng-if="aCtrl.type === 'time'">
-			<label>{{ 'Compare organisation units to' | i18next }}</label><br />
-			<div class="btn-group btn-group-justified" style="width: 330px; margin-bottom: 10px;" ng-init="aCtrl.comparisonType = 'level'">
-				<label class="btn btn-default" ng-model="aCtrl.comparisonType" uib-btn-radio="'level'">{{ 'Overall result' | i18next }}</label>
-				<label class="btn btn-default" ng-model="aCtrl.comparisonType" uib-btn-radio="'relationship'">{{ 'Expected result' | i18next }}</label>
-			</div>
-			<label>{{ 'Expected trend' | i18next }}</label><br />
-			<div class="btn-group btn-group-justified" style="width: 330px; margin-bottom: 10px;" ng-init="aCtrl.trendType = 'constant'">
-					<label class="btn btn-default" ng-model="aCtrl.trendType" uib-btn-radio="'constant'">{{ 'Constant' | i18next }}</label>
-					<label class="btn btn-default" ng-model="aCtrl.trendType" uib-btn-radio="'increase'">{{ 'Increasing/decreasing' | i18next }}</label>
-			</div>
-		</div>
-
-		<div style="margin-bottom: 10px;" ng-if="aCtrl.subType != 'do' || aCtrl.type === 'time'">
-		<label>{{ 'Criteria' | i18next }}</label><br />
-		<input ng-init="aCtrl.consistencyCriteria = 33" class="form-control" type="number" style="text-align: right; width: 150px; display: inline-block;" ng-model="aCtrl.consistencyCriteria" min="0" max="50"> <span style="display: inline-block;">%</span>
+		<label>{{ 'Expected relationship' | i18next }}</label><br />
+		<div class="btn-group btn-group-justified" style="width: 330px; margin-bottom: 10px;" ng-init="aCtrl.subType = 'eq'">
+			<label ng-disabled="aCtrl.comparisonType != 'relationship'" class="btn btn-default" ng-model="aCtrl.subType" uib-btn-radio="'eq'">A ≈ B</label> <label ng-disabled="aCtrl.comparisonType != 'relationship'" class="btn btn-default" ng-model="aCtrl.subType" uib-btn-radio="'aGTb'">A > B</label> <label ng-disabled="aCtrl.comparisonType != 'relationship'" class="btn btn-default" ng-model="aCtrl.subType" uib-btn-radio="'do'">{{ 'Dropout' | i18next }}</label> 
 		</div>
 	</div>
-
-
-	<!-- DATA -->
-
-    <div uib-accordion-group class="panel-default" heading="{{ 'Data' | i18next }}">
-		<div ng-init="aCtrl.dataTypeSelectedA = 'dataElements'">
-			<h4>{{ 'Select data element/indicator' | i18next }}</h4>
-			<div class="btn-group btn-group-justified" style="width: 120px; margin-bottom: 10px; display: inline-block;">
-				<label class="btn btn-default" ng-model="aCtrl.dataTypeSelectedA" uib-btn-radio="'dataElements'">{{ 'Data element' | i18next }}</label>
-				<label class="btn btn-default" ng-model="aCtrl.dataTypeSelectedA" uib-btn-radio="'indicators'">{{ 'Indicator' | i18next }}</label>
-			</div>
-
-			<!-- DATA ELEMENTS -->
-			<div ng-if="aCtrl.dataTypeSelectedA === 'dataElements'" style="max-width: 600px" >
-				<d2-select-data-element
-						multiple="false"
-						ng-model="aCtrl.dataSelectedA">
-				</d2-select-data-element>
-			</div>
-
-			<!-- INDICATORS -->
-			<div ng-if="aCtrl.dataTypeSelectedA === 'indicators'" style="max-width: 600px">
-				<d2-select-indicator
-						multiple="false"
-						ng-model="aCtrl.dataSelectedA">
-				</d2-select-indicator>
-				</div>
+	<div ng-if="aCtrl.type === 'time'">
+		<label>{{ 'Compare organisation units to' | i18next }}</label><br />
+		<div class="btn-group btn-group-justified" style="width: 330px; margin-bottom: 10px;" ng-init="aCtrl.comparisonType = 'level'">
+			<label class="btn btn-default" ng-model="aCtrl.comparisonType" uib-btn-radio="'level'">{{ 'Overall result' | i18next }}</label> <label class="btn btn-default" ng-model="aCtrl.comparisonType" uib-btn-radio="'relationship'">{{ 'Expected result' | i18next }}</label> 
 		</div>
-
-		<div ng-if="aCtrl.type === 'data'" ng-init="aCtrl.dataTypeSelectedB = 'dataElements'">
-			<h4>{{ 'Select data element/indicator for comparison' | i18next }}</h4>
-			<div class="btn-group btn-group-justified" style="width: 120px; margin-bottom: 10px; display: inline-block;">
-				<label class="btn btn-default" ng-model="aCtrl.dataTypeSelectedB" uib-btn-radio="'dataElements'">{{ 'Data element' | i18next }}</label>
-				<label class="btn btn-default" ng-model="aCtrl.dataTypeSelectedB" uib-btn-radio="'indicators'">{{ 'Indicator' | i18next }}</label>
-			</div>
-
-			<!-- DATA ELEMENTS -->
-			<div ng-if="aCtrl.dataTypeSelectedB === 'dataElements'" style="max-width: 600px">
-				<d2-select-data-element
-						multiple="false"
-						ng-model="aCtrl.dataSelectedB">
-				</d2-select-data-element>
-			</div>
-
-			<!-- INDICATORS -->
-			<div ng-if="aCtrl.dataTypeSelectedB === 'indicators'" style="max-width: 600px">
-				<d2-select-indicator
-						multiple="false"
-						ng-model="aCtrl.dataSelectedB">
-				</d2-select-indicator>
-			</div>
+		<label>{{ 'Expected trend' | i18next }}</label><br />
+		<div class="btn-group btn-group-justified" style="width: 330px; margin-bottom: 10px;" ng-init="aCtrl.trendType = 'constant'">
+			<label class="btn btn-default" ng-model="aCtrl.trendType" uib-btn-radio="'constant'">{{ 'Constant' | i18next }}</label> <label class="btn btn-default" ng-model="aCtrl.trendType" uib-btn-radio="'increase'">{{ 'Increasing/decreasing' | i18next }}</label> 
 		</div>
-
-    </div>
-    
-    
-    <!-- PERIOD -->
-    <div uib-accordion-group class="panel-default" heading="{{ 'Period' | i18next }}">
-    	
-    	<h4 ng-if="aCtrl.type === 'time'">{{ 'Period' | i18next }}</h4>
-
-    	<div style="display: inline-block;">
-    		<label>{{ 'Period type' | i18next }}</label><br />
-    		<div style="display: inline-block;">
-    		<ui-select on-select="aCtrl.getPeriodsInYear(); aCtrl.periodSelected = null;" ng-model="aCtrl.periodTypeSelected"  style="margin-bottom: 10px; width: 200px;">
-    		  <ui-select-match placeholder="{{ 'Select period type...' | i18next }}">
-    		  	{{aCtrl.periodTypeSelected.name}}
-    		  </ui-select-match>
-    		  <ui-select-choices
-    		  	repeat="obj in aCtrl.filteredPeriodTypes | filter: $select.search">
-    		   		<div ng-bind-html="obj.name | highlight: $select.search"></div>
-    		  </ui-select-choices>
-    		</ui-select>
-    		</div>
-    	</div>
-
-    	<div style="display: inline-block;">
-    		<label>{{ 'Year' | i18next }}</label><br />
-    		<div style="display: inline-block;">
-    		<ui-select on-select="aCtrl.getPeriodsInYear(); aCtrl.periodSelected = null;" ng-model="aCtrl.yearSelected"  style="margin-bottom: 10px; width: 200px;">
-    		  <ui-select-match placeholder="{{ 'Select year...' | i18next }}'">
-    		  	{{aCtrl.yearSelected.name}}
-    		  </ui-select-match>
-    		  <ui-select-choices
-    		  	repeat="obj in aCtrl.years | filter: $select.search">
-    		   		<div ng-bind-html="obj.name | highlight: $select.search"></div>
-    		  </ui-select-choices>
-    		</ui-select>
-    		</div>
-
-    	</div>
-
-    	<div ng-if="aCtrl.periodTypeSelected.id != 'Yearly'" style="display: inline-block;">
-    		<label>{{ 'Period' | i18next }}</label><br />
-    		<div style="display: inline-block;">
-    		<ui-select ng-model="aCtrl.periodSelected"  style="margin-bottom: 10px; width: 200px;">
-    		  <ui-select-match placeholder="{{ 'Select period...' | i18next }}">
-    		  	{{aCtrl.periodSelected.name}}
-    		  </ui-select-match>
-    		  <ui-select-choices
-    		  	repeat="obj in aCtrl.periodsInYear | filter: $select.search">
-    		   		<div ng-bind-html="obj.name | highlight: $select.search"></div>
-    		  </ui-select-choices>
-    		</ui-select>
-    		</div>
-
-    	</div>
-
-    	<div ng-if="aCtrl.type === 'time'">
-
-    		<h4>{{ 'Reference periods' | i18next }}</h4>
-    		<label>{{ 'No. of Preceding periods' | i18next }}</label><br />
-    		<div style="display: inline-block;">
-				<input class="form-control" type="number" style="text-align: right; width: 150px; display: inline-block;" ng-model="aCtrl.periodCountSelected" min="0" max="52">
-    		</div>
-    	</div>
-    	
-    </div>
-    
-    <!-- ORGUNIT -->
-    <div uib-accordion-group class="panel-default" heading="{{ 'Orgunit' | i18next }}" is-open="status.open">
-
-		<d2-select-orgunit default-level="1" max-level="3" ng-model="aCtrl.selectedOrgunit" on-select="aCtrl.selectedOrgunit = object;"></d2-select-orgunit>
-    </div>
-  </uib-accordion>
-
-<button type="button" class="btn btn-primary pull-right" ng-click="aCtrl.doAnalysis(null, null); aCtrl.updateCharts();"
-	ng-disabled="(!aCtrl.periodSelected && aCtrl.periodTypeSelected.id != 'Yearly') ||
-					!aCtrl.dataSelectedA ||
-					(aCtrl.type === 'data' && !aCtrl.dataSelectedB)"
-		style="margin-bottom:20px">{{ 'Analyze' | i18next }}</button>
-
-<hr / style="clear: both;">
-
-<div ng-if="aCtrl.req">
-<h5>{{ 'Loading data...' | i18next }}'</h5>
-<uib-progressbar class="progress-striped active" value="100" type="default"><i ng-show="showWarning">{{ 'Processing' | i18next }}</i></uib-progressbar>
+	</div>
+	<div style="margin-bottom: 10px;" ng-if="aCtrl.subType != 'do' || aCtrl.type === 'time'">
+		<label>{{ 'Criteria' | i18next }}</label><br />
+		<input ng-init="aCtrl.consistencyCriteria = 33" class="form-control" type="number" style="text-align: right; width: 150px; display: inline-block;" ng-model="aCtrl.consistencyCriteria" min="0" max="50"> <span style="display: inline-block;">%</span> 
+	</div>
 </div>
+<!-- DATA -->
+<div uib-accordion-group class="panel-default" heading="{{ 'Data' | i18next }}">
+	<div ng-init="aCtrl.dataTypeSelectedA = 'dataElements'">
+		<h4>
+			{{ 'Select data element/indicator' | i18next }}
+		</h4>
+		<div class="btn-group btn-group-justified" style="width: 120px; margin-bottom: 10px; display: inline-block;">
+			<label class="btn btn-default" ng-model="aCtrl.dataTypeSelectedA" uib-btn-radio="'dataElements'">{{ 'Data element' | i18next }}</label> <label class="btn btn-default" ng-model="aCtrl.dataTypeSelectedA" uib-btn-radio="'indicators'">{{ 'Indicator' | i18next }}</label> 
+		</div>
+<!-- DATA ELEMENTS -->
+		<div ng-if="aCtrl.dataTypeSelectedA === 'dataElements'" style="max-width: 600px">
+			<d2-select-data-element multiple="false" ng-model="aCtrl.dataSelectedA"> </d2-select-data-element> 
+		</div>
+<!-- INDICATORS -->
+		<div ng-if="aCtrl.dataTypeSelectedA === 'indicators'" style="max-width: 600px">
+			<d2-select-indicator multiple="false" ng-model="aCtrl.dataSelectedA"> </d2-select-indicator> 
+		</div>
+	</div>
+	<div ng-if="aCtrl.type === 'data'" ng-init="aCtrl.dataTypeSelectedB = 'dataElements'">
+		<h4>
+			{{ 'Select data element/indicator for comparison' | i18next }}
+		</h4>
+		<div class="btn-group btn-group-justified" style="width: 120px; margin-bottom: 10px; display: inline-block;">
+			<label class="btn btn-default" ng-model="aCtrl.dataTypeSelectedB" uib-btn-radio="'dataElements'">{{ 'Data element' | i18next }}</label> <label class="btn btn-default" ng-model="aCtrl.dataTypeSelectedB" uib-btn-radio="'indicators'">{{ 'Indicator' | i18next }}</label> 
+		</div>
+<!-- DATA ELEMENTS -->
+		<div ng-if="aCtrl.dataTypeSelectedB === 'dataElements'" style="max-width: 600px">
+			<d2-select-data-element multiple="false" ng-model="aCtrl.dataSelectedB"> </d2-select-data-element> 
+		</div>
+<!-- INDICATORS -->
+		<div ng-if="aCtrl.dataTypeSelectedB === 'indicators'" style="max-width: 600px">
+			<d2-select-indicator multiple="false" ng-model="aCtrl.dataSelectedB"> </d2-select-indicator> 
+		</div>
+	</div>
+</div>
+<!-- PERIOD -->
+<div uib-accordion-group class="panel-default" heading="{{ 'Period' | i18next }}">
+	<h4 ng-if="aCtrl.type === 'time'">
+		{{ 'Period' | i18next }}
+	</h4>
+	<div style="display: inline-block;">
+		<label>{{ 'Period type' | i18next }}</label><br />
+		<div style="display: inline-block;">
+			<ui-select on-select="aCtrl.getPeriodsInYear(); aCtrl.periodSelected = null;" ng-model="aCtrl.periodTypeSelected" style="margin-bottom: 10px; width: 200px;"> <ui-select-match placeholder="{{&nbsp;'Select period type...' | i18next }}"> {{aCtrl.periodTypeSelected.name}} </ui-select-match> <ui-select-choices repeat="obj in aCtrl.filteredPeriodTypes | filter: $select.search"> 
+			<div ng-bind-html="obj.name | highlight: $select.search">
+			</div>
+			</ui-select-choices> </ui-select> 
+		</div>
+	</div>
+	<div style="display: inline-block;">
+		<label>{{ 'Year' | i18next }}</label><br />
+		<div style="display: inline-block;">
+			<ui-select on-select="aCtrl.getPeriodsInYear(); aCtrl.periodSelected = null;" ng-model="aCtrl.yearSelected" style="margin-bottom: 10px; width: 200px;"> <ui-select-match placeholder="{{ 'Select year...' | i18next }}'"> {{aCtrl.yearSelected.name}} </ui-select-match> <ui-select-choices repeat="obj in aCtrl.years | filter: $select.search"> 
+			<div ng-bind-html="obj.name | highlight: $select.search">
+			</div>
+			</ui-select-choices> </ui-select> 
+		</div>
+	</div>
+	<div ng-if="aCtrl.periodTypeSelected.id != 'Yearly'" style="display: inline-block;">
+		<label>{{ 'Period' | i18next }}</label><br />
+		<div style="display: inline-block;">
+			<ui-select ng-model="aCtrl.periodSelected" style="margin-bottom: 10px; width: 200px;"> <ui-select-match placeholder="{{ 'Select period...' | i18next }}"> {{aCtrl.periodSelected.name}} </ui-select-match> <ui-select-choices repeat="obj in aCtrl.periodsInYear | filter: $select.search"> 
+			<div ng-bind-html="obj.name | highlight: $select.search">
+			</div>
+			</ui-select-choices> </ui-select> 
+		</div>
+	</div>
+	<div ng-if="aCtrl.type === 'time'">
+		<h4>
+			{{ 'Reference periods' | i18next }}
+		</h4>
+		<label>{{ 'No. of Preceding periods' | i18next }}</label><br />
+		<div style="display: inline-block;">
+			<input class="form-control" type="number" style="text-align: right; width: 150px; display: inline-block;" ng-model="aCtrl.periodCountSelected" min="0" max="52"> 
+		</div>
+	</div>
+</div>
+<!-- ORGUNIT -->
+<div uib-accordion-group class="panel-default" heading="{{ 'Orgunit' | i18next }}" is-open="status.open">
+	<d2-select-orgunit default-level="1" max-level="3" ng-model="aCtrl.selectedOrgunit" on-select="aCtrl.selectedOrgunit = object;"></d2-select-orgunit> 
+</div>
+</uib-accordion> 
+<button type="button" class="btn btn-primary pull-right" ng-click="aCtrl.doAnalysis(null, null); aCtrl.updateCharts();" ng-disabled="(!aCtrl.periodSelected &amp;&amp; aCtrl.periodTypeSelected.id != 'Yearly') ||
+					!aCtrl.dataSelectedA ||
+					(aCtrl.type === 'data' &amp;&amp; !aCtrl.dataSelectedB)" style="margin-bottom:20px">{{ 'Analyze' | i18next }}</button> 
+
+<hr/> 
+
+<!-- PROGRESS -->
+<div ng-if="aCtrl.req">
+	<h5>
+		{{ 'Loading data...' | i18next }}'
+	</h5>
+	<uib-progressbar class="progress-striped active" value="100" type="default"><i ng-show="showWarning">{{ 'Processing' | i18next }}</i></uib-progressbar> 
+</div>
+<div ng-if="aCtrl.result === undefined" style="height: 400px;"></div>
+
 
 <!-- RESULT -->
-<div ng-if="aCtrl.result === undefined" style="height: 400px;"></div>
 <div ng-if="aCtrl.result">
 	<div class="pull-left">
-		<h4>{{aCtrl.title()}}</h4>
+		<h4>
+			{{aCtrl.title()}}
+		</h4>
 	</div>
 	<div class="pull-right">
 		<div class="btn-group">
-			<button type="button" ng-click="aCtrl.exportCSV();" class="btn btn-default" style="width: 100px">
-				{{ 'Download' | i18next }}
-			</button>
-			<button style="width: 100px" type="button" class="btn btn-default"
-					ng-disabled="aCtrl.results.length < 2 || aCtrl.currentResult >= 4 || (1 + aCtrl.currentResult) === aCtrl.results.length"
-					ng-click="aCtrl.previousResult();">
-				{{ 'Previous' | i18next }}
-			</button>
+			<button type="button" ng-click="aCtrl.exportCSV();" class="btn btn-default" style="width: 100px"> {{ 'Download' | i18next }} </button> <button style="width: 100px" type="button" class="btn btn-default" ng-disabled="aCtrl.results.length &lt; 2 || aCtrl.currentResult &gt;= 4 ||&nbsp;(1 + aCtrl.currentResult) === aCtrl.results.length" ng-click="aCtrl.previousResult();"> {{ 'Previous' | i18next }} </button> 
 		</div>
 	</div>
-
-<div style="display: inline-block; width: 100%; margin-top: 10px">
-	<nvd3 id="mainChart" style="display: inline-block; width: 55%; vertical-align: top;" options='aCtrl.chart.options' data='aCtrl.chart.data'></nvd3>
-
-	<div style="font-size: 85%; display: inline-block; width: 44%;  vertical-align: top;" class="table-responsive">
-	<table class="table table-bordered table-striped table-condensed table-hover">
-		<thead>
-		    <tr>
-
-		    	<th style="white-space:nowrap;" ng-click="aCtrl.sortByColumn('name')">
-					{{ 'Unit' | i18next }}
-					<span ng-if="aCtrl.sortCol === 'name'" class="glyphicon glyphicon-sort-by-attributes"></span>
-				</th>
-		    	<th ng-click="aCtrl.sortByColumn('value')">
-		    		<span ng-if="aCtrl.result.type === 'data'">
-		    			{{aCtrl.result.dxNameA}}
-		    		</span>
-		    		<span ng-if="aCtrl.result.type === 'time'">
-						{{ 'Current Period' | i18next }}
-					</span>
-					<span ng-if="aCtrl.sortCol === 'value'" class="glyphicon glyphicon-sort-by-attributes"></span>
-		    	</th>
-		    	<th ng-click="aCtrl.sortByColumn('refValue')">
-			    	<span ng-if="aCtrl.result.type === 'data'">{{aCtrl.result.dxNameB}}</span>
-			    	<span ng-if="aCtrl.result.type === 'time' && aCtrl.result.subType === 'constant'">{{ 'Average' | i18next }}</span>
-			    	<span ng-if="aCtrl.result.type === 'time' && aCtrl.result.subType != 'constant'">{{ 'Forecast' | i18next }}</span>
-					<span ng-if="aCtrl.sortCol === 'refValue'" class="glyphicon glyphicon-sort-by-attributes"></span>
-		    	</th>
-		    	<th style="white-space:nowrap;" ng-click="aCtrl.sortByColumn('ratio')">
-			    	<span ng-if="aCtrl.result.type === 'data' && aCtrl.result.subType === 'do'">{{ 'Dropout rate' | i18next }} (%)</span>
-			    	<span ng-if="aCtrl.result.type === 'data' && aCtrl.result.subType != 'do'">{{ 'Ratio' | i18next }}</span>
-			    	<span ng-if="aCtrl.result.type === 'time'">{{ 'Ratio' | i18next }}</span>
-					<span class="glyphicon glyphicon-info-sign"
-						  style="color: black"
-						  aria-hidden="true"
-						  uib-tooltip="{{aCtrl.ratioDescription()}}">
-					</span>
-					<span ng-if="aCtrl.sortCol === 'ratio'" class="glyphicon glyphicon-sort-by-attributes"></span>
-		    	</th>
-		    	<th style="white-space:nowrap;" ng-click="aCtrl.sortByColumn('weight')">
-					{{ 'Weight' | i18next }}
-					<span class="glyphicon glyphicon-info-sign"
-						  style="color: black"
-						  aria-hidden="true"
-						  uib-tooltip="Significance of potential data quality problem.">
-					</span>
-					<span ng-if="aCtrl.sortCol === 'weight'" class="glyphicon glyphicon-sort-by-attributes"></span>
-				</th>
-		    </tr>
-		</thead>
-
-		<tfoot>
-		    <td colspan="5">
-		        <div uib-pagination total-items="aCtrl.totalRows" items-per-page="aCtrl.pageSize" max-size="5" ng-model="aCtrl.currentPage" class="pagination-sm pull-right" boundary-links="true" rotate="true"></div>
-		    </td>
-		</tfoot>
-
-		<tbody>
-			<tr	class="info"
-				valign="middle">
-				<td>{{aCtrl.result.boundaryName}}</td>
-				<td class="valueCell">{{aCtrl.result.boundaryValue}}</td>
-				<td class="valueCell">{{aCtrl.result.boundaryRefValue}}</td>
-				<td class="valueCell">
-	            	<span ng-if="aCtrl.result.type === 'data' && aCtrl.result.subType === 'do'">
-	            		{{aCtrl.result.boundaryPercentage}}%
-	            	</span>
-	            	<span ng-if="aCtrl.result.subType != 'do' && aCtrl.validRatio(aCtrl.result.boundaryRatio)">
-	            		{{aCtrl.result.boundaryRatio}}
-	            	</span>
+	<div style="display: inline-block; width: 100%; margin-top: 10px">
+		<nvd3 id="mainChart" style="display: inline-block; width: 55%; vertical-align: top;" options='aCtrl.chart.options' data='aCtrl.chart.data'></nvd3> 
+		<div style="font-size: 85%; display: inline-block; width: 44%;  vertical-align: top;" class="table-responsive">
+			<table class="table table-bordered table-striped table-condensed table-hover">
+				<thead>
+					<tr>
+						<th style="white-space:nowrap;" ng-click="aCtrl.sortByColumn('name')"> {{ 'Unit' | i18next }} <span ng-if="aCtrl.sortCol === 'name'" class="glyphicon glyphicon-sort-by-attributes"></span> </th>
+						<th ng-click="aCtrl.sortByColumn('value')"> <span ng-if="aCtrl.result.type === 'data'"> {{aCtrl.result.dxNameA}} </span> <span ng-if="aCtrl.result.type === 'time'"> {{ 'Current Period' | i18next }} </span> <span ng-if="aCtrl.sortCol === 'value'" class="glyphicon glyphicon-sort-by-attributes"></span> </th>
+						<th ng-click="aCtrl.sortByColumn('refValue')"> <span ng-if="aCtrl.result.type === 'data'">{{aCtrl.result.dxNameB}}</span> <span ng-if="aCtrl.result.type === 'time' &amp;&amp; aCtrl.result.subType === 'constant'">{{ 'Average' | i18next }}</span> <span ng-if="aCtrl.result.type === 'time' &amp;&amp; aCtrl.result.subType != 'constant'">{{ 'Forecast' | i18next }}</span> <span ng-if="aCtrl.sortCol === 'refValue'" class="glyphicon glyphicon-sort-by-attributes"></span> </th>
+						<th style="white-space:nowrap;" ng-click="aCtrl.sortByColumn('ratio')"> <span ng-if="aCtrl.result.type === 'data' &amp;&amp; aCtrl.result.subType === 'do'">{{ 'Dropout rate' | i18next }} (%)</span> <span ng-if="aCtrl.result.type === 'data' &amp;&amp; aCtrl.result.subType != 'do'">{{ 'Ratio' | i18next }}</span> <span ng-if="aCtrl.result.type === 'time'">{{ 'Ratio' | i18next }}</span> <span class="glyphicon glyphicon-info-sign" style="color: black" aria-hidden="true" uib-tooltip="{{aCtrl.ratioDescription()}}"> </span> <span ng-if="aCtrl.sortCol === 'ratio'" class="glyphicon glyphicon-sort-by-attributes"></span> </th>
+						<th style="white-space:nowrap;" ng-click="aCtrl.sortByColumn('weight')"> {{ 'Weight' | i18next }} <span class="glyphicon glyphicon-info-sign" style="color: black" aria-hidden="true" uib-tooltip="Significance of potential data quality problem."> </span> <span ng-if="aCtrl.sortCol === 'weight'" class="glyphicon glyphicon-sort-by-attributes"></span> </th>
+					</tr>
+				</thead>
+				<tfoot> 
+				<td colspan="5"> 
+				<div uib-pagination total-items="aCtrl.totalRows" items-per-page="aCtrl.pageSize" max-size="5" ng-model="aCtrl.currentPage" class="pagination-sm pull-right" boundary-links="true" rotate="true">
+				</div>
 				</td>
-				<td></td>
-			</tr>
-	    	<tr
-	    		ng-click="aCtrl.selectOrgunit(row);"
-	    		ng-class="{warning: row.id === aCtrl.selectedObject.id}"
-	    		valign="middle"
-	    		ng-repeat="row in aCtrl.tableData | orderBy:aCtrl.sortCol:aCtrl.reverse | startFrom:(aCtrl.currentPage-1)*aCtrl.pageSize | limitTo:aCtrl.pageSize">
-	            <td >{{row.name}}</td>
-	            <td class="valueCell">{{row.value}}</td>
-	            <td class="valueCell">{{row.refValue}}</td>
-	            <td class="valueCell" ng-class="{danger: row.violation}">
-	            	<span ng-if="aCtrl.result.type === 'data' && aCtrl.result.subType === 'do'">
-	            		{{aCtrl.dropoutRate(row.value, row.refValue)}}%
-	            	</span>
-	            	<span ng-if="aCtrl.result.subType != 'do' && aCtrl.validRatio(row.ratio)">
-	            		{{row.ratio}}
-	            	</span>
-	            </td>
-	            <td>{{row.weight}}</td>
-	        </tr>
-		</tbody>
-	</table>
+				</tfoot> 
+				<tbody>
+					<tr class="info" valign="middle">
+						<td>{{aCtrl.result.boundaryName}}</td>
+						<td class="valueCell">{{aCtrl.result.boundaryValue}}</td>
+						<td class="valueCell">{{aCtrl.result.boundaryRefValue}}</td>
+						<td class="valueCell"> <span ng-if="aCtrl.result.type === 'data' &amp;&amp; aCtrl.result.subType === 'do'"> {{aCtrl.result.boundaryPercentage}}% </span> <span ng-if="aCtrl.result.subType != 'do' &amp;&amp; aCtrl.validRatio(aCtrl.result.boundaryRatio)"> {{aCtrl.result.boundaryRatio}} </span> </td>
+						<td></td>
+					</tr>
+					<tr ng-click="aCtrl.selectOrgunit(row);" ng-class="{warning: row.id === aCtrl.selectedObject.id}" valign="middle" ng-repeat="row in aCtrl.tableData | orderBy:aCtrl.sortCol:aCtrl.reverse | startFrom:(aCtrl.currentPage-1)*aCtrl.pageSize | limitTo:aCtrl.pageSize">
+						<td>{{row.name}}</td>
+						<td class="valueCell">{{row.value}}</td>
+						<td class="valueCell">{{row.refValue}}</td>
+						<td class="valueCell" ng-class="{danger: row.violation}"> <span ng-if="aCtrl.result.type === 'data' &amp;&amp; aCtrl.result.subType === 'do'"> {{aCtrl.dropoutRate(row.value, row.refValue)}}% </span> <span ng-if="aCtrl.result.subType != 'do' &amp;&amp; aCtrl.validRatio(row.ratio)"> {{row.ratio}} </span> </td>
+						<td>{{row.weight}}</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
 	</div>
-</div>
-
-<div style="margin-bottom: 10px;">
-<h4>{{ 'Selected' | i18next }}</h4>
-<table class="table table-bordered table-striped table-condensed table-hover">
-	<thead>
-	    <tr>
-	    	<th nowrap>{{ 'Unit' | i18next }}</th>
-	    	<th>
-	    		<span ng-if="aCtrl.result.type === 'data'">{{aCtrl.result.dxNameA}}</span>
-	    		<span ng-if="aCtrl.result.type === 'time'">{{ 'Current Period' | i18next }}</span></th>
-	    	<th>
-	    		<span ng-if="aCtrl.result.type === 'data'">{{aCtrl.result.dxNameB}}</span>
-	    		<span ng-if="aCtrl.result.type === 'time' && aCtrl.result.subType === 'constant'">{{ 'Average' | i18next }}</span>
-	    		<span ng-if="aCtrl.result.type === 'time' && aCtrl.result.subType != 'constant'">{{ 'Forecast' | i18next }}</span>
-	    	</th>
-	    	<th>
-	    		<span ng-if="aCtrl.result.type === 'data' && aCtrl.result.subType === 'do'">{{ 'Dropout rate' | i18next }} (%)</span>
-	    		<span ng-if="aCtrl.result.type === 'data' && aCtrl.result.subType != 'do'">{{ 'Ratio' | i18next }}</span>
-	    		<span ng-if="aCtrl.result.type === 'time'">{{ 'Ratio' | i18next }}</span>
-	    	</th>
-	    	<th></th>
-	    </tr>
-	</thead>
-
-	<tbody>
-    	<tr ng-if="aCtrl.selectedObject.hasOwnProperty('name')">
-            <td>{{aCtrl.selectedObject.name}}</td>
-            <td class="valueCell">{{aCtrl.selectedObject.value}}</td>
-            <td class="valueCell">{{aCtrl.selectedObject.refValue}}</td>
-            <td class="valueCell">
-	            <span ng-if="aCtrl.result.type === 'data' && aCtrl.result.subType === 'do'">
-	            	{{aCtrl.dropoutRate(aCtrl.selectedObject.value, aCtrl.selectedObject.refValue)}}%
-	            </span>
-	            <span ng-if="aCtrl.result.subType != 'do'">
-	            	{{aCtrl.selectedObject.ratio}}
-	            </span>
-	        </td>
-            <td>
-            	<span class="dropdown" uib-dropdown>
-                  <a href class="dropdown-toggle" uib-dropdown-toggle>
-                          <span class="glyphicon glyphicon-th-list" style="color: black" aria-hidden="true"></span>
-                        </a>
-                  <ul class="dropdown-menu uib-dropdown-menu-right">
-                    <li><a href ng-click="aCtrl.sendMessage(aCtrl.selectedObject);">{{ 'Contact' | i18next }}</a></li>
-                    <li><a href ng-click="aCtrl.drillDown(aCtrl.selectedObject);">{{ 'Drill down' | i18next }}</a></li>
-                  </ul>
-                  </span>
-            </td>
-        </tr>
-        <tr ng-if="!aCtrl.selectedObject.hasOwnProperty('name')">
-        	<td colspan="5">{{ 'Click on the graph or in the table see details.' | i18next }}</td>
-        </tr>
-	</tbody>
-</table>
-</div>
-
-<nvd3 options='aCtrl.chartSelected.options' data='aCtrl.chartSelected.data'></nvd3>
-
+	<div style="margin-bottom: 10px;">
+		<h4>
+			{{ 'Selected' | i18next }}
+		</h4>
+		<table class="table table-bordered table-striped table-condensed table-hover">
+			<thead>
+				<tr>
+					<th nowrap>{{ 'Unit' | i18next }}</th>
+					<th> <span ng-if="aCtrl.result.type === 'data'">{{aCtrl.result.dxNameA}}</span> <span ng-if="aCtrl.result.type === 'time'">{{ 'Current Period' | i18next }}</span></th>
+					<th> <span ng-if="aCtrl.result.type === 'data'">{{aCtrl.result.dxNameB}}</span> <span ng-if="aCtrl.result.type === 'time' &amp;&amp; aCtrl.result.subType === 'constant'">{{ 'Average' | i18next }}</span> <span ng-if="aCtrl.result.type === 'time' &amp;&amp; aCtrl.result.subType != 'constant'">{{ 'Forecast' | i18next }}</span> </th>
+					<th> <span ng-if="aCtrl.result.type === 'data' &amp;&amp; aCtrl.result.subType === 'do'">{{ 'Dropout rate' | i18next }} (%)</span> <span ng-if="aCtrl.result.type === 'data' &amp;&amp; aCtrl.result.subType != 'do'">{{ 'Ratio' | i18next }}</span> <span ng-if="aCtrl.result.type === 'time'">{{ 'Ratio' | i18next }}</span> </th>
+					<th></th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr ng-if="aCtrl.selectedObject.hasOwnProperty('name')">
+					<td>{{aCtrl.selectedObject.name}}</td>
+					<td class="valueCell">{{aCtrl.selectedObject.value}}</td>
+					<td class="valueCell">{{aCtrl.selectedObject.refValue}}</td>
+					<td class="valueCell"> <span ng-if="aCtrl.result.type === 'data' &amp;&amp; aCtrl.result.subType === 'do'"> {{aCtrl.dropoutRate(aCtrl.selectedObject.value, aCtrl.selectedObject.refValue)}}% </span> <span ng-if="aCtrl.result.subType != 'do'"> {{aCtrl.selectedObject.ratio}} </span> </td>
+					<td> <span class="dropdown" uib-dropdown> <a href="" class="dropdown-toggle" uib-dropdown-toggle> <span class="glyphicon glyphicon-th-list" style="color: black" aria-hidden="true"></span> </a> 
+					<ul class="dropdown-menu uib-dropdown-menu-right">
+						<li><a href="" ng-click="aCtrl.sendMessage(aCtrl.selectedObject);">{{ 'Contact' | i18next }}</a></li>
+						<li><a href="" ng-click="aCtrl.drillDown(aCtrl.selectedObject);">{{ 'Drill down' | i18next }}</a></li>
+					</ul>
+					</span> </td>
+				</tr>
+				<tr ng-if="!aCtrl.selectedObject.hasOwnProperty('name')">
+					<td colspan="5">{{ 'Click on the graph or in the table see details.' | i18next }}</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	<nvd3 options='aCtrl.chartSelected.options' data='aCtrl.chartSelected.data'></nvd3> 
 </div>
