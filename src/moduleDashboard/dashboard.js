@@ -13,8 +13,8 @@ const moment = require("moment");
 angular.module("dashboard", ["d2", "dqAnalysis", "ui.bootstrap"]);
 
 //Define DashboardController
-	angular.module('dashboard').controller("DashboardController",
-	['periodService', 'visualisationService', 'dataAnalysisService', 'notificationService', '$q', '$scope', 'd2Map', 'd2Meta', 'dqAnalysisConsistency',
+angular.module("dashboard").controller("DashboardController",
+	["periodService", "visualisationService", "dataAnalysisService", "notificationService", "$q", "$scope", "d2Map", "d2Meta", "dqAnalysisConsistency",
 		function(periodService, visualisationService, dataAnalysisService, notificationService, $q, $scope, d2Map, d2Meta, dqAnalysisConsistency) {
 
 			var self = this;
@@ -33,7 +33,7 @@ angular.module("dashboard", ["d2", "dqAnalysis", "ui.bootstrap"]);
 
 
 			/** ===== ANALYSIS ===== */
-		
+
 			/** COMPLETENESS */
 			self.makeCompletenessCharts = function() {
 
@@ -66,7 +66,7 @@ angular.module("dashboard", ["d2", "dqAnalysis", "ui.bootstrap"]);
 
 					var level;
 					if (self.selectedOrgunit.level) level = self.selectedOrgunit.level.level;
-				
+
 					var dataSetQueryID = [];
 					dataSetQueryID.push(dataset.id + ".REPORTING_RATE");
 					dataSetQueryID.push(dataset.id + ".REPORTING_RATE_ON_TIME");
@@ -107,7 +107,7 @@ angular.module("dashboard", ["d2", "dqAnalysis", "ui.bootstrap"]);
 			};
 
 
-		
+
 			/** CONSISTENCY OVER TIME */
 			self.makeTimeConsistencyCharts = function() {
 				if (!self.ready) {
@@ -130,13 +130,12 @@ angular.module("dashboard", ["d2", "dqAnalysis", "ui.bootstrap"]);
 				var ouBoundaryID = self.selectedOrgunit.boundary.id;
 				var ouLevel;
 				if (self.selectedOrgunit.level) ouLevel = self.selectedOrgunit.level.level;
-				var data, endDate, startDate, periodType, yyPeriods, period, refPeriods; 	
+				var data, endDate, startDate, periodType, yyPeriods, period, refPeriods;
 				var datas = d2Map.groupNumerators(self.group.code, true);
 				self.expectedConsistencyCharts = datas.length;
-				var consistencyChart;
 				if (datas.length > 0) self.tcLoading = true;
 				for (var i = 0; i < datas.length; i++) {
-				
+
 					data = datas[i];
 					periodType = d2Map.dataSets(data.dataSetID).periodType;
 
@@ -148,15 +147,15 @@ angular.module("dashboard", ["d2", "dqAnalysis", "ui.bootstrap"]);
 					endDate = self.endDate;
 					yyPeriods.push(periodService.getISOPeriods(startDate, endDate, periodType));
 					for (var j = 0; j < 2; j++) {
-      				startDate = moment(startDate).subtract(1, 'year');
-      				endDate = moment(endDate).subtract(1, 'year');
+						startDate = moment(startDate).subtract(1, "year");
+						endDate = moment(endDate).subtract(1, "year");
 						yyPeriods.push(periodService.getISOPeriods(startDate, endDate, periodType));
 					}
 
 					var promises = [];
 					promises.push(promiseObject(data));
 					promises.push(visualisationService.yyLineChart(null, yyPeriods, data.dataID, ouBoundaryID));
-				promises.push(dqAnalysisConsistency.analyse(data.dataID, null, period, refPeriods, ouBoundaryID, ouLevel, null, 'time', data.trend, data.comparison, data.consistency, null));
+					promises.push(dqAnalysisConsistency.analyse(data.dataID, null, period, refPeriods, ouBoundaryID, ouLevel, null, "time", data.trend, data.comparison, data.consistency, null));
 					$q.all(promises).then(function(datas) {
 
 						var data = datas[0];
@@ -184,7 +183,7 @@ angular.module("dashboard", ["d2", "dqAnalysis", "ui.bootstrap"]);
 						visualisationService.setChartLegend(consistencyChart.consistencyChartOptions, true);
 						visualisationService.setChartYAxis(consistencyChart.consistencyChartOptions, 0, 100);
 						visualisationService.setChartMargins(consistencyChart.consistencyChartOptions, 60, 30, 90, 110);
-					
+
 
 						self.consistencyCharts.push(consistencyChart);
 						if (self.consistencyCharts.length === self.expectedConsistencyCharts) self.tcLoading = false;
@@ -192,7 +191,7 @@ angular.module("dashboard", ["d2", "dqAnalysis", "ui.bootstrap"]);
 					});
 
 				}
-						
+
 			};
 
 
@@ -228,19 +227,19 @@ angular.module("dashboard", ["d2", "dqAnalysis", "ui.bootstrap"]);
 					var indicatorA = d2Map.numerators(relation.A);
 					var indicatorB = d2Map.numerators(relation.B);
 
-				
+
 					var periodType = periodService.longestPeriod([d2Map.dataSets(indicatorA.dataSetID).periodType,
 						d2Map.dataSets(indicatorB.dataSetID).periodType]);
 					var period = periodService.getISOPeriods(self.startDate, self.endDate, periodType);
 
 					var promises = [];
 					promises.push(relation);
-				promises.push(dqAnalysisConsistency.analyse(indicatorA.dataID, indicatorB.dataID, period, null, ouBoundaryID, ouLevel, null, 'data', relation.type, null, relation.criteria, null));
+					promises.push(dqAnalysisConsistency.analyse(indicatorA.dataID, indicatorB.dataID, period, null, ouBoundaryID, ouLevel, null, "data", relation.type, null, relation.criteria, null));
 					$q.all(promises).then(function(datas) {
-					var data = datas[0]
+						var data = datas[0];
 						var result = datas[1];
 
-					if (result.result.subType != 'do') {
+						if (result.result.subType != "do") {
 							visualisationService.makeDataConsistencyChart(null, result.result, null);
 						}
 						else {
@@ -249,13 +248,13 @@ angular.module("dashboard", ["d2", "dqAnalysis", "ui.bootstrap"]);
 
 						var dataConsistencyChart = {
 							name: data.name,
-						period: periodService.shortPeriodName(result.result.pe[0]) + ' to ' +
+							period: periodService.shortPeriodName(result.result.pe[0]) + " to " +
 							periodService.shortPeriodName(result.result.pe[result.result.pe.length - 1]),
 							chartOptions: result.result.chartOptions,
 							chartData: result.result.chartData
 						};
 
-					if (result.result.subType != 'do') {
+						if (result.result.subType != "do") {
 							visualisationService.setChartLegend(dataConsistencyChart.chartOptions, true);
 						}
 
@@ -271,7 +270,7 @@ angular.module("dashboard", ["d2", "dqAnalysis", "ui.bootstrap"]);
 				}
 
 			};
-		
+
 
 
 
@@ -305,7 +304,7 @@ angular.module("dashboard", ["d2", "dqAnalysis", "ui.bootstrap"]);
 
 
 				//Get period IDs
-			var periods = periodService.getISOPeriods(self.startDate, self.endDate, 'Monthly');
+				var periods = periodService.getISOPeriods(self.startDate, self.endDate, "Monthly");
 
 
 				//Get data IDs
@@ -317,11 +316,11 @@ angular.module("dashboard", ["d2", "dqAnalysis", "ui.bootstrap"]);
 
 				self.outLoading = true;
 				dataAnalysisService.outlierGap(receiveResult, dataIDs, null, null, periods, [self.selectedOrgunit.boundary.id], level, null, 2, 3.5, 1);
-		}
+			};
 
 
 
-		
+
 			/** ===== UTILITIES ===== */
 
 			function promiseObject(object) {
@@ -333,7 +332,7 @@ angular.module("dashboard", ["d2", "dqAnalysis", "ui.bootstrap"]);
 
 			self.setWindowWidth = function() {
 
-			var contentWidth = angular.element('.mainView').width();
+				var contentWidth = angular.element(".mainView").width();
 
 				//TODO: For now, assume there is a scrollbar - which on Win Chrome is 17 px
 				contentWidth -= 17;
@@ -360,15 +359,15 @@ angular.module("dashboard", ["d2", "dqAnalysis", "ui.bootstrap"]);
 					chartWidth = chartWidth/2; //half width for chart
 				}
 
-			self.halfChart = Math.floor(chartWidth).toString() + 'px';
-			self.contentWidth = Math.floor(contentWidth).toString() + 'px';
+				self.halfChart = Math.floor(chartWidth).toString() + "px";
+				self.contentWidth = Math.floor(contentWidth).toString() + "px";
 
 				for (var i = 0; i < 3; i++) {
 					self.widthChanged[i] = true;
 				}
 				self.widthChanged[self.selectedTab] = false;
 
-		}
+			};
 
 
 			self.update = function() {
@@ -377,12 +376,12 @@ angular.module("dashboard", ["d2", "dqAnalysis", "ui.bootstrap"]);
 				self.consistencyData = false;
 				self.outliers = false;
 
-			if (self.selectedOrgunit && self.selectedOrgunit.boundary && self.group) self.ready = true;
+				if (self.selectedOrgunit && self.selectedOrgunit.boundary && self.group) self.ready = true;
 
 
 				self.endDate = moment(self.endDate).date(1);
-			self.startDate = moment(self.endDate).subtract(11, 'months');
-			self.endDate = self.endDate.add(1, 'months').subtract(1, 'day');
+				self.startDate = moment(self.endDate).subtract(11, "months");
+				self.endDate = self.endDate.add(1, "months").subtract(1, "day");
 
 
 				switch (self.selectedTab) {
@@ -399,7 +398,7 @@ angular.module("dashboard", ["d2", "dqAnalysis", "ui.bootstrap"]);
 					self.makeOutlierTable();
 					break;
 				}
-		}
+			};
 
 
 			self.updateCurrent = function() {
@@ -417,7 +416,7 @@ angular.module("dashboard", ["d2", "dqAnalysis", "ui.bootstrap"]);
 					self.makeDataConsistencyCharts();
 					break;
 				}
-		}
+			};
 
 
 
@@ -426,34 +425,34 @@ angular.module("dashboard", ["d2", "dqAnalysis", "ui.bootstrap"]);
 			/** ===== INIT ===== */
 			function init() {
 
-      		self.group = {displayName: '[ Core ]', code: 'core'};
+				self.group = {displayName: "[ Core ]", code: "core"};
 				self.groups = d2Map.configuredGroups();
 				self.groups.unshift(self.group);
 
 				//Assume no groups means not configured
 				if (self.groups.length === 1) {
-				notificationService.notify('Info', "The data quality tool has not been configured. " +
-					"Contact your system administrator.\n\n If you are an administrator select " +
-					"More > Administration from the top menu to get started.");
+					notificationService.notify("Info", "The data quality tool has not been configured. " +
+						"Contact your system administrator.\n\n If you are an administrator select " +
+						"More > Administration from the top menu to get started.");
 				}
 
 				self.endDate = moment();
 				if (self.endDate.date() > 7) {
-				self.endDate.subtract(new Date().getDate(), 'days');
+					self.endDate.subtract(new Date().getDate(), "days");
 				}
 				else {
-				self.endDate.subtract(new Date().getDate(), 'days');
-				self.endDate.subtract(1, 'months');
+					self.endDate.subtract(new Date().getDate(), "days");
+					self.endDate.subtract(1, "months");
 				}
-			self.startDate = moment(self.endDate).subtract(12, 'months').add(1, 'day');
+				self.startDate = moment(self.endDate).subtract(12, "months").add(1, "day");
 
-			self.datepickerOptions.maxDate = moment().subtract(1, 'month').toDate();
+				self.datepickerOptions.maxDate = moment().subtract(1, "month").toDate();
 
 			}
 
 
 			function uiInit() {
-			if (angular.element('.mainView').width() > 1280) {
+				if (angular.element(".mainView").width() > 1280) {
 					self.showParameters = true;
 				}
 				else {
@@ -474,8 +473,8 @@ angular.module("dashboard", ["d2", "dqAnalysis", "ui.bootstrap"]);
 				self.selectedTab = 0;
 
 				self.datepickerOptions = {
-				minMode: 'month',
-				datepickerMode: 'month'
+					minMode: "month",
+					datepickerMode: "month"
 				};
 
 			}
@@ -501,5 +500,5 @@ angular.module("dashboard", ["d2", "dqAnalysis", "ui.bootstrap"]);
 
 
 			return self;
-		
+
 		}]);

@@ -7,11 +7,11 @@
  */
 
 export default function (BASE_URL, API_VERSION, $http, $q, notificationService) {
-	
+
 	var self = this;
-		      
+
 	self.getMultiple = function(requestURLs) {
-			
+
 		var promises = requestURLs.map(function(request) {
 
 			//Cache analytics requests
@@ -19,21 +19,21 @@ export default function (BASE_URL, API_VERSION, $http, $q, notificationService) 
 			//				if (request.indexOf("api/analytics") > -1); cache = true;
 
 			var fullURL = BASE_URL + "/api/" + API_VERSION + request;
-		    	return $http.get(fullURL, {"cache": cache});
-		    });
-		  	
-		  	return $q.all(promises);
+			return $http.get(fullURL, {"cache": cache});
+		});
+
+		return $q.all(promises);
 	};
-		
+
 	self.getSingle = function(requestURL) {
-		
-		
+
+
 		//Cache analytics requests
 		var cache = false;
 		//			if (requestURL.indexOf("api/analytics") > -1); cache = true;
-		
+
 		var fullURL = BASE_URL + "/api/" + API_VERSION + requestURL;
-		  	return $http.get(fullURL, {"cache": cache});
+		return $http.get(fullURL, {"cache": cache});
 	};
 
 
@@ -61,16 +61,16 @@ export default function (BASE_URL, API_VERSION, $http, $q, notificationService) 
 	};
 
 
-		
-	self.getSingleLocal = function(requestURL) {  	
-		  	return $http.get(requestURL);
+
+	self.getSingleLocal = function(requestURL) {
+		return $http.get(requestURL);
 	};
-		
-		
+
+
 	self.post = function(postURL, data) {
 		var fullURL = BASE_URL + "/api/" + API_VERSION + postURL;
-		  	
-		  	return $http.post(fullURL, data);
+
+		return $http.post(fullURL, data);
 	};
 
 	self.put = function(postURL, data) {
@@ -124,8 +124,8 @@ export default function (BASE_URL, API_VERSION, $http, $q, notificationService) 
 		}
 		return true;
 	};
-		
-		      
+
+
 	return self;
-	
+
 }

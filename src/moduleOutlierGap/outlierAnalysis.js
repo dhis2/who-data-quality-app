@@ -11,4 +11,4 @@ angular.module("outlierGapAnalysis", []);
 	
 require("./outlierAnalysisParameters.js");
 require("./outlierAnalysisResult.js");
-require("./modalOutlierAnalysisGraphController.js")
+require("./modalOutlierAnalysisGraphController.js");

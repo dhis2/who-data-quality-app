@@ -10,15 +10,15 @@
 
 	var app = angular.module("appCommons");
 
-	app.directive('d2SelectOrgunit', function () {
+	app.directive("d2SelectOrgunit", function () {
 		return {
 			scope: {
-				'ngModel': '=',
-				'onSelect': '&',
-				'defaultLevel': '=',
-				'maxLevel': '=',
-				'hideGroup': '=',
-				'hideLevel': '='
+				"ngModel": "=",
+				"onSelect": "&",
+				"defaultLevel": "=",
+				"maxLevel": "=",
+				"hideGroup": "=",
+				"hideLevel": "="
 			},
 			bindToController: true,
 			controller: "d2SelectOUController",
@@ -28,7 +28,7 @@
 	});
 	
 	app.controller("d2SelectOUController",
-		['d2Meta', 'd2Utils', '$q',
+		["d2Meta", "d2Utils", "$q",
 			function(d2Meta, d2Utils, $q) {
 				var self = this;
 
@@ -51,13 +51,13 @@
 
 					var promises = [];
 					promises.push(d2Meta.userOrgunits());
-					promises.push(d2Meta.objects('organisationUnitLevels', null, 'displayName,id,level'));
-					promises.push(d2Meta.objects('organisationUnitGroups'));
+					promises.push(d2Meta.objects("organisationUnitLevels", null, "displayName,id,level"));
+					promises.push(d2Meta.objects("organisationUnitGroups"));
 					$q.all(promises).then(
 						function(data) {
 							self.userOrgunits = data[0];
-							self.orgunitLevels = d2Utils.arraySortByProperty(data[1], 'level', true, true);
-							self.orgunitGroups = d2Utils.arraySortByProperty(data[2], 'displayName', false);
+							self.orgunitLevels = d2Utils.arraySortByProperty(data[1], "level", true, true);
+							self.orgunitGroups = d2Utils.arraySortByProperty(data[2], "displayName", false);
 
 							self.selectionType = 0;
 							self.selectedOrgunit = self.userOrgunits[0];
@@ -162,7 +162,7 @@
 
 				function triggerOnSelect() {
 					if (self.ngModel && self.ngModel.boundary) {
-						self.onSelect({'object': self.ngModel});
+						self.onSelect({"object": self.ngModel});
 					}
 				}
 

@@ -105,19 +105,19 @@ export default function ($q, requestService, mathService, d2Meta, d2Map) {
 
 	/** -- ANALYSIS -- */
 	/**
-			 * Performs outlier and gap analysis
-			 * @param {Object} callback - function to send result to
-			 * @param {string[]} dataIDs - array of data element or indicator IDs
-			 * @param {bool} coAll - include all categoroptions
-			 * @param {string[]} coIDs - dataelementoperands to include (if not all)
-			 * @param {string[]} periods - array of periods in ISO format
-			 * @param {string[]} ouBoundary - array of orgunit IDs (act as boundary if combined with ouLevel or ouGroup)
-			 * @param {int} ouLevel - orgunit level (or null)
-			 * @param {string} ouGroup - orgunit group id
-			 * @param {float} sScoreCriteria - minimum standard score to be included in result
-			 * @param {float} zScoreCriteria - minimum modified z-score to be included in result
-			 * @param {float} gapCriteria - minimum number of gaps for result to be included
-			 */
+	 * Performs outlier and gap analysis
+	 * @param {Object} callback - function to send result to
+	 * @param {string[]} dataIDs - array of data element or indicator IDs
+	 * @param {bool} coAll - include all categoroptions
+	 * @param {string[]} coIDs - dataelementoperands to include (if not all)
+	 * @param {string[]} periods - array of periods in ISO format
+	 * @param {string[]} ouBoundary - array of orgunit IDs (act as boundary if combined with ouLevel or ouGroup)
+	 * @param {int} ouLevel - orgunit level (or null)
+	 * @param {string} ouGroup - orgunit group id
+	 * @param {float} sScoreCriteria - minimum standard score to be included in result
+	 * @param {float} zScoreCriteria - minimum modified z-score to be included in result
+	 * @param {float} gapCriteria - minimum number of gaps for result to be included
+	 */
 	self.outlierGap = function (callback, dataIDs, coAll, coIDs, periods, ouBoundary, ouLevel, ouGroup, sScoreCriteria, zScoreCriteria, gapCriteria) {
 		if (coAll || coIDs) console.log("CO still used for in self.outlierGap()");
 		var queueItem = {
@@ -193,7 +193,7 @@ export default function ($q, requestService, mathService, d2Meta, d2Map) {
 					if ((ouCount * peCount) > maxValues) {
 
 						console.log("Request too large (estimated " + parseInt(ouCount*self.og.ouBoundary.length) +
-									" units and " + peCount + " periods), partitioning");
+							" units and " + peCount + " periods), partitioning");
 
 
 						//TODO: Check here that children are not actually in some of the selected groups (if using groups)
@@ -667,7 +667,7 @@ export default function ($q, requestService, mathService, d2Meta, d2Map) {
 		//2 request subunit completeness data
 		var ou;
 		if (self.dsco.ouBoundary) ou = self.dsco.ouBoundary + ";LEVEL-" + self.dsco.ouLevel;
-		else ou = LEVEL - self.dsco.ouLevel;
+		else ou = LEVEL - self.dsco.ouLevel; //TODO - LEVEL is what?
 
 		var requestURL = "/analytics.json?dimension=dx:" + self.dsco.dsID + "&dimension=ou:" + ou + "&dimension=pe:" + self.dsco.pe + "&displayProperty=NAME";
 
@@ -1068,9 +1068,9 @@ export default function ($q, requestService, mathService, d2Meta, d2Map) {
 			data = dataValues[i];
 			if (
 				(dxi === undefined || data[dxi] === de) &&
-						(pei === undefined || data[pei] === pe.toString()) &&
-						(oui === undefined || data[oui] === ou) &&
-						(coi === undefined || data[coi] === co)
+				(pei === undefined || data[pei] === pe.toString()) &&
+				(oui === undefined || data[oui] === ou) &&
+				(coi === undefined || data[coi] === co)
 			) return parseFloat(data[vali]);
 		}
 
@@ -1260,7 +1260,7 @@ export default function ($q, requestService, mathService, d2Meta, d2Map) {
 			data.pending = true;
 			self.process.pending++;
 
-			if (data.type = "outlierGap") outlierAnalysis(data);
+			if (data.type == "outlierGap") outlierAnalysis(data);
 
 			data = getNextData();
 		}

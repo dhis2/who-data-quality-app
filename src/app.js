@@ -1,11 +1,11 @@
 /**
-© Copyright 2017 the World Health Organization (WHO).
+ © Copyright 2017 the World Health Organization (WHO).
 
-This software is distributed under the terms of the GNU General Public License version 3 (GPL Version 3),
-copied verbatim in the file “COPYING”.  In applying this license, WHO does not waive any of the privileges and
-immunities enjoyed by WHO under national or international law or submit to any national court jurisdiction.
-*/
-'use strict'
+ This software is distributed under the terms of the GNU General Public License version 3 (GPL Version 3),
+ copied verbatim in the file “COPYING”.  In applying this license, WHO does not waive any of the privileges and
+ immunities enjoyed by WHO under national or international law or submit to any national court jurisdiction.
+ */
+"use strict";
 
 const dhisDevConfig = DHIS_CONFIG; // eslint-disable-line
 
@@ -26,7 +26,7 @@ import "file-saver";
 import "blob";
 
 import i18next from "i18next";
-import i18nextXHRBackend from 'i18next-xhr-backend';
+import i18nextXHRBackend from "i18next-xhr-backend";
 import "ng-i18next";
 
 import "bootstrap/dist/css/bootstrap.css";
@@ -58,40 +58,40 @@ import "./moduleExport/export.js";
 import "./css/style.css";
 
 var app = angular.module("dataQualityApp",
-	["ngAnimate", "ngSanitize", "ngRoute", "ui.select", "jm.i18next", "dqAnalysis", "dashboard", "review", 
-		"consistencyAnalysis", "outlierGapAnalysis", "about", "dataExport", 
+	["ngAnimate", "ngSanitize", "ngRoute", "ui.select", "jm.i18next", "dqAnalysis", "dashboard", "review",
+		"consistencyAnalysis", "outlierGapAnalysis", "about", "dataExport",
 		"admin", "appService", "appCommons"]);
 
 
 /**Bootstrap*/
-angular.element(document).ready( 
+angular.element(document).ready(
 	function() {
 		var initInjector = angular.injector(["ng"]);
 		var $http = initInjector.get("$http");
 
 		$http.get("manifest.webapp").then(
 			function(response) {
-			
+
 				//Not production => rely on webpack-dev-server proxy
-				const baseUrl = process.env.NODE_ENV === 'production' ? 
-					response.data.activities.dhis.href : '';
+				const baseUrl = process.env.NODE_ENV === "production" ?
+					response.data.activities.dhis.href : "";
 				app.constant("BASE_URL", baseUrl);
 				app.constant("API_VERSION", "25");
 				angular.bootstrap(document, ["dataQualityApp"]);
 			}
 		);
-		
+
 		i18next
-	  .use(i18nextXHRBackend)
-	  .init({
-	    returnEmptyString: false,
-	    fallbackLng: false,
-	    keySeparator: '|',
-	    backend: {
-	      loadPath: './i18n/{{lng}}.pot'
-	    }
-	});
-window.i18next = i18next;
+			.use(i18nextXHRBackend)
+			.init({
+				returnEmptyString: false,
+				fallbackLng: false,
+				keySeparator: "|",
+				backend: {
+					loadPath: "./i18n/{{lng}}.pot"
+				}
+			});
+		window.i18next = i18next;
 	}
 );
 
@@ -155,40 +155,40 @@ app.config(["$routeProvider",
 
 /**Controller: Navigation*/
 app.controller("NavigationController",
-	["BASE_URL", "$location", "$window",
-		function(BASE_URL, $location, $window) {
+	["BASE_URL", "$location", "$window", "notificationService",
+		function(BASE_URL, $location, $window, notificationService) {
 			var self = this;
 
 			self.validBrowser = (navigator.userAgent.indexOf("MSIE 9") >= 0
-			|| navigator.userAgent.indexOf("MSIE 8") >= 0
-			|| navigator.userAgent.indexOf("MSIE 7") >= 0) ? false : true;
+				|| navigator.userAgent.indexOf("MSIE 8") >= 0
+				|| navigator.userAgent.indexOf("MSIE 7") >= 0) ? false : true;
 
 			if (!self.validBrowser) notificationService.notify("Warning", "This browser is not supported. Please upgrade to a recent version of " +
-			"Google Chrome or Mozilla Firefox.");
+				"Google Chrome or Mozilla Firefox.");
 
 
-			self.isCollapsed = true;	
+			self.isCollapsed = true;
 			self.navClass = function (page) {
 				var currentRoute = $location.path().substring(1) || "dashboard";
 				return page === currentRoute ? "active" : "";
 			};
-		
+
 			self.collapse = function() {
 				this.isCollapsed = !this.isCollapsed;
 			};
-		
+
 			self.exit = function() {
 				$window.open(BASE_URL, "_self");
 			};
 
 			return self;
 		}]);
-		
-		
-app.run(['BASE_URL', '$http', function(BASE_URL, $http) {
-		$http.get( BASE_URL + '/api/me/profile.json').then(function (response) {
-			if (response.data && response.data.settings && response.data.settings.keyUiLocale) {
-				i18next.changeLanguage(response.data.settings.keyUiLocale);
-			}
-		});
-	}]);
+
+
+app.run(["BASE_URL", "$http", function(BASE_URL, $http) {
+	$http.get( BASE_URL + "/api/me/profile.json").then(function (response) {
+		if (response.data && response.data.settings && response.data.settings.keyUiLocale) {
+			i18next.changeLanguage(response.data.settings.keyUiLocale);
+		}
+	});
+}]);

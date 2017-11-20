@@ -8,177 +8,173 @@
 
 const moment = require("moment");
 
-(function() {
+angular.module("outlierGapAnalysis").controller("OutlierGapAnalysisController",
+	["d2Meta", "d2Utils", "d2Map", "periodService", "requestService", "dataAnalysisService", "$scope",
+		function(d2Meta, d2Utils, d2Map, periodService, requestService, dataAnalysisService, $scope) {
 
-	angular.module('outlierGapAnalysis').controller("OutlierGapAnalysisController",
-	['d2Meta', 'd2Utils', 'd2Map', 'periodService', 'requestService', 'dataAnalysisService', '$scope', '$uibModal',
-	function(d2Meta, d2Utils, d2Map, periodService, requestService, dataAnalysisService, $scope, $uibModal) {
+			var self = this;
 
-		var self = this;
+			self.results = [];
+			self.currentResult = undefined;
+			self.result = undefined;
 
-		self.results = [];
-		self.currentResult = undefined;
-		self.result = undefined;
+			self.itemsPerPage = 25;
+			self.hasVisual = false;
 
-		self.itemsPerPage = 25;
-		self.hasVisual = false;
+			self.processStatus = dataAnalysisService.status;
 
-		self.processStatus = dataAnalysisService.status;
+			d2Map.load().then(function() {
+				init();
+			});
 
-		d2Map.load().then(function(status) {
+			function init() {
+				self.showFilter = false;
 
-			init();
-		});
+				self.selectedData = {
+					ds: [],
+					deg: [],
+					ig: []
+				};
+				self.selectedOrgunit;
 
-		function init() {
-			self.showFilter = false;
+				self.periodTypes = [];
+				self.periodTypes = periodService.getPeriodTypes();
+				self.periodTypeSelected = self.periodTypes[1];
 
-			self.selectedData = {
-				ds: [],
-				deg: [],
-				ig: []
-			};
-			self.selectedOrgunit;
+				self.periodCount = [];
+				self.periodCounts = periodService.getPeriodCount();
+				self.periodCountSelected = self.periodCounts[11];
 
-			self.periodTypes = [];
-			self.periodTypes = periodService.getPeriodTypes();
-			self.periodTypeSelected = self.periodTypes[1];
+				self.years = periodService.getYears();
+				self.yearSelected = self.years[0];
 
-			self.periodCount = [];
-			self.periodCounts = periodService.getPeriodCount();
-			self.periodCountSelected = self.periodCounts[11];
+				self.isoPeriods = [];
 
-			self.years = periodService.getYears();
-			self.yearSelected = self.years[0];
+				self.currentDate = new Date();
+				self.date = {
+					"startDate": moment().subtract(12, "months"),
+					"endDate": moment()
+				};
 
-			self.isoPeriods = [];
+				self.periodOption = "last";
 
-			self.currentDate = new Date();
-			self.date = {
-				"startDate": moment().subtract(12, 'months'),
-				"endDate": moment()
-			};
+				self.onlyNumbers = /^\d+$/;
 
-			self.periodOption = "last";
+				//Accordion settings
+				self.oneAtATime = true;
+				self.status = {
+					isFirstOpen: true
+				};
 
-			self.onlyNumbers = /^\d+$/;
-
-			//Accordion settings
-			self.oneAtATime = true;
-			self.status = {
-				isFirstOpen: true
-			};
-
-			//Datepicker settings
-			self.datepickerOptionsFrom = {
-				minMode: 'month',
-				datepickerMode: 'month',
-				maxDate: self.date.endDate.toDate()
-			};
-			self.datepickerOptionsTo = {
-				minMode: 'month',
-				datepickerMode: 'month',
-				minDate: self.date.startDate.toDate(),
-				maxDate: self.currentDate
-			};
-		}
-
-		/** -- PARAMETER SELECTION -- */
-
-		/** Orgunits */
-
-
-
-		function getPeriods() {
-
-			var startDate, endDate;
-			if (self.periodOption === "last") {
-				endDate = moment().format("YYYY-MM-DD");
-				if (self.periodTypeSelected.id === 'Weekly') {
-					startDate = moment().subtract(self.periodCountSelected.value, 'weeks').format("YYYY-MM-DD");
-				}
-				else if (self.periodTypeSelected.id === 'Monthly') {
-					startDate = moment().subtract(self.periodCountSelected.value, 'months').format("YYYY-MM-DD");
-				}
-				else if (self.periodTypeSelected.id === 'BiMonthly') {
-					startDate = moment().subtract(self.periodCountSelected.value * 2, 'months').format("YYYY-MM-DD");
-				}
-				else if (self.periodTypeSelected.id === 'Quarterly') {
-					startDate = moment().subtract(self.periodCountSelected.value, 'quarters').format("YYYY-MM-DD");
-				}
-				else if (self.periodTypeSelected.id === 'SixMonthly') {
-					startDate = moment().subtract(self.periodCountSelected.value * 2, 'quarters').format("YYYY-MM-DD");
-				}
-				else if (self.periodTypeSelected.id === 'Yearly') {
-					startDate = moment().subtract(self.periodCountSelected.value, 'years').format("YYYY-MM-DD");
-				}
+				//Datepicker settings
+				self.datepickerOptionsFrom = {
+					minMode: "month",
+					datepickerMode: "month",
+					maxDate: self.date.endDate.toDate()
+				};
+				self.datepickerOptionsTo = {
+					minMode: "month",
+					datepickerMode: "month",
+					minDate: self.date.startDate.toDate(),
+					maxDate: self.currentDate
+				};
 			}
-			else if (self.periodOption === "year") {
 
-				if (self.yearSelected.name === moment().format('YYYY')) {
-					endDate = moment().format('YYYY-MM-DD');
+			/** -- PARAMETER SELECTION -- */
+
+			/** Orgunits */
+
+
+
+			function getPeriods() {
+
+				var startDate, endDate;
+				if (self.periodOption === "last") {
+					endDate = moment().format("YYYY-MM-DD");
+					if (self.periodTypeSelected.id === "Weekly") {
+						startDate = moment().subtract(self.periodCountSelected.value, "weeks").format("YYYY-MM-DD");
+					}
+					else if (self.periodTypeSelected.id === "Monthly") {
+						startDate = moment().subtract(self.periodCountSelected.value, "months").format("YYYY-MM-DD");
+					}
+					else if (self.periodTypeSelected.id === "BiMonthly") {
+						startDate = moment().subtract(self.periodCountSelected.value * 2, "months").format("YYYY-MM-DD");
+					}
+					else if (self.periodTypeSelected.id === "Quarterly") {
+						startDate = moment().subtract(self.periodCountSelected.value, "quarters").format("YYYY-MM-DD");
+					}
+					else if (self.periodTypeSelected.id === "SixMonthly") {
+						startDate = moment().subtract(self.periodCountSelected.value * 2, "quarters").format("YYYY-MM-DD");
+					}
+					else if (self.periodTypeSelected.id === "Yearly") {
+						startDate = moment().subtract(self.periodCountSelected.value, "years").format("YYYY-MM-DD");
+					}
+				}
+				else if (self.periodOption === "year") {
+
+					if (self.yearSelected.name === moment().format("YYYY")) {
+						endDate = moment().format("YYYY-MM-DD");
+					}
+					else {
+						endDate = self.yearSelected.id + "-12-31";
+					}
+
+					startDate = self.yearSelected.id + "-01-01";
+
+
 				}
 				else {
-					endDate = self.yearSelected.id + "-12-31";
+					startDate = self.date.startDate;
+					endDate = self.date.endDate;
 				}
 
-				startDate = self.yearSelected.id + "-01-01";
-
+				return periodService.getISOPeriods(startDate, endDate, self.periodTypeSelected.id);
 
 			}
-			else {
-				startDate = self.date.startDate;
-				endDate = self.date.endDate;
+
+
+			function getData() {
+				var dx = [];
+				d2Utils.arrayMerge(dx, self.selectedData.ds);
+				d2Utils.arrayMerge(dx, self.selectedData.deg);
+				d2Utils.arrayMerge(dx, self.selectedData.ig);
+				d2Utils.arrayRemoveDuplicates(dx, "id");
+				return dx;
 			}
 
-			return periodService.getISOPeriods(startDate, endDate, self.periodTypeSelected.id);
 
-		}
+			self.doAnalysis = function () {
 
-
-		function getData() {
-			var dx = [];
-			d2Utils.arrayMerge(dx, self.selectedData.ds);
-			d2Utils.arrayMerge(dx, self.selectedData.deg);
-			d2Utils.arrayMerge(dx, self.selectedData.ig);
-			d2Utils.arrayRemoveDuplicates(dx, 'id');
-			return dx;
-		}
+				//Collapse open panels
+				angular.element(".panel-collapse").removeClass("in");
+				angular.element(".panel-collapse").addClass("collapse");
 
 
-		self.doAnalysis = function () {
+				//Clear previous result
+				self.result = undefined;
+				if (self.results.length > 1) self.results.move(self.currentResult, 0);
 
-			//Collapse open panels
-			angular.element('.panel-collapse').removeClass('in');
-			angular.element('.panel-collapse').addClass('collapse');
+				var dx = getData();
+				var ouBoundary = self.selectedOrgunit.boundary;
+				var ouLevel = self.selectedOrgunit.level;
+				var ouGroup = self.selectedOrgunit.group;
 
+				var dxIDs = d2Utils.arrayProperties(dx, "id");
+				var periods = getPeriods();
 
-			//Clear previous result
-			self.result = undefined;
-			if (self.results.length > 1) self.results.move(self.currentResult, 0);
+				dataAnalysisService.outlierGap(receiveResult, dxIDs, null, null, periods, [ouBoundary.id],
+					ouLevel ? ouLevel.level : null, ouGroup ? ouGroup.id : null, 2, 3.5, 1);
 
-			var dx = getData();
-			var ouBoundary = self.selectedOrgunit.boundary;
-			var ouLevel = self.selectedOrgunit.level;
-			var ouGroup = self.selectedOrgunit.group;
-
-			var dxIDs = d2Utils.arrayProperties(dx, 'id');
-			var periods = getPeriods();
-
-			dataAnalysisService.outlierGap(receiveResult, dxIDs, null, null, periods, [ouBoundary.id],
-				ouLevel ? ouLevel.level : null, ouGroup ? ouGroup.id : null, 2, 3.5, 1);
-
-		};
+			};
 
 
-		/** UTILITIES */
+			/** UTILITIES */
 
-		//Directive will add its function here:
-		self.resultControl = {};
-		function receiveResult(result) {
-			self.resultControl.receiveResult(result);
-		}
+			//Directive will add its function here:
+			self.resultControl = {};
+			function receiveResult(result) {
+				self.resultControl.receiveResult(result);
+			}
 
-		return self;
-	}]);
-})();
+			return self;
+		}]);

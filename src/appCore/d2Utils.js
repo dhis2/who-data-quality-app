@@ -71,16 +71,16 @@ export default function ($q) {
 
 	function arraySortByProperty(array, property, numeric, reverse) {
 
-					 return array.sort(function(a, b) {
-						 var res;
+		return array.sort(function(a, b) {
+			var res;
 			if (numeric) {
 				res = b[property] - a[property] ;
 			}
 			else {
 				res = a[property] < b[property] ? -1 : 1;
 			}
-						 if (reverse) return -res;
-						 else return res;
+			if (reverse) return -res;
+			else return res;
 		});
 
 	}

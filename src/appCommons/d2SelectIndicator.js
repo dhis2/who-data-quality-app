@@ -10,13 +10,13 @@
 
 	var app = angular.module("appCommons");
 
-	app.directive('d2SelectIndicator', function () {
+	app.directive("d2SelectIndicator", function () {
 		return {
 			scope: {
-				'ngModel': '=',
-				'dataset': '=',
-				'multiple': '=',
-				'onSelect': '&'
+				"ngModel": "=",
+				"dataset": "=",
+				"multiple": "=",
+				"onSelect": "&"
 			},
 			bindToController: true,
 			controller: "d2SelectIController",
@@ -26,7 +26,7 @@
 	});
 
 	app.controller("d2SelectIController",
-		['d2Meta', 'd2Utils', '$scope',
+		["d2Meta", "d2Utils", "$scope",
 			function(d2Meta, d2Utils, $scope) {
 				var self = this;
 
@@ -43,7 +43,7 @@
 				function init() {
 
 					//Get groups
-					var object = 'indicatorGroups';
+					var object = "indicatorGroups";
 					d2Meta.objects(object).then(
 						function(data) {
 							self.groups = data;
@@ -59,21 +59,21 @@
 						if (self.multiple) {
 							var currentModel = [];
 							for (var i = 0; i < self.element.length; i++) {
-								if (self.element[i].id === 'all') {
+								if (self.element[i].id === "all") {
 									d2Utils.arrayMerge(currentModel, self.element[i].elements);
 								}
 								else {
 									currentModel.push(self.element[i]);
 								}
 							}
-							currentModel = d2Utils.arrayRemoveDuplicates(currentModel, 'id');
+							currentModel = d2Utils.arrayRemoveDuplicates(currentModel, "id");
 							self.ngModel = currentModel;
 						}
 						else {
 							self.ngModel = self.element;
 						}
 
-						self.onSelect({'object': self.ngModel});
+						self.onSelect({"object": self.ngModel});
 
 					});
 
@@ -88,8 +88,8 @@
 					self.placeholder = "Loading...";
 
 
-					var fields = 'indicators[displayName,id]';
-					var object = 'indicatorGroups';
+					var fields = "indicators[displayName,id]";
+					var object = "indicatorGroups";
 					d2Meta.object(object, self.group.id, fields).then(function(data) {saveElements(data.indicators);});
 
 
@@ -101,12 +101,12 @@
 					else self.placeholder = "Select indicator...";
 
 					if (self.multiple) filterElements(data);
-					d2Utils.arraySortByProperty(data, 'displayName', false);
+					d2Utils.arraySortByProperty(data, "displayName", false);
 
 					if (self.multiple != undefined && self.multiple) {
 						data.unshift({
-							displayName: '[All indicators]',
-							id: 'all',
+							displayName: "[All indicators]",
+							id: "all",
 							group: self.group.id,
 							elements: angular.copy(data)
 						});
@@ -122,7 +122,7 @@
 
 							var remove = false;
 							if (data[i].id === self.element[j].id) {
-								if (data[i].id === 'all') {
+								if (data[i].id === "all") {
 									if (data.group === self.element[j].group) {
 										remove = true;
 									}

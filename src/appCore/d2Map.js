@@ -64,7 +64,6 @@ export default function (requestService, d2Meta, d2Utils, $q) {
 	var _map;
 	var _d2Objects = {};
 	var _dataIDs;
-	var _version;
 
 	/**
 				 * Check if mapping is "ready", e.g. has been downloaded from server
@@ -177,12 +176,8 @@ export default function (requestService, d2Meta, d2Utils, $q) {
 	function versionUpgrade() {
 		var currentVersion = "1.0";
 		if (_map.metaDataVersion != currentVersion) {
-
-
+		
 			//Do whatever upgrades are needed here
-
-
-
 			_map.metaDataVersion = currentVersion;
 			return save();
 		}
@@ -404,7 +399,7 @@ export default function (requestService, d2Meta, d2Utils, $q) {
 		for (var i = 0; i <= _map.groups.length; i++) {
 
 			current = "G" + parseInt(i+1);
-			existing = false;
+			var existing = false;
 
 			for (var j = 0; j < _map.groups.length; j++) {
 				if (_map.groups[j].code === current) existing = true;
@@ -625,7 +620,7 @@ export default function (requestService, d2Meta, d2Utils, $q) {
 		for (var i = 0; i <= _map.numerators.length; i++) {
 
 			current = "C" + parseInt(i+1);
-			existing = false;
+			var existing = false;
 
 			for (var j = 0; j < _map.numerators.length; j++) {
 				if (_map.numerators[j].code === current) existing = true;
@@ -732,7 +727,7 @@ export default function (requestService, d2Meta, d2Utils, $q) {
 		for (var i = 0; i <= _map.numeratorRelations.length; i++) {
 
 			current = "R" + parseInt(i+1);
-			existing = false;
+			var existing = false;
 
 			for (var j = 0; j < _map.numeratorRelations.length; j++) {
 				if (_map.numeratorRelations[j].code === current) existing = true;
@@ -907,7 +902,7 @@ export default function (requestService, d2Meta, d2Utils, $q) {
 		for (var i = 0; i <= _map.denominators.length; i++) {
 
 			current = "P" + parseInt(i + 1);
-			existing = false;
+			var existing = false;
 
 			for (var j = 0; j < _map.denominators.length; j++) {
 				if (_map.denominators[j].code === current) existing = true;
@@ -985,7 +980,7 @@ export default function (requestService, d2Meta, d2Utils, $q) {
 		for (var i = 0; i <= _map.denominatorRelations.length; i++) {
 
 			current = "PR" + parseInt(i + 1);
-			existing = false;
+			var existing = false;
 
 			for (var j = 0; j < _map.denominatorRelations.length; j++) {
 				if (_map.denominatorRelations[j].code === current) existing = true;
@@ -1047,7 +1042,7 @@ export default function (requestService, d2Meta, d2Utils, $q) {
 		for (var i = 0; i <= _map.externalRelations.length; i++) {
 
 			current = "ER" + parseInt(i + 1);
-			existing = false;
+			var existing = false;
 
 			for (var j = 0; j < _map.externalRelations.length; j++) {
 				if (_map.externalRelations[j].code === current) existing = true;

@@ -7,11 +7,11 @@
  */
 
 export default function (periodService, requestService, mathService, $q, d2Data, d2Utils, d2Meta) {
-	
-	  	
+
+
 	var self = this;
 	var maxScatterPoints = 1000;
-		
+
 	/** NG-NVD3 Line */
 	/*
 		Takes IDs as parameters, returns chartData and chartOptions for use with angular-nvd3
@@ -84,10 +84,10 @@ export default function (periodService, requestService, mathService, $q, d2Data,
 							},
 							"forceY": [0, getRange(maxY)],
 							"xAxis": {
-								  "rotateLabels": -45,
-								  "tickFormat": function(d) {
+								"rotateLabels": -45,
+								"tickFormat": function(d) {
 									return periodNames[d];
-								  }
+								}
 							},
 							"tooltip": {
 								"enabled": true
@@ -179,34 +179,34 @@ export default function (periodService, requestService, mathService, $q, d2Data,
 
 				//Chart options
 				chartOptions = {
-					   	"chart": {
-					        "type": "multiBarChart",
-					        "height": 400,
-					        "margin": {
-					          "top": 140,
-					          "right": 20,
-					          "bottom": 100,
-					          "left": 100
-					        },
+					"chart": {
+						"type": "multiBarChart",
+						"height": 400,
+						"margin": {
+							"top": 140,
+							"right": 20,
+							"bottom": 100,
+							"left": 100
+						},
 						"forceY": [0, getRange(maxY)],
-					        "xAxis": {
-					          "rotateLabels": -45,
-					          "tickFormat": function(d) {
-					          	return periodNames[d];
-					          }
-					        },
+						"xAxis": {
+							"rotateLabels": -45,
+							"tickFormat": function(d) {
+								return periodNames[d];
+							}
+						},
 						"tooltip": {
 							"enabled": true
 						},
-					        "showLegend": true,
+						"showLegend": true,
 						"transitionDuration": 100
-					    },
-					    "parameters": {
-					    	"dataIDs": dataIDs,
-					    	"periods": periodIDs,
-					    	"orgunitIDs": orgunitIDs,
-					    	"type": type
-					    }
+					},
+					"parameters": {
+						"dataIDs": dataIDs,
+						"periods": periodIDs,
+						"orgunitIDs": orgunitIDs,
+						"type": type
+					}
 				};
 
 			}
@@ -287,10 +287,10 @@ export default function (periodService, requestService, mathService, $q, d2Data,
 						"chart": {
 							"type": "discreteBarChart",
 							"margin": {
-								  "top": 25,
-								  "right": 25,
-								  "bottom": 25 + labelSizes.x,
-								  "left": 25 + labelSizes.y
+								"top": 25,
+								"right": 25,
+								"bottom": 25 + labelSizes.x,
+								"left": 25 + labelSizes.y
 							},
 							"tooltip": {
 								"enabled": true
@@ -333,50 +333,50 @@ export default function (periodService, requestService, mathService, $q, d2Data,
 	};
 
 
-	  	/** NG-NVD3 YY line chart */
-	  	/*Year over year line chart - parameter-based
-	  	@param elementID	html element to place chart in
-	  	@param periods		array of array of ISO period, one set for each series. Same period in each year.
-	  	@param dataIDs		data ID
-	  	@param ouID			orgunit ID
-	  	*/
-	  	self.yyLineChart = function (callback, periods, dataID, ouID) {
+	/** NG-NVD3 YY line chart */
+	/*Year over year line chart - parameter-based
+	@param elementID	html element to place chart in
+	@param periods		array of array of ISO period, one set for each series. Same period in each year.
+	@param dataIDs		data ID
+	@param ouID			orgunit ID
+	*/
+	self.yyLineChart = function (callback, periods, dataID, ouID) {
 
 		var deferred = $q.defer();
 
-	  		for (var i = 0; i < periods.length; i++) {
+		for (var i = 0; i < periods.length; i++) {
 			d2Data.addRequest(dataID, periods[i], ouID, null, null);
-	  		}
+		}
 
 		d2Data.fetch().then(function (data) {
 			var yLen = 0, xLen = 0;
 
-	  			//Get XAxis labels = periods from series[0]
-  				var periodNames = [];
-  				for (var i = 0; i < periods[0].length; i++) {
+			//Get XAxis labels = periods from series[0]
+			var periodNames = [];
+			for (var i = 0; i < periods[0].length; i++) {
 				var name = periodService.shortPeriodName(periods[0][i]).split(" ")[0];
-  					periodNames.push(name);
+				periodNames.push(name);
 				xLen = Math.max(xLen, name.length);
-  				}
+			}
 
 			var maxY = 0;
 
-  				var minRange = 0, maxRange = 0;
-  				var chartData = [], chartSeries, values, dataSet;
-  				for (var i = 0; i < periods.length; i++) {
+			var minRange = 0, maxRange = 0;
+			var chartData = [], chartSeries, values, dataSet;
+			for (var i = 0; i < periods.length; i++) {
 
-  					values = [];
-  					chartSeries = {};
+				values = [];
+				chartSeries = {};
 
-  					if (periods[i][0].substring(0, 4) === periods[i][periods[i].length-1].substring(0, 4)) {
-  						chartSeries.key = periods[i][0].substring(0, 4);
-  					}
-  					else {
-  						chartSeries.key = periods[i][0].substring(0, 4) + " - " + periods[i][periods[i].length-1].substring(0, 4);
-  					}
+				if (periods[i][0].substring(0, 4) === periods[i][periods[i].length-1].substring(0, 4)) {
+					chartSeries.key = periods[i][0].substring(0, 4);
+				}
+				else {
+					chartSeries.key = periods[i][0].substring(0, 4) + " - " + periods[i][periods[i].length-1].substring(0, 4);
+				}
 
-  					var row, value, values = [];
-  					for (var j = 0; j < periods[i].length; j++) {
+				var row, value, values = [];
+				for (var j = 0; j < periods[i].length; j++) {
 					var pe = periods[i][j];
 					value = parseFloat(d2Data.value(dataID, pe, ouID, null));
 					if (isNaN(value)) value = null;
@@ -396,52 +396,52 @@ export default function (periodService, requestService, mathService, $q, d2Data,
 					if (value > maxRange) {
 						maxRange = value;
 					}
-  					}
+				}
 
-  					chartSeries.values = values;
-  					chartSeries.periods = periods[i];
+				chartSeries.values = values;
+				chartSeries.periods = periods[i];
 
 
-  					chartData.push(chartSeries);
-  				}
+				chartData.push(chartSeries);
+			}
 
-  				var toolTip = function(point) {
-  				    return "<h3>" + periodService.shortPeriodName(e.series.periods[point.point.point.x]) + "</h3>" +
-  				        "<p>" + point.point.point.y + "</p>";
-  				};
+			var toolTip = function(point) {
+				return "<h3>" + periodService.shortPeriodName(e.series.periods[point.point.point.x]) + "</h3>" +
+					"<p>" + point.point.point.y + "</p>";
+			};
 
 			var labelSizes = estimateLabelSize(xLen, yLen, true);
-  				//Chart options
-  				var chartOptions = {
-  				   	"chart": {
-  				   		"x": function(d){ return d.x; },
-  				   		"y": function(d){ return d.y; },
-  				        "type": "lineChart",
-  				        "margin": {
-  				          "top": 25,
-  				          "right": 25,
-  				          "bottom": 25 + labelSizes.x,
-  				          "left": 25 + labelSizes.y
-  				        },
+			//Chart options
+			var chartOptions = {
+				"chart": {
+					"x": function(d){ return d.x; },
+					"y": function(d){ return d.y; },
+					"type": "lineChart",
+					"margin": {
+						"top": 25,
+						"right": 25,
+						"bottom": 25 + labelSizes.x,
+						"left": 25 + labelSizes.y
+					},
 					"forceY": [0, getRange(maxY)],
-  				        "xAxis": {
-  				          "rotateLabels": -45,
-  				          "tickFormat": function(d) {return periodNames[d];}
-  				        },
+					"xAxis": {
+						"rotateLabels": -45,
+						"tickFormat": function(d) {return periodNames[d];}
+					},
 					"tooltip": {
 						enabled: true,
 						contentGenerator: toolTip
 					},
-  				        "showLegend": true,
-  				        "useInteractiveGuideline": true,
+					"showLegend": true,
+					"useInteractiveGuideline": true,
 					"transitionDuration": 100
-  				    },
-  				    "parameters": {
-  				    	"dataID": dataID, 
-  				    	"periods": periods,
-  				    	"orgunitIDs": ouID
-  				    }
-  				};
+				},
+				"parameters": {
+					"dataID": dataID,
+					"periods": periods,
+					"orgunitIDs": ouID
+				}
+			};
 
 			if (callback) {
 				callback(chartData, chartOptions);
@@ -452,30 +452,30 @@ export default function (periodService, requestService, mathService, $q, d2Data,
 					opts: chartOptions
 				});
 			}
-  				
-	  		});
+
+		});
 
 		return deferred.promise;
-	  	};
-	  	
-	  	
-	  	
-		
+	};
+
+
+
+
 	/** -- PROCESSING ANALYSED DATA -- */
-		
-		
+
+
 	/** Time consistency */
 	/*
 		@param callback 	callback function, takes chartData and chartOptions as parameters. If null, options and data are stored in reference result object
 		@param result		result as returned from data analysis service (timeConsistency function)
 		*/
 	self.makeTimeConsistencyChart = function (callback, result, includeTitle) {
-	    	var datapoints = result.subunitDatapoints;
-	    	var boundaryRatio = result.boundaryRatio;
-	    	var consistency = result.criteria;
-	    		    	
-	    	var toolTip = function(point) {
-	    		var data = result.subunitDatapoints;
+		var datapoints = result.subunitDatapoints;
+		var boundaryRatio = result.boundaryRatio;
+		var consistency = result.criteria;
+
+		var toolTip = function(point) {
+			var data = result.subunitDatapoints;
 			var ouID = point.point.z;
 			var ouName;
 			for (var i = 0; i < data.length; i++) {
@@ -485,20 +485,20 @@ export default function (periodService, requestService, mathService, $q, d2Data,
 				}
 			}
 
-	    		var toolTipHTML = "<h3>" + ouName + "</h3>";
+			var toolTipHTML = "<h3>" + ouName + "</h3>";
 
 			var yVal = point.point.y != null ? point.point.y : "No data";
 			var xVal = point.point.x != null ? point.point.x : "No data";
 
-    			toolTipHTML += "<p style=\"margin-bottom: 0px\">" + periodService.shortPeriodName(result.pe) + ": " + yVal + "</p>";
-	    		if (result.subType === "constant") {
-	    			toolTipHTML += "<p>Average: " + xVal + "</p>";
-	    		}
-	    		else {
-	    			toolTipHTML += "<p>Forecasted: " + xVal + "</p>";
-	    		}
-	    	    return toolTipHTML;
-	    	};
+			toolTipHTML += "<p style=\"margin-bottom: 0px\">" + periodService.shortPeriodName(result.pe) + ": " + yVal + "</p>";
+			if (result.subType === "constant") {
+				toolTipHTML += "<p>Average: " + xVal + "</p>";
+			}
+			else {
+				toolTipHTML += "<p>Forecasted: " + xVal + "</p>";
+			}
+			return toolTipHTML;
+		};
 
 		var chartSeries;
 		var maxX;
@@ -538,35 +538,35 @@ export default function (periodService, requestService, mathService, $q, d2Data,
 
 
 
-	    	var chartOptions = {
-	    	   	"chart": {
-	    	        "type": "scatterChart",
-	    	        "margin": {
-	    	          "top": 10,
-	    	          "right": 30,
-	    	          "bottom": 80,
-	    	          "left": 100
-	    	        },
+		var chartOptions = {
+			"chart": {
+				"type": "scatterChart",
+				"margin": {
+					"top": 10,
+					"right": 30,
+					"bottom": 80,
+					"left": 100
+				},
 				"xDomain": [0, maxX],
 				"yDomain": [0, maxY],
-	    	        "xAxis": {
-	    	              "axisLabel": xAxisLabel,
-	    	              "axisLabelDistance": 30,
-	    	              "tickFormat": d3.format("d")
-	    	        },
-	    	        "yAxis": {
-	    	        	"axisLabel": periodService.shortPeriodName(result.pe),
-	    	            "axisLabelDistance": 30,
-	    	            "tickFormat": d3.format("d")
-	    	        },
-	    	        "tooltip": {
+				"xAxis": {
+					"axisLabel": xAxisLabel,
+					"axisLabelDistance": 30,
+					"tickFormat": d3.format("d")
+				},
+				"yAxis": {
+					"axisLabel": periodService.shortPeriodName(result.pe),
+					"axisLabelDistance": 30,
+					"tickFormat": d3.format("d")
+				},
+				"tooltip": {
 					enabled: true,
 					contentGenerator: toolTip
 				},
 				"transitionDuration": 100
 
-	    	    }
-	    	};
+			}
+		};
 		if (includeTitle) {
 			chartOptions.title = {
 				"enable": true,
@@ -578,25 +578,25 @@ export default function (periodService, requestService, mathService, $q, d2Data,
 
 		}
 
-	    	if (callback) {
-		    	callback(chartSeries, chartOptions);
-		    }
-		    else {
-		    	result.chartOptions = chartOptions;
-		    	result.chartData = chartSeries;
-		    }
-	    };
+		if (callback) {
+			callback(chartSeries, chartOptions);
+		}
+		else {
+			result.chartOptions = chartOptions;
+			result.chartData = chartSeries;
+		}
+	};
 
 
 	/** Data consistency */
 	self.makeDataConsistencyChart = function (callback, result) {
 
-	    	var datapoints = result.subunitDatapoints;
-	    	var boundaryRatio = result.boundaryRatio;
-	    	var consistency = result.criteria;
+		var datapoints = result.subunitDatapoints;
+		var boundaryRatio = result.boundaryRatio;
+		var consistency = result.criteria;
 
-	    	var toolTip = function(point) {
-	    		var data = result.subunitDatapoints;
+		var toolTip = function(point) {
+			var data = result.subunitDatapoints;
 			var ouID = point.point.z;
 			var ouName;
 			for (var i = 0; i < data.length; i++) {
@@ -605,14 +605,14 @@ export default function (periodService, requestService, mathService, $q, d2Data,
 					break;
 				}
 			}
-	    	    return "<h3>" + ouName + "</h3>" +
-	    	        "<p style=\"margin-bottom: 0px\">" + result.dxNameA + ": " + point.point.y + "</p>" +
-	    	        "<p>" + result.dxNameB + ": " + point.point.x + "</p>";
-	    	};
+			return "<h3>" + ouName + "</h3>" +
+				"<p style=\"margin-bottom: 0px\">" + result.dxNameA + ": " + point.point.y + "</p>" +
+				"<p>" + result.dxNameB + ": " + point.point.x + "</p>";
+		};
 
 		var maxX = 0;
 		var maxY = 0;
-	    	var chartSeries = [];
+		var chartSeries = [];
 
 
 		if (datapoints.length > 0) {
@@ -646,54 +646,54 @@ export default function (periodService, requestService, mathService, $q, d2Data,
 			}
 		}
 
-	    	var chartOptions = {
-	    	   	"chart": {
-	    	        "type": "scatterChart",
-	    	        "margin": {
-	    	          "top": 10,
-	    	          "right": 30,
-	    	          "bottom": 80,
-	    	          "left": 100
-	    	        },
+		var chartOptions = {
+			"chart": {
+				"type": "scatterChart",
+				"margin": {
+					"top": 10,
+					"right": 30,
+					"bottom": 80,
+					"left": 100
+				},
 				"xDomain": [0, maxX],
 				"yDomain": [0, maxY],
-	    	        "xAxis": {
-	    	              "axisLabel": result.dxNameB,
-	    	              "axisLabelDistance": 30,
-	    	              "tickFormat": d3.format("d")
-	    	        },
-	    	        "yAxis": {
-	    	        	"axisLabel": result.dxNameA,
-	    	            "axisLabelDistance": 30,
-	    	            "tickFormat": d3.format("d")
-	    	        },
+				"xAxis": {
+					"axisLabel": result.dxNameB,
+					"axisLabelDistance": 30,
+					"tickFormat": d3.format("d")
+				},
+				"yAxis": {
+					"axisLabel": result.dxNameA,
+					"axisLabelDistance": 30,
+					"tickFormat": d3.format("d")
+				},
 				"tooltip": {
 					enabled: true,
 					contentGenerator: toolTip
 				},
 				"transitionDuration": 100
-	    	    }
-	    	};
-	    	
-	    	
-	    	if (callback) {
-	    		callback(chartSeries, chartOptions);
-	    	}
-	    	else {
-	    		result.chartOptions = chartOptions;
-	    		result.chartData = chartSeries;
-	    	}
-	    };
+			}
+		};
+
+
+		if (callback) {
+			callback(chartSeries, chartOptions);
+		}
+		else {
+			result.chartOptions = chartOptions;
+			result.chartData = chartSeries;
+		}
+	};
 
 	/** Data consistency */
 	self.makeExternalConsistencyChart = function (callback, result) {
 
-	    	var datapoints = result.subunitDatapoints;
+		var datapoints = result.subunitDatapoints;
 		var names = [];
 
 		var toolTip = function(point) {
 
-	    		var data = result.subunitDatapoints;
+			var data = result.subunitDatapoints;
 			var ouID = point.point.z;
 			var ouName;
 			var data;
@@ -710,13 +710,13 @@ export default function (periodService, requestService, mathService, $q, d2Data,
 			if (!survey) survey = result.boundaryValue;
 			if (!routine) routine = result.boundaryRefValue;
 
-	    	    return "<h3>" + ouName + "</h3>" +
-	    	        "<p style=\"margin-bottom: 0px\">Survey: " + survey + "%</p>"+
-					"<p style=\"margin-bottom: 0px\">Routine: " + routine + "%</p>";
-	    	};
+			return "<h3>" + ouName + "</h3>" +
+				"<p style=\"margin-bottom: 0px\">Survey: " + survey + "%</p>"+
+				"<p style=\"margin-bottom: 0px\">Routine: " + routine + "%</p>";
+		};
 
 		var maxY = 0;
-	    	var chartSeries = [], tickValues = [0, 1], chartOptions = {};
+		var chartSeries = [], tickValues = [0, 1], chartOptions = {};
 		if (datapoints.length > 0) {
 
 			var externalSeries = {
@@ -857,7 +857,7 @@ export default function (periodService, requestService, mathService, $q, d2Data,
 				if (point.label === "Range") return "";
 
 				return "<h3>" + point.label + "</h3>" +
-						"<p style=\"margin-bottom: 0px\">" + point.value + "%</p>";
+					"<p style=\"margin-bottom: 0px\">" + point.value + "%</p>";
 			};
 
 
@@ -902,7 +902,7 @@ export default function (periodService, requestService, mathService, $q, d2Data,
 			result.chartData = chartSeries;
 		}
 
-	    };
+	};
 
 
 
@@ -914,7 +914,7 @@ export default function (periodService, requestService, mathService, $q, d2Data,
 			if (point.label === "Range") return "";
 
 			return "<h3>" + point.label + "</h3>" +
-					"<p style=\"margin-bottom: 0px\">" + point.value + "%</p>";
+				"<p style=\"margin-bottom: 0px\">" + point.value + "%</p>";
 		};
 
 		var names = [];
@@ -969,28 +969,28 @@ export default function (periodService, requestService, mathService, $q, d2Data,
 
 
 
-	    /** Dropout */
-	    self.makeDropoutRateChart = function(callback, result) {	    		    	
+	/** Dropout */
+	self.makeDropoutRateChart = function(callback, result) {
 
 
-	    	var toolTip = function(point) {
+		var toolTip = function(point) {
 			var data = result.subunitDatapoints;
 
 			if (!point.data.hasOwnProperty("z")) {
 				return "<h3>Threshold</h3>" +
-						"<p>0 % dropout</p>";
+					"<p>0 % dropout</p>";
 			}
 
 			var rate = mathService.round(100*mathService.dropOutRate(data[point.data.x].value, data[point.data.x].refValue), 2);
 			if (isFinite(rate)) {
-	    	    	return "<h3>" + data[point.data.x].name + "</h3>" +
-	    	        "<p>" +  rate  + "% dropout</p>";
+				return "<h3>" + data[point.data.x].name + "</h3>" +
+					"<p>" +  rate  + "% dropout</p>";
 			}
 			else {
 				return "<h3>" + data[point.data.x].name + "</h3>" +
-						"<p>Full negative dropout.</p>";
+					"<p>Full negative dropout.</p>";
 			}
-	    	};
+		};
 
 		var chartSeries = [];
 		if (result.subunitDatapoints.length > 0) {
@@ -1050,17 +1050,17 @@ export default function (periodService, requestService, mathService, $q, d2Data,
 				"showControls": false,
 				"transitionDuration": 100
 			}
-	    	};
-	    	
-	    	if (callback) {
-	    		callback(chartSeries, chartOptions);
-	    	}
-	    	else {
-	    		result.chartOptions = chartOptions;
-	    		result.chartData = chartSeries;
-	    	}
-	    };
-		
+		};
+
+		if (callback) {
+			callback(chartSeries, chartOptions);
+		}
+		else {
+			result.chartOptions = chartOptions;
+			result.chartData = chartSeries;
+		}
+	};
+
 
 
 	/** -- MODIFYING OPTIONS -- */
@@ -1122,26 +1122,26 @@ export default function (periodService, requestService, mathService, $q, d2Data,
 			if (header[i].name === "co" && !header[i].hidden) coi = i;
 			if (header[i].name === "value" && !header[i].hidden) vali = i;
 		}
-			
+
 		var data;
 		for (var i = 0; i < dataValues.length; i++) {
 			data = dataValues[i];
 			if (
 				(dxi === undefined || data[dxi] === de) &&
-					(pei === undefined || data[pei] === pe.toString()) &&
-					(oui === undefined || data[oui] === ou) &&
-					(coi === undefined || data[coi] === co)
+				(pei === undefined || data[pei] === pe.toString()) &&
+				(oui === undefined || data[oui] === ou) &&
+				(coi === undefined || data[coi] === co)
 			) return parseFloat(data[vali]);
 		}
-			
-		return null;		
+
+		return null;
 	}
 
 
 	/**
-		 * Sorts number of data points in scatterplots. Orders first by weight, then average of
-		 * numerator and denominator
-		 */
+	 * Sorts number of data points in scatterplots. Orders first by weight, then average of
+	 * numerator and denominator
+	 */
 	function sortScatterData(datapoints) {
 
 		datapoints.sort(function (a, b) {
@@ -1160,11 +1160,11 @@ export default function (periodService, requestService, mathService, $q, d2Data,
 	}
 
 	/**
-		 * Checks if a ratio is in fact a valid ratio (i.e. is a finite number)
-		 *
-		 * @param ratio
-		 * @returns {boolean}
-		 */
+	 * Checks if a ratio is in fact a valid ratio (i.e. is a finite number)
+	 *
+	 * @param ratio
+	 * @returns {boolean}
+	 */
 	function validRatio(ratio) {
 		if (!isNaN(ratio) && isFinite(ratio)) return true;
 		else {
@@ -1175,11 +1175,11 @@ export default function (periodService, requestService, mathService, $q, d2Data,
 
 
 	/**
-		 * Calculates a reasonable max X and Y axis range based on highest values
-		 *
-		 * @param value 	highest value in dataset
-		 * @returns 		object with proposed max value to use
-		 */
+	 * Calculates a reasonable max X and Y axis range based on highest values
+	 *
+	 * @param value 	highest value in dataset
+	 * @returns 		object with proposed max value to use
+	 */
 
 	function getRange(value) {
 
@@ -1213,11 +1213,11 @@ export default function (periodService, requestService, mathService, $q, d2Data,
 
 
 	/**
-		 * Estimates the required margin for the x and y labels.
-		 * @param x
-		 * @param y
-		 * @param rotated	is y axis rotated?
-		 */
+	 * Estimates the required margin for the x and y labels.
+	 * @param x
+	 * @param y
+	 * @param rotated	is y axis rotated?
+	 */
 	function estimateLabelSize(x, y, rotated) {
 
 		//Assume 7 pixels per digit if not rotated, 4 if rotated
@@ -1235,10 +1235,10 @@ export default function (periodService, requestService, mathService, $q, d2Data,
 
 
 	/**
-		 * Make "scatter" points from subunit data, for use with MultiChart
-		 * 
-		 *
-		 */
+	 * Make "scatter" points from subunit data, for use with MultiChart
+	 *
+	 *
+	 */
 	function scatterPoints(datapoints) {
 		datapoints = sortScatterData(datapoints);
 
@@ -1289,5 +1289,5 @@ export default function (periodService, requestService, mathService, $q, d2Data,
 
 
 	return self;
-	  	
+
 }
