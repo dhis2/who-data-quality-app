@@ -53,11 +53,12 @@
     "lint-all": "eslint xyz",
     "prebuild": "rm -rf build && npm run validate && npm run lint-all",
     "build": "webpack -p --progress",
-    "postbuild": "cp -r *.png i18n build/ && npm run manifest",
+    "postbuild": "cp -r i18n build/ && npm run manifest",
     "manifest": "d2-manifest package.json build/manifest.webapp",
     "deploy": "npm run build && mvn clean deploy",
     "extractor": "node extractor.js",
-    "extract-default-pot": "node extractor.js -o translations-app.pot && git add ./i18n/dq-app.pot"
+    "extract-default-pot": "node extractor.js -o translations-app.pot && git add ./i18n/dq-app.pot",
+    "zip": "rm app.zip && npm run build && zip -r -j app.zip build/*"
   },
   "repository": {
     "type": "git",
