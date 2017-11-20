@@ -64,6 +64,7 @@ export default function (requestService, d2Meta, d2Utils, $q) {
 	var _map;
 	var _d2Objects = {};
 	var _dataIDs;
+	var _version;
 
 	/**
 				 * Check if mapping is "ready", e.g. has been downloaded from server
