@@ -58,7 +58,7 @@
     "manifest": "d2-manifest package.json build/manifest.webapp",
     "deploy": "echo \"Error: not configured\" && exit 1",
     "extractor": "node extractor.js",
-    "extract-default-pot": "node extractor.js -o translations-app.pot && git add ./i18n/dq-app.pot",
+    "extract-default-pot": "node extractor.js -o templates.pot && git add ./i18n/templates.pot",
     "zip": "rm -rf compiled && npm run build && mkdir compiled && zip -r -j compiled/$npm_package_name.zip build/*"
   },
   "repository": {
