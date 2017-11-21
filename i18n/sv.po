@@ -12,223 +12,223 @@ msgstr ""
 "Language: sv\n"
 
 msgid "Totals"
-msgstr ""
+msgstr "Sammanlagt"
 
 msgid "Details"
-msgstr ""
+msgstr "Detaljer"
 
 msgid "Indicator group"
-msgstr ""
+msgstr "Indikatorgrupp"
 
 msgid "Boundary"
-msgstr ""
+msgstr "Gräns"
 
 msgid "Other"
-msgstr ""
+msgstr "Övrig"
 
 msgid "Disaggregation"
-msgstr ""
+msgstr "Uppdelning"
 
 msgid "Organisation unit level"
-msgstr ""
+msgstr "Organisationsenhetsnivå"
 
 msgid "Organisation unit group"
-msgstr ""
+msgstr "Organisationsenhetsgrupp"
 
 msgid "Selected"
-msgstr ""
+msgstr "Vald"
 
 msgid "Consistency"
-msgstr ""
+msgstr "Konsistens"
 
 msgid "Consistency analysis type"
-msgstr ""
+msgstr "Konsistens analys typ"
 
 msgid "Between Indicators"
-msgstr ""
+msgstr "Mellan indikatorer"
 
 msgid "Over Time"
-msgstr ""
+msgstr "Med tiden"
 
 msgid "Compare organisation units to"
-msgstr ""
+msgstr "Jämför organisationsenheter till"
 
 msgid "Overall result"
-msgstr ""
+msgstr "Total resultat"
 
 msgid "Expected result"
-msgstr ""
+msgstr "Förväntat resultat"
 
 msgid "Expected relationship"
-msgstr ""
+msgstr "Förväntad relation"
 
 msgid "Dropout"
-msgstr ""
+msgstr "Avhoppad"
 
 msgid "Expected trend"
-msgstr ""
+msgstr "Förväntad trend"
 
 msgid "Increasing/decreasing"
-msgstr ""
+msgstr "Ökning / minskning"
 
 msgid "Criteria"
-msgstr ""
+msgstr "Kriterium"
 
 msgid "Data"
-msgstr ""
+msgstr "Data"
 
 msgid "Select data element/indicator"
-msgstr ""
+msgstr "Välj dataelement / indikator"
 
 msgid "Data element"
-msgstr ""
+msgstr "Dataelement"
 
 msgid "Indicator"
-msgstr ""
+msgstr "Indikator"
 
 msgid "Select data element/indicator for comparison"
-msgstr ""
+msgstr "Välj dataelement / indikator för jämförelse"
 
 msgid "Period"
-msgstr ""
+msgstr "Period"
 
 msgid "Period type"
-msgstr ""
+msgstr "Periodtyp"
 
 msgid "Year"
-msgstr ""
+msgstr "År"
 
 msgid "Select year"
-msgstr ""
+msgstr "Välj år"
 
 msgid "Select period"
-msgstr ""
+msgstr "Välj period"
 
 msgid "Reference periods"
-msgstr ""
+msgstr "Referensperioder"
 
 msgid "No. of Preceding periods"
-msgstr ""
+msgstr "Antal föregående perioder"
 
 msgid "Orgunit"
-msgstr ""
+msgstr "Organisationsenhet"
 
 msgid "Analyze"
-msgstr ""
+msgstr "Analysera"
 
 msgid "Loading data"
-msgstr ""
+msgstr "Laddar data"
 
 msgid "Processing"
-msgstr ""
+msgstr "Behandlar"
 
 msgid "Download"
-msgstr ""
+msgstr "Hämta"
 
 msgid "Previous"
-msgstr ""
+msgstr "Föregående"
 
 msgid "Unit"
-msgstr ""
+msgstr "Enhet"
 
 msgid "Current Period"
-msgstr ""
+msgstr "Aktuell period"
 
 msgid "Average"
-msgstr ""
+msgstr "Genomsnitt"
 
 msgid "Forecast"
-msgstr ""
+msgstr "Prognos"
 
 msgid "Dropout rate"
-msgstr ""
+msgstr "Bortfall"
 
 msgid "Ratio"
-msgstr ""
+msgstr "Ratio"
 
 msgid "Weight"
-msgstr ""
+msgstr "Vikt"
 
 msgid "Contact"
-msgstr ""
+msgstr "Kontakt"
 
 msgid "Drill down"
 msgstr ""
 
 msgid "Click on the graph or in the table see details."
-msgstr ""
+msgstr "Klicka på grafen eller i tabellen se detaljer."
 
 msgid "Dashboard"
 msgstr ""
 
 msgid "Completeness"
-msgstr ""
+msgstr "Fullständighet"
 
 msgid "completeness"
-msgstr ""
+msgstr "fullständighet"
 
 msgid "Consistency - time"
-msgstr ""
+msgstr "Konsistens - tid"
 
 msgid "Consistency - data"
-msgstr ""
+msgstr "Konsistens - data"
 
 msgid "Outliers"
-msgstr ""
+msgstr "Avvikare"
 
 msgid "Outliers and Missing Data"
-msgstr ""
+msgstr "Avvikare och saknad data"
 
 msgid "Data set"
-msgstr ""
+msgstr "Dataset"
 
 msgid "Data elements"
-msgstr ""
+msgstr "Dataelementer"
 
 msgid "Indicators"
-msgstr ""
+msgstr "Indikatorer"
 
 msgid "Recent"
-msgstr ""
+msgstr "Senast"
 
 msgid "By year"
-msgstr ""
+msgstr "Per år"
 
 msgid "Custom"
-msgstr ""
+msgstr "Anpassad"
 
 msgid "Select number of periods..."
-msgstr ""
+msgstr "Välj antal perioder..."
 
 msgid "Select period type..."
-msgstr ""
+msgstr "Välj period typ..."
 
 msgid "Select year..."
-msgstr ""
+msgstr "Valj år..."
 
 msgid "From"
-msgstr ""
+msgstr "Från"
 
 msgid "To"
-msgstr ""
+msgstr "Till"
 
 msgid "Loading data..."
-msgstr ""
+msgstr "Laddar data..."
 
 msgid "Annual Data Quality Report"
-msgstr ""
+msgstr "Årlig datakvalitetsrapport"
 
 msgid "Select group"
-msgstr ""
+msgstr "Välj grupp"
 
 msgid "Preceding years for reference"
-msgstr ""
+msgstr "Föregående år som referens"
 
 msgid "Generate"
-msgstr ""
+msgstr "Generera"
 
 msgid "Print"
-msgstr ""
+msgstr "Skriv ut"
 
 msgid "Assessment of Health Facility Data Quality"
 msgstr ""
@@ -237,32 +237,32 @@ msgid "WHO Data Quality Review"
 msgstr ""
 
 msgid "SUMMARY"
-msgstr ""
+msgstr "SAMMANFATTNING"
 
 msgid "Domain 1: Completeness"
-msgstr ""
+msgstr "Domän 1: Fullständighet"
 
 msgid "1a: Completeness of facility reporting"
-msgstr ""
+msgstr "1a: Fullständighet av rapportering av faciliteter"
 
 msgid ""
 "The percentage of expected reports that have been entered and completed."
-msgstr ""
+msgstr "Andelen förväntade rapporter som har skrivits in och genomförts."
 
 msgid "Overall score"
-msgstr ""
+msgstr "Total resultat"
 
 msgid "with divergent score"
-msgstr ""
+msgstr "med divergerande poäng"
 
 msgid "Number"
-msgstr ""
+msgstr "Nummer"
 
 msgid "Percent"
-msgstr ""
+msgstr "Procent"
 
 msgid "Not available"
-msgstr ""
+msgstr "Inte tillgänglig"
 
 msgid "1b: Timeliness of facility reporting"
 msgstr ""
@@ -276,13 +276,13 @@ msgid "1c: Completeness of indicator data"
 msgstr ""
 
 msgid "Missing or zero values"
-msgstr ""
+msgstr "Missande eller nollvärden"
 
 msgid "compared to previous"
-msgstr ""
+msgstr "jämfört med tidigare"
 
 msgid "years."
-msgstr ""
+msgstr "år."
 
 msgid "Domain 2: Internal consistency"
 msgstr ""
@@ -310,7 +310,7 @@ msgid ""
 msgstr ""
 
 msgid "Not applicable"
-msgstr ""
+msgstr "Ej tillämplig"
 
 msgid "2c: Moderate outliers."
 msgstr ""
@@ -336,10 +336,10 @@ msgid "Quality threshold"
 msgstr ""
 
 msgid "Interpretations"
-msgstr ""
+msgstr "Tolkning"
 
 msgid "Values"
-msgstr ""
+msgstr "Värden"
 
 msgid "Expected"
 msgstr ""
