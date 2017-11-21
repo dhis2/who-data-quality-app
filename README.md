@@ -16,6 +16,11 @@ To install app dependencies:
 ```
 npm install
 ```
+Because of an issue in the current setup, two commands needs to be run immediately after `npm install` to revert changes done during installation (the d2-app-base postinstall script). It must be done before any changes are made, else these will be overwritten.
+```
+git clean -df
+git checkout -- .
+```
 
 ### Compile to zip
 To compile the app to a .zip file:
