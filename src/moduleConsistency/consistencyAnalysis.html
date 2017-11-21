@@ -85,7 +85,7 @@ immunities enjoyed by WHO under national or international law or submit to any n
 	<div style="display: inline-block;">
 		<label>{{ 'Period type' | i18next }}</label><br />
 		<div style="display: inline-block;">
-			<ui-select on-select="aCtrl.getPeriodsInYear(); aCtrl.periodSelected = null;" ng-model="aCtrl.periodTypeSelected" style="margin-bottom: 10px; width: 200px;"> <ui-select-match placeholder="{{&nbsp;'Select period type...' | i18next }}"> {{aCtrl.periodTypeSelected.name}} </ui-select-match> <ui-select-choices repeat="obj in aCtrl.filteredPeriodTypes | filter: $select.search"> 
+			<ui-select on-select="aCtrl.getPeriodsInYear(); aCtrl.periodSelected = null;" ng-model="aCtrl.periodTypeSelected" style="margin-bottom: 10px; width: 200px;"> <ui-select-match placeholder="{{&nbsp;'Select period type' | i18next }}..."> {{aCtrl.periodTypeSelected.name}} </ui-select-match> <ui-select-choices repeat="obj in aCtrl.filteredPeriodTypes | filter: $select.search"> 
 			<div ng-bind-html="obj.name | highlight: $select.search">
 			</div>
 			</ui-select-choices> </ui-select> 
@@ -94,7 +94,7 @@ immunities enjoyed by WHO under national or international law or submit to any n
 	<div style="display: inline-block;">
 		<label>{{ 'Year' | i18next }}</label><br />
 		<div style="display: inline-block;">
-			<ui-select on-select="aCtrl.getPeriodsInYear(); aCtrl.periodSelected = null;" ng-model="aCtrl.yearSelected" style="margin-bottom: 10px; width: 200px;"> <ui-select-match placeholder="{{ 'Select year...' | i18next }}'"> {{aCtrl.yearSelected.name}} </ui-select-match> <ui-select-choices repeat="obj in aCtrl.years | filter: $select.search"> 
+			<ui-select on-select="aCtrl.getPeriodsInYear(); aCtrl.periodSelected = null;" ng-model="aCtrl.yearSelected" style="margin-bottom: 10px; width: 200px;"> <ui-select-match placeholder="{{ 'Select year' | i18next }}..."> {{aCtrl.yearSelected.name}} </ui-select-match> <ui-select-choices repeat="obj in aCtrl.years | filter: $select.search"> 
 			<div ng-bind-html="obj.name | highlight: $select.search">
 			</div>
 			</ui-select-choices> </ui-select> 
@@ -103,7 +103,7 @@ immunities enjoyed by WHO under national or international law or submit to any n
 	<div ng-if="aCtrl.periodTypeSelected.id != 'Yearly'" style="display: inline-block;">
 		<label>{{ 'Period' | i18next }}</label><br />
 		<div style="display: inline-block;">
-			<ui-select ng-model="aCtrl.periodSelected" style="margin-bottom: 10px; width: 200px;"> <ui-select-match placeholder="{{ 'Select period...' | i18next }}"> {{aCtrl.periodSelected.name}} </ui-select-match> <ui-select-choices repeat="obj in aCtrl.periodsInYear | filter: $select.search"> 
+			<ui-select ng-model="aCtrl.periodSelected" style="margin-bottom: 10px; width: 200px;"> <ui-select-match placeholder="{{ 'Select period' | i18next }}..."> {{aCtrl.periodSelected.name}} </ui-select-match> <ui-select-choices repeat="obj in aCtrl.periodsInYear | filter: $select.search"> 
 			<div ng-bind-html="obj.name | highlight: $select.search">
 			</div>
 			</ui-select-choices> </ui-select> 
@@ -133,7 +133,7 @@ immunities enjoyed by WHO under national or international law or submit to any n
 <!-- PROGRESS -->
 <div ng-if="aCtrl.req">
 	<h5>
-		{{ 'Loading data...' | i18next }}'
+		{{ 'Loading data' | i18next }}...'
 	</h5>
 	<uib-progressbar class="progress-striped active" value="100" type="default"><i ng-show="showWarning">{{ 'Processing' | i18next }}</i></uib-progressbar> 
 </div>

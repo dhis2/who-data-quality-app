@@ -13,14 +13,14 @@ immunities enjoyed by WHO under national or international law or submit to any n
 <!-- DATA -->
 	<div uib-accordion-group class="panel-default" heading="{{ 'Data' | i18next }}" is-open="revCtrl.status.isFirstOpen">
 		<label>Group</label><br />
-		<ui-select ng-model="revCtrl.groupSelected" theme="bootstrap" style="min-width: 200px; display: inline-block;"> <ui-select-match placeholder="{{ 'Select group...' | i18next }}"> {{revCtrl.groupSelected.name}} </ui-select-match> <ui-select-choices repeat="obj in revCtrl.groups | filter: $select.search"> 
+		<ui-select ng-model="revCtrl.groupSelected" theme="bootstrap" style="min-width: 200px; display: inline-block;"> <ui-select-match placeholder="{{ 'Select group' | i18next }}..."> {{revCtrl.groupSelected.name}} </ui-select-match> <ui-select-choices repeat="obj in revCtrl.groups | filter: $select.search"> 
 		<div ng-bind-html="obj.name | highlight: $select.search">
 		</div>
 		</ui-select-choices> </ui-select> 
 	</div>
 	<div uib-accordion-group class="panel-default" heading="Period">
 		<label>{{ 'Year' | i18next }}</label><br />
-		<ui-select ng-model="revCtrl.yearSelected" theme="bootstrap" style="width: 150px; display: inline-block;"> <ui-select-match placeholder="{{ 'Select year...' | i18next }}"> {{revCtrl.yearSelected.name}} </ui-select-match> <ui-select-choices repeat="obj in revCtrl.years | filter: $select.search"> 
+		<ui-select ng-model="revCtrl.yearSelected" theme="bootstrap" style="width: 150px; display: inline-block;"> <ui-select-match placeholder="{{ 'Select year' | i18next }}..."> {{revCtrl.yearSelected.name}} </ui-select-match> <ui-select-choices repeat="obj in revCtrl.years | filter: $select.search"> 
 		<div ng-bind-html="obj.name | highlight: $select.search">
 		</div>
 		</ui-select-choices> </ui-select> <br />
@@ -42,7 +42,7 @@ immunities enjoyed by WHO under national or international law or submit to any n
 </div>
 <div ng-if="revCtrl.outstandingRequests != 0">
 	<h5>
-		{{ 'Loading data...' | i18next }} 
+		{{ 'Loading data' | i18next }}... 
 	</h5>
 	<uib-progressbar animate="false" value="revCtrl.progress()" type="default"> <b>{{revCtrl.progress()}}%</b> </uib-progressbar> 
 </div>

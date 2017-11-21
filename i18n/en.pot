@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2017-11-21T08:54:46.623Z\n"
-"PO-Revision-Date: 2017-11-21T08:54:46.624Z\n"
+"POT-Creation-Date: 2017-11-21T09:03:21.595Z\n"
+"PO-Revision-Date: 2017-11-21T09:03:21.595Z\n"
 
 msgid "Totals"
 msgstr ""
@@ -14,7 +14,7 @@ msgstr ""
 msgid "Details"
 msgstr ""
 
-msgid "Indicator group..."
+msgid "Indicator group"
 msgstr ""
 
 msgid "Boundary"
@@ -95,10 +95,10 @@ msgstr ""
 msgid "Year"
 msgstr ""
 
-msgid "Select year..."
+msgid "Select year"
 msgstr ""
 
-msgid "Select period..."
+msgid "Select period"
 msgstr ""
 
 msgid "Reference periods"
@@ -113,7 +113,7 @@ msgstr ""
 msgid "Analyze"
 msgstr ""
 
-msgid "Loading data..."
+msgid "Loading data"
 msgstr ""
 
 msgid "Processing"
@@ -200,16 +200,22 @@ msgstr ""
 msgid "Select period type..."
 msgstr ""
 
+msgid "Select year..."
+msgstr ""
+
 msgid "From"
 msgstr ""
 
 msgid "To"
 msgstr ""
 
+msgid "Loading data..."
+msgstr ""
+
 msgid "Annual Data Quality Report"
 msgstr ""
 
-msgid "Select group..."
+msgid "Select group"
 msgstr ""
 
 msgid "Preceding years for reference"
