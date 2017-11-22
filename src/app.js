@@ -88,7 +88,7 @@ angular.element(document).ready(
 				fallbackLng: false,
 				keySeparator: "|",
 				backend: {
-					loadPath: "./i18n/{{lng}}.pot"
+					loadPath: "./i18n/{{lng}}.po"
 				}
 			});
 		window.i18next = i18next;

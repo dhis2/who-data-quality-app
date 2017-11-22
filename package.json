@@ -31,7 +31,6 @@
     "babel-preset-es2015": "^6.24.1",
     "copy-webpack-plugin": "^4.2.0",
     "css-loader": "^0.28.7",
-    "d2-app-base": "^1.0.0-rc.0",
     "d2-manifest": "^1.0.0",
     "file-loader": "^1.1.5",
     "html-loader": "^0.5.1",
