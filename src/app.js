@@ -26,7 +26,7 @@ import "file-saver";
 import "blob";
 
 import i18next from "i18next";
-import i18nextXHRBackend from "i18next-xhr-backend";
+import i18nextResources from './i18nextResources';
 import "ng-i18next";
 
 import "bootstrap/dist/css/bootstrap.css";
@@ -82,14 +82,11 @@ angular.element(document).ready(
 		);
 
 		i18next
-			.use(i18nextXHRBackend)
 			.init({
 				returnEmptyString: false,
 				fallbackLng: false,
 				keySeparator: "|",
-				backend: {
-					loadPath: "./i18n/{{lng}}.pot"
-				}
+        resources: i18nextResources
 			});
 		window.i18next = i18next;
 	}
