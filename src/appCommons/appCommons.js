@@ -9,7 +9,7 @@
 
 angular.module("appCommons", ["ui.bootstrap", "angularBootstrapNavTree"]);
 
-require("d2Select.js");
+require("./d2Select.js");
 require("./d2SelectDataElement.js");
 require("./d2SelectIndicator.js");
 require("./d2SelectOrgunit.js");
