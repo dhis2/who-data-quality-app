@@ -42,20 +42,21 @@
     "webpack-dev-server": "^2.9.4"
   },
   "pre-commit": [
-    "extract-default-pot"
+    "refresh-translations-template"
   ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "d2-manifest package.json manifest.webapp && node poTranslator.js && webpack-dev-server",
+    "start": "d2-manifest package.json manifest.webapp && npm run convert-po && webpack-dev-server",
     "validate": "npm ls --depth 0",
     "lint-all": "eslint src",
     "prebuild": "rm -rf build && npm run validate && npm run lint-all",
-    "build": "node poTranslator.js && webpack -p --progress",
+    "build": "npm run convert-po && webpack -p --progress",
     "postbuild": "cp -r *.png i18n build/ && npm run manifest",
     "manifest": "d2-manifest package.json build/manifest.webapp",
     "deploy": "npm run build && mvn clean deploy",
-    "extractor": "node extractor.js",
-    "extract-default-pot": "node extractor.js -o templates.pot && git add ./i18n/templates.pot",
+    "convert-po": "node po-converter.js",
+    "extract-pot": "node pot-extractor.js",
+    "refresh-translations-template": "npm run extract-pot -- -o translations.pot && git add ./i18n/translations.pot",
     "zip": "rm -rf compiled && npm run build && mkdir compiled && zip -r -j compiled/$npm_package_name.zip build/*"
   },
   "repository": {

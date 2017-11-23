@@ -24,7 +24,7 @@ const storeTranslationsForIndex = (index) => {
       storeTranslationsForIndex(index + 1);
     }
   } else {
-    writeFileSync('./src/i18nextResources.js', "const i18nextResources = " + JSON.stringify(translations, null, 2) + "; export default i18nextResources;");
+    writeFileSync('./i18n/resources.js', "const i18nextResources = " + JSON.stringify(translations, null, 2) + "; export default i18nextResources;");
   }
 };
 

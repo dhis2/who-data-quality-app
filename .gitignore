@@ -14,3 +14,6 @@ manifest.webapp
 
 *.zip
 npm-debug.log
+
+# Do not include JS translation resources regenrated by po-converter.js
+i18n/resources.js

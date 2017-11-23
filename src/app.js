@@ -26,7 +26,7 @@ import "file-saver";
 import "blob";
 
 import i18next from "i18next";
-import i18nextResources from './i18nextResources';
+import i18nextResources from '../i18n/resources';
 import "ng-i18next";
 
 import "bootstrap/dist/css/bootstrap.css";
