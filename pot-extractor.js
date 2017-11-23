@@ -39,5 +39,5 @@ recursive('src', function (err, files) {
     }
   }
 
-  i18nextToPot('en', JSON.stringify(translations)).then(save('i18n/' + filename));
+  i18nextToPot('en', JSON.stringify(translations)).then(save('./i18n/' + filename));
 });
