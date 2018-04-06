@@ -1,464 +1,477 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: i18next-conv\n"
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2017-11-21T10:07:41.961Z\n"
+"PO-Revision-Date: 2018-03-24 18:47+0000\n"
+"Last-Translator: Translator 2 <tr2@emata.net>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: ar\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2017-11-21T10:07:41.961Z\n"
-"PO-Revision-Date: 2017-11-21 05:20-0500\n"
-"Last-Translator: Pootle <pootle@translate.dhis2.net>\n"
-"Language-Team: Arabic\n"
-"Language: ar\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 "
+"&& n%100<=10 ? 3 : n%100>=11 ? 4 : 5;\n"
+"X-Generator: Pootle 2.8\n"
+"X-POOTLE-MTIME: 1521917268.053898\n"
 
 msgid "Totals"
-msgstr ""
+msgstr "الإجماليات"
 
 msgid "Details"
-msgstr ""
+msgstr "التفاصيل"
 
 msgid "Indicator group"
-msgstr ""
+msgstr "مجموعة المؤشرات"
 
 msgid "Boundary"
-msgstr ""
+msgstr "حدّ"
 
 msgid "Other"
-msgstr ""
+msgstr "أخرى"
 
 msgid "Disaggregation"
-msgstr ""
+msgstr "تصنيف"
 
 msgid "Organisation unit level"
-msgstr ""
+msgstr "مستوى الوحدة التنظيمية"
 
 msgid "Organisation unit group"
-msgstr ""
+msgstr "مجموعة الوحدات التنظيمية"
 
 msgid "Selected"
-msgstr ""
+msgstr "محدد"
 
 msgid "Consistency"
-msgstr ""
+msgstr "التناسق"
 
 msgid "Consistency analysis type"
-msgstr ""
+msgstr "نوع تحليل التناسق"
 
 msgid "Between Indicators"
-msgstr ""
+msgstr "بين المؤشرات"
 
 msgid "Over Time"
-msgstr ""
+msgstr "بعد مرور الوقت"
 
 msgid "Compare organisation units to"
-msgstr ""
+msgstr "قارن الوحدات التنظيمية ب"
 
 msgid "Overall result"
-msgstr ""
+msgstr "النتيجة النهائية"
 
 msgid "Expected result"
-msgstr ""
+msgstr "النتيجة المتوقعة"
 
 msgid "Expected relationship"
-msgstr ""
+msgstr "العلاقة المتوقعة"
 
 msgid "Dropout"
-msgstr ""
+msgstr "التسرب"
 
 msgid "Expected trend"
-msgstr ""
+msgstr "الاتجاه المتوقع"
 
 msgid "Increasing/decreasing"
-msgstr ""
+msgstr "زيادة / نقصان"
 
 msgid "Criteria"
-msgstr ""
+msgstr "المعيار"
 
 msgid "Data"
-msgstr ""
+msgstr "البيانات"
 
 msgid "Select data element/indicator"
-msgstr ""
+msgstr "تحديد عنصر البيانات / المؤشر"
 
 msgid "Data element"
-msgstr ""
+msgstr "عنصر البيانات"
 
 msgid "Indicator"
-msgstr ""
+msgstr "المؤشر"
 
 msgid "Select data element/indicator for comparison"
-msgstr ""
+msgstr "تحديد عنصر البيانات / المؤشر للمقارنة"
 
 msgid "Period"
-msgstr ""
+msgstr "الفترة الزمنية"
 
 msgid "Period type"
-msgstr ""
+msgstr "نوع الفترة الزمنية"
 
 msgid "Year"
-msgstr ""
+msgstr "السنة"
 
 msgid "Select year"
-msgstr ""
+msgstr "تحديد السنة"
 
 msgid "Select period"
-msgstr ""
+msgstr "تحديد الفترة الزمنية"
 
 msgid "Reference periods"
-msgstr ""
+msgstr "الفترات المرجعية"
 
 msgid "No. of Preceding periods"
-msgstr ""
+msgstr "عدد الفترات السابقة"
 
 msgid "Orgunit"
-msgstr ""
+msgstr "الوحدة التنظيمية"
 
 msgid "Analyze"
-msgstr ""
+msgstr "تحليل"
 
 msgid "Loading data"
-msgstr ""
+msgstr "جار تحميل البيانات"
 
 msgid "Processing"
-msgstr ""
+msgstr "جار المعالجة"
 
 msgid "Download"
-msgstr ""
+msgstr "تنزيل"
 
 msgid "Previous"
-msgstr ""
+msgstr "السابق"
 
 msgid "Unit"
-msgstr ""
+msgstr "الوحدة"
 
 msgid "Current Period"
-msgstr ""
+msgstr "الفترة الزمنية الحالية"
 
 msgid "Average"
-msgstr ""
+msgstr "المتوسط"
 
 msgid "Forecast"
-msgstr ""
+msgstr "التوقعات"
 
 msgid "Dropout rate"
-msgstr ""
+msgstr "معدل التسرب"
 
 msgid "Ratio"
-msgstr ""
+msgstr "النسبة"
 
 msgid "Weight"
-msgstr ""
+msgstr "الوزن"
 
 msgid "Contact"
-msgstr ""
+msgstr "الاتصال"
 
 msgid "Drill down"
-msgstr ""
+msgstr "الانتقال للأسفل"
 
 msgid "Click on the graph or in the table see details."
-msgstr ""
+msgstr "انقر على الرسم البياني أو في الجدول لرؤية التفاصيل."
 
 msgid "Dashboard"
-msgstr ""
+msgstr "لوحة المعلومات"
 
 msgid "Completeness"
-msgstr ""
+msgstr "اكتمال"
 
 msgid "completeness"
-msgstr ""
+msgstr "اكتمال"
 
 msgid "Consistency - time"
-msgstr ""
+msgstr "تناسق - الوقت"
 
 msgid "Consistency - data"
-msgstr ""
+msgstr "تناسق - البيانات"
 
 msgid "Outliers"
-msgstr ""
+msgstr "القيم المتطرفة"
 
 msgid "Outliers and Missing Data"
-msgstr ""
+msgstr "القيم المتطرفة و البيانات المفقودة"
 
 msgid "Data set"
-msgstr ""
+msgstr "حزمة البيانات"
 
 msgid "Data elements"
-msgstr ""
+msgstr "عناصر البيانات"
 
 msgid "Indicators"
-msgstr ""
+msgstr "المؤشرات"
 
 msgid "Recent"
-msgstr ""
+msgstr "الأخيرة"
 
 msgid "By year"
-msgstr ""
+msgstr "حسب السنة"
 
 msgid "Custom"
-msgstr ""
+msgstr "مخصص"
 
 msgid "Select number of periods..."
-msgstr ""
+msgstr "تحديد عدد الفترات الزمنية..."
 
 msgid "Select period type..."
-msgstr ""
+msgstr "تحديد نوع الفترة الزمنية..."
 
 msgid "Select year..."
-msgstr ""
+msgstr "تحديد السنة..."
 
 msgid "From"
-msgstr ""
+msgstr "من"
 
 msgid "To"
-msgstr ""
+msgstr "إلى"
 
 msgid "Loading data..."
-msgstr ""
+msgstr "جار تحميل البيانات..."
 
 msgid "Annual Data Quality Report"
-msgstr ""
+msgstr "التقرير السنوي لجودة البيانات"
 
 msgid "Select group"
-msgstr ""
+msgstr "تحديد المجموعة"
 
 msgid "Preceding years for reference"
-msgstr ""
+msgstr "السنوات السابقة كمرجع"
 
 msgid "Generate"
-msgstr ""
+msgstr "توليد"
 
 msgid "Print"
-msgstr ""
+msgstr "طباعة"
 
 msgid "Assessment of Health Facility Data Quality"
-msgstr ""
+msgstr "تقييم جودة بيانات المنشأة الصحية"
 
 msgid "WHO Data Quality Review"
-msgstr ""
+msgstr "مراجعة جودة بيانات من منظمة الصحة العالمية"
 
 msgid "SUMMARY"
-msgstr ""
+msgstr "الملخص"
 
 msgid "Domain 1: Completeness"
-msgstr ""
+msgstr "المجال 1: الاكتمال"
 
 msgid "1a: Completeness of facility reporting"
-msgstr ""
+msgstr "1أ: اكتمال تقارير المنشأة"
 
-msgid ""
-"The percentage of expected reports that have been entered and completed."
-msgstr ""
+msgid "The percentage of expected reports that have been entered and completed."
+msgstr "النسبة المئوية للتقارير المتوقعة التي تم إدخالها وإكمالها."
 
 msgid "Overall score"
-msgstr ""
+msgstr "النتيجة النهائية"
 
 msgid "with divergent score"
-msgstr ""
+msgstr "مع درجة متباينة"
 
 msgid "Number"
-msgstr ""
+msgstr "العدد"
 
 msgid "Percent"
-msgstr ""
+msgstr "النسبة المئوية"
 
 msgid "Not available"
-msgstr ""
+msgstr "غير متوفر"
 
 msgid "1b: Timeliness of facility reporting"
-msgstr ""
+msgstr "1ب: توقيت إعداد تقارير المنشأة"
 
 msgid ""
 "The percentage of expected reports that have been entered and completed on "
 "time."
 msgstr ""
+"النسبة المئوية للتقارير المتوقعة التي تم إدخالها وإكمالها في الوقت المحدد."
 
 msgid "1c: Completeness of indicator data"
-msgstr ""
+msgstr "1ج: اكتمال بيانات المؤشرات"
 
 msgid "Missing or zero values"
-msgstr ""
+msgstr "القيم المفقودة أو الصفرية"
 
 msgid "compared to previous"
-msgstr ""
+msgstr "مقارنة مع السابق"
 
 msgid "years."
-msgstr ""
+msgstr "سنوات"
 
 msgid "Domain 2: Internal consistency"
-msgstr ""
+msgstr "المجال 2: التناسق الداخلي"
 
 msgid "Extreme outliers, using the standard method."
-msgstr ""
+msgstr "القيم المتطرفة القصوى، باستخدام الطريقة القياسية."
 
 msgid ""
 "are counted as divergent if they have one or more extreme outliers for an "
 "indicator."
 msgstr ""
+"يتم اعتبارها منحرفة إذا كان لها واحد أو أكثر من القيم المتطرفة القصوى للمؤشر."
 
 msgid "2b: Moderate outliers."
-msgstr ""
+msgstr "2ب: القيم المتطرفة المعتدلة"
 
 msgid "Outliers relative to the mean."
-msgstr ""
+msgstr "القيم المتطرفة بالنسبة للمتوسط."
 
 msgid "Moderate outliers, using the standard method."
-msgstr ""
+msgstr "القيم المتطرفة المعتدلة، وذلك باستخدام الطريقة القياسية."
 
 msgid ""
 "are counted as divergent if they have two or more moderate outliers for an "
 "indicator."
 msgstr ""
+"يتم اعتبارها منحرفة إذا كان لديها اثنين أو أكثر من القيم المتطرفة المعتدلة "
+"لمؤشر."
 
 msgid "Not applicable"
-msgstr ""
+msgstr "غير قابل للتطبيق"
 
 msgid "2c: Moderate outliers."
-msgstr ""
+msgstr "2جـ : القيم المتطرفة المعتدلة"
 
 msgid "2d: Consistency over time."
-msgstr ""
+msgstr "2د : التناسق مع مرور الوقت"
 
 msgid ""
 "Difference between the current year and either the average of the 3 "
 "preceding years (if expected trend is constant), or the forecasted value."
 msgstr ""
+"الفرق بين السنة الحالية ومتوسط السنوات الثلاث السابقة (إذا كان الاتجاه "
+"المتوقع ثابتا)، أو القيمة المتوقعة."
 
 msgid "Subunits with divergent score"
-msgstr ""
+msgstr "الوحدات الفرعية مع درجة الانحراف"
 
 msgid "Consistency with United Nations Population Projections"
-msgstr ""
+msgstr "التناسق مع الإسقاطات السكانية للأمم المتحدة"
 
 msgid "4b: Consistency of denominators"
-msgstr ""
+msgstr "4ب: تناسق المقامات"
 
 msgid "Quality threshold"
-msgstr ""
+msgstr "عتبة الجودة"
 
 msgid "Interpretations"
-msgstr ""
+msgstr "التفسيرات"
 
 msgid "Values"
-msgstr ""
+msgstr "القيم"
 
 msgid "Expected"
-msgstr ""
+msgstr "المتوقع"
 
 msgid "Actual"
-msgstr ""
+msgstr "الفعلي"
 
 msgid "Name"
-msgstr ""
+msgstr "الاسم"
 
 msgid "1d: Consistency of dataset completeness over time"
-msgstr ""
+msgstr "1د: تناسق اكتمال حزمة البيانات مع الوقت"
 
 msgid "Completeness of datasets in"
-msgstr ""
+msgstr "اكتمال حزم البيانات في"
 
 msgid "Compare"
-msgstr ""
+msgstr "مقارنة"
 
 msgid "to"
-msgstr ""
+msgstr "إلى"
 
 msgid "Constant"
-msgstr ""
+msgstr "الثابت"
 
 msgid "Decreasing"
-msgstr ""
+msgstr "تناقص"
 
 msgid "Current vs average"
-msgstr ""
+msgstr "الحالي مقابل المتوسط"
 
 msgid "Current vs forecast"
-msgstr ""
+msgstr "الحالي مقابل التوقعات"
 
 msgid "Reporting completeness over time"
-msgstr ""
+msgstr "اكتمال التقارير مع مرور الوقت"
 
 msgid "DOMAIN 2: INTERNAL CONSISTENCY OF REPORTED DATA"
-msgstr ""
+msgstr "المجال 2: التناسق الداخلي للبيانات المبلغ عنها"
 
 msgid ""
-"Extreme outliers, using the standard method. Threshold denotes the number of "
-"standard deviations from the mean."
+"Extreme outliers, using the standard method. Threshold denotes the number "
+"of standard deviations from the mean."
 msgstr ""
+"القيم المتطرفة القصوى، باستخدام الطريقة القياسية. وتشير العتبة إلى عدد "
+"الانحرافات المعيارية عن المتوسط."
 
 msgid "Threshold"
-msgstr ""
+msgstr "العتبة"
 
 msgid "Names"
-msgstr ""
+msgstr "الأسماء"
 
 msgid ""
 "Moderate outliers, using the standard method. Threshold denotes the number "
 "of standard deviations from the mean."
 msgstr ""
+"القيم المتطرفة المعتدلة، وذلك باستخدام الطريقة القياسية. وتشير العتبة إلى "
+"عدد الانحرافات المعيارية عن المتوسط."
 
 msgid "2c: Moderate outliers"
-msgstr ""
+msgstr "2 جـ : القيم المتطرفة المعتدلة"
 
 msgid "Increasing"
-msgstr ""
+msgstr "متزايد"
 
 msgid "Number of"
-msgstr ""
+msgstr "عدد من"
 
 msgid "Percent of"
-msgstr ""
+msgstr "نسبة مئوية من"
 
 msgid "2e: Consistency between related indicators"
-msgstr ""
+msgstr "2 هـ : التناسق بين المؤشرات ذوات الصلة"
 
 msgid ""
 "Consistency between reported values for two related indicators within the "
 "same year."
-msgstr ""
+msgstr "التناسق بين القيم المبلغ عنها لمؤشرين ذوي صلة في نفس السنة."
 
 msgid "Indicator A"
-msgstr ""
+msgstr "المؤشر أ"
 
 msgid "Indicator B"
-msgstr ""
+msgstr "المؤشر ب"
 
 msgid "Not negative"
-msgstr ""
+msgstr "ليست سلبية"
 
 msgid "DOMAIN 3: EXTERNAL COMPARISON"
-msgstr ""
+msgstr "المجال 3: مقارنة الخارجية"
 
 msgid "3a: Comparison with external/survey data"
-msgstr ""
+msgstr "3أ: مقارنة مع البيانات الخارجية / المسح"
 
 msgid "Survey value"
-msgstr ""
+msgstr "قيمة الاستطلاع"
 
 msgid "Routine value"
-msgstr ""
+msgstr "القيمة الروتينية"
 
 msgid "4a: Consistency with UN population projection."
-msgstr ""
+msgstr "4 أ : التناسق مع إسقاطات السكان في الأمم المتحدة."
 
 msgid ""
 "Ratio of population projection from the Bureau of Statistics to a UN "
 "projection"
-msgstr ""
+msgstr "نسبة إسقاطات السكان من مكتب الإحصاءات إلى إسقاطات الأمم المتحدة"
 
 msgid "Consistency of denominators within the same year."
-msgstr ""
+msgstr "تناسق المقامات خلال نفس العام."
 
 msgid "Denominator B"
-msgstr ""
+msgstr "المقام ب"
 
 msgid "with poor score"
-msgstr ""
+msgstr "بدرجة قليلة"
 
 msgid "Remarks"
-msgstr ""
+msgstr "ملاحظات"
 
 msgid "Analysis type"
-msgstr ""
+msgstr "نوع التحليل"
 
 msgid "Item"
-msgstr ""
+msgstr "العنصر"
