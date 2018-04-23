@@ -351,7 +351,6 @@ app.controller("OutlierResultController",
 			}
 
 			function notification(title, message) {
-				//TODO
 				var modalInstance = $uibModal.open({
 					template: require("../appCommons/modalNotification.html"),
 					controller: "ModalNotificationController",

@@ -141,7 +141,7 @@ export default function () {
 			if (values[i]) points.push([i, parseFloat(values[i])]);
 			else points.push([i, null]);
 		}
-		var forecast = regression("linear", points);
+		var forecast = regression.linear(points);
 		return forecast.equation[0]*i + forecast.equation[1];
 	};
 

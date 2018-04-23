@@ -425,9 +425,8 @@ angular.module("consistencyAnalysis").controller("ConsistencyAnalysisController"
 
 						var hasChildren = orgunit.children;
 						if (!hasChildren) {
-							//TODO
 							var modalInstance = $uibModal.open({
-								templateUrl: "appCommons/modalNotification.html",
+								template: require("../appCommons/modalNotification.html"),
 								controller: "ModalNotificationController",
 								controllerAs: "nCtrl",
 								resolve: {
@@ -439,8 +438,8 @@ angular.module("consistencyAnalysis").controller("ConsistencyAnalysisController"
 									}
 								}
 							});
-
 							modalInstance.result.then(function (result) {
+							
 							});
 							return;
 						}
