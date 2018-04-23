@@ -7,17 +7,17 @@ immunities enjoyed by WHO under national or international law or submit to any n
 -->
 
 <div class="modal-header">
-    <h4>Download</h4>
-	<h5>CSV format</h5>
+    <h4>{{ "Download" || i18next }}</h4>
+	<h5>{{ "CSV format" || i18next }}</h5>
 </div>
 <div class="modal-body">
     <table class="table table-bordered">
         <tr>
-			<th colspan="2">Options</th>
+			<th colspan="2">{{ "Options" || i18next }}</th>
         </tr>
 		<tr>
 			<td>
-				Field separator
+				{{"Field separator" || i18next }}
 			</td>
 			<td>
 				<div class="btn-group btn-group-justified" style="width: 200px; display: inline-block;">
@@ -32,7 +32,7 @@ immunities enjoyed by WHO under national or international law or submit to any n
 		</tr>
 		<tr>
 			<td>
-				Decimal separator
+				{{ "Decimal separator" || i18next }}
 			</td>
 			<td>
 				<div class="btn-group btn-group-justified" style="width: 200px; display: inline-block;">
@@ -46,7 +46,7 @@ immunities enjoyed by WHO under national or international law or submit to any n
 		</tr>
 		<tr>
 			<td>
-				File name
+				{{ "File name" || i18next }}
 			</td>
 			<td>
 				<input type="text" class="form-control" ng-model="exportCtrl.options.fileName">
@@ -55,6 +55,6 @@ immunities enjoyed by WHO under national or international law or submit to any n
     </table>
 </div>
 <div class="modal-footer" style="clear: both;">
-	<button type="button" class="btn btn-default" data-ng-click="exportCtrl.cancel()">Cancel</button>
-    <button type="button" class="btn btn-primary" data-ng-click="exportCtrl.close()">Download</button>
+	<button type="button" class="btn btn-default" data-ng-click="exportCtrl.cancel()">{{ "Cancel" || i18next }}</button>
+    <button type="button" class="btn btn-primary" data-ng-click="exportCtrl.close()">{{ "Download" || i18next }}</button>
 </div>

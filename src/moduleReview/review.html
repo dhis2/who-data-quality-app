@@ -227,7 +227,7 @@ immunities enjoyed by WHO under national or international law or submit to any n
 									<th colspan="4"> <em>{{ '2a: Extreme outliers.' | i18next }}</em> </th>
 								</tr>
 								<tr>
-									<td colspan="4"> <em>{{ 'Extreme outliers, using the standard method.' | i18next }} {{revCtrl.selectedOrgunit.level.displayName}} {{ 'are counted as divergent if they have one or more extreme outliers for an indicator.' | i18next }</em> </td>
+									<td colspan="4"> <em>{{ 'Extreme outliers, using the standard method.' | i18next }} {{revCtrl.selectedOrgunit.level.displayName}} {{ 'are counted as divergent if they have one or more extreme outliers for an indicator.' | i18next }}</em> </td>
 								</tr>
 								<tr bgcolor="#f9f9f9">
 									<th rowspan="2" width="275">{{ 'Indicator' | i18next }}</th>
@@ -263,8 +263,8 @@ immunities enjoyed by WHO under national or international law or submit to any n
 									<th colspan="2" width="175">{{revCtrl.selectedOrgunit.level.displayName}} {{ 'with divergent score' | i18next }}</th>
 								</tr>
 								<tr bgcolor="#f9f9f9">
-									<th width="175">{{ 'Number' | i18next }</th>
-									<th width="175">{{ 'Percent' | i18next }</th>
+									<th width="175">{{ 'Number' | i18next }}</th>
+									<th width="175">{{ 'Percent' | i18next }}</th>
 								</tr>
 								<tr ng-repeat="indicator in revCtrl.outliers | orderBy:'displayName'">
 									<td>{{indicator.displayName}}</td>
@@ -800,7 +800,7 @@ immunities enjoyed by WHO under national or international law or submit to any n
 										<th> {{ '2e: Consistency between related indicators' | i18next }} </th>
 									</tr>
 									<tr>
-										<td> <em>{{ 'Consistency between reported values for two related indicators within the same year.' | i18next }</em> </td>
+										<td> <em>{{ 'Consistency between reported values for two related indicators within the same year.' | i18next }}</em> </td>
 									</tr>
 								</tbody>
 							</table>
@@ -888,7 +888,7 @@ immunities enjoyed by WHO under national or international law or submit to any n
 									<td ng-if="!relation.boundaryValue" class="valueCell">{{ 'Not available' | i18next }}</td>
 								</tr>
 								<tr>
-									<td>{{ 'Routine value' | i18next }</td>
+									<td>{{ 'Routine value' | i18next }}</td>
 									<td ng-if="relation.boundaryRefValue" class="valueCell">{{relation.boundaryRefValue}}%</td>
 									<td ng-if="!relation.boundaryRefValue" class="valueCell">{{ 'Not available' | i18next }}</td>
 								</tr>
