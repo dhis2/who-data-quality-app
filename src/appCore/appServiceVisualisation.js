@@ -134,9 +134,9 @@ export default function (periodService, requestService, mathService, $q, d2Data,
 
 			var data = response.data.rows;
 			var header = response.data.headers;
-			var names = response.data.metaData.names;
+			var items = response.data.metaData.items;
 
-			orgunitIDs = response.data.metaData.ou; //Replace for "USER ORGUNIT" etc
+			orgunitIDs = response.data.metaData.dimensions.ou; //Replace for "USER ORGUNIT" etc
 
 			var maxY;
 
@@ -148,7 +148,7 @@ export default function (periodService, requestService, mathService, $q, d2Data,
 
 				for (var i = 0; i < dataIDs.length; i++) {
 					var chartSerie = {
-						"key": names[dataIDs[i]],
+						"key": items[dataIDs[i]].name,
 						"values": []
 					};
 

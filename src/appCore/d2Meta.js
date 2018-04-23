@@ -127,7 +127,7 @@ export default function (requestService, periodService, d2Utils, $q) {
 
 		requestService.getSingleData(requestURL).then(function(data) {
 
-			var orgunits = data.metaData.ou;
+			var orgunits = data.metaData.dimensions.ou;
 			var boundary = [];
 			var subunits = [];
 

@@ -283,7 +283,7 @@ export default function ($q, requestService, mathService, d2Meta, d2Map) {
 
 		var headers = data.data.headers;
 		var metaData = data.data.metaData;
-		var names = metaData.names;
+		var items = metaData.items; //TODO: fix
 		var rows = data.data.rows;
 
 		var sScoreCriteria = self.og.sScoreCriteria;
@@ -317,10 +317,10 @@ export default function ($q, requestService, mathService, d2Meta, d2Map) {
 
 
 			var ouID = row[ou];
-			var ouName = names[ouID];
+			var ouName = items[ouID].name;
 			var ouHierarchy = makeOuHierarchy(ouID, metaData);
 			var dxID = row[dx];
-			var dxName = names[row[dx]];
+			var dxName = items[row[dx]].name;
 			newRow = outlierGapNewRow(ouID, ouName, ouHierarchy, dxID, dxName);
 
 			//Iterate to get all values, and look for gaps at the same time
@@ -460,7 +460,7 @@ export default function ($q, requestService, mathService, d2Meta, d2Map) {
 		var hierarchyNames = [];
 		for (var i = 0; i < hierarchyIDs.length; i++) {
 
-			hierarchyNames.push(metaData.names[hierarchyIDs[i]]);
+			hierarchyNames.push(metaData.items[hierarchyIDs[i]].name);
 
 		}
 		return hierarchyNames;
@@ -696,17 +696,17 @@ export default function ($q, requestService, mathService, d2Meta, d2Map) {
 		var threshold = self.dsco.threshold;
 		var pe = self.dsco.pe;
 		var ouBoundary = self.dsco.ouBoundary;
-		var ouSubunitIDs = self.dsco.subunitData.metaData.ou;
+		var ouSubunitIDs = self.dsco.subunitData.metaData.dimensions.ou;
 
 		//reshuffle and concat the data from DHIS a bit to make is easier to use
 		var headers = self.dsco.boundaryData.headers;
-		var names = self.dsco.subunitData.metaData.names;
+		var items = self.dsco.subunitData.metaData.items;
 		var data = self.dsco.subunitData.rows;
 
 		var key;
 		data = data.concat(self.dsco.boundaryData.rows);
-		for (key in self.dsco.boundaryData.metaData.names) {
-			names[key] = self.dsco.boundaryData.metaData.names[key];
+		for (key in self.dsco.boundaryData.metaData.items) {
+			items[key] = self.dsco.boundaryData.metaData.items[key];
 		}
 
 		var errors = [];
@@ -726,7 +726,7 @@ export default function ($q, requestService, mathService, d2Meta, d2Map) {
 				if (value > threshold) subunitsWithinThreshold++;
 				else {
 					subunitsOutsideThreshold++;
-					subunitViolationNames.push(names[ouSubunitIDs[j]]);
+					subunitViolationNames.push(items[ouSubunitIDs[j]].name);
 				}
 			}
 		}
@@ -740,7 +740,7 @@ export default function ($q, requestService, mathService, d2Meta, d2Map) {
 		//Add key metadata to result
 		result.pe = pe;
 		result.dxID = dsID;
-		result.dxName = names[dsID];
+		result.dxName = items[dsID].name;
 		result.threshold = threshold;
 
 		self.dsco.callback(result, errors);
@@ -822,10 +822,10 @@ export default function ($q, requestService, mathService, d2Meta, d2Map) {
 
 		var rows = self.dco.data.rows;
 		var headers = self.dco.data.headers;
-		var names = self.dco.data.metaData.names;
+		var items = self.dco.data.metaData.items;
 
-		var subunits = self.dco.data.metaData.ou;
-		var periods = self.dco.data.metaData.pe;
+		var subunits = self.dco.data.metaData.dimensions.ou;
+		var periods = self.dco.data.metaData.dimensions.pe;
 		var dxID = self.dco.dxID;
 
 		var threshold = self.dco.threshold;
@@ -852,7 +852,7 @@ export default function ($q, requestService, mathService, d2Meta, d2Map) {
 
 			completeness = 100 * valid / periods.length;
 			if (completeness < threshold) {
-				subunitViolationNames.push(names[subunits[i]]);
+				subunitViolationNames.push(items[subunits[i]].items);
 				subunitsOutsideThreshold++;
 			}
 		}
@@ -867,7 +867,7 @@ export default function ($q, requestService, mathService, d2Meta, d2Map) {
 
 		//Include some metadata
 		result.dxID = dxID;
-		result.dxName = names[dxID];
+		result.dxName = items[dxID].name;
 		result.pe = periods;
 		result.threshold = threshold;
 
@@ -948,9 +948,9 @@ export default function ($q, requestService, mathService, d2Meta, d2Map) {
 	function startIndicatorOutlierAnalysis() {
 		var rows = self.io.data.rows;
 		var headers = self.io.data.headers;
-		var subunits = self.io.data.metaData.ou;
-		var periods = self.io.data.metaData.pe;
-		var names = self.io.data.metaData.names;
+		var subunits = self.io.data.metaData.dimensions.ou;
+		var periods = self.io.data.metaData.dimensions.pe;
+		var items = self.io.data.metaData.items;
 
 		var totalValues = 0;
 		var totalExtremeOutliers = 0;
@@ -1008,15 +1008,15 @@ export default function ($q, requestService, mathService, d2Meta, d2Map) {
 
 			if (extremeCount > 0) {
 				subunitsExtreme++;
-				subunitExtremeNames.push(names[subunits[i]]);
+				subunitExtremeNames.push(items[subunits[i]].name);
 			}
 			if (moderateCount > 1) {
 				subunitsModerate++;
-				subunitModerateNames.push(names[subunits[i]]);
+				subunitModerateNames.push(items[subunits[i]].name);
 			}
 			if (zCount > 1) {
 				subunitsZscore++;
-				subunitZscoreNames.push(names[subunits[i]]);
+				subunitZscoreNames.push(items[subunits[i]].name);
 			}
 		}
 

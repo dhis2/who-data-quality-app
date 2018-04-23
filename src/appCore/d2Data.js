@@ -171,14 +171,14 @@ export default function (requestService, d2Utils, $q) {
 				 * Look up names based on ID.
 				 */
 	function name(id) {
-		var names = mergedData.metaData.names;
+		var items = mergedData.metaData.items;
 		var name;
 		//data element operand
 		if (id.length === 23) {
-			name = names[id.substr(0,11)] + " " + names[id.substr(12,11)];
+			name = items[id.substr(0,11)].name + " " + items[id.substr(12,11)].name;
 		}
 		else {
-			name = names[id];
+			name = items[id].name;
 		}
 		return name;
 	}
@@ -330,7 +330,7 @@ export default function (requestService, d2Utils, $q) {
 		var meta = {
 			co: [],
 			dx: [],
-			names: {},
+			items: {},
 			ou: [],
 			pe: []
 		};
@@ -339,14 +339,14 @@ export default function (requestService, d2Utils, $q) {
 			var metaData = receivedData[i].metaData;
 
 			//Transfer metadata
-			meta.co.push.apply(meta.co, metaData.co);
-			meta.dx.push.apply(meta.dx, metaData.dx);
-			meta.ou.push.apply(meta.ou, metaData.ou);
-			meta.pe.push.apply(meta.pe, metaData.pe);
+			meta.co.push.apply(meta.co, metaData.dimensions.co);
+			meta.dx.push.apply(meta.dx, metaData.dimensions.dx);
+			meta.ou.push.apply(meta.ou, metaData.dimensions.ou);
+			meta.pe.push.apply(meta.pe, metaData.dimensions.pe);
 
-			for (var key in metaData.names) {
-				if (metaData.names.hasOwnProperty(key)) {
-					meta.names[key] = metaData.names[key];
+			for (var key in metaData.items) {
+				if (metaData.items.hasOwnProperty(key)) {
+					meta.items[key] = metaData.items[key];
 				}
 
 			}
@@ -387,7 +387,7 @@ export default function (requestService, d2Utils, $q) {
 				metaData: {
 					co: [],
 					dx: [],
-					names: {},
+					items: {},
 					ou: [],
 					pe: []
 				},
@@ -425,14 +425,14 @@ export default function (requestService, d2Utils, $q) {
 			}
 
 			//Transfer metadata
-			mergedData.metaData.co.push.apply(mergedData.metaData.co, metaData.co);
-			mergedData.metaData.dx.push.apply(mergedData.metaData.dx, metaData.dx);
-			mergedData.metaData.ou.push.apply(mergedData.metaData.ou, metaData.ou);
-			mergedData.metaData.pe.push.apply(mergedData.metaData.pe, metaData.pe);
+			mergedData.metaData.co.push.apply(mergedData.metaData.co, metaData.dimensions.co);
+			mergedData.metaData.dx.push.apply(mergedData.metaData.dx, metaData.dimensions.dx);
+			mergedData.metaData.ou.push.apply(mergedData.metaData.ou, metaData.dimensions.ou);
+			mergedData.metaData.pe.push.apply(mergedData.metaData.pe, metaData.dimensions.pe);
 
-			for (var key in metaData.names) {
-				if (metaData.names.hasOwnProperty(key)) {
-					mergedData.metaData.names[key] = metaData.names[key];
+			for (var key in metaData.items) {
+				if (metaData.items.hasOwnProperty(key)) {
+					mergedData.metaData.items[key] = metaData.items[key];
 				}
 
 			}
