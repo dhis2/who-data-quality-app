@@ -5,36 +5,43 @@
 	{
 		"code": "G1",
 		"name": "General Service Statistics",
+		"displayName": "General Service Statistics",
 		"members": ["D21"]
 	},
 	{
 		"code": "G2",
 		"name": "Maternal Health",
+		"displayName": "Maternal Health",
 		"members": ["D1", "D2", "D40", "D29", "D19"]
 	},
 	{
 		"code": "G3",
 		"name": "Immunization",
+		"displayName": "Immunization",
 		"members": ["D3", "D4", "D10", "D24", "D12", "D13", "D25"]
 	},
 	{
 		"code": "G4",
-		"name": "HIV/Aids",
+	  	"name": "HIV/Aids",
+		"displayName": "HIV/Aids",
 		"members": ["D6", "D16", "D42", "D26", "D27"]
 	},
 	{
 		"code": "G5",
-		"name": "TB",
+	  "name": "TB",
+		"displayName": "TB",
 		"members": ["D5", "D30", "D34", "D37"]
 	},
 	{
 	  "code": "G6",
 	  "name": "TB/HIV",
+	  "displayName": "TB/HIV",
 	  "members": ["D31", "D32"]
 	},
 	{
 		"code": "G7",
 		"name": "Malaria",
+		"displayName": "Malaria",
 		"members": ["D8", "D9", "D35", "D23", "D41", "D36"]
 	}		
 	],

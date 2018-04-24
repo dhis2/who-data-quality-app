@@ -272,6 +272,7 @@ export default function (requestService, d2Meta, d2Utils, $q) {
 
 		//Add indicator
 		_map.groups.push({
+			"displayName": name,
 			"name": name,
 			"code": code,
 			"members": []
