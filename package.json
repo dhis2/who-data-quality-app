@@ -1,6 +1,6 @@
 {
   "name": "who-data-quality-tool",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "WHO Data Quality Tool for DHIS2",
   "main": "./src/app.js",
   "dependencies": {
