@@ -26,7 +26,7 @@ import "file-saver";
 import "blob";
 
 import i18next from "i18next";
-import i18nextResources from '../i18n/resources';
+import i18nextResources from "../i18n/resources";
 import "ng-i18next";
 
 import "bootstrap/dist/css/bootstrap.css";
@@ -86,7 +86,7 @@ angular.element(document).ready(
 				returnEmptyString: false,
 				fallbackLng: false,
 				keySeparator: "|",
-        resources: i18nextResources
+				resources: i18nextResources
 			});
 		window.i18next = i18next;
 	}
