@@ -175,13 +175,40 @@ export default function (requestService, d2Meta, d2Utils, $q) {
 				 * Upgrade metadata version
 				 */
 	function versionUpgrade() {
-		var currentVersion = "1.0";
+		var currentVersion = "1.1";
 		if (_map.metaDataVersion != currentVersion) {
-		
-			//Do whatever upgrades are needed here
 			_map.metaDataVersion = currentVersion;
+			
+			//Do whatever upgrades are needed here
+			requestService.getSingleLocal("data/metaData.json").then(function(response) {
+			var reference = response.data;
+			for (var refNum of reference.numerators) {
+				var current = indicators(refNum.code);
+				if (current) {
+					current.name = refNum.name;
+				}
+				else {
+					//Needs to be added
+					console.log(refNum.name);
+					for (var refGroup of reference.groups) {
+						for (var groupMem of refGroup.members) {
+							if (groupMem == refNum.code) {
+								//Check if group exists, else add it
+								if (groups(refGroup.code) == null) {
+									_map.groups.push(refGroup);
+								}
+								_map.numerators.push(refNum);
+								groups(refGroup.code).members.push(refNum.code);
+							}
+						}
+					}
+				}
+			}
+			});
 			return save();
 		}
+		
+		
 
 	}
 
