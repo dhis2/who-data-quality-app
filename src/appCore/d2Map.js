@@ -182,7 +182,8 @@ export default function (requestService, d2Meta, d2Utils, $q) {
 			//Do whatever upgrades are needed here
 			requestService.getSingleLocal("data/metaData.json").then(function(response) {
 			var reference = response.data;
-			for (var refNum of reference.numerators) {
+			for (var i = 0; i < reference.numerators.length; i++) {
+				var refNum = reference.numerators[i];
 				var current = indicators(refNum.code);
 				if (current) {
 					current.name = refNum.name;
@@ -190,8 +191,10 @@ export default function (requestService, d2Meta, d2Utils, $q) {
 				else {
 					//Needs to be added
 					console.log(refNum.name);
-					for (var refGroup of reference.groups) {
-						for (var groupMem of refGroup.members) {
+					for (var j = 0; j < reference.groups.length; j++) {
+						var refGroup = reference.groups[j];
+						for (var k = 0; k < refGroup.members.length; k++) {
+							var groupMem = refGroup.members[k];
 							if (groupMem == refNum.code) {
 								//Check if group exists, else add it
 								if (groups(refGroup.code) == null) {
