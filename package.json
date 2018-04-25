@@ -59,7 +59,7 @@
     "convert-po": "node po-converter.js",
     "extract-pot": "node pot-extractor.js",
     "refresh-translations-template": "npm run extract-pot -- -o translations.pot && git add ./i18n/translations.pot",
-    "zip": "rm -rf compiled && npm run build && rm -f build/*.js.map && mkdir compiled && zip -r -j compiled/$npm_package_name.zip build/*"
+    "zip": "rm -rf compiled && npm run build && rm -f build/*.js.map && mkdir compiled && cd build && zip -r ../compiled/$npm_package_name.zip *"
   },
   "repository": {
     "type": "git",
