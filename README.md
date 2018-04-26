@@ -30,5 +30,14 @@ npm start
 ```
 
 By default, webpack will start on port 8081, and assumes DHIS2 is running on 
-http://localhost:8080/dhis with admin:district as the user and password.
+http://localhost:8080/dhis with `admin:district` as the user and password.
 
+A different DHIS2 instance can be used to develop against by setting the `DHIS2_HOME`
+environmental variable (e.g. `export DHIS2_HOME=/Users/Olav/dhis2/dq_d2home`). 
+Inside the folder `DHIS2_HOME` points to, create a file `config` with the url 
+and base64-encoded username:password like this:
+
+```
+exports.baseUrl = 'http://localhost:8090/dqdev';
+exports.authorization = 'Basic YWRtaW46ZGlzdHJpY3QK='; //Based64 encoded
+```
