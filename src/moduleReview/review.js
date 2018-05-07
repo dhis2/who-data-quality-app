@@ -46,8 +46,6 @@ angular.module("review").controller("ReviewController",
 
 				self.remarks = [];
 
-				self.selectedOrgunit = {};
-
 				self.years = periodService.getYears();
 				self.years.shift();
 				self.yearSelected = self.years[0];
