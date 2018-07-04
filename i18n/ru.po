@@ -240,10 +240,10 @@ msgstr ""
 msgid "SUMMARY"
 msgstr ""
 
-msgid "Domain 1: Completeness"
+msgid "Domain 1 - Completeness"
 msgstr ""
 
-msgid "1a: Completeness of facility reporting"
+msgid "Completeness of facility reporting"
 msgstr ""
 
 msgid ""
@@ -265,7 +265,7 @@ msgstr ""
 msgid "Not available"
 msgstr ""
 
-msgid "1b: Timeliness of facility reporting"
+msgid "Timeliness of facility reporting"
 msgstr ""
 
 msgid ""
@@ -273,7 +273,7 @@ msgid ""
 "time."
 msgstr ""
 
-msgid "1c: Completeness of indicator data"
+msgid "Completeness of indicator data"
 msgstr ""
 
 msgid "Missing or zero values"
@@ -285,7 +285,7 @@ msgstr ""
 msgid "years."
 msgstr ""
 
-msgid "Domain 2: Internal consistency"
+msgid "Domain 2 - Internal consistency"
 msgstr ""
 
 msgid "Extreme outliers, using the standard method."
@@ -296,7 +296,7 @@ msgid ""
 "indicator."
 msgstr ""
 
-msgid "2b: Moderate outliers."
+msgid "Moderate outliers."
 msgstr ""
 
 msgid "Outliers relative to the mean."
@@ -313,10 +313,10 @@ msgstr ""
 msgid "Not applicable"
 msgstr ""
 
-msgid "2c: Moderate outliers."
+msgid "Moderate outliers."
 msgstr ""
 
-msgid "2d: Consistency over time."
+msgid "Consistency over time."
 msgstr ""
 
 msgid ""
@@ -330,7 +330,7 @@ msgstr ""
 msgid "Consistency with United Nations Population Projections"
 msgstr ""
 
-msgid "4b: Consistency of denominators"
+msgid "Consistency of denominators"
 msgstr ""
 
 msgid "Quality threshold"
@@ -351,7 +351,7 @@ msgstr ""
 msgid "Name"
 msgstr ""
 
-msgid "1d: Consistency of dataset completeness over time"
+msgid "Consistency of dataset completeness over time"
 msgstr ""
 
 msgid "Completeness of datasets in"
@@ -378,7 +378,7 @@ msgstr ""
 msgid "Reporting completeness over time"
 msgstr ""
 
-msgid "DOMAIN 2: INTERNAL CONSISTENCY OF REPORTED DATA"
+msgid "DOMAIN 2 - INTERNAL CONSISTENCY OF REPORTED DATA"
 msgstr ""
 
 msgid ""
@@ -397,7 +397,7 @@ msgid ""
 "of standard deviations from the mean."
 msgstr ""
 
-msgid "2c: Moderate outliers"
+msgid "Moderate outliers"
 msgstr ""
 
 msgid "Increasing"
@@ -409,7 +409,7 @@ msgstr ""
 msgid "Percent of"
 msgstr ""
 
-msgid "2e: Consistency between related indicators"
+msgid "Consistency between related indicators"
 msgstr ""
 
 msgid ""
@@ -426,10 +426,10 @@ msgstr ""
 msgid "Not negative"
 msgstr ""
 
-msgid "DOMAIN 3: EXTERNAL COMPARISON"
+msgid "DOMAIN 3 - EXTERNAL COMPARISON"
 msgstr ""
 
-msgid "3a: Comparison with external/survey data"
+msgid "Comparison with external/survey data"
 msgstr ""
 
 msgid "Survey value"
@@ -438,7 +438,7 @@ msgstr ""
 msgid "Routine value"
 msgstr ""
 
-msgid "4a: Consistency with UN population projection."
+msgid "Consistency with UN population projection."
 msgstr ""
 
 msgid ""

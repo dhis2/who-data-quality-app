@@ -73,12 +73,12 @@ immunities enjoyed by WHO under national or international law or submit to any n
 		<div>
 			<div class="noBreak">
 				<div class="fullWidth headerSection">
-					{{ 'Domain 1: Completeness' | i18next }} 
+					{{ 'Domain 1 - Completeness' | i18next }} 
 				</div>
 				<table class="table tablePrint table-bordered table-condensed noBreak">
 					<tbody>
 						<tr bgcolor="#f9f9f9">
-							<th colspan="4"> {{ '1a: Completeness of facility reporting' | i18next }} </th>
+							<th colspan="4"> 1a: {{'Completeness of facility reporting' | i18next }} </th>
 						</tr>
 						<tr>
 							<td colspan="4"> <em>{{ 'The percentage of expected reports that have been entered and completed.' | i18next }}</em> </td>
@@ -106,7 +106,7 @@ immunities enjoyed by WHO under national or international law or submit to any n
 					<table class="table tablePrint table-bordered table-condensed noBreak">
 						<tbody>
 							<tr bgcolor="#f9f9f9">
-								<th colspan="4"> {{ '1b: Timeliness of facility reporting' | i18next }} </th>
+								<th colspan="4">1b: {{ 'Timeliness of facility reporting' | i18next }} </th>
 							</tr>
 							<tr>
 								<td colspan="4"> <em>{{ 'The percentage of expected reports that have been entered and completed on time.' | i18next }}</em> </td>
@@ -137,7 +137,7 @@ immunities enjoyed by WHO under national or international law or submit to any n
 						<table class="table tablePrint table-bordered table-condensed noBreak">
 							<tbody>
 								<tr bgcolor="#f9f9f9">
-									<th colspan="4"> {{ '1c: Completeness of indicator data' | i18next }} </th>
+									<th colspan="4">1c: {{ 'Completeness of indicator data' | i18next }} </th>
 								</tr>
 								<tr>
 									<td colspan="4"> <em>{{ 'Missing or zero values' | i18next }}</em> </td>
@@ -165,7 +165,7 @@ immunities enjoyed by WHO under national or international law or submit to any n
 						<table class="table tablePrint table-bordered table-condensed noBreak">
 							<tbody>
 								<tr bgcolor="#f9f9f9">
-									<th colspan="4"> {{ '1c: Completeness of indicator data' | i18next }} </th>
+									<th colspan="4">1c: {{ 'Completeness of indicator data' | i18next }} </th>
 								</tr>
 								<tr>
 									<td colspan="4"> <em>{{ 'Reports where values are not missing. If zeros are not stored, zeros are counted as missing.' | i18next }}</em> </td>
@@ -193,7 +193,7 @@ immunities enjoyed by WHO under national or international law or submit to any n
 						<table class="table tablePrint table-bordered table-condensed noBreak">
 							<tbody>
 								<tr bgcolor="#f9f9f9">
-									<th colspan="4"> {{ '1d: Consistency of dataset completeness over time' | i18next }} </th>
+									<th colspan="4">1d: {{ 'Consistency of dataset completeness over time' | i18next }} </th>
 								</tr>
 								<tr>
 									<td colspan="4"> <em>{{ 'Completeness of datasets in' | i18next }} {{revCtrl.yearSelected.id}} {{ 'compared to previous' | i18next }} {{revCtrl.selectedRefPeriod}} {{ 'years.' | i18next }}</em> </td>
@@ -219,12 +219,12 @@ immunities enjoyed by WHO under national or international law or submit to any n
 					</div>
 					<div class="noBreak">
 						<div class="fullWidth headerSection">
-							{{ 'Domain 2: Internal consistency' | i18next }} 
+							{{ 'Domain 2 - Internal consistency' | i18next }} 
 						</div>
 						<table class="table tablePrint table-bordered table-condensed noBreak">
 							<tbody>
 								<tr bgcolor="#f9f9f9">
-									<th colspan="4"> <em>{{ '2a: Extreme outliers.' | i18next }}</em> </th>
+									<th colspan="4"> <em>2a: {{ 'Extreme outliers.' | i18next }}</em> </th>
 								</tr>
 								<tr>
 									<td colspan="4"> <em>{{ 'Extreme outliers, using the standard method.' | i18next }} {{revCtrl.selectedOrgunit.level.displayName}} {{ 'are counted as divergent if they have one or more extreme outliers for an indicator.' | i18next }}</em> </td>
@@ -252,7 +252,7 @@ immunities enjoyed by WHO under national or international law or submit to any n
 						<table class="table tablePrint table-bordered table-condensed noBreak">
 							<tbody>
 								<tr bgcolor="#f9f9f9">
-									<th colspan="4"> <em>{{ '2b: Moderate outliers.' | i18next }}</em> {{ 'Outliers relative to the mean.' | i18next }} </th>
+									<th colspan="4"> <em>2b: {{ 'Moderate outliers.' | i18next }}</em> {{ 'Outliers relative to the mean.' | i18next }} </th>
 								</tr>
 								<tr>
 									<td colspan="4"> <em>{{ 'Moderate outliers, using the standard method.' | i18next }} {{revCtrl.selectedOrgunit.level.displayName}} {{ 'are counted as divergent if they have two or more moderate outliers for an indicator.' | i18next }}</em> </td>
@@ -281,7 +281,7 @@ immunities enjoyed by WHO under national or international law or submit to any n
 						<table class="table tablePrint table-bordered table-condensed noBreak">
 							<tbody>
 								<tr bgcolor="#f9f9f9">
-									<th colspan="4"> <em>{{ '2c: Moderate outliers.' | i18next }}</em> </th>
+									<th colspan="4"> <em>2c: {{ 'Moderate outliers.' | i18next }}</em> </th>
 								</tr>
 								<tr>
 									<td colspan="4"> <em>{{ 'Moderate outliers, based on median (modified Z score).' | i18next }} {{revCtrl.selectedOrgunit.level.displayName}} {{ 'are counted as divergent if they have two or more moderate outliers for an indicator.' | i18next }}</em> </td>
@@ -310,7 +310,7 @@ immunities enjoyed by WHO under national or international law or submit to any n
 						<table class="table tablePrint table-bordered table-condensed noBreak">
 							<tbody>
 								<tr bgcolor="#f9f9f9">
-									<th colspan="4"> <em>{{ '2d: Consistency over time.' | i18next }}</em> </th>
+									<th colspan="4"> <em>2d: {{ 'Consistency over time.' | i18next }}</em> </th>
 								</tr>
 								<tr>
 									<td colspan="4"> <em>{{ 'Difference between the current year and either the average of the 3 preceding years (if expected trend is constant), or the forecasted value.' | i18next }}</em> </td>
@@ -338,7 +338,7 @@ immunities enjoyed by WHO under national or international law or submit to any n
 						<table class="table tablePrint table-bordered table-condensed ">
 							<tbody>
 								<tr bgcolor="#f9f9f9">
-									<th colspan="4"> <em>{{ '2e: Consistency between related indicators.' | i18next }}'</em> </th>
+									<th colspan="4"> <em>2e: {{ 'Consistency between related indicators' | i18next }}</em> </th>
 								</tr>
 								<tr>
 									<td colspan="4"> <em>{{ 'Consistency between reported values for two related indicators within the same year.' | i18next }}'</em> </td>
@@ -364,12 +364,12 @@ immunities enjoyed by WHO under national or international law or submit to any n
 					</div>
 					<div class="noBreak">
 						<div class="fullWidth headerSection">
-							{{ 'Domain 3: External Comparison' | i18next }} 
+							{{ 'Domain 3 - External Comparison' | i18next }} 
 						</div>
 						<table class="table tablePrint table-bordered table-condensed ">
 							<tbody>
 								<tr>
-									<td colspan="4"> <em>{{ '3a: Consistency of routine data with data from external source, e.g. population-based surveys.' | i18next }}</em> </td>
+									<td colspan="4"> <em>3a: {{ 'Consistency of routine data with data from external source, e.g. population-based surveys.' | i18next }}</em> </td>
 								</tr>
 								<tr bgcolor="#f9f9f9">
 									<th rowspan="2" width="275">{{ 'Indicator' | i18next }}</th>
@@ -398,11 +398,11 @@ immunities enjoyed by WHO under national or international law or submit to any n
 				</div>
 				<div class="noBreak">
 					<div class="fullWidth headerSection">
-						{{ 'Domain 4: Consistency of Population Data' | i18next }} 
+						{{ 'Domain 4 - Consistency of Population Data' | i18next }} 
 					</div>
 					<table class="table tablePrint table-bordered table-condensed noBreak">
 						<tr bgcolor="#f9f9f9">
-							<th colspan="2"> <em>{{ '4a: Consistency with UN population projections.' | i18next }}</em> </th>
+							<th colspan="2"> <em>4a: {{ 'Consistency with UN population projections.' | i18next }}</em> </th>
 						</tr>
 						<tr bgcolor="#f9f9f9">
 							<th width="275">{{ 'Indicator' | i18next }}</th>
@@ -418,7 +418,7 @@ immunities enjoyed by WHO under national or international law or submit to any n
 				<div class="noBreak">
 					<table class="table tablePrint table-bordered table-condensed noBreak">
 						<tr bgcolor="#f9f9f9">
-							<th colspan="4"> <em>{{ '4b: Consistency of denominators' | i18next }}</em> </th>
+							<th colspan="4"> <em>4b: {{ 'Consistency of denominators' | i18next }}</em> </th>
 						</tr>
 						<tr bgcolor="#f9f9f9">
 							<th rowspan="2" width="275">{{ 'Indicator' | i18next }}</th>
@@ -444,12 +444,12 @@ immunities enjoyed by WHO under national or international law or submit to any n
 	<!--COMPLETENESS-->
 	<div class="reportPart">
 				<div class="fullWidth headerPart">
-					{{ 'DOMAIN 1: COMPLETENESS OF REPORTING' | i18next }} 
+					{{ 'DOMAIN 1 - COMPLETENESS OF REPORTING' | i18next }} 
 				</div>
 				<div class="noBreak">
 					<table class="table tablePrint table-bordered table-condensed ">
 						<tr bgcolor="#f9f9f9">
-							<th colspan="6"> {{ '1a: Completeness of facility reporting' | i18next }} </th>
+							<th colspan="6">1a: {{ 'Completeness of facility reporting' | i18next }} </th>
 						</tr>
 						<tr>
 							<td colspan="6"> <em>{{ 'The percentage of expected reports that have been entered and completed.' | i18next }}</em> </td>
@@ -483,7 +483,7 @@ immunities enjoyed by WHO under national or international law or submit to any n
 				<div class="noBreak">
 					<table class="table tablePrint table-bordered table-condensed ">
 						<tr bgcolor="#f9f9f9">
-							<th colspan="6"> {{ '1b: Timeliness of facility reporting' | i18next }} </th>
+							<th colspan="6">1b: {{ 'Timeliness of facility reporting' | i18next }} </th>
 						</tr>
 						<tr>
 							<td colspan="6"> <em>{{ 'The percentage of expected reports that have been entered and completed on time.' | i18next }}</em> </td>
@@ -521,7 +521,7 @@ immunities enjoyed by WHO under national or international law or submit to any n
 					<table class="table tablePrint table-bordered table-condensed ">
 						<tbody>
 							<tr bgcolor="#f9f9f9">
-								<th colspan="8"> {{ '1c: Completeness of indicator data' | i18next }} </th>
+								<th colspan="8">1c: {{ 'Completeness of indicator data' | i18next }} </th>
 							</tr>
 							<tr>
 								<tr>
@@ -562,7 +562,7 @@ immunities enjoyed by WHO under national or international law or submit to any n
 					<div class="noBreak">
 						<table class="table tablePrint table-bordered table-condensed ">
 							<tr bgcolor="#f9f9f9">
-								<th colspan="8"> {{ '1d: Consistency of dataset completeness over time' | i18next }} </th>
+								<th colspan="8">1d: {{ 'Consistency of dataset completeness over time' | i18next }} </th>
 							</tr>
 							<tr>
 								<td colspan="8"> <em>{{ 'Completeness of datasets in' | i18next }} {{revCtrl.yearSelected.id}} {{ 'compared to previous' | i18next }} {{revCtrl.selectedRefPeriod}} years.</em> </td>
@@ -613,13 +613,13 @@ immunities enjoyed by WHO under national or international law or submit to any n
 	<!--INTERNAL CONSISTENCY-->
 	<div class="reportPart">
 					<div class="fullWidth headerPart">
-						{{ 'DOMAIN 2: INTERNAL CONSISTENCY OF REPORTED DATA' | i18next }} 
+						{{ 'DOMAIN 2 - INTERNAL CONSISTENCY OF REPORTED DATA' | i18next }} 
 					</div>
 					<div class="noBreak">
 						<table class="table tablePrint table-bordered table-condensed ">
 							<tbody>
 								<tr bgcolor="#f9f9f9">
-									<th colspan="6"> {{ '2a: Extreme outliers' | i18next }} </th>
+									<th colspan="6">2a: {{ 'Extreme outliers' | i18next }} </th>
 								</tr>
 								<tr>
 									<td colspan="6"> <em>{{ 'Extreme outliers, using the standard method. Threshold denotes the number of standard deviations from the mean.' | i18next}} {{revCtrl.selectedOrgunit.level.displayName}} {{ 'are counted as divergent if they have one or more extreme outliers for an indicator.' | i18next }}</em> </td>
@@ -655,7 +655,7 @@ immunities enjoyed by WHO under national or international law or submit to any n
 						<table class="table tablePrint table-bordered table-condensed ">
 							<tbody>
 								<tr bgcolor="#f9f9f9">
-									<th colspan="6"> <em>{{ '2b: Moderate outliers.' | i18next }}</em> </th>
+									<th colspan="6"> <em>2b: {{ 'Moderate outliers.' | i18next }}</em> </th>
 								</tr>
 								<tr>
 									<td colspan="6"> <em>{{ 'Moderate outliers, using the standard method. Threshold denotes the number of standard deviations from the mean.' | i18next }} {{revCtrl.selectedOrgunit.level.displayName}} {{ 'are counted as divergent if they have two or more moderate outliers for an indicator.' | i18next }}</em> </td>
@@ -692,7 +692,7 @@ immunities enjoyed by WHO under national or international law or submit to any n
 						<table class="table tablePrint table-bordered table-condensed ">
 							<tbody>
 								<tr bgcolor="#f9f9f9">
-									<th colspan="6"> {{ '2c: Moderate outliers' | i18next }} </th>
+									<th colspan="6"> 2c: {{ 'Moderate outliers' | i18next }} </th>
 								</tr>
 								<tr>
 									<td colspan="6"> <em>{{ 'Moderate outliers, based on median (modified Z score).' | i18next }} {{revCtrl.selectedOrgunit.level.displayName}} {{ 'are counted as divergent if they have two or more moderate outliers for an indicator.' | i18next }}</em> </td>
@@ -731,7 +731,7 @@ immunities enjoyed by WHO under national or international law or submit to any n
 								<table class="table tablePrint table-bordered table-condensed" style="margin-bottom: 5px">
 									<tbody>
 										<tr bgcolor="#f9f9f9">
-											<th> {{ '2d: Consistency of indicator values over time' | i18next }} </th>
+											<th>2d: {{ 'Consistency of indicator values over time' | i18next }} </th>
 										</tr>
 										<tr>
 											<td> <em>{{ 'Difference between the current year and either the average of the 3 preceding years (if expected trend is constant), or the forecasted value.' | i18next }}</em> </td>
@@ -797,7 +797,7 @@ immunities enjoyed by WHO under national or international law or submit to any n
 							<table class="table tablePrint table-bordered table-condensed" style="margin-bottom: 5px">
 								<tbody>
 									<tr bgcolor="#f9f9f9">
-										<th> {{ '2e: Consistency between related indicators' | i18next }} </th>
+										<th>2e: {{ 'Consistency between related indicators' | i18next }} </th>
 									</tr>
 									<tr>
 										<td> <em>{{ 'Consistency between reported values for two related indicators within the same year.' | i18next }}</em> </td>
@@ -859,13 +859,13 @@ immunities enjoyed by WHO under national or international law or submit to any n
 	<!--EXTERNAL CONSISTENCY-->
 	<div class="reportPart">
 					<div class="fullWidth headerPart">
-						{{ 'DOMAIN 3: EXTERNAL COMPARISON' | i18next }} 
+						{{ 'DOMAIN 3 - EXTERNAL COMPARISON' | i18next }} 
 					</div>
 					<div class="inline fullWidth">
 						<table class="table tablePrint table-bordered table-condensed" style="margin-bottom: 5px">
 							<tbody>
 								<tr bgcolor="#f9f9f9">
-									<th> {{ '3a: Comparison with external/survey data' | i18next }} </th>
+									<th>3a: {{ 'Comparison with external/survey data' | i18next }} </th>
 								</tr>
 								<tr>
 									<td> <em>{{ 'Consistency of routine data with data from external source, e.g. population-based surveys.' | i18next }}</em> </td>
@@ -935,12 +935,12 @@ immunities enjoyed by WHO under national or international law or submit to any n
 	<!--DENOMINATOR CONSISTENCY-->
 	<div class="reportPart">
 					<div class="fullWidth headerPart">
-						{{ 'DOMAIN 4: CONSISTENCY OF POPULATION DATA' | i18next }} 
+						{{ 'DOMAIN 4 - CONSISTENCY OF POPULATION DATA' | i18next }} 
 					</div>
 					<div class="noBreak">
 						<table class="table tablePrint table-bordered table-condensed ">
 							<tr bgcolor="#f9f9f9">
-								<th colspan="2"> {{ '4a: Consistency with UN population projection.' | i18next }} </th>
+								<th colspan="2">4a: {{ 'Consistency with UN population projection.' | i18next }} </th>
 							</tr>
 							<tr>
 								<td>{{ 'Ratio of population projection from the Bureau of Statistics to a UN projection' | i18next }}</td>
@@ -953,7 +953,7 @@ immunities enjoyed by WHO under national or international law or submit to any n
 						<table class="table tablePrint table-bordered table-condensed" style="margin-bottom: 5px">
 							<tbody>
 								<tr bgcolor="#f9f9f9">
-									<th> {{ '4b: Consistency of denominators' | i18next }} </th>
+									<th>4b: {{ 'Consistency of denominators' | i18next }} </th>
 								</tr>
 								<tr>
 									<td> <em>{{ 'Consistency of denominators within the same year.' | i18next }}</em> </td>

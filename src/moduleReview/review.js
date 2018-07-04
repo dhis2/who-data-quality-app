@@ -26,16 +26,6 @@ angular.module("review").controller("ReviewController",
 				init();
 			}
 
-			//HTML partials
-			self.selection = "moduleReview/selection.html";
-			self.resultSummary= "moduleReview/result0Summary.html";
-			self.resultFrontpage = "moduleReview/result0Frontpage.html";
-			self.result1Completeness = "moduleReview/result1Completeness.html";
-			self.result2Consistency = "moduleReview/result2Consistency.html";
-			self.result3External = "moduleReview/result3External.html";
-			self.result4Denominators = "moduleReview/result4Denominators.html";
-
-
 			function init() {
 
 				initPrint();

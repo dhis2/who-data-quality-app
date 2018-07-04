@@ -243,10 +243,10 @@ msgstr "مراجعة جودة بيانات من منظمة الصحة العال
 msgid "SUMMARY"
 msgstr "الملخص"
 
-msgid "Domain 1: Completeness"
+msgid "Domain 1 - Completeness"
 msgstr "المجال 1: الاكتمال"
 
-msgid "1a: Completeness of facility reporting"
+msgid "Completeness of facility reporting"
 msgstr "1أ: اكتمال تقارير المنشأة"
 
 msgid "The percentage of expected reports that have been entered and completed."
@@ -267,7 +267,7 @@ msgstr "النسبة المئوية"
 msgid "Not available"
 msgstr "غير متوفر"
 
-msgid "1b: Timeliness of facility reporting"
+msgid "Timeliness of facility reporting"
 msgstr "1ب: توقيت إعداد تقارير المنشأة"
 
 msgid ""
@@ -276,7 +276,7 @@ msgid ""
 msgstr ""
 "النسبة المئوية للتقارير المتوقعة التي تم إدخالها وإكمالها في الوقت المحدد."
 
-msgid "1c: Completeness of indicator data"
+msgid "Completeness of indicator data"
 msgstr "1ج: اكتمال بيانات المؤشرات"
 
 msgid "Missing or zero values"
@@ -288,7 +288,7 @@ msgstr "مقارنة مع السابق"
 msgid "years."
 msgstr "سنوات"
 
-msgid "Domain 2: Internal consistency"
+msgid "Domain 2 - Internal consistency"
 msgstr "المجال 2: التناسق الداخلي"
 
 msgid "Extreme outliers, using the standard method."
@@ -300,7 +300,7 @@ msgid ""
 msgstr ""
 "يتم اعتبارها منحرفة إذا كان لها واحد أو أكثر من القيم المتطرفة القصوى للمؤشر."
 
-msgid "2b: Moderate outliers."
+msgid "Moderate outliers."
 msgstr "2ب: القيم المتطرفة المعتدلة"
 
 msgid "Outliers relative to the mean."
@@ -319,10 +319,10 @@ msgstr ""
 msgid "Not applicable"
 msgstr "غير قابل للتطبيق"
 
-msgid "2c: Moderate outliers."
+msgid "Moderate outliers."
 msgstr "2جـ : القيم المتطرفة المعتدلة"
 
-msgid "2d: Consistency over time."
+msgid "Consistency over time."
 msgstr "2د : التناسق مع مرور الوقت"
 
 msgid ""
@@ -338,7 +338,7 @@ msgstr "الوحدات الفرعية مع درجة الانحراف"
 msgid "Consistency with United Nations Population Projections"
 msgstr "التناسق مع الإسقاطات السكانية للأمم المتحدة"
 
-msgid "4b: Consistency of denominators"
+msgid "Consistency of denominators"
 msgstr "4ب: تناسق المقامات"
 
 msgid "Quality threshold"
@@ -359,7 +359,7 @@ msgstr "الفعلي"
 msgid "Name"
 msgstr "الاسم"
 
-msgid "1d: Consistency of dataset completeness over time"
+msgid "Consistency of dataset completeness over time"
 msgstr "1د: تناسق اكتمال حزمة البيانات مع الوقت"
 
 msgid "Completeness of datasets in"
@@ -386,7 +386,7 @@ msgstr "الحالي مقابل التوقعات"
 msgid "Reporting completeness over time"
 msgstr "اكتمال التقارير مع مرور الوقت"
 
-msgid "DOMAIN 2: INTERNAL CONSISTENCY OF REPORTED DATA"
+msgid "DOMAIN 2 - INTERNAL CONSISTENCY OF REPORTED DATA"
 msgstr "المجال 2: التناسق الداخلي للبيانات المبلغ عنها"
 
 msgid ""
@@ -409,7 +409,7 @@ msgstr ""
 "القيم المتطرفة المعتدلة، وذلك باستخدام الطريقة القياسية. وتشير العتبة إلى "
 "عدد الانحرافات المعيارية عن المتوسط."
 
-msgid "2c: Moderate outliers"
+msgid "Moderate outliers"
 msgstr "2 جـ : القيم المتطرفة المعتدلة"
 
 msgid "Increasing"
@@ -421,7 +421,7 @@ msgstr "عدد من"
 msgid "Percent of"
 msgstr "نسبة مئوية من"
 
-msgid "2e: Consistency between related indicators"
+msgid "Consistency between related indicators"
 msgstr "2 هـ : التناسق بين المؤشرات ذوات الصلة"
 
 msgid ""
@@ -438,10 +438,10 @@ msgstr "المؤشر ب"
 msgid "Not negative"
 msgstr "ليست سلبية"
 
-msgid "DOMAIN 3: EXTERNAL COMPARISON"
+msgid "DOMAIN 3 - EXTERNAL COMPARISON"
 msgstr "المجال 3: مقارنة الخارجية"
 
-msgid "3a: Comparison with external/survey data"
+msgid "Comparison with external/survey data"
 msgstr "3أ: مقارنة مع البيانات الخارجية / المسح"
 
 msgid "Survey value"
@@ -450,7 +450,7 @@ msgstr "قيمة الاستطلاع"
 msgid "Routine value"
 msgstr "القيمة الروتينية"
 
-msgid "4a: Consistency with UN population projection."
+msgid "Consistency with UN population projection."
 msgstr "4 أ : التناسق مع إسقاطات السكان في الأمم المتحدة."
 
 msgid ""

@@ -236,11 +236,11 @@ msgstr "ڈبلیو ایچ او ڈیٹا کی معیار کا جائزہ"
 msgid "SUMMARY"
 msgstr "خلاصہ"
 
-msgid "Domain 1: Completeness"
+msgid "Domain 1 - Completeness"
 msgstr "ڈومین 1: مکمل طور پر"
 
-msgid "1a: Completeness of facility reporting"
-msgstr "1a: سہولت کی مکمل رپورٹنگ"
+msgid "Completeness of facility reporting"
+msgstr "سہولت کی مکمل رپورٹنگ"
 
 msgid "The percentage of expected reports that have been entered and completed."
 msgstr "متوقع رپورٹوں کا فیصد درج کیا گیا ہے اور مکمل کیا گیا ہے."
@@ -260,16 +260,16 @@ msgstr "فیصد"
 msgid "Not available"
 msgstr "دستیاب نہیں ہے"
 
-msgid "1b: Timeliness of facility reporting"
-msgstr "1b: سہولیات کی رپورٹنگ کی تیاری"
+msgid "Timeliness of facility reporting"
+msgstr "سہولیات کی رپورٹنگ کی تیاری"
 
 msgid ""
 "The percentage of expected reports that have been entered and completed on "
 "time."
 msgstr "متوقع رپورٹوں کا فیصد درج ہو چکا ہے اور وقت پر مکمل ہو گیا ہے"
 
-msgid "1c: Completeness of indicator data"
-msgstr "1C: اشارے کے اعداد و شمار کی مکملی"
+msgid "Completeness of indicator data"
+msgstr "اشارے کے اعداد و شمار کی مکملی"
 
 msgid "Missing or zero values"
 msgstr "لاپتہ یا صفر اقدار"
@@ -280,7 +280,7 @@ msgstr "پچھلے مقابلے میں"
 msgid "years."
 msgstr "سال."
 
-msgid "Domain 2: Internal consistency"
+msgid "Domain 2 - Internal consistency"
 msgstr "ڈومین 2: اندرونی استحکام"
 
 msgid "Extreme outliers, using the standard method."
@@ -291,7 +291,7 @@ msgid ""
 "indicator."
 msgstr "اگر ان کے اشارے کے لئے ایک یا زیادہ انتہائی مفہوم ہیں تو انفرادی طور پر شمار کیا جاتا ہے."
 
-msgid "2b: Moderate outliers."
+msgid "Moderate outliers."
 msgstr "2 ب: اعتدال پسند صحافی."
 
 msgid "Outliers relative to the mean."
@@ -308,11 +308,11 @@ msgstr "اگر ان کے اشارے کے لئے دو یا زیادہ اعتدا�
 msgid "Not applicable"
 msgstr "قابل اطلاق نہیں"
 
-msgid "2c: Moderate outliers."
-msgstr "2C: اعتدال پسند تنظیموں."
+msgid "Moderate outliers."
+msgstr "اعتدال پسند تنظیموں."
 
-msgid "2d: Consistency over time."
-msgstr "2d: وقت کے ساتھ مطابقت."
+msgid "Consistency over time."
+msgstr "وقت کے ساتھ مطابقت."
 
 msgid ""
 "Difference between the current year and either the average of the 3 "
@@ -325,8 +325,8 @@ msgstr "ڈیوجنٹ سکور کے ساتھ Subunits"
 msgid "Consistency with United Nations Population Projections"
 msgstr "اقوام متحدہ کے آبادی کے منصوبوں کے ساتھ مطابقت"
 
-msgid "4b: Consistency of denominators"
-msgstr "4b: ڈومومینٹرز کی مطابقت"
+msgid "Consistency of denominators"
+msgstr "ڈومومینٹرز کی مطابقت"
 
 msgid "Quality threshold"
 msgstr "معیار کی حد"
@@ -346,8 +346,8 @@ msgstr "اصل"
 msgid "Name"
 msgstr "نام"
 
-msgid "1d: Consistency of dataset completeness over time"
-msgstr "1d: ڈیٹا کے ساتھ مطابقت سے متعلق ڈیٹا بیس کی مطابقت"
+msgid "Consistency of dataset completeness over time"
+msgstr "ڈیٹا کے ساتھ مطابقت سے متعلق ڈیٹا بیس کی مطابقت"
 
 msgid "Completeness of datasets in"
 msgstr "ڈیٹا بیس کی مکمل طور پر"
@@ -373,8 +373,8 @@ msgstr "موجودہ بمقابلہ پیشن گوئی"
 msgid "Reporting completeness over time"
 msgstr "وقت کے ساتھ مکمل طور پر رپورٹنگ"
 
-msgid "DOMAIN 2: INTERNAL CONSISTENCY OF REPORTED DATA"
-msgstr "DOMAIN 2: رپورٹ کردہ ڈیٹا کا بین الاقوامی کنسلٹنسی"
+msgid "DOMAIN 2 - INTERNAL CONSISTENCY OF REPORTED DATA"
+msgstr "DOMAIN 2 - رپورٹ کردہ ڈیٹا کا بین الاقوامی کنسلٹنسی"
 
 msgid ""
 "Extreme outliers, using the standard method. Threshold denotes the number "
@@ -392,8 +392,8 @@ msgid ""
 "of standard deviations from the mean."
 msgstr "معیاری طریقہ کار کا استعمال کرتے ہوئے اعتدال پسند صحافی. تھراشولڈ معنی سے معیاری انحرافات کی تعداد کو بتاتا ہے."
 
-msgid "2c: Moderate outliers"
-msgstr "2C: اعتدال پسند تنظیموں"
+msgid "Moderate outliers"
+msgstr "اعتدال پسند تنظیموں"
 
 msgid "Increasing"
 msgstr "اضافہ"
@@ -404,8 +404,8 @@ msgstr "کی تعداد"
 msgid "Percent of"
 msgstr "فی صد"
 
-msgid "2e: Consistency between related indicators"
-msgstr "2e: متعلقہ اشارے کے درمیان مطابقت"
+msgid "Consistency between related indicators"
+msgstr "متعلقہ اشارے کے درمیان مطابقت"
 
 msgid ""
 "Consistency between reported values for two related indicators within the "
@@ -421,11 +421,11 @@ msgstr "اشارے بی"
 msgid "Not negative"
 msgstr "منفی نہیں"
 
-msgid "DOMAIN 3: EXTERNAL COMPARISON"
-msgstr "DOMAIN 3: بیرونی مقابلے"
+msgid "DOMAIN 3 - EXTERNAL COMPARISON"
+msgstr "DOMAIN 3 - بیرونی مقابلے"
 
-msgid "3a: Comparison with external/survey data"
-msgstr "3a: بیرونی / سروے کے اعداد و شمار کے ساتھ مقابلے"
+msgid "Comparison with external/survey data"
+msgstr "بیرونی / سروے کے اعداد و شمار کے ساتھ مقابلے"
 
 msgid "Survey value"
 msgstr "سروے کی قیمت"
@@ -433,8 +433,8 @@ msgstr "سروے کی قیمت"
 msgid "Routine value"
 msgstr "معمول کی قیمت"
 
-msgid "4a: Consistency with UN population projection."
-msgstr "4a: اقوام متحدہ کی آبادی کے پروجیکشن کے ساتھ مطابقت."
+msgid "Consistency with UN population projection."
+msgstr "اقوام متحدہ کی آبادی کے پروجیکشن کے ساتھ مطابقت."
 
 msgid ""
 "Ratio of population projection from the Bureau of Statistics to a UN "
