@@ -1,0 +1,483 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: i18next-conv\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"POT-Creation-Date: 2018-07-04T05:32:54.290Z\n"
+"PO-Revision-Date: 2018-08-28 14:54+0200\n"
+"Language-Team: \n"
+"X-Generator: Poedit 2.1.1\n"
+"Last-Translator: \n"
+"Language: pt_PT\n"
+
+msgid "Totals"
+msgstr "Totais"
+
+msgid "Details"
+msgstr "Detalhes"
+
+msgid "Indicator group"
+msgstr "Grupo de Indicador"
+
+msgid "Boundary"
+msgstr "Fronteira"
+
+msgid "Other"
+msgstr "Outro"
+
+msgid "Disaggregation"
+msgstr "Desagregação"
+
+msgid "Organisation unit level"
+msgstr "Nível da unidade organizacional"
+
+msgid "Organisation unit group"
+msgstr "Grupo de unidade organizacional"
+
+msgid "Selected"
+msgstr "Seleccionado"
+
+msgid "Consistency"
+msgstr "Consistência"
+
+msgid "Consistency analysis type"
+msgstr "Tipo de análise de consistência"
+
+msgid "Between Indicators"
+msgstr "Entre indicadores"
+
+msgid "Over Time"
+msgstr "Ao longo do tempo"
+
+msgid "Compare organisation units to"
+msgstr "Comparar unidades organizacionais a"
+
+msgid "Overall result"
+msgstr "Resultado geral"
+
+msgid "Expected result"
+msgstr "Resultado esperado"
+
+msgid "Expected relationship"
+msgstr "Relação esperada"
+
+msgid "Dropout"
+msgstr "Abandono"
+
+msgid "Expected trend"
+msgstr "Tendência esperada"
+
+msgid "Increasing/decreasing"
+msgstr "Aumentar/diminuir"
+
+msgid "Criteria"
+msgstr "Critério"
+
+msgid "Data"
+msgstr "Dados"
+
+msgid "Select data element/indicator"
+msgstr "Selecionar elemento de dados/indicador"
+
+msgid "Data element"
+msgstr "Elemento de dado"
+
+msgid "Indicator"
+msgstr "Indicador"
+
+msgid "Select data element/indicator for comparison"
+msgstr "Selecionar elemento de dado/indicador para comparação"
+
+msgid "Period"
+msgstr "Período"
+
+msgid "Period type"
+msgstr "Tipo de período"
+
+msgid "Year"
+msgstr "Ano"
+
+msgid "Select year"
+msgstr "Selecionar o ano"
+
+msgid "Select period"
+msgstr "Selecionar período"
+
+msgid "Reference periods"
+msgstr "Períodos de referencia"
+
+msgid "No. of Preceding periods"
+msgstr "No. de períodos precedentes"
+
+msgid "Orgunit"
+msgstr "Unidade organizacional"
+
+msgid "Analyze"
+msgstr "Analisar"
+
+msgid "Loading data"
+msgstr "Carregando dados"
+
+msgid "Processing"
+msgstr "A processar"
+
+msgid "Download"
+msgstr "Download"
+
+msgid "Previous"
+msgstr "Anterior"
+
+msgid "Unit"
+msgstr "Unidade"
+
+msgid "Current Period"
+msgstr "Período corrente"
+
+msgid "Average"
+msgstr "Média"
+
+msgid "Forecast"
+msgstr "Previsão"
+
+msgid "Dropout rate"
+msgstr "Taxa de abandono"
+
+msgid "Ratio"
+msgstr "Racio/Razão/Relação"
+
+msgid "Weight"
+msgstr "Peso"
+
+msgid "Contact"
+msgstr "Contacto"
+
+msgid "Drill down"
+msgstr "Perfurar/Detalhar"
+
+msgid "Click on the graph or in the table see details."
+msgstr "Clique no gráfico ou na tabela Ver detalhes."
+
+msgid "Dashboard"
+msgstr "Painel"
+
+msgid "Data for 12 months up to and including the selected month will be used."
+msgstr "Serão utilizados dados de 12 meses incluindo o mês seleccionado."
+
+msgid "Organisation unit"
+msgstr "Unidade organizacional"
+
+msgid "Completeness"
+msgstr "Completude"
+
+msgid "completeness"
+msgstr "Completude"
+
+msgid "Consistency - time"
+msgstr "Consistência ao longo do tempo"
+
+msgid "Consistency - data"
+msgstr "Consistência de Dados"
+
+msgid "Outliers"
+msgstr "Valores atípicos/aberrantes"
+
+msgid "Outliers and Missing Data"
+msgstr "Dados inexistentes e atípicos"
+
+msgid "Data set"
+msgstr "Conjunto de dados"
+
+msgid "Data elements"
+msgstr "Elemento de dados"
+
+msgid "Indicators"
+msgstr "Indicadores"
+
+msgid "Recent"
+msgstr "Recente"
+
+msgid "By year"
+msgstr "Por ano"
+
+msgid "Custom"
+msgstr "Personalizado"
+
+msgid "Select number of periods..."
+msgstr "Selecione o número de períodos..."
+
+msgid "Select period type..."
+msgstr "Selecione tipo de período"
+
+msgid "Select year..."
+msgstr "Selecione o ano…"
+
+msgid "From"
+msgstr "De"
+
+msgid "To"
+msgstr "Para"
+
+msgid "Loading data..."
+msgstr "Carregando dados..."
+
+msgid "Annual Data Quality Report"
+msgstr "Relatório anual de qualidade de dados"
+
+msgid "Select group"
+msgstr "Selecionar grupo"
+
+msgid "Preceding years for reference"
+msgstr "Anos precedentes para a referência"
+
+msgid "Generate"
+msgstr "Gerar"
+
+msgid "Print"
+msgstr "Imprimir"
+
+msgid "Assessment of Health Facility Data Quality"
+msgstr "Avaliação da Qualidade dos Dados da Unidade de Sanitaria"
+
+msgid "WHO Data Quality Review"
+msgstr "OMS Revisão de Qualidade de Dados"
+
+msgid "SUMMARY"
+msgstr "Resumo"
+
+msgid "Domain 1 - Completeness"
+msgstr "Domínio 1 - Completude"
+
+msgid "Completeness of facility reporting"
+msgstr "Completude de relatórios de Unidades Sanitárias"
+
+msgid ""
+"The percentage of expected reports that have been entered and completed."
+msgstr ""
+"A percentagem de relatórios esperados que foram inseridos e terminados."
+
+msgid "Overall score"
+msgstr "Pontuação total"
+
+msgid "with divergent score"
+msgstr "com Pontuação divergente"
+
+msgid "Number"
+msgstr "Número"
+
+msgid "Percent"
+msgstr "Percentagem"
+
+msgid "Not available"
+msgstr "Não disponível "
+
+msgid "Timeliness of facility reporting"
+msgstr "Prontidão de relatórios de Unidades Sanitárias"
+
+msgid ""
+"The percentage of expected reports that have been entered and completed on "
+"time."
+msgstr ""
+"A porcentagem de relatórios esperados que foram inseridos e concluídos a "
+"tempo."
+
+msgid "Completeness of indicator data"
+msgstr "Completude dos dados de indicadores"
+
+msgid "Missing or zero values"
+msgstr "Valores ausentes ou zero"
+
+msgid "compared to previous"
+msgstr "comparado com o anterior"
+
+msgid "years."
+msgstr "Anos."
+
+msgid "Domain 2 - Internal consistency"
+msgstr "Domínio 2 - Consistência interna"
+
+msgid "Extreme outliers, using the standard method."
+msgstr "Valores atipicos extremos, usando o método padrão."
+
+msgid ""
+"are counted as divergent if they have one or more extreme outliers for an "
+"indicator."
+msgstr ""
+"são contados como divergentes se tiverem um ou mais valores atípicos "
+"extremos para um indicador."
+
+msgid "Moderate outliers."
+msgstr "Valores atípicos moderados."
+
+msgid "Outliers relative to the mean."
+msgstr "Valores atípicos em relação à média."
+
+msgid "Moderate outliers, using the standard method."
+msgstr "Valores atípicos moderados, usando o método padrão."
+
+msgid ""
+"are counted as divergent if they have two or more moderate outliers for an "
+"indicator."
+msgstr ""
+"são contados como divergentes se tiverem dois ou mais valores atípicos "
+"moderados para um indicador."
+
+msgid "Not applicable"
+msgstr "Não aplicável"
+
+msgid "Consistency over time."
+msgstr "Consistência ao longo do tempo."
+
+msgid ""
+"Difference between the current year and either the average of the 3 "
+"preceding years (if expected trend is constant), or the forecasted value."
+msgstr ""
+"Diferença entre o ano corrente e quer a média dos 3 anos anteriores (se a "
+"tendência esperada é constante), ou o valor previsto."
+
+msgid "Subunits with divergent score"
+msgstr "Subunidades com pontuação divergente"
+
+msgid "Consistency with United Nations Population Projections"
+msgstr "Coerência com as projeções populacionais das Nações Unidas"
+
+msgid "Consistency of denominators"
+msgstr "Consistência dos denominadores"
+
+msgid "Quality threshold"
+msgstr "Limiar de qualidade"
+
+msgid "Interpretations"
+msgstr "Interpretações"
+
+msgid "Values"
+msgstr "Valores"
+
+msgid "Expected"
+msgstr "Esperado"
+
+msgid "Actual"
+msgstr "Atual"
+
+msgid "Name"
+msgstr "Nome"
+
+msgid "Consistency of dataset completeness over time"
+msgstr "Consistência da completude do conjunto de dados ao longo do tempo"
+
+msgid "Completeness of datasets in"
+msgstr "Completude dos conjuntos de dados em"
+
+msgid "Compare"
+msgstr "Comparar"
+
+msgid "to"
+msgstr "a"
+
+msgid "Constant"
+msgstr "Constante"
+
+msgid "Decreasing"
+msgstr "Diminuindo"
+
+msgid "Current vs average"
+msgstr "Atual vs média"
+
+msgid "Current vs forecast"
+msgstr "Atual vs previsto"
+
+msgid "Reporting completeness over time"
+msgstr "Reportando a completude ao longo do tempo"
+
+msgid "DOMAIN 2 - INTERNAL CONSISTENCY OF REPORTED DATA"
+msgstr "DOMÍNIO 2 - CONSISTÊNCIA INTERNA DE DADOS REPORTADOS"
+
+msgid ""
+"Extreme outliers, using the standard method. Threshold denotes the number of "
+"standard deviations from the mean."
+msgstr ""
+"Valores atípicos extremos, usando o método padrão. Limiar denota o número de "
+"desvios-padrão da média."
+
+msgid "Threshold"
+msgstr "Limite"
+
+msgid "Names"
+msgstr "Nomes"
+
+msgid ""
+"Moderate outliers, using the standard method. Threshold denotes the number "
+"of standard deviations from the mean."
+msgstr ""
+"Valores atípicos moderados, usando o método padrão. Limiar denota o número "
+"de desvios-padrão da média."
+
+msgid "Moderate outliers"
+msgstr "Valores atípicos moderados."
+
+msgid "Increasing"
+msgstr "Crescer/Aumentar"
+
+msgid "Number of"
+msgstr "Número de"
+
+msgid "Percent of"
+msgstr "Porcentagem de"
+
+msgid "Consistency between related indicators"
+msgstr "Coerência entre indicadores relacionados"
+
+msgid ""
+"Consistency between reported values for two related indicators within the "
+"same year."
+msgstr ""
+"Consistência entre valores relatados para dois indicadores relacionados no "
+"mesmo ano."
+
+msgid "Indicator A"
+msgstr "Indicador A"
+
+msgid "Indicator B"
+msgstr "Indicador B"
+
+msgid "Not negative"
+msgstr "Não negativo"
+
+msgid "DOMAIN 3 - EXTERNAL COMPARISON"
+msgstr "DOMÍNIO 3 - COMPARAÇÃO EXTERNA"
+
+msgid "Comparison with external/survey data"
+msgstr "Comparação com dados externos/inquéritos"
+
+msgid "Survey value"
+msgstr "Valor de inquérito "
+
+msgid "Routine value"
+msgstr "Valor de rotina"
+
+msgid "Consistency with UN population projection."
+msgstr "Coerência com a projecção populacional da ONU."
+
+msgid ""
+"Ratio of population projection from the Bureau of Statistics to a UN "
+"projection"
+msgstr "Proporção de projecção populacional do Bureau de estatística a da ONU"
+
+msgid "Consistency of denominators within the same year."
+msgstr "Consistência dos denominadores no mesmo ano."
+
+msgid "Denominator B"
+msgstr "Denominador B"
+
+msgid "with poor score"
+msgstr "com pontuação fraca"
+
+msgid "Remarks"
+msgstr "Observações"
+
+msgid "Analysis type"
+msgstr "Tipo de análise"
+
+msgid "Item"
+msgstr "Item"

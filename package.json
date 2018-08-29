@@ -1,6 +1,6 @@
 {
   "name": "who-data-quality-tool",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "WHO Data Quality Tool for DHIS2",
   "main": "./src/app.js",
   "dependencies": {
@@ -58,7 +58,7 @@
     "deploy": "npm run build && mvn clean deploy",
     "convert-po": "node po-converter.js",
     "extract-pot": "node pot-extractor.js",
-    "refresh-translations-template": "npm run extract-pot -- -o translations.pot && git add ./i18n/translations.pot",
+    "refresh-translations-template": "npm run extract-pot -- -o en.pot && git add ./i18n/en.pot",
     "zip": "rm -rf compiled && npm run build && rm -f build/*.js.map && mkdir compiled && cd build && zip -r ../compiled/$npm_package_name.zip *"
   },
   "repository": {
