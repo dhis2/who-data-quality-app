@@ -5,8 +5,53 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2018-07-04T05:32:54.290Z\n"
-"PO-Revision-Date: 2018-07-04T05:32:54.290Z\n"
+"POT-Creation-Date: 2018-08-30T08:59:28.317Z\n"
+"PO-Revision-Date: 2018-08-30T08:59:28.317Z\n"
+
+msgid "Toggle navigation"
+msgstr ""
+
+msgid "Data Quality Tool"
+msgstr ""
+
+msgid "Dashboard"
+msgstr ""
+
+msgid "Analysis"
+msgstr ""
+
+msgid "Outliers and Missing Data"
+msgstr ""
+
+msgid "Consistency"
+msgstr ""
+
+msgid "Annual Report"
+msgstr ""
+
+msgid "About"
+msgstr ""
+
+msgid "More"
+msgstr ""
+
+msgid "User manual"
+msgstr ""
+
+msgid "Data Export for Excel tool"
+msgstr ""
+
+msgid "Feedback"
+msgstr ""
+
+msgid "Administration"
+msgstr ""
+
+msgid "This browser is not supported!"
+msgstr ""
+
+msgid "Exit"
+msgstr ""
 
 msgid "Totals"
 msgstr ""
@@ -33,9 +78,6 @@ msgid "Organisation unit group"
 msgstr ""
 
 msgid "Selected"
-msgstr ""
-
-msgid "Consistency"
 msgstr ""
 
 msgid "Consistency analysis type"
@@ -155,9 +197,6 @@ msgstr ""
 msgid "Click on the graph or in the table see details."
 msgstr ""
 
-msgid "Dashboard"
-msgstr ""
-
 msgid "Data for 12 months up to and including the selected month will be used."
 msgstr ""
 
@@ -177,9 +216,6 @@ msgid "Consistency - data"
 msgstr ""
 
 msgid "Outliers"
-msgstr ""
-
-msgid "Outliers and Missing Data"
 msgstr ""
 
 msgid "Data set"

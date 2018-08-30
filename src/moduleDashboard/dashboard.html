@@ -116,25 +116,25 @@ immunities enjoyed by WHO under national or international law or submit to any n
 	<div ng-show="dashCtrl.innerWidth > 600" uib-collapse="!dashCtrl.showParameters" class="well well-sm no-print" style="vertical-align: top; margin-left: 10px; width: 320px; margin-top: 42px; float:right">
 		<div style="height: auto;">
 			<h4>
-				Data 
+				{{ 'Data' | i18next}} 
 			</h4>
 			<d2-select on-select="dashCtrl.update(object);" ng-model="dashCtrl.group" options="dashCtrl.groups">
 			</d2-select>
 		</div>
 		<hr /> 
 		<h4>
-			Period 
+			{{ 'Period' | i18next}}  
 		</h4>
 		<div style="width: 290px; height: auto">
 			<div uib-datepicker ng-change="dashCtrl.update();" class="well well-sm" ng-model="dashCtrl.endDate" datepicker-options="dashCtrl.datepickerOptions">
 			</div>
 			<span>
-				Data for 12 months up to and including the selected month will be used.
+				{{ 'Data for 12 months up to and including the selected month will be used.' | i18next}}
 			</span>
 		</div>
 		<hr /> 
 		<h4>
-			Organisation unit 
+			{{ 'Organisation unit' | i18next}}
 		</h4>
 		<d2-select-orgunit style="width: 300px;" default-level="1" max-level="2" hide-group="true" hide-level="false" ng-model="dashCtrl.selectedOrgunit" on-select="dashCtrl.selectedOrgunit = object; dashCtrl.update();">
 		</d2-select-orgunit>

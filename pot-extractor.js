@@ -36,6 +36,8 @@ recursive('src', function (err, files) {
       addKeysFromFileContent(readFileSync(file, 'utf-8'), HTML_FUNCTION_REGEX);
     } else if (fileExtension === 'js') {
       addKeysFromFileContent(readFileSync(file, 'utf-8'), JS_FUNCTION_REGEX);
+    } else if (fileExtension === 'ejs') {
+      addKeysFromFileContent(readFileSync(file, 'utf-8'), HTML_FUNCTION_REGEX);
     }
   }
 

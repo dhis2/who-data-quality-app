@@ -1,16 +1,61 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
+"POT-Creation-Date: 2018-08-30T08:59:28.317Z\n"
+"PO-Revision-Date: 2018-08-30 12:07+0200\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: pt_PT\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"POT-Creation-Date: 2018-07-04T05:32:54.290Z\n"
-"PO-Revision-Date: 2018-08-28 14:54+0200\n"
-"Language-Team: \n"
 "X-Generator: Poedit 2.1.1\n"
-"Last-Translator: \n"
-"Language: pt_PT\n"
+
+msgid "Toggle navigation"
+msgstr "Alternar de navegação"
+
+msgid "Data Quality Tool"
+msgstr "Ferramenta de qualidade de dados"
+
+msgid "Dashboard"
+msgstr "Painel"
+
+msgid "Analysis"
+msgstr "Análise"
+
+msgid "Outliers and Missing Data"
+msgstr "Dados inexistentes e atípicos"
+
+msgid "Consistency"
+msgstr "Consistência"
+
+msgid "Annual Report"
+msgstr "Relatório Anual"
+
+msgid "About"
+msgstr "Sobre"
+
+msgid "More"
+msgstr "Ver mais"
+
+msgid "User manual"
+msgstr "Manual do usuário"
+
+msgid "Data Export for Excel tool"
+msgstr "Exportação de dados para Excel"
+
+msgid "Feedback"
+msgstr "Feedback"
+
+msgid "Administration"
+msgstr "Administração"
+
+msgid "This browser is not supported!"
+msgstr "Este navegador não é suportado!"
+
+msgid "Exit"
+msgstr "Sair"
 
 msgid "Totals"
 msgstr "Totais"
@@ -38,9 +83,6 @@ msgstr "Grupo de unidade organizacional"
 
 msgid "Selected"
 msgstr "Seleccionado"
-
-msgid "Consistency"
-msgstr "Consistência"
 
 msgid "Consistency analysis type"
 msgstr "Tipo de análise de consistência"
@@ -159,9 +201,6 @@ msgstr "Perfurar/Detalhar"
 msgid "Click on the graph or in the table see details."
 msgstr "Clique no gráfico ou na tabela Ver detalhes."
 
-msgid "Dashboard"
-msgstr "Painel"
-
 msgid "Data for 12 months up to and including the selected month will be used."
 msgstr "Serão utilizados dados de 12 meses incluindo o mês seleccionado."
 
@@ -172,7 +211,7 @@ msgid "Completeness"
 msgstr "Completude"
 
 msgid "completeness"
-msgstr "Completude"
+msgstr "completude"
 
 msgid "Consistency - time"
 msgstr "Consistência ao longo do tempo"
@@ -182,9 +221,6 @@ msgstr "Consistência de Dados"
 
 msgid "Outliers"
 msgstr "Valores atípicos/aberrantes"
-
-msgid "Outliers and Missing Data"
-msgstr "Dados inexistentes e atípicos"
 
 msgid "Data set"
 msgstr "Conjunto de dados"
@@ -208,7 +244,7 @@ msgid "Select number of periods..."
 msgstr "Selecione o número de períodos..."
 
 msgid "Select period type..."
-msgstr "Selecione tipo de período"
+msgstr "Selecione tipo de período…"
 
 msgid "Select year..."
 msgstr "Selecione o ano…"
@@ -270,7 +306,7 @@ msgid "Percent"
 msgstr "Percentagem"
 
 msgid "Not available"
-msgstr "Não disponível "
+msgstr "Não disponível"
 
 msgid "Timeliness of facility reporting"
 msgstr "Prontidão de relatórios de Unidades Sanitárias"
@@ -292,7 +328,7 @@ msgid "compared to previous"
 msgstr "comparado com o anterior"
 
 msgid "years."
-msgstr "Anos."
+msgstr "anos."
 
 msgid "Domain 2 - Internal consistency"
 msgstr "Domínio 2 - Consistência interna"
@@ -358,7 +394,7 @@ msgid "Expected"
 msgstr "Esperado"
 
 msgid "Actual"
-msgstr "Atual"
+msgstr "Actual"
 
 msgid "Name"
 msgstr "Nome"
@@ -414,7 +450,7 @@ msgstr ""
 "de desvios-padrão da média."
 
 msgid "Moderate outliers"
-msgstr "Valores atípicos moderados."
+msgstr "Valores atípicos moderados"
 
 msgid "Increasing"
 msgstr "Crescer/Aumentar"
@@ -451,7 +487,7 @@ msgid "Comparison with external/survey data"
 msgstr "Comparação com dados externos/inquéritos"
 
 msgid "Survey value"
-msgstr "Valor de inquérito "
+msgstr "Valor de inquérito"
 
 msgid "Routine value"
 msgstr "Valor de rotina"

@@ -1,5 +1,7 @@
 # WHO Data Quality Tool
 
+[![Build Status](https://travis-ci.org/dhis2/data-quality-app-who.svg?branch=master)](https://travis-ci.org/dhis2/data-quality-app-who)
+
 ## License
 © Copyright 2017 the World Health Organization (WHO).
 This software is distributed under the terms of the GNU General Public License version 3 (GPL Version 3),

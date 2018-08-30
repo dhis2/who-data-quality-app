@@ -1,15 +1,67 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
+"POT-Creation-Date: 2018-08-30T08:59:28.317Z\n"
+"PO-Revision-Date: 2018-08-30 11:03+0200\n"
+"Last-Translator: Pootle <pootle@translate.dhis2.net>\n"
+"Language-Team: French\n"
+"Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"POT-Creation-Date: 2017-11-21T10:07:41.961Z\n"
-"PO-Revision-Date: 2017-11-21 05:20-0500\n"
-"Last-Translator: Pootle <pootle@translate.dhis2.net>\n"
-"Language-Team: French\n"
-"Language: fr\n"
+"X-Generator: Poedit 2.1.1\n"
+
+msgid "Toggle navigation"
+msgstr ""
+
+#, fuzzy
+#| msgid "Annual Data Quality Report"
+msgid "Data Quality Tool"
+msgstr "Rapport annuel de qualité de données"
+
+msgid "Dashboard"
+msgstr "Tableau de bord"
+
+#, fuzzy
+#| msgid "Analysis type"
+msgid "Analysis"
+msgstr "Type danalyse"
+
+msgid "Outliers and Missing Data"
+msgstr "Valeurs atypiques et données manquantes"
+
+msgid "Consistency"
+msgstr "Cohérence"
+
+#, fuzzy
+#| msgid "Annual Data Quality Report"
+msgid "Annual Report"
+msgstr "Rapport annuel de qualité de données"
+
+msgid "About"
+msgstr ""
+
+msgid "More"
+msgstr ""
+
+msgid "User manual"
+msgstr ""
+
+msgid "Data Export for Excel tool"
+msgstr ""
+
+msgid "Feedback"
+msgstr ""
+
+msgid "Administration"
+msgstr ""
+
+msgid "This browser is not supported!"
+msgstr ""
+
+msgid "Exit"
+msgstr ""
 
 msgid "Totals"
 msgstr "Totaux"
@@ -37,9 +89,6 @@ msgstr "Groupe d'unité d'organisation"
 
 msgid "Selected"
 msgstr "Choisi"
-
-msgid "Consistency"
-msgstr "Cohérence"
 
 msgid "Consistency analysis type"
 msgstr "Analyse de cohérence"
@@ -158,8 +207,13 @@ msgstr "voir niveau inferieur"
 msgid "Click on the graph or in the table see details."
 msgstr "Cliquer sur le graphique ou le tableau pour voir les détails"
 
-msgid "Dashboard"
-msgstr "Tableau de bord"
+msgid "Data for 12 months up to and including the selected month will be used."
+msgstr ""
+
+#, fuzzy
+#| msgid "Organisation unit level"
+msgid "Organisation unit"
+msgstr "Niveau d'unité d'organisation"
 
 msgid "Completeness"
 msgstr "Complétude"
@@ -175,9 +229,6 @@ msgstr "Cohérence - données"
 
 msgid "Outliers"
 msgstr "Valeurs atypiques"
-
-msgid "Outliers and Missing Data"
-msgstr "Valeurs atypiques et données manquantes"
 
 msgid "Data set"
 msgstr "Ensemble de données"
@@ -270,7 +321,8 @@ msgstr "Promptitude des rapports des formations sanitaires"
 msgid ""
 "The percentage of expected reports that have been entered and completed on "
 "time."
-msgstr "Le pourcentage des rapports attendus qui sont saisis et complets à temps"
+msgstr ""
+"Le pourcentage des rapports attendus qui sont saisis et complets à temps"
 
 msgid "Completeness of indicator data"
 msgstr "Complétude des données d'indicateur"
@@ -293,7 +345,9 @@ msgstr "Valeurs atypiques extrêmes, avec la méthode standard"
 msgid ""
 "are counted as divergent if they have one or more extreme outliers for an "
 "indicator."
-msgstr "sont compté comme divergents ils ont une ou plus d'une valeurs atypiques extrêmes pour un"
+msgstr ""
+"sont compté comme divergents ils ont une ou plus d'une valeurs atypiques "
+"extrêmes pour un"
 
 msgid "Moderate outliers."
 msgstr "Valeurs atypiques modérées"
@@ -307,13 +361,12 @@ msgstr "Valeurs atypiques modérées basées sur la méthode standard"
 msgid ""
 "are counted as divergent if they have two or more moderate outliers for an "
 "indicator."
-msgstr "sont comptés comme divergents s'ils ont deux ou plus de valeurs atypiques modérées pour un "
+msgstr ""
+"sont comptés comme divergents s'ils ont deux ou plus de valeurs atypiques "
+"modérées pour un "
 
 msgid "Not applicable"
 msgstr "Non applicable"
-
-msgid "Moderate outliers."
-msgstr "Valeurs atypiques modérées"
 
 msgid "Consistency over time."
 msgstr "Cohérence dans le temps"
@@ -321,8 +374,9 @@ msgstr "Cohérence dans le temps"
 msgid ""
 "Difference between the current year and either the average of the 3 "
 "preceding years (if expected trend is constant), or the forecasted value."
-msgstr "Différence entre l'année en cours et soit la moyenne des 3 "
-"années précédentes (si tendance attendue est Constant) ou sois la prédiction"
+msgstr ""
+"Différence entre l'année en cours et soit la moyenne des 3 années "
+"précédentes (si tendance attendue est Constant) ou sois la prédiction"
 
 msgid "Subunits with divergent score"
 msgstr "Sous.unité aec un score divergent"
@@ -384,8 +438,10 @@ msgstr "DOMAIN 2 - COHERENCE INTERNE DES DONNEES TRANSMISES"
 msgid ""
 "Extreme outliers, using the standard method. Threshold denotes the number of "
 "standard deviations from the mean."
-msgstr "Valeurs atypiques extrêmes, basées sur la méthode standard. Le seuil indique le nombre de"
-"déviations standards de la moyenne"
+msgstr ""
+"Valeurs atypiques extrêmes, basées sur la méthode standard. Le seuil indique "
+"le nombre dedéviations standards de la moyenne"
+
 msgid "Threshold"
 msgstr "Seuiil"
 
@@ -395,8 +451,10 @@ msgstr "Noms"
 msgid ""
 "Moderate outliers, using the standard method. Threshold denotes the number "
 "of standard deviations from the mean."
-msgstr "Valeurs atypiques modérées, basées sur la méthode standard. Le seuil indique le nombre de"
-"déviations standards de la moyenne"
+msgstr ""
+"Valeurs atypiques modérées, basées sur la méthode standard. Le seuil indique "
+"le nombre dedéviations standards de la moyenne"
+
 msgid "Moderate outliers"
 msgstr "Valeurs atypiques modérées"
 
@@ -415,8 +473,9 @@ msgstr "Cohérence entre indicateurs connexes"
 msgid ""
 "Consistency between reported values for two related indicators within the "
 "same year."
-msgstr "Cohérence entre les valeurs de deux indicateurs connexes au cours de "
-"la même année"
+msgstr ""
+"Cohérence entre les valeurs de deux indicateurs connexes au cours de la même "
+"année"
 
 msgid "Indicator A"
 msgstr "Indicateur A"
@@ -445,8 +504,8 @@ msgstr "Cohérence avec les projection de population ONU"
 msgid ""
 "Ratio of population projection from the Bureau of Statistics to a UN "
 "projection"
-msgstr "Ratio projection de population du Bureau de statistique sur"
-"projection ONU"
+msgstr ""
+"Ratio projection de population du Bureau de statistique surprojection ONU"
 
 msgid "Consistency of denominators within the same year."
 msgstr "Cohérence des dénominateurs au cours de la même année"
