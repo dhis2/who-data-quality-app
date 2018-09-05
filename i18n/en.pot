@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2018-09-05T08:11:06.481Z\n"
-"PO-Revision-Date: 2018-09-05T08:11:06.481Z\n"
+"POT-Creation-Date: 2018-09-05T09:48:06.155Z\n"
+"PO-Revision-Date: 2018-09-05T09:48:06.155Z\n"
 
 msgid "Toggle navigation"
 msgstr ""
@@ -51,72 +51,6 @@ msgid "This browser is not supported!"
 msgstr ""
 
 msgid "Exit"
-msgstr ""
-
-msgid "Totals"
-msgstr ""
-
-msgid "Details"
-msgstr ""
-
-msgid "Indicator group"
-msgstr ""
-
-msgid "Boundary"
-msgstr ""
-
-msgid "Other"
-msgstr ""
-
-msgid "Disaggregation"
-msgstr ""
-
-msgid "Organisation unit level"
-msgstr ""
-
-msgid "Organisation unit group"
-msgstr ""
-
-msgid "Selected"
-msgstr ""
-
-msgid "Download"
-msgstr ""
-
-msgid "CSV format"
-msgstr ""
-
-msgid "Options"
-msgstr ""
-
-msgid "Field separator"
-msgstr ""
-
-msgid "Decimal separator"
-msgstr ""
-
-msgid "File name"
-msgstr ""
-
-msgid "Cancel"
-msgstr ""
-
-msgid "Loading contact information"
-msgstr ""
-
-msgid "Recipients"
-msgstr ""
-
-msgid "Send message"
-msgstr ""
-
-msgid "Write Message"
-msgstr ""
-
-msgid "Done"
-msgstr ""
-
-msgid "OK"
 msgstr ""
 
 msgid "Consistency analysis type"
@@ -200,6 +134,9 @@ msgstr ""
 msgid "Processing"
 msgstr ""
 
+msgid "Download"
+msgstr ""
+
 msgid "Previous"
 msgstr ""
 
@@ -222,6 +159,9 @@ msgid "Ratio"
 msgstr ""
 
 msgid "Weight"
+msgstr ""
+
+msgid "Selected"
 msgstr ""
 
 msgid "Contact"
@@ -275,96 +215,6 @@ msgstr ""
 msgid "Service Data"
 msgstr ""
 
-msgid "Close"
-msgstr ""
-
-msgid "Data set"
-msgstr ""
-
-msgid "Data elements"
-msgstr ""
-
-msgid "Indicators"
-msgstr ""
-
-msgid "Recent"
-msgstr ""
-
-msgid "By year"
-msgstr ""
-
-msgid "Custom"
-msgstr ""
-
-msgid "Select number of periods..."
-msgstr ""
-
-msgid "Select period type..."
-msgstr ""
-
-msgid "Select year..."
-msgstr ""
-
-msgid "From"
-msgstr ""
-
-msgid "To"
-msgstr ""
-
-msgid "Loading data..."
-msgstr ""
-
-msgid "Result"
-msgstr ""
-
-msgid "Display columns"
-msgstr ""
-
-msgid "All"
-msgstr ""
-
-msgid "Missing data"
-msgstr ""
-
-msgid "Include Z-score"
-msgstr ""
-
-msgid "Outlier filter"
-msgstr ""
-
-msgid "Off"
-msgstr ""
-
-msgid "Standard Score"
-msgstr ""
-
-msgid "Modified Z-Score"
-msgstr ""
-
-msgid "Moderate"
-msgstr ""
-
-msgid "Extreme"
-msgstr ""
-
-msgid "Standard"
-msgstr ""
-
-msgid "Modified"
-msgstr ""
-
-msgid "Missing"
-msgstr ""
-
-msgid "Outlier"
-msgstr ""
-
-msgid "Total"
-msgstr ""
-
-msgid "Visualise"
-msgstr ""
-
 msgid "Annual Data Quality Report"
 msgstr ""
 
@@ -396,6 +246,9 @@ msgid "Completeness of facility reporting"
 msgstr ""
 
 msgid "The percentage of expected reports that have been entered and completed."
+msgstr ""
+
+msgid "Data set"
 msgstr ""
 
 msgid "Overall score"
@@ -607,4 +460,151 @@ msgid "Analysis type"
 msgstr ""
 
 msgid "Item"
+msgstr ""
+
+msgid "Close"
+msgstr ""
+
+msgid "Data elements"
+msgstr ""
+
+msgid "Indicators"
+msgstr ""
+
+msgid "Recent"
+msgstr ""
+
+msgid "By year"
+msgstr ""
+
+msgid "Custom"
+msgstr ""
+
+msgid "Select number of periods..."
+msgstr ""
+
+msgid "Select period type..."
+msgstr ""
+
+msgid "Select year..."
+msgstr ""
+
+msgid "From"
+msgstr ""
+
+msgid "To"
+msgstr ""
+
+msgid "Loading data..."
+msgstr ""
+
+msgid "Result"
+msgstr ""
+
+msgid "Options"
+msgstr ""
+
+msgid "Display columns"
+msgstr ""
+
+msgid "All"
+msgstr ""
+
+msgid "Missing data"
+msgstr ""
+
+msgid "Include Z-score"
+msgstr ""
+
+msgid "Outlier filter"
+msgstr ""
+
+msgid "Off"
+msgstr ""
+
+msgid "Standard Score"
+msgstr ""
+
+msgid "Modified Z-Score"
+msgstr ""
+
+msgid "Moderate"
+msgstr ""
+
+msgid "Extreme"
+msgstr ""
+
+msgid "Standard"
+msgstr ""
+
+msgid "Modified"
+msgstr ""
+
+msgid "Missing"
+msgstr ""
+
+msgid "Outlier"
+msgstr ""
+
+msgid "Total"
+msgstr ""
+
+msgid "Visualise"
+msgstr ""
+
+msgid "Totals"
+msgstr ""
+
+msgid "Details"
+msgstr ""
+
+msgid "Indicator group"
+msgstr ""
+
+msgid "Boundary"
+msgstr ""
+
+msgid "Other"
+msgstr ""
+
+msgid "Disaggregation"
+msgstr ""
+
+msgid "Organisation unit level"
+msgstr ""
+
+msgid "Organisation unit group"
+msgstr ""
+
+msgid "CSV format"
+msgstr ""
+
+msgid "Field separator"
+msgstr ""
+
+msgid "Decimal separator"
+msgstr ""
+
+msgid "File name"
+msgstr ""
+
+msgid "Cancel"
+msgstr ""
+
+msgid "Loading contact information"
+msgstr ""
+
+msgid "Recipients"
+msgstr ""
+
+msgid "Send message"
+msgstr ""
+
+msgid "Write Message"
+msgstr ""
+
+msgid "Done"
+msgstr ""
+
+msgid "OK"
 msgstr ""

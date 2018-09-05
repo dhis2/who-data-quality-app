@@ -89,8 +89,8 @@ angular.module("dashboard").controller("DashboardController",
 						};
 
 						visualisationService.setChartYAxis(datasetCompletenessChart.trendChartOptions, 0, 100);
-						datasetCompletenessChart.trendChartData[0].key = "Completeness";
-						datasetCompletenessChart.trendChartData[1].key = "Timeliness";
+						datasetCompletenessChart.trendChartData[0].key = $i18next.t("Completeness");
+						datasetCompletenessChart.trendChartData[1].key = $i18next.t("Timeliness");
 
 						visualisationService.setChartLegend(datasetCompletenessChart.ouChartOptions, true);
 						visualisationService.setChartYAxis(datasetCompletenessChart.ouChartOptions, 0, 100);
