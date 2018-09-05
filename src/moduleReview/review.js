@@ -9,8 +9,8 @@
 angular.module("review", []);
 
 angular.module("review").controller("ReviewController",
-	["d2Meta","d2Map", "periodService", "dataAnalysisService", "visualisationService", "dqAnalysisConsistency", "dqAnalysisExternal", "dqAnalysisCompleteness", "$timeout", "d2Utils", "$scope",
-		function(d2Meta, d2Map, periodService, dataAnalysisService, visualisationService, dqAnalysisConsistency, dqAnalysisExternal, dqAnalysisCompleteness, $timeout, d2Utils, $scope) {
+	["d2Meta","d2Map", "periodService", "dataAnalysisService", "visualisationService", "dqAnalysisConsistency", "dqAnalysisExternal", "dqAnalysisCompleteness", "$timeout", "d2Utils", "$i18next", "$scope",
+		function(d2Meta, d2Map, periodService, dataAnalysisService, visualisationService, dqAnalysisConsistency, dqAnalysisExternal, dqAnalysisCompleteness, $timeout, d2Utils, $i18next, $scope) {
 
 			var self = this;
 
@@ -56,7 +56,7 @@ angular.module("review").controller("ReviewController",
 
 				//Warning if closing window
 				window.onbeforeunload = function (event) {
-					var message = "Are you sure you want to leave this page? Any interpretations will be lost.";
+					var message = $i18next.t("Are you sure you want to leave this page? Any interpretations will be lost.");
 					if (typeof event == "undefined") {
 						event = window.event;
 					}
@@ -68,7 +68,7 @@ angular.module("review").controller("ReviewController",
 
 				//Warning if navigating away from report
 				$scope.$on("$locationChangeStart", function( event ) {
-					var answer = confirm("Are you sure you want to leave this page? Any interpretations will be lost.");
+					var answer = confirm($i18next.t("Are you sure you want to leave this page? Any interpretations will be lost."));
 					if (!answer) {
 						event.preventDefault();
 					}

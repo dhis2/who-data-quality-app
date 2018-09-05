@@ -15,4 +15,4 @@ import dqAnalysisExternal from "./dqAnalysisExternal.js";
 angular.module("dqAnalysis", ["d2", "appService"])
 	.factory("dqAnalysisCompleteness", ["d2Data", "d2Meta", "d2Utils", "mathService", "requestService", "$q", dqAnalysisCompleteness])
 	.factory("dqAnalysisConsistency", ["d2Data", "d2Meta", "d2Utils", "mathService", "$q", dqAnalysisConsistency])
-	.factory("dqAnalysisExternal", ["d2Data", "d2Meta", "d2Utils", "mathService", "$q", dqAnalysisExternal]);
+	.factory("dqAnalysisExternal", ["d2Data", "d2Meta", "d2Utils", "mathService", "$i18next", "$q", dqAnalysisExternal]);

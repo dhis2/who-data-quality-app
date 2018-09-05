@@ -26,8 +26,8 @@
 	});
 
 	app.controller("d2SelectIController",
-		["d2Meta", "d2Utils", "$scope",
-			function(d2Meta, d2Utils, $scope) {
+		["d2Meta", "d2Utils", "$i18next", "$scope",
+			function(d2Meta, d2Utils, $i18next, $scope) {
 				var self = this;
 
 				self.groups = [];
@@ -36,7 +36,7 @@
 				self.element;
 				self.disaggregation = 0;
 
-				self.placeholder = "Select indicator...";
+				self.placeholder = $i18next.t("Select indicator...");
 
 				self.getElements = getElements;
 
@@ -85,7 +85,7 @@
 				function getElements() {
 					if (!self.group) return;
 
-					self.placeholder = "Loading...";
+					self.placeholder = $i18next.t("Loading...");
 
 
 					var fields = "indicators[displayName,id]";
@@ -97,15 +97,15 @@
 
 
 				function saveElements(data) {
-					if (data.length === 0) self.placeholder = "No indicators in " + self.group.name;
-					else self.placeholder = "Select indicator...";
+					if (data.length === 0) self.placeholder = $i18next.t("No indicators in ") + self.group.name;
+					else self.placeholder = $i18next.t("Select indicator...");
 
 					if (self.multiple) filterElements(data);
 					d2Utils.arraySortByProperty(data, "displayName", false);
 
 					if (self.multiple != undefined && self.multiple) {
 						data.unshift({
-							displayName: "[All indicators]",
+							displayName: $i18next.t("[All indicators]"),
 							id: "all",
 							group: self.group.id,
 							elements: angular.copy(data)

@@ -6,7 +6,7 @@
  immunities enjoyed by WHO under national or international law or submit to any national court jurisdiction.
  */
 
-export default function (d2Data, d2Meta, d2Utils, mathService, $q) {
+export default function (d2Data, d2Meta, d2Utils, mathService, $i18next, $q) {
 
 	var service = {
 		analyse: analyse
@@ -377,7 +377,7 @@ export default function (d2Data, d2Meta, d2Utils, mathService, $q) {
 		error.item = d2Data.name(_dataIdExternal);
 
 		error.type = "External consistency";
-		error.msg = "Skipped due to missing data for " + d2Data.name(dx) + ".";
+		error.msg = $i18next.t("Skipped due to missing data for ") + d2Data.name(dx) + ".";
 
 		return error;
 	}
@@ -398,7 +398,7 @@ export default function (d2Data, d2Meta, d2Utils, mathService, $q) {
 				"severity": "warning",
 				"type": "External consistency",
 				"item": d2Data.name(_dataIdExternal),
-				"msg": "Skipped for the following units due to missing data: " + orgunits.join(", ")
+				"msg": $i18next.t("Skipped for the following units due to missing data: ") + orgunits.join(", ")
 			};
 
 

@@ -9,12 +9,12 @@ immunities enjoyed by WHO under national or international law or submit to any n
 <table style="width: 100%">
 	<tr  height="60px">
 		<td>
-			<h4>{{'Dashboard' | i18next}}</h4>
+			<h4>{{ 'Dashboard' | i18next}}</h4>
 		</td>
 		<td>
 			<uib-progressbar ng-if="dashCtrl.cmpLoading || dashCtrl.tcLoading || dashCtrl.dcLoading || dashCtrl.outLoading"
 					style="width: 140px; float: right; margin-top: 20px"
-					class="progress-striped active" value="100" type="default"><i ng-show="showWarning">{{'Processing' | i18next}}</i>
+					class="progress-striped active" value="100" type="default"><i ng-show="showWarning">{{ 'Processing' | i18next}}</i>
 			</uib-progressbar>
 			<p></p>
 		</td>
@@ -57,18 +57,18 @@ immunities enjoyed by WHO under national or international law or submit to any n
 	</div>
 
 	<uib-tabset justified="true" ng-style="{width: dashCtrl.contentWidth, 'display': 'inline-block', 'vertical-align': 'top', 'float': 'left'}">
-		<uib-tab heading="{{'Completeness' | i18next}}" select="dashCtrl.selectedTab = 0; dashCtrl.makeCompletenessCharts();">
+		<uib-tab heading="{{ 'Completeness' | i18next}}" select="dashCtrl.selectedTab = 0; dashCtrl.makeCompletenessCharts();">
 			<div
 				style="display: inline-block; width: 100%; margin-top: 10px"
 				ng-repeat="dataset in dashCtrl.completenessCharts|orderBy:'name'">
-				<h5>"{{dataset.name}}" {{'completeness' | i18next}}</h5>
+				<h5>"{{dataset.name}}" {{ 'completeness' | i18next}}</h5>
 				<div ng-style="{width: dashCtrl.halfChart}" style="display: inline-block; border: 1px dotted gray; height: 400px">
 					<nvd3
 						options='dataset.trendChartOptions'
 						data='dataset.trendChartData'>
 					</nvd3>
 				</div>
-				<h5 ng-if="dashCtrl.singleCol">"{{dataset.name}}" {{'completeness' | i18next}}</h5>
+				<h5 ng-if="dashCtrl.singleCol">"{{dataset.name}}" {{ 'completeness' | i18next}}</h5>
 				<div ng-style="{width: dashCtrl.halfChart}" style="display: inline-block; border: 1px dotted gray; height: 400px">
 					<nvd3 style="width: 100%"
 						options='dataset.ouChartOptions'
@@ -77,7 +77,7 @@ immunities enjoyed by WHO under national or international law or submit to any n
 				</div>
 			</div>
 		</uib-tab>
-		<uib-tab heading="{{'Consistency - time' | i18next}}" select="dashCtrl.selectedTab = 1;dashCtrl.makeTimeConsistencyCharts();">
+		<uib-tab heading="{{ 'Consistency - time' | i18next}}" select="dashCtrl.selectedTab = 1;dashCtrl.makeTimeConsistencyCharts();">
 			<div
 				style="display: inline-block; width: 100%; margin-top: 10px"
 				ng-repeat="data in dashCtrl.consistencyCharts|orderBy:'name'|limitTo: 100">
@@ -95,7 +95,7 @@ immunities enjoyed by WHO under national or international law or submit to any n
 				</nvd3>
 			</div>
 		</uib-tab>
-		<uib-tab heading="{{'Consistency - data' | i18next}}" select="dashCtrl.selectedTab = 2; dashCtrl.makeDataConsistencyCharts();">
+		<uib-tab heading="{{ 'Consistency - data' | i18next}}" select="dashCtrl.selectedTab = 2; dashCtrl.makeDataConsistencyCharts();">
 			<div style="display: inline-block; width: 100%; margin-top: 10px"
 					ng-repeat="data in dashCtrl.dataConsistencyCharts|orderBy:'name'|limitTo: 100">
 				<h5>{{data.name}} - {{data.period}}</h5>
@@ -107,7 +107,7 @@ immunities enjoyed by WHO under national or international law or submit to any n
 				</nvd3>
 			</div>
 		</uib-tab>
-		<uib-tab heading="{{'Outliers' | i18next}}" select=" dashCtrl.selectedTab = 3; dashCtrl.makeOutlierTable();">
+		<uib-tab heading="{{ 'Outliers' | i18next}}" select=" dashCtrl.selectedTab = 3; dashCtrl.makeOutlierTable();">
 			<div style="margin-bottom: 20px"></div>
 			<outlier-result  result-control="dashCtrl.resultControl"></outlier-result>
 		</uib-tab>

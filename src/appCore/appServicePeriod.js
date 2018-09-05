@@ -57,7 +57,8 @@ export default function ($i18next) {
 
 
 	self.shortPeriodName = function(periodISO) {
-		var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+		var monthNames = [$i18next.t("Jan"), $i18next.t("Feb"), $i18next.t("Mar"), $i18next.t("Apr"), $i18next.t("May"), $i18next.t("Jun"), 
+			$i18next.t("Jul"), $i18next.t("Aug"), $i18next.t("Sep"), $i18next.t("Oct"), $i18next.t("Nov"), $i18next.t("Dec")];
 		periodISO = periodISO.toString();
 
 		var periodType = self.periodTypeFromPeriod(periodISO);
@@ -78,10 +79,10 @@ export default function ($i18next) {
 		case "SixMonthly":
 			part = periodISO.substring(5);
 			if (part === "1") {
-				part = "Jan-Jun";
+				part = $i18next.t("Jan-Jun");
 			}
 			else {
-				part = "Jul-Dec";
+				part = $i18next.t("Jul-Dec");
 			}
 			break;
 		case "BiMonthly":

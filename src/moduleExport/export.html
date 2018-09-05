@@ -6,14 +6,14 @@ copied verbatim in the file “COPYING”.  In applying this license, WHO does n
 immunities enjoyed by WHO under national or international law or submit to any national court jurisdiction.
 -->
 
-<h4 style="margin-top: 20px;">{{ "Data Export" || i18next }}</h4>
-<p>{{ "Export data for use with the Excel-based data quality report card" || i18next }}</p>
+<h4 style="margin-top: 20px;">{{ 'Data Export' || i18next }}</h4>
+<p>{{ 'Export data for use with the Excel-based data quality report card' || i18next }}</p>
 
 <div class="well well-large" style="width: 470px">
-<label>{{ "Select data element OR indicator" || i18next }}</label><br />
+<label>{{ 'Select data element OR indicator' || i18next }}</label><br />
 <div class="btn-group btn-group-justified" style="width: 120px; margin-bottom: 10px; display: inline-block;" ng-init="exportCtrl.dataTypeSelected = 'dataElements'">
-	<label class="btn btn-default" ng-model="exportCtrl.dataTypeSelected" uib-btn-radio="'dataElements'">{{ "Data element" || i18next }}</label>
-	<label class="btn btn-default" ng-model="exportCtrl.dataTypeSelected" uib-btn-radio="'indicators'">{{ "Indicator" || i18next }}</label>
+	<label class="btn btn-default" ng-model="exportCtrl.dataTypeSelected" uib-btn-radio="'dataElements'">{{ 'Data element' || i18next }}</label>
+	<label class="btn btn-default" ng-model="exportCtrl.dataTypeSelected" uib-btn-radio="'indicators'">{{ 'Indicator' || i18next }}</label>
 </div>
 
 <!-- DATA ELEMENTS -->
@@ -34,7 +34,7 @@ immunities enjoyed by WHO under national or international law or submit to any n
 
 <br />
 
-<label>{{ "Select organisation unit level" || i18next }}</label>
+<label>{{ 'Select organisation unit level' || i18next }}</label>
 <ui-select ng-model="exportCtrl.orgunitLevelSelected" theme="bootstrap" style="margin-bottom: 10px; min-width: 250px; max-width: 470px;">
   <ui-select-match allow-clear="true" placeholder="Select organisation unit level">
 	{{exportCtrl.orgunitLevelSelected.displayName}}
@@ -46,7 +46,7 @@ immunities enjoyed by WHO under national or international law or submit to any n
 </ui-select>
 
 <br />
-<label>{{ "Select year" || i18next }}</label>
+<label>{{ 'Select year' || i18next }}</label>
 <ui-select ng-model="exportCtrl.yearSelected" theme="bootstrap" style="margin-bottom: 10px; min-width: 250px; max-width: 470px;">
   <ui-select-match allow-clear="true" placeholder="Select year">
 	{{exportCtrl.yearSelected.name}}
@@ -57,7 +57,7 @@ immunities enjoyed by WHO under national or international law or submit to any n
   </ui-select-choices>
 </ui-select>
 </div>
-<label>{{ "Download"  || i18next }}</label><br />
-<button type="button" class="btn btn-primary" ng-click="exportCtrl.doOuExport();" ng-disabled="exportCtrl.orgunitLevelSelected === undefined">{{ "Admin Units" || i18next }}</button>
-<button type="button" class="btn btn-primary" ng-click="exportCtrl.doTrendExport();" ng-disabled="exportCtrl.orgunitLevelSelected === undefined || exportCtrl.dataSelected === undefined || exportCtrl.yearSelected === undefined">{{ "Trend Data" || i18next }}</button>
-<button type="button" class="btn btn-primary" ng-click="exportCtrl.doExport();" ng-disabled="exportCtrl.orgunitLevelSelected === undefined || exportCtrl.dataSelected === undefined || exportCtrl.yearSelected === undefined">{{ "Service Data" || i18next }}</button>
+<label>{{ 'Download'  || i18next }}</label><br />
+<button type="button" class="btn btn-primary" ng-click="exportCtrl.doOuExport();" ng-disabled="exportCtrl.orgunitLevelSelected === undefined">{{ 'Admin Units' || i18next }}</button>
+<button type="button" class="btn btn-primary" ng-click="exportCtrl.doTrendExport();" ng-disabled="exportCtrl.orgunitLevelSelected === undefined || exportCtrl.dataSelected === undefined || exportCtrl.yearSelected === undefined">{{ 'Trend Data' || i18next }}</button>
+<button type="button" class="btn btn-primary" ng-click="exportCtrl.doExport();" ng-disabled="exportCtrl.orgunitLevelSelected === undefined || exportCtrl.dataSelected === undefined || exportCtrl.yearSelected === undefined">{{ 'Service Data' || i18next }}</button>

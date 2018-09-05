@@ -26,8 +26,8 @@
 	});
 
 	app.controller("d2SelectDEController",
-		["d2Meta", "d2Map", "d2Utils", "$scope",
-			function(d2Meta, d2Map, d2Utils, $scope) {
+		["d2Meta", "d2Map", "d2Utils", "$i18next", "$scope",
+			function(d2Meta, d2Map, d2Utils, $i18next, $scope) {
 				var self = this;
 
 				self.groups = [];
@@ -36,7 +36,7 @@
 				self.element;
 				self.disaggregation = 0;
 
-				self.placeholder = "Select data element...";
+				self.placeholder = $i18next.t("Select data element...");
 
 				self.getElements = getElements;
 				self.frameWidth = frameWidth;
@@ -84,7 +84,7 @@
 				function getElements() {
 					if (!self.group) return;
 
-					self.placeholder = "Loading...";
+					self.placeholder = $i18next.t("Loading...");
 
 
 					if (self.disaggregation === 0) {
@@ -125,8 +125,8 @@
 
 
 				function saveElements(data) {
-					if (data.length === 0) self.placeholder = "No data elements in " + self.group.name;
-					else self.placeholder = "Select data element...";
+					if (data.length === 0) self.placeholder = $i18next.t("No data elements in ") + self.group.name;
+					else self.placeholder = $i18next.t("Select data element...");
 
 
 					if (self.multiple) filterElements(data);
@@ -134,7 +134,7 @@
 
 					if (self.multiple != undefined && self.multiple) {
 						data.unshift({
-							displayName: "[All data elements]",
+							displayName: $i18next.t("[All data elements]"),
 							id: "all",
 							group: self.group.id,
 							elements: angular.copy(data)

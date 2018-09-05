@@ -9,11 +9,11 @@ immunities enjoyed by WHO under national or international law or submit to any n
 <div ng-if="resultCtrl.results.length > 0">
 	<div style="display: inline-block; width: 100%;">
 		<div class="pull-left">
-			<h4>{{ "Result"  || i18next }}</h4>
+			<h4>{{ 'Result'  || i18next }}</h4>
 		</div>
 		<div class="pull-right">
 			<button type="button" class="btn btn-default" ng-model="resultCtrl.showFilter" uib-btn-checkbox btn-checkbox-true="true" btn-checkbox-false="false">
-				{{ "Options" || i18next }}
+				{{ 'Options' || i18next }}
 			</button>
 			<div class="btn-group">
 				<button style="width: 100px" type="button" ng-click="resultCtrl.exportCSV();" class="btn btn-default">Download</button>
@@ -21,35 +21,35 @@ immunities enjoyed by WHO under national or international law or submit to any n
 						class="btn btn-default"
 						ng-disabled="resultCtrl.results.length < 2 || resultCtrl.currentResult >= 4  || (1 + resultCtrl.currentResult) === resultCtrl.results.length"
 						ng-click="resultCtrl.previousResult();">
-					{{ "Previous" || i18next }}
+					{{ 'Previous' || i18next }}
 				</button>
 			</div>
 		</div>
 	</div>
 	<div uib-collapse="!resultCtrl.showFilter" class="well well-sm">
 		<div>
-			<label for="threshold">{{ "Display columns" || i18next }}</label>
+			<label for="threshold">{{ 'Display columns' || i18next }}</label>
 			<div class="btn-group btn-group-justified" ng-click="resultCtrl.updateType();" style="margin-bottom: 5px; max-width: 400px;">
-				<label class="btn btn-default" ng-model="resultCtrl.typeFilter" uib-btn-radio="0">{{ "All" || i18next }}</label>
-				<label class="btn btn-default" ng-model="resultCtrl.typeFilter" uib-btn-radio="1">{{ "Missing data" || i18next }}</label>
-				<label class="btn btn-default" ng-model="resultCtrl.typeFilter" uib-btn-radio="2">{{ "Outliers" || i18next }}</label>
+				<label class="btn btn-default" ng-model="resultCtrl.typeFilter" uib-btn-radio="0">{{ 'All' || i18next }}</label>
+				<label class="btn btn-default" ng-model="resultCtrl.typeFilter" uib-btn-radio="1">{{ 'Missing data' || i18next }}</label>
+				<label class="btn btn-default" ng-model="resultCtrl.typeFilter" uib-btn-radio="2">{{ 'Outliers' || i18next }}</label>
 			</div>
 			<div style="display: inline-block; margin-bottom: 20px">
-				{{ "Include Z-score" || i18next }}<input type="checkbox" ng-disabled="resultCtrl.typeFilter === 1" ng-init="resultCtrl.zScoreColumns = false" ng-model="resultCtrl.zScoreColumns"/>
+				{{ 'Include Z-score' || i18next }}<input type="checkbox" ng-disabled="resultCtrl.typeFilter === 1" ng-init="resultCtrl.zScoreColumns = false" ng-model="resultCtrl.zScoreColumns"/>
 			</div>
 		</div>
 		<div >
-			<label for="threshold">{{ "Outlier filter" || i18next }}</label>
+			<label for="threshold">{{ 'Outlier filter' || i18next }}</label>
 			<div class="btn-group btn-group-justified" ng-click="resultCtrl.updateFilter();" style="margin-bottom: 5px; max-width: 400px;">
-				<label class="btn btn-default" ng-model="resultCtrl.stdFilterType" uib-btn-radio="0">{{ "Off" || i18next }}</label>
-				<label class="btn btn-default" ng-model="resultCtrl.stdFilterType" uib-btn-radio="1">{{ "Standard Score" || i18next }}</label>
-				<label class="btn btn-default" ng-model="resultCtrl.stdFilterType" uib-btn-radio="2">{{ "Modified Z-Score" || i18next }}</label>
+				<label class="btn btn-default" ng-model="resultCtrl.stdFilterType" uib-btn-radio="0">{{ 'Off' || i18next }}</label>
+				<label class="btn btn-default" ng-model="resultCtrl.stdFilterType" uib-btn-radio="1">{{ 'Standard Score' || i18next }}</label>
+				<label class="btn btn-default" ng-model="resultCtrl.stdFilterType" uib-btn-radio="2">{{ 'Modified Z-Score' || i18next }}</label>
 			</div>
 		</div>
 		<div style="display: inline-block; margin-right: 15px; vertical-align: bottom;">
 			<div  class="btn-group btn-group-justified" ng-click="resultCtrl.updateFilter();" style="margin-bottom: 5px; max-width: 400px;">
-				<label ng-disabled="resultCtrl.stdFilterType === 0" class="btn btn-warning" ng-model="resultCtrl.stdFilterDegree" uib-btn-radio="1">{{ "Moderate" || i18next }}</label>
-				<label ng-disabled="resultCtrl.stdFilterType === 0" class="btn btn-danger" ng-model="resultCtrl.stdFilterDegree" uib-btn-radio="2">{{ "Extreme" || i18next }}</label>
+				<label ng-disabled="resultCtrl.stdFilterType === 0" class="btn btn-warning" ng-model="resultCtrl.stdFilterDegree" uib-btn-radio="1">{{ 'Moderate' || i18next }}</label>
+				<label ng-disabled="resultCtrl.stdFilterType === 0" class="btn btn-danger" ng-model="resultCtrl.stdFilterDegree" uib-btn-radio="2">{{ 'Extreme' || i18next }}</label>
 			</div>
 		</div>
 	</div>
@@ -59,17 +59,17 @@ immunities enjoyed by WHO under national or international law or submit to any n
 			<tr>
 				<th ng-if="resultCtrl.result.metaData.hierarchy.length > 0" colspan="{{resultCtrl.result.metaData.hierarchy.length}}">{{ Hierarchy || i18next }}</th>
 				<th style="white-space:nowrap;" rowspan="2" ng-click="resultCtrl.sortByColumn('metaData.ou.name')">
-					{{ "Unit" || i18next }}
+					{{ 'Unit' || i18next }}
 					<span ng-if="resultCtrl.sortCol === 'metaData.ou.name'" class="glyphicon glyphicon-sort-by-attributes"></span>
 				</th>
 				<th style="white-space:nowrap;" rowspan="2" style="max-width: 200px;" ng-click="resultCtrl.sortByColumn('metaData.dx.name')">
-					{{ "Data" || i18next }}
+					{{ 'Data' || i18next }}
 					<span ng-if="resultCtrl.sortCol === 'metaData.dx.name'" class="glyphicon glyphicon-sort-by-attributes"></span>
 				</th>
 				<th rowspan="2" ng-repeat="period in resultCtrl.periods" nowrap>{{period}}</th>
 				<th style="white-space:nowrap;" colspan="2"
 					ng-if="resultCtrl.typeFilter != 1 && resultCtrl.zScoreColumns">
-					{{ "Z-score" || i18next }}
+					{{ 'Z-score' || i18next }}
 									<span class="glyphicon glyphicon-info-sign"
 										  style="color: black"
 										  aria-hidden="true"
@@ -77,7 +77,7 @@ immunities enjoyed by WHO under national or international law or submit to any n
 									</span>
 				</th>
 				<th style="white-space:nowrap;" colspan="{{resultCtrl.typeFilter === 0 ? 3 : 1}}">
-					{{ "Weight" || i18next }}
+					{{ 'Weight' || i18next }}
 									<span class="glyphicon glyphicon-info-sign"
 										  style="color: black"
 										  aria-hidden="true"
@@ -93,23 +93,23 @@ immunities enjoyed by WHO under national or international law or submit to any n
 					<span ng-if='resultCtrl.sortCol === "metaData.ou.hierarchy[" + $index + "]"' class="glyphicon glyphicon-sort-by-attributes"></span>
 				</th>
 				<th style="white-space:nowrap;" ng-if="resultCtrl.typeFilter != 1 && resultCtrl.zScoreColumns" ng-click="resultCtrl.sortByColumn('result.maxSscore')">
-					{{ "Standard" || i18next }}
+					{{ 'Standard' || i18next }}
 					<span ng-if="resultCtrl.sortCol === 'result.maxSscore'" class="glyphicon glyphicon-sort-by-attributes"></span>
 				</th>
 				<th style="white-space:nowrap;" ng-if="resultCtrl.typeFilter != 1 && resultCtrl.zScoreColumns" ng-click="resultCtrl.sortByColumn('result.maxZscore')">
-					{{ "Modified" || i18next }}
+					{{ 'Modified' || i18next }}
 					<span ng-if="resultCtrl.sortCol === 'result.maxZscore'" class="glyphicon glyphicon-sort-by-attributes"></span>
 				</th>
 				<th style="white-space:nowrap;" ng-if="resultCtrl.typeFilter != 2" ng-click="resultCtrl.sortByColumn('result.gapWeight')">
-					{{ "Missing" || i18next }}
+					{{ 'Missing' || i18next }}
 					<span ng-if="resultCtrl.sortCol === 'result.gapWeight'" class="glyphicon glyphicon-sort-by-attributes"></span>
 				</th>
 				<th style="white-space:nowrap;" ng-if="resultCtrl.typeFilter != 1" ng-click="resultCtrl.sortByColumn('result.outWeight')">
-					{{ "Outlier" || i18next }}
+					{{ 'Outlier' || i18next }}
 					<span ng-if="resultCtrl.sortCol === 'result.outWeight'" class="glyphicon glyphicon-sort-by-attributes"></span>
 				</th>
 				<th style="white-space:nowrap;" ng-if="resultCtrl.typeFilter === 0" ng-click="resultCtrl.sortByColumn('result.totalWeight')">
-					{{ "Total" || i18next }}
+					{{ 'Total' || i18next }}
 					<span ng-if="resultCtrl.sortCol === 'result.totalWeight'" class="glyphicon glyphicon-sort-by-attributes"></span>
 				</th>
 			</tr>
@@ -143,9 +143,9 @@ immunities enjoyed by WHO under national or international law or submit to any n
 						  <span class="glyphicon glyphicon-th-list" style="color: black" aria-hidden="true"></span>
 					  </a>
 					  <ul class="dropdown-menu dropdown-menu-right">
-						  <li><a href ng-click="resultCtrl.showDetails(row);">{{ "Visualise" || i18next }}</a></li>
-						  <li><a href ng-click="resultCtrl.drillDown(row.metaData);">{{ "Drill down" || i18next }}</a></li>
-						  <li><a href ng-click="resultCtrl.sendMessage(row.metaData);">{{ "Contact" || i18next }}</a></li>
+						  <li><a href ng-click="resultCtrl.showDetails(row);">{{ 'Visualise' || i18next }}</a></li>
+						  <li><a href ng-click="resultCtrl.drillDown(row.metaData);">{{ 'Drill down' || i18next }}</a></li>
+						  <li><a href ng-click="resultCtrl.sendMessage(row.metaData);">{{ 'Contact' || i18next }}</a></li>
 					  </ul>
 					  </span>
 				</td>

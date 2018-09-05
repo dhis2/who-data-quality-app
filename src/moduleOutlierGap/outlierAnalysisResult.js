@@ -29,8 +29,8 @@ app.filter("startFrom", function() {
 });
 
 app.controller("OutlierResultController",
-	["periodService", "mathService", "dataAnalysisService", "requestService", "visualisationService", "$uibModal",
-		function(periodService, mathService, dataAnalysisService, requestService, visualisationService, $uibModal) {
+	["periodService", "mathService", "dataAnalysisService", "requestService", "visualisationService", "$i18next", "$uibModal",
+		function(periodService, mathService, dataAnalysisService, requestService, visualisationService, $i18next, $uibModal) {
 			var self = this;
 
 			//"API" for sending result
@@ -46,9 +46,8 @@ app.controller("OutlierResultController",
 					self.alerts = [];
 					console.log("Received " + result.rows.length + " rows");
 					if (result.trimmed) {
-						var message = "Due to its size, the result was trimmed down to " + result.rows.length + " rows.";
-						message += " Rows were prioritized based on total weight (significance of missing data and outliers), ";
-						message += "with rows with the lowest weight being left out of the result.";
+						var message = $i18next.t("Due to its size, the result was trimmed down to ") + result.rows.length + $i18next.t(" rows. ");
+						message += $i18next.t("Rows were prioritized based on total weight (significance of missing data and outliers), with rows with the lowest weight being left out of the result.");
 						notification("Warning", message);
 					}
 				}
@@ -282,7 +281,7 @@ app.controller("OutlierResultController",
 					}
 
 					else {
-						notification("Warning", "Not possible to drill down, " + rowMetaData.ou.name + " has no children.");
+						notification($i18next.t("Warning"), $i18next.t("Not possible to drill down, ") + rowMetaData.ou.name + $i18next.t(" has no children."));
 					}
 				});
 
