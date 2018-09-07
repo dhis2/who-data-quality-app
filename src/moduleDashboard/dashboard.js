@@ -14,8 +14,8 @@ angular.module("dashboard", ["d2", "dqAnalysis", "ui.bootstrap"]);
 
 //Define DashboardController
 angular.module("dashboard").controller("DashboardController",
-	["periodService", "visualisationService", "dataAnalysisService", "notificationService", "$q", "$scope", "d2Map", "d2Meta", "dqAnalysisConsistency",
-		function(periodService, visualisationService, dataAnalysisService, notificationService, $q, $scope, d2Map, d2Meta, dqAnalysisConsistency) {
+	["periodService", "visualisationService", "dataAnalysisService", "notificationService", "$q", "$scope", "d2Map", "d2Meta", "dqAnalysisConsistency", "$i18next",
+		function(periodService, visualisationService, dataAnalysisService, notificationService, $q, $scope, d2Map, d2Meta, dqAnalysisConsistency, $i18next) {
 
 			var self = this;
 
@@ -89,8 +89,8 @@ angular.module("dashboard").controller("DashboardController",
 						};
 
 						visualisationService.setChartYAxis(datasetCompletenessChart.trendChartOptions, 0, 100);
-						datasetCompletenessChart.trendChartData[0].key = $i18next.t("Completeness");
-						datasetCompletenessChart.trendChartData[1].key = $i18next.t("Timeliness");
+						datasetCompletenessChart.trendChartData[0].key = $i18next.t('Completeness');
+						datasetCompletenessChart.trendChartData[1].key = $i18next.t('Timeliness');
 
 						visualisationService.setChartLegend(datasetCompletenessChart.ouChartOptions, true);
 						visualisationService.setChartYAxis(datasetCompletenessChart.ouChartOptions, 0, 100);

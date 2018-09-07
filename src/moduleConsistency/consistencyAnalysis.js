@@ -327,14 +327,14 @@ angular.module("consistencyAnalysis").controller("ConsistencyAnalysisController"
 				var description = "";
 				if (self.result.type === "data") {
 					if (self.result.subType === "do") {
-						description += $i18next.t("Dropout rate from ") + self.result.dxNameA + $i18next.t(" to ") + self.result.dxNameB + ".";
+						description += $i18next.t('Dropout rate from ') + self.result.dxNameA + $i18next.t(' to ') + self.result.dxNameB + ".";
 					}
 					else {
-						description += $i18next.t("Ratio between ") + self.result.dxNameA + $i18next.t(" and ") + self.result.dxNameB + ".";
+						description += $i18next.t('Ratio between ') + self.result.dxNameA + $i18next.t(' and ') + self.result.dxNameB + ".";
 					}
 				}
 				else {
-					description += $i18next.t("Ratio between the selected period and preceding periods.");
+					description += $i18next.t('Ratio between the selected period and preceding periods.');
 				}
 
 				return description;
@@ -431,10 +431,10 @@ angular.module("consistencyAnalysis").controller("ConsistencyAnalysisController"
 								controllerAs: "nCtrl",
 								resolve: {
 									title: function () {
-										return $i18next.t("Warning");
+										return $i18next.t('Warning');
 									},
 									message: function () {
-										return $i18next.t("Not possible to drill down, ") + self.selectedObject.name + $i18next.t(" has no children.");
+										return $i18next.t('Not possible to drill down, ') + self.selectedObject.name + $i18next.t(' has no children.');
 									}
 								}
 							});
@@ -503,26 +503,26 @@ angular.module("consistencyAnalysis").controller("ConsistencyAnalysisController"
 				var headers = [];
 				var rows = [];
 
-				headers = headers.concat([$i18next.t("Orgunit")]);
+				headers = headers.concat([$i18next.t('Orgunit')]);
 
 				if (self.result.type === "data") {
 					if (self.result.subType != "do") {
-						headers = headers.concat([self.result.dxNameA, self.result.dxNameB, $i18next.t("Ratio")]);
+						headers = headers.concat([self.result.dxNameA, self.result.dxNameB, $i18next.t('Ratio')]);
 					}
 					else {
-						headers = headers.concat([self.result.dxNameA, self.result.dxNameB, $i18next.t("Dropout rate (%)")]);
+						headers = headers.concat([self.result.dxNameA, self.result.dxNameB, $i18next.t('Dropout rate (%)')]);
 					}
 				}
 				else {
 					headers = headers.concat([
 						self.result.dxName + " - " + self.resultPeriodName(),
 						self.result.dxName + (self.result.subType === "constant"
-							? $i18next.t(" - average of ") + self.resultReferencePeriodNames().join(" ,")
-							: $i18next.t(" - forecast from ") + self.resultReferencePeriodNames().join(" ,")),
-							$i18next.t("Ratio")]);
+							? $i18next.t(' - average of ') + self.resultReferencePeriodNames().join(" ,")
+							: $i18next.t(' - forecast from ') + self.resultReferencePeriodNames().join(" ,")),
+							$i18next.t('Ratio')]);
 				}
 
-				headers = headers.concat([$i18next.t("Weight")]);
+				headers = headers.concat([$i18next.t('Weight')]);
 
 
 

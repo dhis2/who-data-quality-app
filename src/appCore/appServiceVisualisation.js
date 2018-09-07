@@ -522,7 +522,7 @@ export default function (periodService, requestService, mathService, $q, d2Data,
 			//else current = average/forecast
 			else {
 				ratio = 1;
-				key = result.subType === "constant" ? $i18next.t("Current = Average") : $i18next.t("Current = Forecast");
+				key = result.subType === "constant" ? $i18next.t('Current = Average') : $i18next.t('Current = Forecast');
 			}
 			chartSeries.push(scatterLine(ratio, key, "#000000", maxX, maxY));
 
@@ -533,8 +533,8 @@ export default function (periodService, requestService, mathService, $q, d2Data,
 		}
 
 		var xAxisLabel;
-		if (result.subType === "constant") xAxisLabel = $i18next.t("Average of ") + result.peRef.length  + $i18next.t(" previous periods");
-		else xAxisLabel = $i18next.t("Forecasted value");
+		if (result.subType === "constant") xAxisLabel = $i18next.t('Average of ') + result.peRef.length  + $i18next.t(' previous periods');
+		else xAxisLabel = $i18next.t('Forecasted value');
 
 
 

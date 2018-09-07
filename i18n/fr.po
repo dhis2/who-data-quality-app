@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2018-08-30T08:59:28.317Z\n"
-"PO-Revision-Date: 2018-08-30 11:03+0200\n"
+"POT-Creation-Date: 2018-09-07T07:24:31.975Z\n"
+"PO-Revision-Date: 2018-09-07 09:25+0200\n"
 "Last-Translator: Pootle <pootle@translate.dhis2.net>\n"
 "Language-Team: French\n"
 "Language: fr\n"
@@ -13,12 +13,12 @@ msgstr ""
 "X-Generator: Poedit 2.1.1\n"
 
 msgid "Toggle navigation"
-msgstr ""
+msgstr "Afficher/masquer la navigation"
 
 #, fuzzy
 #| msgid "Annual Data Quality Report"
 msgid "Data Quality Tool"
-msgstr "Rapport annuel de qualité de données"
+msgstr "Outil de qualité de données"
 
 msgid "Dashboard"
 msgstr "Tableau de bord"
@@ -26,7 +26,7 @@ msgstr "Tableau de bord"
 #, fuzzy
 #| msgid "Analysis type"
 msgid "Analysis"
-msgstr "Type danalyse"
+msgstr "Analyse"
 
 msgid "Outliers and Missing Data"
 msgstr "Valeurs atypiques et données manquantes"
@@ -37,37 +37,42 @@ msgstr "Cohérence"
 #, fuzzy
 #| msgid "Annual Data Quality Report"
 msgid "Annual Report"
-msgstr "Rapport annuel de qualité de données"
+msgstr "Rapport annuel"
 
 msgid "About"
-msgstr ""
+msgstr "A propos de"
 
 msgid "More"
-msgstr ""
+msgstr "Plus"
 
 msgid "User manual"
-msgstr ""
+msgstr "Guide d'utilisateur"
 
 msgid "Data Export for Excel tool"
-msgstr ""
+msgstr "Outil d'exportation de données Excel"
 
 msgid "Feedback"
-msgstr ""
+msgstr "Retroinformation"
 
 msgid "Administration"
-msgstr ""
+msgstr "Administration"
 
 msgid "This browser is not supported!"
-msgstr ""
+msgstr "Ce navigateur n'est pas pris en charge"
 
 msgid "Exit"
-msgstr ""
+msgstr "Sortie"
 
 msgid "Totals"
 msgstr "Totaux"
 
 msgid "Details"
 msgstr "Details"
+
+#, fuzzy
+#| msgid "Select data element/indicator"
+msgid "Select data element..."
+msgstr "Choisir élément de donnée/indicateur"
 
 msgid "Indicator group"
 msgstr "Groupe d'indicateurs"
@@ -89,6 +94,149 @@ msgstr "Groupe d'unité d'organisation"
 
 msgid "Selected"
 msgstr "Choisi"
+
+#, fuzzy
+#| msgid "Select year..."
+msgid "Select level..."
+msgstr "Choisir l'année"
+
+#, fuzzy
+#| msgid "Select group"
+msgid "Select group..."
+msgstr "Choisir group"
+
+msgid "Download"
+msgstr "Télécharger"
+
+msgid "CSV format"
+msgstr "Fformat CSV"
+
+msgid "Options"
+msgstr "Options"
+
+msgid "Field separator"
+msgstr ""
+
+msgid "Decimal separator"
+msgstr "Séparateur de décimal"
+
+msgid "File name"
+msgstr "Nom de fichier"
+
+msgid "Cancel"
+msgstr "Annuler"
+
+msgid "Loading contact information"
+msgstr "Chargement des informations de contact"
+
+msgid "Recipients"
+msgstr "Destinataires"
+
+msgid "Send message"
+msgstr "Envoyer message"
+
+msgid "Write Message"
+msgstr "Ecrire un message"
+
+msgid "Done"
+msgstr "Termné"
+
+msgid "OK"
+msgstr "OK"
+
+msgid "Jan"
+msgstr ""
+
+msgid "Feb"
+msgstr ""
+
+msgid "Mar"
+msgstr ""
+
+msgid "Apr"
+msgstr ""
+
+msgid "May"
+msgstr ""
+
+msgid "Jun"
+msgstr ""
+
+msgid "Jul"
+msgstr ""
+
+msgid "Aug"
+msgstr ""
+
+msgid "Sep"
+msgstr ""
+
+msgid "Oct"
+msgstr ""
+
+msgid "Nov"
+msgstr ""
+
+msgid "Dec"
+msgstr ""
+
+msgid "Jan-Jun"
+msgstr ""
+
+msgid "Jul-Dec"
+msgstr ""
+
+msgid "Weeks"
+msgstr ""
+
+msgid "Months"
+msgstr ""
+
+msgid "Quarters"
+msgstr ""
+
+msgid "Six-months"
+msgstr ""
+
+#, fuzzy
+#| msgid "Year"
+msgid "Years"
+msgstr "Année"
+
+msgid "Logged out"
+msgstr ""
+
+msgid "You are logged out, and will be redirected to the login page."
+msgstr ""
+
+#, fuzzy
+#| msgid "Current vs average"
+msgid "Current = Average"
+msgstr "Actuel vs moyenne"
+
+#, fuzzy
+#| msgid "Current vs forecast"
+msgid "Current = Forecast"
+msgstr "actuel vs projection"
+
+#, fuzzy
+#| msgid "Average"
+msgid "Average of "
+msgstr "Moyenne"
+
+msgid " previous periods"
+msgstr ""
+
+#, fuzzy
+#| msgid "Forecast"
+msgid "Forecasted value"
+msgstr "Prévision"
+
+msgid "Skipped due to missing data for "
+msgstr ""
+
+msgid "Skipped for the following units due to missing data: "
+msgstr ""
 
 msgid "Consistency analysis type"
 msgstr "Analyse de cohérence"
@@ -171,9 +319,6 @@ msgstr "Chargement de données"
 msgid "Processing"
 msgstr "Traitement en cours"
 
-msgid "Download"
-msgstr "Télécharger"
-
 msgid "Previous"
 msgstr "Précédent"
 
@@ -193,13 +338,13 @@ msgid "Dropout rate"
 msgstr "Taux d'abandon"
 
 msgid "Ratio"
-msgstr ""
+msgstr "Ratio"
 
 msgid "Weight"
 msgstr "Poids"
 
 msgid "Contact"
-msgstr ""
+msgstr "Contact"
 
 msgid "Drill down"
 msgstr "voir niveau inferieur"
@@ -207,13 +352,52 @@ msgstr "voir niveau inferieur"
 msgid "Click on the graph or in the table see details."
 msgstr "Cliquer sur le graphique ou le tableau pour voir les détails"
 
+#, fuzzy
+#| msgid "Dropout rate"
+msgid "Dropout rate from "
+msgstr "Taux d'abandon"
+
+msgid " to "
+msgstr ""
+
+msgid "Ratio between "
+msgstr ""
+
+msgid " and "
+msgstr ""
+
+msgid "Ratio between the selected period and preceding periods."
+msgstr ""
+
+msgid "Warning"
+msgstr ""
+
+msgid "Not possible to drill down, "
+msgstr ""
+
+msgid " has no children."
+msgstr ""
+
+#, fuzzy
+#| msgid "Dropout rate"
+msgid "Dropout rate (%)"
+msgstr "Taux d'abandon"
+
+msgid " - average of "
+msgstr ""
+
+msgid " - forecast from "
+msgstr ""
+
 msgid "Data for 12 months up to and including the selected month will be used."
 msgstr ""
+"Les données des 12 derniers mois y compris le mois sélectionné seront "
+"utilisées"
 
 #, fuzzy
 #| msgid "Organisation unit level"
 msgid "Organisation unit"
-msgstr "Niveau d'unité d'organisation"
+msgstr "Unité d'organisation"
 
 msgid "Completeness"
 msgstr "Complétude"
@@ -229,6 +413,52 @@ msgstr "Cohérence - données"
 
 msgid "Outliers"
 msgstr "Valeurs atypiques"
+
+msgid "Timeliness"
+msgstr ""
+
+#, fuzzy
+#| msgid "Data set"
+msgid "Data Export"
+msgstr "Exportation de données"
+
+msgid "Export data for use with the Excel-based data quality report card"
+msgstr ""
+"Exportation de données pour la fiche de rapport de qualité des données basée "
+"sur Excel"
+
+#, fuzzy
+#| msgid "Select data element/indicator"
+msgid "Select data element OR indicator"
+msgstr "Choisir élément de donnée ou indicateur"
+
+#, fuzzy
+#| msgid "Organisation unit level"
+msgid "Select organisation unit level"
+msgstr "CHoisir le niveau d'unité d'organisation"
+
+msgid "Admin Units"
+msgstr "Unités administratives"
+
+msgid "Trend Data"
+msgstr "Données de tendance"
+
+msgid "Service Data"
+msgstr "Données de service"
+
+msgid "Close"
+msgstr "Fermer"
+
+msgid "Due to its size, the result was trimmed down to "
+msgstr ""
+
+msgid " rows. "
+msgstr ""
+
+msgid ""
+"Rows were prioritized based on total weight (significance of missing data "
+"and outliers), with rows with the lowest weight being left out of the result."
+msgstr ""
 
 msgid "Data set"
 msgstr "Ensemble de données"
@@ -265,6 +495,67 @@ msgstr "A"
 
 msgid "Loading data..."
 msgstr "Chargement de données"
+
+msgid "Result"
+msgstr "Resultat"
+
+msgid "Display columns"
+msgstr "Afficher les colonnes"
+
+msgid "All"
+msgstr "Tout"
+
+#, fuzzy
+#| msgid "Loading data"
+msgid "Missing data"
+msgstr "Données manquantes"
+
+msgid "Include Z-score"
+msgstr "Inclure le Z-score"
+
+#, fuzzy
+#| msgid "Outliers"
+msgid "Outlier filter"
+msgstr "Filtre de valeurs atypiques"
+
+msgid "Off"
+msgstr "Désactiver"
+
+msgid "Standard Score"
+msgstr "Score standard"
+
+msgid "Modified Z-Score"
+msgstr "Z-score modifié"
+
+#, fuzzy
+#| msgid "Moderate outliers"
+msgid "Moderate"
+msgstr "Modérées"
+
+msgid "Extreme"
+msgstr "Extrêmes"
+
+msgid "Standard"
+msgstr "Standard"
+
+msgid "Modified"
+msgstr "Modifié"
+
+msgid "Missing"
+msgstr "Manquantes"
+
+#, fuzzy
+#| msgid "Outliers"
+msgid "Outlier"
+msgstr "Valeur atypique"
+
+#, fuzzy
+#| msgid "Totals"
+msgid "Total"
+msgstr "Total"
+
+msgid "Visualise"
+msgstr "Visualiser"
 
 msgid "Annual Data Quality Report"
 msgstr "Rapport annuel de qualité de données"
@@ -313,7 +604,7 @@ msgid "Percent"
 msgstr "Pourcent"
 
 msgid "Not available"
-msgstr "Non disponible"
+msgstr "Pas disponible"
 
 msgid "Timeliness of facility reporting"
 msgstr "Promptitude des rapports des formations sanitaires"
@@ -322,7 +613,7 @@ msgid ""
 "The percentage of expected reports that have been entered and completed on "
 "time."
 msgstr ""
-"Le pourcentage des rapports attendus qui sont saisis et complets à temps"
+"Le pourcentage des rapports attendus qui sont saisis et terminés à temps"
 
 msgid "Completeness of indicator data"
 msgstr "Complétude des données d'indicateur"
@@ -346,8 +637,8 @@ msgid ""
 "are counted as divergent if they have one or more extreme outliers for an "
 "indicator."
 msgstr ""
-"sont compté comme divergents ils ont une ou plus d'une valeurs atypiques "
-"extrêmes pour un"
+"sont compté comme divergents s'ils ont une ou plus d'une valeurs atypiques "
+"extrêmes pour un indicateur."
 
 msgid "Moderate outliers."
 msgstr "Valeurs atypiques modérées"
@@ -363,7 +654,7 @@ msgid ""
 "indicator."
 msgstr ""
 "sont comptés comme divergents s'ils ont deux ou plus de valeurs atypiques "
-"modérées pour un "
+"modérées pour un indicateur."
 
 msgid "Not applicable"
 msgstr "Non applicable"
@@ -376,10 +667,10 @@ msgid ""
 "preceding years (if expected trend is constant), or the forecasted value."
 msgstr ""
 "Différence entre l'année en cours et soit la moyenne des 3 années "
-"précédentes (si tendance attendue est Constant) ou sois la prédiction"
+"précédentes (si tendance attendue est Constant) ou soit la prédiction."
 
 msgid "Subunits with divergent score"
-msgstr "Sous.unité aec un score divergent"
+msgstr "Sous.unité avec un score divergent"
 
 msgid "Consistency with United Nations Population Projections"
 msgstr "Cohérence avec les projections de population des Nations Unies"
@@ -524,3 +815,7 @@ msgstr "Type danalyse"
 
 msgid "Item"
 msgstr "Item"
+
+msgid ""
+"Are you sure you want to leave this page? Any interpretations will be lost."
+msgstr ""

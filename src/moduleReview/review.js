@@ -56,7 +56,7 @@ angular.module("review").controller("ReviewController",
 
 				//Warning if closing window
 				window.onbeforeunload = function (event) {
-					var message = $i18next.t("Are you sure you want to leave this page? Any interpretations will be lost.");
+					var message = $i18next.t('Are you sure you want to leave this page? Any interpretations will be lost.');
 					if (typeof event == "undefined") {
 						event = window.event;
 					}
@@ -68,7 +68,7 @@ angular.module("review").controller("ReviewController",
 
 				//Warning if navigating away from report
 				$scope.$on("$locationChangeStart", function( event ) {
-					var answer = confirm($i18next.t("Are you sure you want to leave this page? Any interpretations will be lost."));
+					var answer = confirm($i18next.t('Are you sure you want to leave this page? Any interpretations will be lost.'));
 					if (!answer) {
 						event.preventDefault();
 					}

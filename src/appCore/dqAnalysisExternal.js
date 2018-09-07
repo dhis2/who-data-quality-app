@@ -377,7 +377,7 @@ export default function (d2Data, d2Meta, d2Utils, mathService, $i18next, $q) {
 		error.item = d2Data.name(_dataIdExternal);
 
 		error.type = "External consistency";
-		error.msg = $i18next.t("Skipped due to missing data for ") + d2Data.name(dx) + ".";
+		error.msg = $i18next.t('Skipped due to missing data for ') + d2Data.name(dx) + ".";
 
 		return error;
 	}
@@ -398,7 +398,7 @@ export default function (d2Data, d2Meta, d2Utils, mathService, $i18next, $q) {
 				"severity": "warning",
 				"type": "External consistency",
 				"item": d2Data.name(_dataIdExternal),
-				"msg": $i18next.t("Skipped for the following units due to missing data: ") + orgunits.join(", ")
+				"msg": $i18next.t('Skipped for the following units due to missing data: ') + orgunits.join(", ")
 			};
 
 

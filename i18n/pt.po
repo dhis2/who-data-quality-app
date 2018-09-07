@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2018-08-30T08:59:28.317Z\n"
-"PO-Revision-Date: 2018-08-30 12:07+0200\n"
+"POT-Creation-Date: 2018-09-07T07:24:31.975Z\n"
+"PO-Revision-Date: 2018-09-07 09:26+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: pt_PT\n"
@@ -63,6 +63,11 @@ msgstr "Totais"
 msgid "Details"
 msgstr "Detalhes"
 
+#, fuzzy
+#| msgid "Select data element/indicator"
+msgid "Select data element..."
+msgstr "Selecionar elemento de dados/indicador"
+
 msgid "Indicator group"
 msgstr "Grupo de Indicador"
 
@@ -83,6 +88,149 @@ msgstr "Grupo de unidade organizacional"
 
 msgid "Selected"
 msgstr "Seleccionado"
+
+#, fuzzy
+#| msgid "Select year..."
+msgid "Select level..."
+msgstr "Selecione o ano…"
+
+#, fuzzy
+#| msgid "Select group"
+msgid "Select group..."
+msgstr "Selecionar grupo"
+
+msgid "Download"
+msgstr "Download"
+
+msgid "CSV format"
+msgstr "Formato CSV"
+
+msgid "Options"
+msgstr "Opções"
+
+msgid "Field separator"
+msgstr "Separador de campo"
+
+msgid "Decimal separator"
+msgstr "Separador decimal"
+
+msgid "File name"
+msgstr "Nome do ficheiro"
+
+msgid "Cancel"
+msgstr "Cancelar"
+
+msgid "Loading contact information"
+msgstr "Carregando informações de contato"
+
+msgid "Recipients"
+msgstr "Destinatários"
+
+msgid "Send message"
+msgstr "Enviar mensagem"
+
+msgid "Write Message"
+msgstr "Escrever Mensagem"
+
+msgid "Done"
+msgstr "Concluído"
+
+msgid "OK"
+msgstr "OK"
+
+msgid "Jan"
+msgstr ""
+
+msgid "Feb"
+msgstr ""
+
+msgid "Mar"
+msgstr ""
+
+msgid "Apr"
+msgstr ""
+
+msgid "May"
+msgstr ""
+
+msgid "Jun"
+msgstr ""
+
+msgid "Jul"
+msgstr ""
+
+msgid "Aug"
+msgstr ""
+
+msgid "Sep"
+msgstr ""
+
+msgid "Oct"
+msgstr ""
+
+msgid "Nov"
+msgstr ""
+
+msgid "Dec"
+msgstr ""
+
+msgid "Jan-Jun"
+msgstr ""
+
+msgid "Jul-Dec"
+msgstr ""
+
+msgid "Weeks"
+msgstr ""
+
+msgid "Months"
+msgstr ""
+
+msgid "Quarters"
+msgstr ""
+
+msgid "Six-months"
+msgstr ""
+
+#, fuzzy
+#| msgid "Year"
+msgid "Years"
+msgstr "Ano"
+
+msgid "Logged out"
+msgstr ""
+
+msgid "You are logged out, and will be redirected to the login page."
+msgstr ""
+
+#, fuzzy
+#| msgid "Current vs average"
+msgid "Current = Average"
+msgstr "Atual vs média"
+
+#, fuzzy
+#| msgid "Current vs forecast"
+msgid "Current = Forecast"
+msgstr "Atual vs previsto"
+
+#, fuzzy
+#| msgid "Average"
+msgid "Average of "
+msgstr "Média"
+
+msgid " previous periods"
+msgstr ""
+
+#, fuzzy
+#| msgid "Forecast"
+msgid "Forecasted value"
+msgstr "Previsão"
+
+msgid "Skipped due to missing data for "
+msgstr ""
+
+msgid "Skipped for the following units due to missing data: "
+msgstr ""
 
 msgid "Consistency analysis type"
 msgstr "Tipo de análise de consistência"
@@ -106,7 +254,7 @@ msgid "Expected relationship"
 msgstr "Relação esperada"
 
 msgid "Dropout"
-msgstr "Abandono"
+msgstr "Migração/Abandono"
 
 msgid "Expected trend"
 msgstr "Tendência esperada"
@@ -165,9 +313,6 @@ msgstr "Carregando dados"
 msgid "Processing"
 msgstr "A processar"
 
-msgid "Download"
-msgstr "Download"
-
 msgid "Previous"
 msgstr "Anterior"
 
@@ -184,7 +329,7 @@ msgid "Forecast"
 msgstr "Previsão"
 
 msgid "Dropout rate"
-msgstr "Taxa de abandono"
+msgstr "Taxa de migração/abandono"
 
 msgid "Ratio"
 msgstr "Racio/Razão/Relação"
@@ -196,10 +341,47 @@ msgid "Contact"
 msgstr "Contacto"
 
 msgid "Drill down"
-msgstr "Perfurar/Detalhar"
+msgstr "Detalhar"
 
 msgid "Click on the graph or in the table see details."
 msgstr "Clique no gráfico ou na tabela Ver detalhes."
+
+#, fuzzy
+#| msgid "Dropout rate"
+msgid "Dropout rate from "
+msgstr "Taxa de migração/abandono"
+
+msgid " to "
+msgstr ""
+
+msgid "Ratio between "
+msgstr ""
+
+msgid " and "
+msgstr ""
+
+msgid "Ratio between the selected period and preceding periods."
+msgstr ""
+
+msgid "Warning"
+msgstr ""
+
+msgid "Not possible to drill down, "
+msgstr ""
+
+msgid " has no children."
+msgstr ""
+
+#, fuzzy
+#| msgid "Dropout rate"
+msgid "Dropout rate (%)"
+msgstr "Taxa de migração/abandono"
+
+msgid " - average of "
+msgstr ""
+
+msgid " - forecast from "
+msgstr ""
 
 msgid "Data for 12 months up to and including the selected month will be used."
 msgstr "Serão utilizados dados de 12 meses incluindo o mês seleccionado."
@@ -221,6 +403,46 @@ msgstr "Consistência de Dados"
 
 msgid "Outliers"
 msgstr "Valores atípicos/aberrantes"
+
+msgid "Timeliness"
+msgstr ""
+
+msgid "Data Export"
+msgstr "Exportação de dados"
+
+msgid "Export data for use with the Excel-based data quality report card"
+msgstr ""
+"Exportar dados para uso com o cartão de relatório de qualidade de dados "
+"baseado em Excel"
+
+msgid "Select data element OR indicator"
+msgstr "Selecionar elemento de dados OU indicador"
+
+msgid "Select organisation unit level"
+msgstr "Selecione o nível da unidade organizacional"
+
+msgid "Admin Units"
+msgstr "Unidades de Administração"
+
+msgid "Trend Data"
+msgstr "Dados de tendência"
+
+msgid "Service Data"
+msgstr "Dados de serviço"
+
+msgid "Close"
+msgstr "Fechar"
+
+msgid "Due to its size, the result was trimmed down to "
+msgstr ""
+
+msgid " rows. "
+msgstr ""
+
+msgid ""
+"Rows were prioritized based on total weight (significance of missing data "
+"and outliers), with rows with the lowest weight being left out of the result."
+msgstr ""
 
 msgid "Data set"
 msgstr "Conjunto de dados"
@@ -257,6 +479,59 @@ msgstr "Para"
 
 msgid "Loading data..."
 msgstr "Carregando dados..."
+
+msgid "Result"
+msgstr "Resultado"
+
+msgid "Display columns"
+msgstr "Exibir colunas"
+
+msgid "All"
+msgstr "Todos"
+
+msgid "Missing data"
+msgstr "Dados inexistentes"
+
+msgid "Include Z-score"
+msgstr "Incluir Z-score"
+
+msgid "Outlier filter"
+msgstr "Filtro de dados atípico"
+
+msgid "Off"
+msgstr "Desligado"
+
+msgid "Standard Score"
+msgstr "Pontuação padrão"
+
+msgid "Modified Z-Score"
+msgstr "Z-Score modificado"
+
+msgid "Moderate"
+msgstr "Moderado"
+
+msgid "Extreme"
+msgstr "Extrema"
+
+msgid "Standard"
+msgstr "Padrão"
+
+msgid "Modified"
+msgstr "Modificado"
+
+msgid "Missing"
+msgstr "Em falta"
+
+#, fuzzy
+#| msgid "Outliers"
+msgid "Outlier"
+msgstr "Valores atípicos/aberrantes"
+
+msgid "Total"
+msgstr "Total"
+
+msgid "Visualise"
+msgstr "Visualizar"
 
 msgid "Annual Data Quality Report"
 msgstr "Relatório anual de qualidade de dados"
@@ -517,3 +792,7 @@ msgstr "Tipo de análise"
 
 msgid "Item"
 msgstr "Item"
+
+msgid ""
+"Are you sure you want to leave this page? Any interpretations will be lost."
+msgstr ""

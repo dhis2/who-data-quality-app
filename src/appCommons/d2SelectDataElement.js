@@ -36,7 +36,7 @@
 				self.element;
 				self.disaggregation = 0;
 
-				self.placeholder = $i18next.t("Select data element...");
+				self.placeholder = $i18next.t('Select data element...');
 
 				self.getElements = getElements;
 				self.frameWidth = frameWidth;
