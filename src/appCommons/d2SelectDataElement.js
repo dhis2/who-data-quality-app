@@ -84,7 +84,7 @@
 				function getElements() {
 					if (!self.group) return;
 
-					self.placeholder = $i18next.t("Loading...");
+					self.placeholder = $i18next.t('Loading...');
 
 
 					if (self.disaggregation === 0) {
@@ -125,8 +125,8 @@
 
 
 				function saveElements(data) {
-					if (data.length === 0) self.placeholder = $i18next.t("No data elements in ") + self.group.name;
-					else self.placeholder = $i18next.t("Select data element...");
+					if (data.length === 0) self.placeholder = $i18next.t('No data elements in ') + self.group.name;
+					else self.placeholder = $i18next.t('Select data element...');
 
 
 					if (self.multiple) filterElements(data);
@@ -134,7 +134,7 @@
 
 					if (self.multiple != undefined && self.multiple) {
 						data.unshift({
-							displayName: $i18next.t("[All data elements]"),
+							displayName: $i18next.t('[All data elements]'),
 							id: "all",
 							group: self.group.id,
 							elements: angular.copy(data)

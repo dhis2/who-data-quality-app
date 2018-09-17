@@ -6,7 +6,7 @@
  immunities enjoyed by WHO under national or international law or submit to any national court jurisdiction.
  */
 
-export default function (periodService, requestService, mathService, $q, d2Data, d2Utils, d2Meta) {
+export default function (periodService, requestService, mathService, $q, d2Data, $i18next) {
 
 
 	var self = this;
