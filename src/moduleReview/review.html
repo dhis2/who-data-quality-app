@@ -212,7 +212,7 @@ immunities enjoyed by WHO under national or international law or submit to any n
 									<td ng-if="revCtrl.isNumber(dataset.boundaryPercentage)" class="valueCell">{{dataset.boundaryPercentage}}%</td>
 									<td ng-if="revCtrl.isNumber(dataset.boundaryPercentage)" class="valueCell">{{dataset.subunitsOutsideThreshold}}</td>
 									<td ng-if="revCtrl.isNumber(dataset.boundaryPercentage)" class="valueCell">{{dataset.subunitViolationPercentage}}%</td>
-									<td ng-if="!revCtrl.isNumber(dataset.boundaryPercentage)" colspan="3">{{ 'Not available' || i18next }}</td>
+									<td ng-if="!revCtrl.isNumber(dataset.boundaryPercentage)" colspan="3">{{ 'Not available' | i18next }}</td>
 								</tr>
 							</tbody>
 						</table>
@@ -706,7 +706,7 @@ immunities enjoyed by WHO under national or international law or submit to any n
 								<tr bgcolor="#f9f9f9">
 									<th width="110">{{ 'Number' | i18next }}</th>
 									<th width="110">{{ 'Percent' | i18next }}</th>
-									<th>{{ 'Names' || i18next }}</th>
+									<th>{{ 'Names' | i18next }}</th>
 								</tr>
 								<tr ng-repeat="indicator in revCtrl.outliers | orderBy : 'displayName'">
 									<td>{{indicator.displayName}}</td>
