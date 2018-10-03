@@ -7,6 +7,7 @@
  */
 
 
+import {version} from '../../package.json';
 
 angular.module("about", []);
 
@@ -16,6 +17,7 @@ angular.module("about").controller("AboutController",
 
 		var self = this;
 
+		self.version = version;
 
 		return self;
 
