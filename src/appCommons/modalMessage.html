@@ -12,7 +12,7 @@ immunities enjoyed by WHO under national or international law or submit to any n
 
 <div class="modal-body">
 	<div ng-if="mmCtrl.info.length === 0" class="spinner">
-		<p><img src="../img/ajax-loader.gif" alt="loading"/>{{ 'Loading contact information' || i18next }}</p>
+		<p><img src="../img/ajax-loader.gif" alt="loading"/>{{ 'Loading contact information' | i18next }}</p>
 	</div>
 	<div style="clear: both" ng-if="mmCtrl.info.length > 0">
 	
@@ -24,7 +24,7 @@ immunities enjoyed by WHO under national or international law or submit to any n
 		</table>
 		<div ng-if="mmCtrl.message">
 		
-			<label style="float: left;">{{ 'Recipients' || i18next }}</label><br/>
+			<label style="float: left;">{{ 'Recipients' | i18next }}</label><br/>
 			<d2-select
 					clear="true"
 					ng-model="mmCtrl.selectedRecipient"
@@ -43,7 +43,7 @@ immunities enjoyed by WHO under national or international law or submit to any n
 				  
 			<textarea style="margin-top: 10px; margin-bottom: 10px; width: 100%; height: 100px;" ng-model="mmCtrl.text"></textarea>
 			<div style="clear: both;">
-			<button ng-disabled="!mmCtrl.selectedRecipient || mmCtrl.text === ''" style="float: right; margin-bottom: 10px;" type="button" class="btn btn-success" data-ng-click="mmCtrl.sendMessage()">{{ 'Send message' || i18next }}</button>
+			<button ng-disabled="!mmCtrl.selectedRecipient || mmCtrl.text === ''" style="float: right; margin-bottom: 10px;" type="button" class="btn btn-success" data-ng-click="mmCtrl.sendMessage()">{{ 'Send message' | i18next }}</button>
 			</div>
 			<div style="clear: both;">
 			<uib-alert ng-repeat="alert in mmCtrl.alerts track by $index" type="{{alert.type}}" close="mmCtrl.alerts.splice($index, 1)">{{alert.msg}}</uib-alert>
@@ -52,6 +52,6 @@ immunities enjoyed by WHO under national or international law or submit to any n
 	</div>
 </div>
 <div class="modal-footer" style="clear: both;">     
-    <button type="button" class="btn btn-default" data-ng-click="mmCtrl.enableMessage()">{{ 'Write Message' || i18next }}</button>
-    <button type="button" class="btn btn-default" data-ng-click="mmCtrl.close()">{{ 'Done' || i18next }}</button>
+    <button type="button" class="btn btn-default" data-ng-click="mmCtrl.enableMessage()">{{ 'Write Message' | i18next }}</button>
+    <button type="button" class="btn btn-default" data-ng-click="mmCtrl.close()">{{ 'Done' | i18next }}</button>
 </div>
