@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2018-09-07T07:24:31.975Z\n"
-"PO-Revision-Date: 2018-09-07T07:24:31.975Z\n"
+"POT-Creation-Date: 2018-10-24T14:21:36.678Z\n"
+"PO-Revision-Date: 2018-10-24T14:21:36.678Z\n"
 
 msgid "Toggle navigation"
 msgstr ""
@@ -51,81 +51,6 @@ msgid "This browser is not supported!"
 msgstr ""
 
 msgid "Exit"
-msgstr ""
-
-msgid "Totals"
-msgstr ""
-
-msgid "Details"
-msgstr ""
-
-msgid "Select data element..."
-msgstr ""
-
-msgid "Indicator group"
-msgstr ""
-
-msgid "Boundary"
-msgstr ""
-
-msgid "Other"
-msgstr ""
-
-msgid "Disaggregation"
-msgstr ""
-
-msgid "Organisation unit level"
-msgstr ""
-
-msgid "Organisation unit group"
-msgstr ""
-
-msgid "Selected"
-msgstr ""
-
-msgid "Select level..."
-msgstr ""
-
-msgid "Select group..."
-msgstr ""
-
-msgid "Download"
-msgstr ""
-
-msgid "CSV format"
-msgstr ""
-
-msgid "Options"
-msgstr ""
-
-msgid "Field separator"
-msgstr ""
-
-msgid "Decimal separator"
-msgstr ""
-
-msgid "File name"
-msgstr ""
-
-msgid "Cancel"
-msgstr ""
-
-msgid "Loading contact information"
-msgstr ""
-
-msgid "Recipients"
-msgstr ""
-
-msgid "Send message"
-msgstr ""
-
-msgid "Write Message"
-msgstr ""
-
-msgid "Done"
-msgstr ""
-
-msgid "OK"
 msgstr ""
 
 msgid "Jan"
@@ -210,6 +135,99 @@ msgid "Skipped due to missing data for "
 msgstr ""
 
 msgid "Skipped for the following units due to missing data: "
+msgstr ""
+
+msgid "Totals"
+msgstr ""
+
+msgid "Details"
+msgstr ""
+
+msgid "Select data element..."
+msgstr ""
+
+msgid "Loading..."
+msgstr ""
+
+msgid "No data elements in "
+msgstr ""
+
+msgid "[All data elements]"
+msgstr ""
+
+msgid "Indicator group"
+msgstr ""
+
+msgid "Select indicator..."
+msgstr ""
+
+msgid "No indicators in "
+msgstr ""
+
+msgid "[All indicators]"
+msgstr ""
+
+msgid "Boundary"
+msgstr ""
+
+msgid "Other"
+msgstr ""
+
+msgid "Disaggregation"
+msgstr ""
+
+msgid "Organisation unit level"
+msgstr ""
+
+msgid "Organisation unit group"
+msgstr ""
+
+msgid "Selected"
+msgstr ""
+
+msgid "Select level..."
+msgstr ""
+
+msgid "Select group..."
+msgstr ""
+
+msgid "Download"
+msgstr ""
+
+msgid "CSV format"
+msgstr ""
+
+msgid "Options"
+msgstr ""
+
+msgid "Field separator"
+msgstr ""
+
+msgid "Decimal separator"
+msgstr ""
+
+msgid "File name"
+msgstr ""
+
+msgid "Cancel"
+msgstr ""
+
+msgid "Loading contact information"
+msgstr ""
+
+msgid "Recipients"
+msgstr ""
+
+msgid "Send message"
+msgstr ""
+
+msgid "Write Message"
+msgstr ""
+
+msgid "Done"
+msgstr ""
+
+msgid "OK"
 msgstr ""
 
 msgid "Consistency analysis type"

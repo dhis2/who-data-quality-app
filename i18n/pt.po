@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2018-09-07T07:24:31.975Z\n"
-"PO-Revision-Date: 2018-09-07 09:26+0200\n"
+"POT-Creation-Date: 2018-10-24T14:21:36.678Z\n"
+"PO-Revision-Date: 2018-10-25 14:14+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: pt_PT\n"
@@ -57,22 +57,123 @@ msgstr "Este navegador não é suportado!"
 msgid "Exit"
 msgstr "Sair"
 
+msgid "Jan"
+msgstr "Jan"
+
+msgid "Feb"
+msgstr "Fev"
+
+msgid "Mar"
+msgstr "Mar"
+
+msgid "Apr"
+msgstr "Abr"
+
+msgid "May"
+msgstr "Maio"
+
+msgid "Jun"
+msgstr "Jun"
+
+msgid "Jul"
+msgstr "Jul"
+
+msgid "Aug"
+msgstr "Ago"
+
+msgid "Sep"
+msgstr "Set"
+
+msgid "Oct"
+msgstr "Out"
+
+msgid "Nov"
+msgstr "Nov"
+
+msgid "Dec"
+msgstr "Dez"
+
+msgid "Jan-Jun"
+msgstr "Jan-Jun"
+
+msgid "Jul-Dec"
+msgstr "Jul-Dez"
+
+msgid "Weeks"
+msgstr "Semanas"
+
+msgid "Months"
+msgstr "Meses"
+
+msgid "Quarters"
+msgstr "Trimestres"
+
+msgid "Six-months"
+msgstr "Seis meses"
+
+msgid "Years"
+msgstr "Anos"
+
+msgid "Logged out"
+msgstr "Desconectado"
+
+msgid "You are logged out, and will be redirected to the login page."
+msgstr "Você está desconectado e será redirecionado para a página de login."
+
+msgid "Current = Average"
+msgstr "Actual = média"
+
+msgid "Current = Forecast"
+msgstr "Actual = previsto"
+
+msgid "Average of "
+msgstr "Média de"
+
+msgid " previous periods"
+msgstr "períodos anteriores"
+
+msgid "Forecasted value"
+msgstr "Valor previsto"
+
+msgid "Skipped due to missing data for "
+msgstr "Ignorado devido a ausência de dados para"
+
+msgid "Skipped for the following units due to missing data: "
+msgstr ""
+"Ignorado para as seguintes unidades organizacionais devido a dados em falta:"
+
 msgid "Totals"
 msgstr "Totais"
 
 msgid "Details"
 msgstr "Detalhes"
 
-#, fuzzy
-#| msgid "Select data element/indicator"
 msgid "Select data element..."
-msgstr "Selecionar elemento de dados/indicador"
+msgstr "Selecione elemento de dados..."
+
+msgid "Loading..."
+msgstr "Carregando..."
+
+msgid "No data elements in "
+msgstr "Nenhum elemento de dados no"
+
+msgid "[All data elements]"
+msgstr "[Todos os elementos de dados]"
 
 msgid "Indicator group"
 msgstr "Grupo de Indicador"
 
+msgid "Select indicator..."
+msgstr "Selecione o indicador..."
+
+msgid "No indicators in "
+msgstr "Não há indicadores em"
+
+msgid "[All indicators]"
+msgstr "[Todos os indicadores]"
+
 msgid "Boundary"
-msgstr "Fronteira"
+msgstr "Limite geográfico"
 
 msgid "Other"
 msgstr "Outro"
@@ -89,18 +190,14 @@ msgstr "Grupo de unidade organizacional"
 msgid "Selected"
 msgstr "Seleccionado"
 
-#, fuzzy
-#| msgid "Select year..."
 msgid "Select level..."
-msgstr "Selecione o ano…"
+msgstr "Selecione o nível..."
 
-#, fuzzy
-#| msgid "Select group"
 msgid "Select group..."
-msgstr "Selecionar grupo"
+msgstr "Selecione o grupo..."
 
 msgid "Download"
-msgstr "Download"
+msgstr "Descarregar"
 
 msgid "CSV format"
 msgstr "Formato CSV"
@@ -121,7 +218,7 @@ msgid "Cancel"
 msgstr "Cancelar"
 
 msgid "Loading contact information"
-msgstr "Carregando informações de contato"
+msgstr "Carregando informação de contato"
 
 msgid "Recipients"
 msgstr "Destinatários"
@@ -137,100 +234,6 @@ msgstr "Concluído"
 
 msgid "OK"
 msgstr "OK"
-
-msgid "Jan"
-msgstr ""
-
-msgid "Feb"
-msgstr ""
-
-msgid "Mar"
-msgstr ""
-
-msgid "Apr"
-msgstr ""
-
-msgid "May"
-msgstr ""
-
-msgid "Jun"
-msgstr ""
-
-msgid "Jul"
-msgstr ""
-
-msgid "Aug"
-msgstr ""
-
-msgid "Sep"
-msgstr ""
-
-msgid "Oct"
-msgstr ""
-
-msgid "Nov"
-msgstr ""
-
-msgid "Dec"
-msgstr ""
-
-msgid "Jan-Jun"
-msgstr ""
-
-msgid "Jul-Dec"
-msgstr ""
-
-msgid "Weeks"
-msgstr ""
-
-msgid "Months"
-msgstr ""
-
-msgid "Quarters"
-msgstr ""
-
-msgid "Six-months"
-msgstr ""
-
-#, fuzzy
-#| msgid "Year"
-msgid "Years"
-msgstr "Ano"
-
-msgid "Logged out"
-msgstr ""
-
-msgid "You are logged out, and will be redirected to the login page."
-msgstr ""
-
-#, fuzzy
-#| msgid "Current vs average"
-msgid "Current = Average"
-msgstr "Atual vs média"
-
-#, fuzzy
-#| msgid "Current vs forecast"
-msgid "Current = Forecast"
-msgstr "Atual vs previsto"
-
-#, fuzzy
-#| msgid "Average"
-msgid "Average of "
-msgstr "Média"
-
-msgid " previous periods"
-msgstr ""
-
-#, fuzzy
-#| msgid "Forecast"
-msgid "Forecasted value"
-msgstr "Previsão"
-
-msgid "Skipped due to missing data for "
-msgstr ""
-
-msgid "Skipped for the following units due to missing data: "
-msgstr ""
 
 msgid "Consistency analysis type"
 msgstr "Tipo de análise de consistência"
@@ -251,7 +254,7 @@ msgid "Expected result"
 msgstr "Resultado esperado"
 
 msgid "Expected relationship"
-msgstr "Relação esperada"
+msgstr "Relacionamento esperado"
 
 msgid "Dropout"
 msgstr "Migração/Abandono"
@@ -290,7 +293,7 @@ msgid "Year"
 msgstr "Ano"
 
 msgid "Select year"
-msgstr "Selecionar o ano"
+msgstr "Selecionar ano"
 
 msgid "Select period"
 msgstr "Selecionar período"
@@ -311,7 +314,7 @@ msgid "Loading data"
 msgstr "Carregando dados"
 
 msgid "Processing"
-msgstr "A processar"
+msgstr "Processando"
 
 msgid "Previous"
 msgstr "Anterior"
@@ -344,44 +347,40 @@ msgid "Drill down"
 msgstr "Detalhar"
 
 msgid "Click on the graph or in the table see details."
-msgstr "Clique no gráfico ou na tabela Ver detalhes."
+msgstr "Clique no gráfico ou na tabela para ver detalhes."
 
-#, fuzzy
-#| msgid "Dropout rate"
 msgid "Dropout rate from "
-msgstr "Taxa de migração/abandono"
+msgstr "Taxa de migração/abandono de"
 
 msgid " to "
-msgstr ""
+msgstr " para "
 
 msgid "Ratio between "
-msgstr ""
+msgstr "Racio/Razão/Relação entre"
 
 msgid " and "
-msgstr ""
+msgstr " e "
 
 msgid "Ratio between the selected period and preceding periods."
-msgstr ""
+msgstr "Relação entre o período selecionado e os períodos anteriores."
 
 msgid "Warning"
-msgstr ""
+msgstr "Aviso"
 
 msgid "Not possible to drill down, "
-msgstr ""
+msgstr "Não é possível Detalhar,"
 
 msgid " has no children."
-msgstr ""
+msgstr "Não tem filhos."
 
-#, fuzzy
-#| msgid "Dropout rate"
 msgid "Dropout rate (%)"
-msgstr "Taxa de migração/abandono"
+msgstr "Taxa de migração/abandono (%)"
 
 msgid " - average of "
-msgstr ""
+msgstr "- média de"
 
 msgid " - forecast from "
-msgstr ""
+msgstr "- previsão de"
 
 msgid "Data for 12 months up to and including the selected month will be used."
 msgstr "Serão utilizados dados de 12 meses incluindo o mês seleccionado."
@@ -396,16 +395,16 @@ msgid "completeness"
 msgstr "completude"
 
 msgid "Consistency - time"
-msgstr "Consistência ao longo do tempo"
+msgstr "Consistência - tempo"
 
 msgid "Consistency - data"
-msgstr "Consistência de Dados"
+msgstr "Consistência - Dados"
 
 msgid "Outliers"
 msgstr "Valores atípicos/aberrantes"
 
 msgid "Timeliness"
-msgstr ""
+msgstr "Prontidão"
 
 msgid "Data Export"
 msgstr "Exportação de dados"
@@ -416,7 +415,7 @@ msgstr ""
 "baseado em Excel"
 
 msgid "Select data element OR indicator"
-msgstr "Selecionar elemento de dados OU indicador"
+msgstr "Selecionar elemento de dado OU indicador"
 
 msgid "Select organisation unit level"
 msgstr "Selecione o nível da unidade organizacional"
@@ -434,18 +433,21 @@ msgid "Close"
 msgstr "Fechar"
 
 msgid "Due to its size, the result was trimmed down to "
-msgstr ""
+msgstr "Devido ao seu tamanho, o resultado foi cortado para"
 
 msgid " rows. "
-msgstr ""
+msgstr "linhas."
 
 msgid ""
 "Rows were prioritized based on total weight (significance of missing data "
 "and outliers), with rows with the lowest weight being left out of the result."
 msgstr ""
+"As linhas foram priorizadas com base no peso total (significância de dados "
+"ausentes e outliers), com linhas com menor peso sendo deixados de fora do "
+"resultado."
 
 msgid "Data set"
-msgstr "Conjunto de dados"
+msgstr "Conjunto de dados/Fichas"
 
 msgid "Data elements"
 msgstr "Elemento de dados"
@@ -463,13 +465,13 @@ msgid "Custom"
 msgstr "Personalizado"
 
 msgid "Select number of periods..."
-msgstr "Selecione o número de períodos..."
+msgstr "Selecione número de períodos..."
 
 msgid "Select period type..."
 msgstr "Selecione tipo de período…"
 
 msgid "Select year..."
-msgstr "Selecione o ano…"
+msgstr "Selecione ano…"
 
 msgid "From"
 msgstr "De"
@@ -511,7 +513,7 @@ msgid "Moderate"
 msgstr "Moderado"
 
 msgid "Extreme"
-msgstr "Extrema"
+msgstr "Extremo"
 
 msgid "Standard"
 msgstr "Padrão"
@@ -522,8 +524,6 @@ msgstr "Modificado"
 msgid "Missing"
 msgstr "Em falta"
 
-#, fuzzy
-#| msgid "Outliers"
 msgid "Outlier"
 msgstr "Valores atípicos/aberrantes"
 
@@ -540,7 +540,7 @@ msgid "Select group"
 msgstr "Selecionar grupo"
 
 msgid "Preceding years for reference"
-msgstr "Anos precedentes para a referência"
+msgstr "Anos precedentes para referência"
 
 msgid "Generate"
 msgstr "Gerar"
@@ -552,10 +552,10 @@ msgid "Assessment of Health Facility Data Quality"
 msgstr "Avaliação da Qualidade dos Dados da Unidade de Sanitaria"
 
 msgid "WHO Data Quality Review"
-msgstr "OMS Revisão de Qualidade de Dados"
+msgstr "Revisão de Qualidade de Dados da OMS"
 
 msgid "SUMMARY"
-msgstr "Resumo"
+msgstr "RESUMO"
 
 msgid "Domain 1 - Completeness"
 msgstr "Domínio 1 - Completude"
@@ -796,3 +796,4 @@ msgstr "Item"
 msgid ""
 "Are you sure you want to leave this page? Any interpretations will be lost."
 msgstr ""
+"Tem certeza que quer sair desta página? Qualquer interpretação será perdida."
