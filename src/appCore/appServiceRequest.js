@@ -19,6 +19,7 @@ export default function (BASE_URL, API_VERSION, $http, $q, notificationService) 
 			//				if (request.indexOf("api/analytics") > -1); cache = true;
 
 			var fullURL = BASE_URL + "/api/" + API_VERSION + request;
+			fullURL = encodeURI(fullURL);
 			return $http.get(fullURL, {"cache": cache});
 		});
 
@@ -31,8 +32,9 @@ export default function (BASE_URL, API_VERSION, $http, $q, notificationService) 
 		//Cache analytics requests
 		var cache = false;
 		//			if (requestURL.indexOf("api/analytics") > -1); cache = true;
-
+		
 		var fullURL = BASE_URL + "/api/" + API_VERSION + requestURL;
+		fullURL = encodeURI(fullURL);
 		return $http.get(fullURL, {"cache": cache});
 	};
 
@@ -45,6 +47,7 @@ export default function (BASE_URL, API_VERSION, $http, $q, notificationService) 
 		//if (requestURL.indexOf("api/analytics") > -1); cache = true;
 
 		var fullURL = BASE_URL + "/api/" + API_VERSION + requestURL;
+		fullURL = encodeURI(fullURL);
 		$http.get(fullURL, {"cache": cache}).then(function(response) {
 			if (self.validResponse(response)) {
 				deferred.resolve(response.data);
@@ -63,19 +66,20 @@ export default function (BASE_URL, API_VERSION, $http, $q, notificationService) 
 
 
 	self.getSingleLocal = function(requestURL) {
+		requestURL = encodeURI(requestURL);
 		return $http.get(requestURL);
 	};
 
 
 	self.post = function(postURL, data) {
 		var fullURL = BASE_URL + "/api/" + API_VERSION + postURL;
-
+		fullURL = encodeURI(fullURL);
 		return $http.post(fullURL, data);
 	};
 
 	self.put = function(postURL, data) {
 		var fullURL = BASE_URL + "/api/" + API_VERSION + postURL;
-
+		fullURL = encodeURI(fullURL);
 		return $http.put(fullURL, data);
 	};
 
