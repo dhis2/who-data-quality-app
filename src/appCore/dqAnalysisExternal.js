@@ -252,7 +252,7 @@ export default function (d2Data, d2Meta, d2Utils, mathService, $i18next, $q) {
 			datapoints: []
 		};
 
-		for (var j = 0; j < subunits.length; j++) {
+		for (let j = 0; j < subunits.length; j++) {
 			var subunit = subunits[j];
 
 			var valueA = d2Data.value(_dataIdExternal, _pe, subunit, null);

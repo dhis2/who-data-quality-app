@@ -63,14 +63,14 @@ angular.module("appCommons").controller("ModalMessageController",
 					label: "Hieararchy"
 				}];
 
-				for (var i = 0; i < attributes.length; i++) {
+				for (let i = 0; i < attributes.length; i++) {
 					attribute = attributes[i];
 					if (data[attribute.attr]) {
 
 
 						if (attribute.attr === "users") {
 							var user, users = [];
-							for (var j = 0; j < data[attribute.attr].length; j++) {
+							for (let j = 0; j < data[attribute.attr].length; j++) {
 								user = data[attribute.attr][j].displayName;
 								if (data[attribute.attr][j].phoneNumber) {
 									user += " (" + data[attribute.attr][j].phoneNumber + ")";
@@ -116,7 +116,7 @@ angular.module("appCommons").controller("ModalMessageController",
 
 				var potentialRecipients = [self.metaData, self.metaData.parent, self.metaData.parent.parent];
 
-				for (var i = 0; i < potentialRecipients.length; i++) {
+				for (let i = 0; i < potentialRecipients.length; i++) {
 					var orgunit = potentialRecipients[i];
 					if (orgunit.users && orgunit.users.length > 0) {
 						self.recipients.push({
@@ -142,7 +142,7 @@ angular.module("appCommons").controller("ModalMessageController",
 
 				var ids = [];
 				if (self.selectedUsers.length > 0) {
-					for (var i = 0; i < self.selectedUsers.length; i++) {
+					for (let i = 0; i < self.selectedUsers.length; i++) {
 						ids.push({"id": self.selectedUsers[i].id});
 					}
 					message.users = ids;

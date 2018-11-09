@@ -22,7 +22,7 @@ angular.module("admin").controller("ModalAddEditDenominatorRelationController",
 
 			var denominators = d2Map.denominatorsConfigured();
 			//Add name
-			for (var i = 0; i < denominators.length; i++) {
+			for (let i = 0; i < denominators.length; i++) {
 				denominators[i]["name"] = d2Map.d2NameFromID(denominators[i].dataID);
 			}
 			self.denominatorsFiltered = [];
@@ -53,14 +53,14 @@ angular.module("admin").controller("ModalAddEditDenominatorRelationController",
 
 
 			function getType(typeCode) {
-				for (var i = 0; i < self.types.length; i++) {
+				for (let i = 0; i < self.types.length; i++) {
 					if (self.types[i].code === typeCode) return self.types[i];
 				}
 			}
 
 			self.filterDenominators = function() {
 				self.denominatorsFiltered = [];
-				for (var i = 0; i < denominators.length; i++) {
+				for (let i = 0; i < denominators.length; i++) {
 					if (self.typeSelected && (denominators[i].type === self.typeSelected.code || self.typeSelected.code === "un")) {
 						denominators[i].displayName = denominators[i].name;
 						self.denominatorsFiltered.push(denominators[i]);

@@ -58,7 +58,7 @@
 						//Check if "all" is included
 						if (self.multiple) {
 							var currentModel = [];
-							for (var i = 0; i < self.element.length; i++) {
+							for (let i = 0; i < self.element.length; i++) {
 								if (self.element[i].id === "all") {
 									d2Utils.arrayMerge(currentModel, self.element[i].elements);
 								}
@@ -117,8 +117,8 @@
 
 
 				function filterElements(data) {
-					for (var i = 0; i < data.length; i++) {
-						for (var j = 0; self.element && j < self.element.length; j++) {
+					for (let i = 0; i < data.length; i++) {
+						for (let j = 0; self.element && j < self.element.length; j++) {
 
 							var remove = false;
 							if (data[i].id === self.element[j].id) {

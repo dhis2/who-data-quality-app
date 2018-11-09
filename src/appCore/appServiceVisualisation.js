@@ -34,13 +34,13 @@ export default function (periodService, requestService, mathService, $q, d2Data,
 
 
 					var yLen = 0, xLen = 0;
-					for (var i = 0; i < dataIDs.length; i++) {
+					for (let i = 0; i < dataIDs.length; i++) {
 						var chartSerie = {
 							"key": d2Data.name(dataIDs[i]),
 							"values": []
 						};
 
-						for (var j = 0; j < periodIDs.length; j++) {
+						for (let j = 0; j < periodIDs.length; j++) {
 							var value = d2Data.value(dataIDs[i], periodIDs[j], orgunitIDs[0], null);
 							var y = mathService.round(value, 2);
 							chartSerie.values.push({
@@ -63,7 +63,7 @@ export default function (periodService, requestService, mathService, $q, d2Data,
 
 					//Get XAxis labels = periods from series[0]
 					var periodNames = [];
-					for (var i = 0; i < periodIDs.length; i++) {
+					for (let i = 0; i < periodIDs.length; i++) {
 						var name = periodService.shortPeriodName(periodIDs[i].toString());
 						periodNames.push(name);
 						xLen = Math.max(xLen, name.length);
@@ -146,13 +146,13 @@ export default function (periodService, requestService, mathService, $q, d2Data,
 
 				if (orgunitIDs.length > 1) console.log("Warning: more than one orgunit for dataOverTime chart");
 
-				for (var i = 0; i < dataIDs.length; i++) {
+				for (let i = 0; i < dataIDs.length; i++) {
 					var chartSerie = {
 						"key": items[dataIDs[i]].name,
 						"values": []
 					};
 
-					for (var j = 0; j < periodIDs.length; j++) {
+					for (let j = 0; j < periodIDs.length; j++) {
 						var value = dataValue(header, data, dataIDs[i], periodIDs[j], orgunitIDs[0], null);
 
 						if (isNaN(value)) value = null;
@@ -173,7 +173,7 @@ export default function (periodService, requestService, mathService, $q, d2Data,
 
 				//Get XAxis labels = periods from series[0]
 				var periodNames = [];
-				for (var i = 0; i < periodIDs.length; i++) {
+				for (let i = 0; i < periodIDs.length; i++) {
 					periodNames.push(periodService.shortPeriodName(periodIDs[i].toString()));
 				}
 
@@ -252,13 +252,13 @@ export default function (periodService, requestService, mathService, $q, d2Data,
 					var dx = dataIDs[0];
 					var pe = periodIDs[0];
 
-					for (var i = 0; i < dataIDs.length; i++) {
+					for (let i = 0; i < dataIDs.length; i++) {
 						var chartSerie = {
 							"key": d2Data.name(dx),
 							"values": []
 						};
 
-						for (var j = 0; j < orgunitIDs.length; j++) {
+						for (let j = 0; j < orgunitIDs.length; j++) {
 							var value = d2Data.value(dx, pe, orgunitIDs[j], null);
 
 							if (isNaN(value)) value = null;
@@ -344,7 +344,7 @@ export default function (periodService, requestService, mathService, $q, d2Data,
 
 		var deferred = $q.defer();
 
-		for (var i = 0; i < periods.length; i++) {
+		for (let i = 0; i < periods.length; i++) {
 			d2Data.addRequest(dataID, periods[i], ouID, null, null);
 		}
 
@@ -353,7 +353,7 @@ export default function (periodService, requestService, mathService, $q, d2Data,
 
 			//Get XAxis labels = periods from series[0]
 			var periodNames = [];
-			for (var i = 0; i < periods[0].length; i++) {
+			for (let i = 0; i < periods[0].length; i++) {
 				var name = periodService.shortPeriodName(periods[0][i]).split(" ")[0];
 				periodNames.push(name);
 				xLen = Math.max(xLen, name.length);
@@ -363,7 +363,7 @@ export default function (periodService, requestService, mathService, $q, d2Data,
 
 			var minRange = 0, maxRange = 0;
 			var chartData = [], chartSeries, values, dataSet;
-			for (var i = 0; i < periods.length; i++) {
+			for (let i = 0; i < periods.length; i++) {
 
 				values = [];
 				chartSeries = {};
@@ -376,7 +376,7 @@ export default function (periodService, requestService, mathService, $q, d2Data,
 				}
 
 				var row, value, values = [];
-				for (var j = 0; j < periods[i].length; j++) {
+				for (let j = 0; j < periods[i].length; j++) {
 					var pe = periods[i][j];
 					value = parseFloat(d2Data.value(dataID, pe, ouID, null));
 					if (isNaN(value)) value = null;
@@ -478,7 +478,7 @@ export default function (periodService, requestService, mathService, $q, d2Data,
 			var data = result.subunitDatapoints;
 			var ouID = point.point.z;
 			var ouName;
-			for (var i = 0; i < data.length; i++) {
+			for (let i = 0; i < data.length; i++) {
 				if (data[i].id === ouID) {
 					ouName = data[i].name;
 					break;
@@ -599,7 +599,7 @@ export default function (periodService, requestService, mathService, $q, d2Data,
 			var data = result.subunitDatapoints;
 			var ouID = point.point.z;
 			var ouName;
-			for (var i = 0; i < data.length; i++) {
+			for (let i = 0; i < data.length; i++) {
 				if (data[i].id === ouID) {
 					ouName = data[i].name;
 					break;
@@ -697,7 +697,7 @@ export default function (periodService, requestService, mathService, $q, d2Data,
 			var ouID = point.point.z;
 			var ouName;
 			var data;
-			for (var i = 0; i < data.length; i++) {
+			for (let i = 0; i < data.length; i++) {
 				if (data[i].id === ouID) {
 					ouName = data[i].name;
 					data = data[i];
@@ -1001,7 +1001,7 @@ export default function (periodService, requestService, mathService, $q, d2Data,
 			var minVal = -10;
 			var maxVal = 50;
 			var point, value;
-			for (var i = 0; i < result.subunitDatapoints.length; i++) {
+			for (let i = 0; i < result.subunitDatapoints.length; i++) {
 				point = result.subunitDatapoints[i];
 				value = 100*mathService.dropOutRate(point.value, point.refValue);
 
@@ -1115,7 +1115,7 @@ export default function (periodService, requestService, mathService, $q, d2Data,
 		*/
 	function dataValue(header, dataValues, de, pe, ou, co) {
 		var dxi, pei, oui, coi, vali;
-		for (var i = 0; i < header.length; i++) {
+		for (let i = 0; i < header.length; i++) {
 			if (header[i].name === "dx" && !header[i].hidden) dxi = i;
 			if (header[i].name === "ou" && !header[i].hidden) oui = i;
 			if (header[i].name === "pe" && !header[i].hidden) pei = i;
@@ -1124,7 +1124,7 @@ export default function (periodService, requestService, mathService, $q, d2Data,
 		}
 
 		var data;
-		for (var i = 0; i < dataValues.length; i++) {
+		for (let i = 0; i < dataValues.length; i++) {
 			data = dataValues[i];
 			if (
 				(dxi === undefined || data[dxi] === de) &&
@@ -1250,7 +1250,7 @@ export default function (periodService, requestService, mathService, $q, d2Data,
 			"key": "Orgunits",
 			"values": []
 		};
-		for (var i = 0; i < Math.min(datapoints.length, maxScatterPoints); i++) {
+		for (let i = 0; i < Math.min(datapoints.length, maxScatterPoints); i++) {
 			var datapoint = {
 				"x": datapoints[i].refValue,
 				"y": datapoints[i].value,

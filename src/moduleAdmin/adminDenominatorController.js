@@ -28,7 +28,7 @@ angular.module("admin").controller("ModalAddEditDenominatorController",
 					self.levels = levels;
 
 					if (denominator && denominator.lowLevel) {
-						for (var i = 0; i < levels.length; i++) {
+						for (let i = 0; i < levels.length; i++) {
 
 							if (denominator.lowLevel === levels[i].level) {
 								self.lowLevel = levels[i];
@@ -58,7 +58,7 @@ angular.module("admin").controller("ModalAddEditDenominatorController",
 			}
 
 			function getType(typeCode) {
-				for (var i = 0; i < self.types.length; i++) {
+				for (let i = 0; i < self.types.length; i++) {
 					if (self.types[i].code === typeCode) return self.types[i];
 				}
 			}

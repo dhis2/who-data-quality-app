@@ -54,16 +54,16 @@ angular.module("appCommons").controller("ModalExportController",
 
 				//Header
 				string = "";
-				for (var i = 0; i < headers.length; i++) {
+				for (let i = 0; i < headers.length; i++) {
 					string += checkExportValue(headers[i]);
 					if (i+1 < headers.length) string += s;
 					else string += "\n";
 				}
 				csvContent += string;
-				for (var i = 0; i < rows.length; i++) {
+				for (let i = 0; i < rows.length; i++) {
 					string = "";
 					var row = rows[i];
-					for (var j = 0; j < row.length; j++) {
+					for (let j = 0; j < row.length; j++) {
 						var value = row[j];
 						if (isNumeric(value)) {
 							value = fixDecimalsForExport(value);

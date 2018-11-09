@@ -237,7 +237,7 @@ export default function (d2Data, d2Meta, d2Utils, mathService, $q) {
 			datapoints: []
 		};
 
-		for (var j = 0; j < subunits.length; j++) {
+		for (let j = 0; j < subunits.length; j++) {
 			var subunit = subunits[j];
 
 			var valueA = dataConsistencySumDatavalues(_dxA, _pe, subunit);
@@ -366,7 +366,7 @@ export default function (d2Data, d2Meta, d2Utils, mathService, $q) {
 
 		var thresholdRatio = _comparison === "ou" ? boundaryRatio : 1;
 
-		for (var j = 0; j < subunits.length; j++) {
+		for (let j = 0; j < subunits.length; j++) {
 			var subunit = subunits[j];
 
 			var valueA = d2Data.value(_dxA, _pe, subunit, null);
@@ -422,7 +422,7 @@ export default function (d2Data, d2Meta, d2Utils, mathService, $q) {
 	function dataConsistencySumDatavalues(dx, pe, ou) {
 		var values = d2Data.values(dx, pe, ou, null);
 		var sum = 0;
-		for (var i = 0; i < values.length; i++) {
+		for (let i = 0; i < values.length; i++) {
 			if (values[i]) sum += values[i];
 		}
 

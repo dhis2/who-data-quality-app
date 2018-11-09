@@ -97,7 +97,7 @@ export default function (requestService, d2Utils, $q) {
 		var dataValues = mergedData.rows;
 
 		var dxi, pei, oui, coi, vali, ati;
-		for (var i = 0; i < header.length; i++) {
+		for (let i = 0; i < header.length; i++) {
 			if (header[i].name === "dx" && !header[i].hidden) dxi = i;
 			if (header[i].name === "ou" && !header[i].hidden) oui = i;
 			if (header[i].name === "pe" && !header[i].hidden) pei = i;
@@ -107,7 +107,7 @@ export default function (requestService, d2Utils, $q) {
 		}
 
 		var data;
-		for (var i = 0; i < dataValues.length; i++) {
+		for (let i = 0; i < dataValues.length; i++) {
 			data = dataValues[i];
 			if (
 				(dxi === undefined || data[dxi] === de) &&
@@ -137,9 +137,9 @@ export default function (requestService, d2Utils, $q) {
 		ou = d2Utils.toArray(ou);
 		co = co === undefined ? null : d2Utils.toArray(co);
 
-		for (var i = 0; i < de.length; i++) {
+		for (let i = 0; i < de.length; i++) {
 
-			for (var j = 0; j < pe.length; j++) {
+			for (let j = 0; j < pe.length; j++) {
 
 				for (var k = 0; k < ou.length; k++) {
 
@@ -206,7 +206,7 @@ export default function (requestService, d2Utils, $q) {
 
 		var dx = [];
 		var dxCo = [];
-		for (var i = 0; i < dxAll.length; i++) {
+		for (let i = 0; i < dxAll.length; i++) {
 
 			var dataID = dxAll[i];
 			if (!dataID) {
@@ -314,7 +314,7 @@ export default function (requestService, d2Utils, $q) {
 
 	function addAggregationInfo(data, aggregationType) {
 		data.headers.push({"name": "at"});
-		for (var i = 0; i < data.rows.length; i++) {
+		for (let i = 0; i < data.rows.length; i++) {
 			data.rows[i].push(aggregationType);
 		}
 
@@ -335,7 +335,7 @@ export default function (requestService, d2Utils, $q) {
 			pe: []
 		};
 
-		for (var i = 0; i < receivedData.length; i++) {
+		for (let i = 0; i < receivedData.length; i++) {
 			var metaData = receivedData[i].metaData;
 
 			//Transfer metadata
@@ -395,13 +395,13 @@ export default function (requestService, d2Utils, $q) {
 			};
 		}
 
-		for (var i = 0; i < receivedData.length; i++) {
+		for (let i = 0; i < receivedData.length; i++) {
 			var header = receivedData[i].headers;
 			var metaData = receivedData[i].metaData;
 			var rows = receivedData[i].rows;
 
 			var dxi = null, pei = null, oui = null, coi = null, vali = null, ati = null;
-			for (var j = 0; j < header.length; j++) {
+			for (let j = 0; j < header.length; j++) {
 				if (header[j].name === "dx" && !header[j].hidden) dxi = j;
 				if (header[j].name === "ou" && !header[j].hidden) oui = j;
 				if (header[j].name === "pe" && !header[j].hidden) pei = j;
@@ -412,7 +412,7 @@ export default function (requestService, d2Utils, $q) {
 
 			//Transfer data to result object
 			var transVal;
-			for (var j = 0; j < rows.length; j++) {
+			for (let j = 0; j < rows.length; j++) {
 				transVal = [];
 				transVal[0] = rows[j][dxi];
 				coi ? transVal[1] = rows[j][coi] : transVal[1] = null;

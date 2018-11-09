@@ -132,10 +132,10 @@ export default function (requestService, periodService, d2Utils, $q) {
 			var subunits = [];
 
 			var ou, boundary;
-			for (var i = 0; i < orgunits.length; i++) {
+			for (let i = 0; i < orgunits.length; i++) {
 				ou = orgunits[i];
 				var isBoundary = false;
-				for (var j = 0; !isBoundary && j < ouBoundary.length; j++) {
+				for (let j = 0; !isBoundary && j < ouBoundary.length; j++) {
 
 					if (ou == ouBoundary[j]) isBoundary = true;
 
@@ -206,7 +206,7 @@ export default function (requestService, periodService, d2Utils, $q) {
 
 				var minLevel = 100;
 				var lowestOrgunit = null;
-				for (var i = (data.length - 1); i >= 0; i--) {
+				for (let i = (data.length - 1); i >= 0; i--) {
 					if (data[i].level < minLevel) {
 						minLevel = data[i].level;
 						lowestOrgunit = data[i];
@@ -316,7 +316,7 @@ export default function (requestService, periodService, d2Utils, $q) {
 		var operandDictionary = {};
 		var categoryOptionCombos = [];
 		var dataElements = [];
-		for (var i = 0; i < ids.length; i++) {
+		for (let i = 0; i < ids.length; i++) {
 			operandDictionary[ids[i]] = true;
 			var parts = ids[i].split(".");
 			dataElements.push(parts[0]);
@@ -331,7 +331,7 @@ export default function (requestService, periodService, d2Utils, $q) {
 			function(data) {
 				var allOperands = data.dataElementOperands;
 				var operands = [];
-				for (var i = 0; i < allOperands.length; i++) {
+				for (let i = 0; i < allOperands.length; i++) {
 					if (operandDictionary[allOperands[i].id]) operands.push(allOperands[i]);
 				}
 				deferred.resolve(operands);
@@ -360,10 +360,10 @@ export default function (requestService, periodService, d2Utils, $q) {
 
 				var datasets = [];
 				var dataElements = data.dataElements;
-				for (var i = 0; i < dataElements.length; i++) {
+				for (let i = 0; i < dataElements.length; i++) {
 					var de = dataElements[i];
 
-					for (var j = 0; j < de.dataSetElements.length; j++) {
+					for (let j = 0; j < de.dataSetElements.length; j++) {
 						datasets.push(de.dataSetElements[j].dataSet);
 					}
 
@@ -458,7 +458,7 @@ export default function (requestService, periodService, d2Utils, $q) {
 				objects("dataElements", dataElementIDs).then(function (data) {
 
 					var ids = [];
-					for (var i = 0; i < data.length; i++) {
+					for (let i = 0; i < data.length; i++) {
 						ids.push(data[i].id);
 					}
 
@@ -466,8 +466,8 @@ export default function (requestService, periodService, d2Utils, $q) {
 						function (data) {
 
 							var included = [];
-							for (var i = 0; i < data.length; i++) {
-								for (var j = 0; j < dataElementAndOperandIDs.length; j++) {
+							for (let i = 0; i < data.length; i++) {
+								for (let j = 0; j < dataElementAndOperandIDs.length; j++) {
 									var op = dataElementAndOperandIDs[j];
 									if (op.indexOf(".") > 0) {
 										if (data[i].dimensionItem === op) {
@@ -532,7 +532,7 @@ export default function (requestService, periodService, d2Utils, $q) {
 			function (data) {
 
 				var ids = [];
-				for (var i = 0; i < data.length; i++) {
+				for (let i = 0; i < data.length; i++) {
 					ids.push(data[i].id);
 				}
 
@@ -574,7 +574,7 @@ export default function (requestService, periodService, d2Utils, $q) {
 
 				//Data
 				var matches = formula.match(/#{(.*?)}/g);
-				for (var i = 0; matches && i < matches.length; i++) {
+				for (let i = 0; matches && i < matches.length; i++) {
 					var match = matches[i];
 					var id = match.slice(2,-1);
 
@@ -596,7 +596,7 @@ export default function (requestService, periodService, d2Utils, $q) {
 
 				//Constants
 				matches = formula.match(/C{(.*?)}/g);
-				for (var i = 0; matches && i < matches.length; i++) {
+				for (let i = 0; matches && i < matches.length; i++) {
 					var match = matches[i];
 					var id = match.slice(2,-1);
 
@@ -615,13 +615,13 @@ export default function (requestService, periodService, d2Utils, $q) {
 					function(datas) {
 
 						var displayDictionary = {};
-						for (var i = 0; i < datas[0].length; i++) {
+						for (let i = 0; i < datas[0].length; i++) {
 							displayDictionary[datas[0][i].id] = datas[0][i].displayName;
 						}
-						for (var i = 0; i < datas[1].length; i++) {
+						for (let i = 0; i < datas[1].length; i++) {
 							displayDictionary[datas[1][i].id] = datas[1][i].displayName;
 						}
-						for (var i = 0; i < datas[2].length; i++) {
+						for (let i = 0; i < datas[2].length; i++) {
 							displayDictionary[datas[2][i].id] = datas[2][i].value;
 						}
 
@@ -662,7 +662,7 @@ export default function (requestService, periodService, d2Utils, $q) {
 		indicatorDataSets(id).then(
 			function(dataSets) {
 				var periodTypes = {};
-				for (var i = 0; i < dataSets.length; i++) {
+				for (let i = 0; i < dataSets.length; i++) {
 					periodTypes[dataSets[i].periodType] = true;
 				}
 				periodTypes = d2Utils.arrayFromKeys(periodTypes);

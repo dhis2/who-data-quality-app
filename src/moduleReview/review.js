@@ -56,7 +56,7 @@ angular.module("review").controller("ReviewController",
 
 				//Warning if closing window
 				window.onbeforeunload = function (event) {
-					var message = $i18next.t('Are you sure you want to leave this page? Any interpretations will be lost.');
+					var message = $i18next.t("Are you sure you want to leave this page? Any interpretations will be lost.");
 					if (typeof event == "undefined") {
 						event = window.event;
 					}
@@ -68,7 +68,7 @@ angular.module("review").controller("ReviewController",
 
 				//Warning if navigating away from report
 				$scope.$on("$locationChangeStart", function( event ) {
-					var answer = confirm($i18next.t('Are you sure you want to leave this page? Any interpretations will be lost.'));
+					var answer = confirm($i18next.t("Are you sure you want to leave this page? Any interpretations will be lost."));
 					if (!answer) {
 						event.preventDefault();
 					}
@@ -102,11 +102,10 @@ angular.module("review").controller("ReviewController",
 				var ouBoundary = self.selectedOrgunit.boundary.id;
 				var ouLevel = self.selectedOrgunit.level.level;
 
-
 				//1 Get dataset completeness and consistency
 				var datasetIDsForConsistencyChart = [];
 
-				for (var i = 0; i < datasets.length; i++) {
+				for (let i = 0; i < datasets.length; i++) {
 
 					var dataSetQueryID = datasets[i].id + ".REPORTING_RATE";
 
@@ -137,7 +136,7 @@ angular.module("review").controller("ReviewController",
 
 				//2 Get indicator completeness, consistency, outliers
 				var indicatorIDsForConsistencyChart = [];
-				for (var i = 0; i < indicators.length; i++) {
+				for (let i = 0; i < indicators.length; i++) {
 
 					var indicator = indicators[i];
 					var periodType = d2Map.dataSetPeriodType(indicator.dataSetID);
@@ -168,15 +167,15 @@ angular.module("review").controller("ReviewController",
 
 									var dataID = data.opts.parameters.dataIDs[0];
 
-									for (var i = 0; i < self.consistency.data.length; i++) {
+									for (let j = 0; j < self.consistency.data.length; j++) {
 
-										if (self.consistency.data[i].dxIDa === dataID) {
-											self.consistency.data[i].trendChartData = data.data;
-											self.consistency.data[i].trendChartOptions = data.opts;
+										if (self.consistency.data[j].dxIDa === dataID) {
+											self.consistency.data[j].trendChartData = data.data;
+											self.consistency.data[j].trendChartOptions = data.opts;
 
-											visualisationService.setChartLegend(self.consistency.data[i].trendChartOptions, false);
-											visualisationService.setChartMargins(self.consistency.data[i].trendChartOptions, null, null, null, 60);
-											self.consistency.data[i].trendChartOptions.chart.xAxis.tickValues = [0, 1, 2, 3];
+											visualisationService.setChartLegend(self.consistency.data[j].trendChartOptions, false);
+											visualisationService.setChartMargins(self.consistency.data[j].trendChartOptions, null, null, null, 60);
+											self.consistency.data[j].trendChartOptions.chart.xAxis.tickValues = [0, 1, 2, 3];
 										}
 
 									}
@@ -199,7 +198,7 @@ angular.module("review").controller("ReviewController",
 
 				//3 Indicator relations
 				var relations = d2Map.groupRelations(self.groupSelected.code, false);
-				for (var i = 0; i < relations.length; i++) {
+				for (let i = 0; i < relations.length; i++) {
 					var relation = relations[i];
 					var indicatorA = d2Map.numerators(relation.A);
 					var indicatorB = d2Map.numerators(relation.B);
@@ -234,7 +233,7 @@ angular.module("review").controller("ReviewController",
 
 				//4 Denominator consistency
 				var denominatorRelations = d2Map.denominatorRelations();
-				for (var i = 0; i < denominatorRelations.length; i++) {
+				for (let i = 0; i < denominatorRelations.length; i++) {
 					var denominatorPair = d2Map.denominatorRelationDenominators(denominatorRelations[i].code);
 
 					denominatorPair.relation = denominatorRelations[i];
@@ -268,7 +267,7 @@ angular.module("review").controller("ReviewController",
 
 				//5 External data consistency
 				var externalRelation, externalRelations = d2Map.externalRelations();
-				for (var i = 0; i < externalRelations.length; i++) {
+				for (let i = 0; i < externalRelations.length; i++) {
 					externalRelation = externalRelations[i];
 
 					var dataIdExternal = externalRelation.externalData;
@@ -387,7 +386,7 @@ angular.module("review").controller("ReviewController",
 				self.outstandingRequests--;
 			}
 
-
+			// eslint-disable-next-line no-unused-vars
 			function receiveDataCompletenessDetailed(result, errors) {
 				self.completeness.indicatorsDetailed.push(result);
 
@@ -409,7 +408,7 @@ angular.module("review").controller("ReviewController",
 
 				var start = parseInt(year);
 				var years = [];
-				for (var i = 1; i <= numberOfYears; i++) {
+				for (let i = 1; i <= numberOfYears; i++) {
 					years.push(start-i);
 				}
 
@@ -483,7 +482,7 @@ angular.module("review").controller("ReviewController",
 			function interpretationToParagraph() {
 				var textAreas = angular.element(".interpretation");
 
-				for (var i = 0; i < textAreas.length; i++) {
+				for (let i = 0; i < textAreas.length; i++) {
 					var text = textAreas[i].value;
 					var parent = textAreas[i].parentElement;
 
@@ -509,10 +508,10 @@ angular.module("review").controller("ReviewController",
 			function interpretationFromParagraph() {
 				var textAreas = angular.element(".interpretationText");
 
-				for (var i = 0; i < textAreas.length; i++) {
+				for (let i = 0; i < textAreas.length; i++) {
 					var text = textAreas[i].innerHTML;
 					var parent = textAreas[i].parentElement;
-					text = text.replace(/\<br\>/g, "\n");
+					text = text.replace(/<br>/g, "\n");
 					parent.innerHTML += "<textarea class=\"interpretation\">" + text + "</textarea>";
 				}
 

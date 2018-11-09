@@ -132,7 +132,7 @@ export default function (d2Data, d2Meta, d2Utils, mathService, requestService, $
 
 				//TODO: move this to d2Meta
 				if (datas[2] && datas[2].categoryCombo) {
-					for (var i = 0; i < datas[2].categoryCombo.categories.length; i++) {
+					for (let i = 0; i < datas[2].categoryCombo.categories.length; i++) {
 						components += datas[2].categoryCombo.categories[i].items;
 					}
 
@@ -144,7 +144,7 @@ export default function (d2Data, d2Meta, d2Utils, mathService, requestService, $
 					var parts = d2Utils.idsFromIndicatorFormula(datas[3].numerator, "", false);
 					var toCheck = [];
 					components = 0;
-					for (var i = 0; i < parts.length; i++) {
+					for (let i = 0; i < parts.length; i++) {
 						if (parts[i].length > 11) {
 							components++;
 						}
@@ -156,8 +156,8 @@ export default function (d2Data, d2Meta, d2Utils, mathService, requestService, $
 					if (toCheck.length > 1) {
 						d2Meta.objects("dataElements", toCheck, "displayName,id,categoryCombo[categories[items::size]]", null, false).then(
 							function(dataElements) {
-								for (var i = 0; i < dataElements.length; i++) {
-									for (var j = 0; j < dataElements[i].categoryCombo.categories.length; j++) {
+								for (let i = 0; i < dataElements.length; i++) {
+									for (let j = 0; j < dataElements[i].categoryCombo.categories.length; j++) {
 										components += dataElements[i].categoryCombo.categories[j].items;
 									}
 
@@ -261,7 +261,7 @@ export default function (d2Data, d2Meta, d2Utils, mathService, requestService, $
 			error: []
 		};
 
-		for (var j = 0; j < subunits.length; j++) {
+		for (let j = 0; j < subunits.length; j++) {
 			var subunit = subunits[j];
 
 			var values = d2Data.value(_dataID, _pe, subunit, null, "COUNT");

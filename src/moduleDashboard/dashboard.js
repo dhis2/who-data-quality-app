@@ -58,7 +58,7 @@ angular.module("dashboard").controller("DashboardController",
 
 				var dataset, periods, ouPeriod;
 				if (datasets.length > 0) self.cmpLoading = true;
-				for (var i = 0; i < datasets.length; i++) {
+				for (let i = 0; i < datasets.length; i++) {
 					dataset = datasets[i];
 
 					periods = periodService.getISOPeriods(self.startDate, self.endDate, dataset.periodType);
@@ -89,8 +89,8 @@ angular.module("dashboard").controller("DashboardController",
 						};
 
 						visualisationService.setChartYAxis(datasetCompletenessChart.trendChartOptions, 0, 100);
-						datasetCompletenessChart.trendChartData[0].key = $i18next.t('Completeness');
-						datasetCompletenessChart.trendChartData[1].key = $i18next.t('Timeliness');
+						datasetCompletenessChart.trendChartData[0].key = $i18next.t("Completeness");
+						datasetCompletenessChart.trendChartData[1].key = $i18next.t("Timeliness");
 
 						visualisationService.setChartLegend(datasetCompletenessChart.ouChartOptions, true);
 						visualisationService.setChartYAxis(datasetCompletenessChart.ouChartOptions, 0, 100);
@@ -134,7 +134,7 @@ angular.module("dashboard").controller("DashboardController",
 				var datas = d2Map.groupNumerators(self.group.code, true);
 				self.expectedConsistencyCharts = datas.length;
 				if (datas.length > 0) self.tcLoading = true;
-				for (var i = 0; i < datas.length; i++) {
+				for (let i = 0; i < datas.length; i++) {
 
 					data = datas[i];
 					periodType = d2Map.dataSets(data.dataSetID).periodType;
@@ -146,7 +146,7 @@ angular.module("dashboard").controller("DashboardController",
 					startDate = self.startDate;
 					endDate = self.endDate;
 					yyPeriods.push(periodService.getISOPeriods(startDate, endDate, periodType));
-					for (var j = 0; j < 2; j++) {
+					for (let j = 0; j < 2; j++) {
 						startDate = moment(startDate).subtract(1, "year");
 						endDate = moment(endDate).subtract(1, "year");
 						yyPeriods.push(periodService.getISOPeriods(startDate, endDate, periodType));
@@ -222,7 +222,7 @@ angular.module("dashboard").controller("DashboardController",
 				var relations = d2Map.groupRelations(self.group.code, false);
 				self.expectedDataConsistencyCharts = relations.length;
 				if (relations.length > 0) self.dcLoading = true;
-				for (var i = 0; i < relations.length; i++) {
+				for (let i = 0; i < relations.length; i++) {
 					var relation = relations[i];
 					var indicatorA = d2Map.numerators(relation.A);
 					var indicatorB = d2Map.numerators(relation.B);
@@ -310,7 +310,7 @@ angular.module("dashboard").controller("DashboardController",
 				//Get data IDs
 				var data = d2Map.groupNumerators(self.group.code);
 				var dataIDs = [];
-				for (var i = 0; i < data.length; i++) {
+				for (let i = 0; i < data.length; i++) {
 					dataIDs.push(data[i].dataID);
 				}
 
@@ -362,7 +362,7 @@ angular.module("dashboard").controller("DashboardController",
 				self.halfChart = Math.floor(chartWidth).toString() + "px";
 				self.contentWidth = Math.floor(contentWidth).toString() + "px";
 
-				for (var i = 0; i < 3; i++) {
+				for (let i = 0; i < 3; i++) {
 					self.widthChanged[i] = true;
 				}
 				self.widthChanged[self.selectedTab] = false;
@@ -460,12 +460,12 @@ angular.module("dashboard").controller("DashboardController",
 				}
 
 				self.widthChanged = [];
-				for (var i = 0; i < 3; i++) {
+				for (let i = 0; i < 3; i++) {
 					self.widthChanged[i] = false;
 				}
 
 				self.setWindowWidth();
-				$( window ).resize(function() {
+				window.jQuery( window ).resize(function() {
 					self.setWindowWidth();
 					$scope.$apply();
 				});
@@ -487,11 +487,11 @@ angular.module("dashboard").controller("DashboardController",
 			}
 			else {
 				d2Map.load().then(
-					function(data) {
+					function() {
 						init();
 						self.update();
 					},
-					function (error) {
+					function () {
 						console.log("Failed to load metadata for dashboard");
 					}
 				);

@@ -8,7 +8,7 @@
 
 const moment = require("moment");
 
-angular.module("consistencyAnalysis", []);
+angular.module("consistencyAnalysis", ["jm.i18next"]);
 
 angular.module("consistencyAnalysis").filter("startFrom", function() {
 	return function(input, start) {
@@ -20,9 +20,8 @@ angular.module("consistencyAnalysis").filter("startFrom", function() {
 
 angular.module("consistencyAnalysis").controller("ConsistencyAnalysisController",
 	["d2Meta", "d2Utils", "dqAnalysisConsistency", "periodService", "visualisationService", "mathService",
-		"$uibModal", "$timeout",
-		function(d2Meta, d2Utils, dqAnalysisConsistency, periodService, visualisationService, mathService,
-				 $uibModal, $timeout) {
+		"$uibModal", "$timeout", "$i18next",
+		function(d2Meta, d2Utils, dqAnalysisConsistency, periodService, visualisationService, mathService, $uibModal, $timeout, $i18next) {
 			var self = this;
 
 			//Variables for storing result and result history
@@ -87,7 +86,7 @@ angular.module("consistencyAnalysis").controller("ConsistencyAnalysisController"
 			self.getPeriodsInYear = function() {
 				self.periodsInYear = [];
 				var isoPeriods = periodService.getISOPeriods(self.yearSelected.name.toString() + "-01-01", self.yearSelected.name.toString() + "-12-31", self.periodTypeSelected.id);
-				for (var i = 0; i < isoPeriods.length; i++) {
+				for (let i = 0; i < isoPeriods.length; i++) {
 					self.periodsInYear.push({
 						"id": isoPeriods[i],
 						"name": periodService.shortPeriodName(isoPeriods[i])
@@ -221,6 +220,8 @@ angular.module("consistencyAnalysis").controller("ConsistencyAnalysisController"
 
 			/** RECEIVE AND PROCESS ANALYSIS RESULT **/
 
+
+			// eslint-disable-next-line no-unused-vars
 			function receiveResult(result, errors) {
 				//Save result
 				self.currentResult = 0;
@@ -239,7 +240,7 @@ angular.module("consistencyAnalysis").controller("ConsistencyAnalysisController"
 
 
 				self.tableData = [];
-				for (var i = 0; i < self.result.subunitDatapoints.length; i++) {
+				for (let i = 0; i < self.result.subunitDatapoints.length; i++) {
 					self.tableData.push(self.result.subunitDatapoints[i]);
 
 				}
@@ -327,14 +328,14 @@ angular.module("consistencyAnalysis").controller("ConsistencyAnalysisController"
 				var description = "";
 				if (self.result.type === "data") {
 					if (self.result.subType === "do") {
-						description += $i18next.t('Dropout rate from ') + self.result.dxNameA + $i18next.t(' to ') + self.result.dxNameB + ".";
+						description += $i18next.t("Dropout rate from ") + self.result.dxNameA + $i18next.t(" to ") + self.result.dxNameB + ".";
 					}
 					else {
-						description += $i18next.t('Ratio between ') + self.result.dxNameA + $i18next.t(' and ') + self.result.dxNameB + ".";
+						description += $i18next.t("Ratio between ") + self.result.dxNameA + $i18next.t(" and ") + self.result.dxNameB + ".";
 					}
 				}
 				else {
-					description += $i18next.t('Ratio between the selected period and preceding periods.');
+					description += $i18next.t("Ratio between the selected period and preceding periods.");
 				}
 
 				return description;
@@ -349,7 +350,7 @@ angular.module("consistencyAnalysis").controller("ConsistencyAnalysisController"
 
 			self.resultReferencePeriodNames = function() {
 				var periodNames = [];
-				for (var i = 0; i < self.result.peRef.length; i++) {
+				for (let i = 0; i < self.result.peRef.length; i++) {
 					periodNames.push(periodService.shortPeriodName(self.result.peRef[i]));
 				}
 
@@ -367,7 +368,7 @@ angular.module("consistencyAnalysis").controller("ConsistencyAnalysisController"
 
 
 			function itemClicked(orgunitID) {
-				for (var i = 0; i < self.tableData.length; i++) {
+				for (let i = 0; i < self.tableData.length; i++) {
 					if (self.tableData[i].id === orgunitID) {
 						self.selectOrgunit(self.tableData[i]);
 						break;
@@ -380,9 +381,9 @@ angular.module("consistencyAnalysis").controller("ConsistencyAnalysisController"
 
 				//Remove previous chart highlight
 				if (self.result.subType != "do") {
-					for (var j = 0; j < self.chart.data.length; j++) {
+					for (let j = 0; j < self.chart.data.length; j++) {
 						var data = self.chart.data[j].values;
-						for (var i = 0; i < data.length; i++) {
+						for (let i = 0; i < data.length; i++) {
 							if (data[i].z === self.selectedObject.id) {
 								data[i].size = 1;
 								i = data.length;
@@ -401,9 +402,9 @@ angular.module("consistencyAnalysis").controller("ConsistencyAnalysisController"
 
 				//Add new chart highlight
 				if (self.result.subType != "do") {
-					for (var j = 0; j < self.chart.data.length; j++) {
-						var data = self.chart.data[j].values;
-						for (var i = 0; i < data.length; i++) {
+					for (let j = 0; j < self.chart.data.length; j++) {
+						let data = self.chart.data[j].values;
+						for (let i = 0; i < data.length; i++) {
 							if (data[i].z === self.selectedObject.id) {
 								data[i].size = 5;
 								i = data.length;
@@ -431,10 +432,10 @@ angular.module("consistencyAnalysis").controller("ConsistencyAnalysisController"
 								controllerAs: "nCtrl",
 								resolve: {
 									title: function () {
-										return $i18next.t('Warning');
+										return $i18next.t("Warning");
 									},
 									message: function () {
-										return $i18next.t('Not possible to drill down, ') + self.selectedObject.name + $i18next.t(' has no children.');
+										return $i18next.t("Not possible to drill down, ") + self.selectedObject.name + $i18next.t(" has no children.");
 									}
 								}
 							});
@@ -470,13 +471,14 @@ angular.module("consistencyAnalysis").controller("ConsistencyAnalysisController"
 					}
 				});
 
+				// eslint-disable-next-line no-unused-vars
 				modalInstance.result.then(function (result) {
 					console.log("Export done");
 				});
 
 			};
 
-
+			// eslint-disable-next-line no-unused-vars
 			self.sendMessage = function(item) {
 
 				var modalInstance = $uibModal.open({
@@ -493,6 +495,7 @@ angular.module("consistencyAnalysis").controller("ConsistencyAnalysisController"
 					}
 				});
 
+				// eslint-disable-next-line no-unused-vars
 				modalInstance.result.then(function (result) {
 				});
 			};
@@ -503,32 +506,32 @@ angular.module("consistencyAnalysis").controller("ConsistencyAnalysisController"
 				var headers = [];
 				var rows = [];
 
-				headers = headers.concat([$i18next.t('Orgunit')]);
+				headers = headers.concat([$i18next.t("Orgunit")]);
 
 				if (self.result.type === "data") {
 					if (self.result.subType != "do") {
-						headers = headers.concat([self.result.dxNameA, self.result.dxNameB, $i18next.t('Ratio')]);
+						headers = headers.concat([self.result.dxNameA, self.result.dxNameB, $i18next.t("Ratio")]);
 					}
 					else {
-						headers = headers.concat([self.result.dxNameA, self.result.dxNameB, $i18next.t('Dropout rate (%)')]);
+						headers = headers.concat([self.result.dxNameA, self.result.dxNameB, $i18next.t("Dropout rate (%)")]);
 					}
 				}
 				else {
 					headers = headers.concat([
 						self.result.dxName + " - " + self.resultPeriodName(),
 						self.result.dxName + (self.result.subType === "constant"
-							? $i18next.t(' - average of ') + self.resultReferencePeriodNames().join(" ,")
-							: $i18next.t(' - forecast from ') + self.resultReferencePeriodNames().join(" ,")),
-							$i18next.t('Ratio')]);
+							? $i18next.t(" - average of ") + self.resultReferencePeriodNames().join(" ,")
+							: $i18next.t(" - forecast from ") + self.resultReferencePeriodNames().join(" ,")),
+						$i18next.t("Ratio")]);
 				}
 
-				headers = headers.concat([$i18next.t('Weight')]);
+				headers = headers.concat([$i18next.t("Weight")]);
 
 
 
 
 				var data = self.result.subunitDatapoints;
-				for (var i = 0; i < data.length; i++) {
+				for (let i = 0; i < data.length; i++) {
 					var row = [];
 					var value = data[i];
 					row.push(value.name);
