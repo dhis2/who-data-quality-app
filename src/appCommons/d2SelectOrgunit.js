@@ -36,8 +36,8 @@
 				self.selectLevel = selectLevel;
 				self.selectGroup = selectGroup;
 
-				self.levelPlaceholder = $i18next.t('Select level...');
-				self.groupPlaceholder = $i18next.t('Select group...');
+				self.levelPlaceholder = $i18next.t("Select level...");
+				self.groupPlaceholder = $i18next.t("Select group...");
 				self.selectionType = 0;
 
 				self.ngModel = {};
@@ -79,7 +79,7 @@
 					self.filteredLevels = [];
 					var level;
 					for (let i = 0; i < self.orgunitLevels.length; i++) {
-						var level = self.orgunitLevels[i].level;
+						level = self.orgunitLevels[i].level;
 
 						var minOK = level > minLevel ? true : false;
 						var maxOK = !maxLevel || level <= maxLevel ? true : false;

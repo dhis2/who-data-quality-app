@@ -5,7 +5,7 @@
  copied verbatim in the file “COPYING”.  In applying this license, WHO does not waive any of the privileges and
  immunities enjoyed by WHO under national or international law or submit to any national court jurisdiction.
  */
-
+import { saveAs } from "file-saver";
 
 /**Controller: Parameters*/
 angular.module("appCommons").controller("ModalExportController",
@@ -47,8 +47,8 @@ angular.module("appCommons").controller("ModalExportController",
 			function makeExportFile() {
 				var string, csvContent = "";
 				var s = self.options.separator;
-				var IDs = self.options.includeIDs;
-				var fileName = self.options.fileName;
+				//var IDs = self.options.includeIDs;
+				//var fileName = self.options.fileName;
 				var headers = self.fileContent.headers;
 				var rows = self.fileContent.rows;
 
