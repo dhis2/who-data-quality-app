@@ -4,13 +4,13 @@
   "description": "WHO Data Quality Tool for DHIS2",
   "main": "./src/app.js",
   "dependencies": {
-    "angular": "^1.5.5",
-    "angular-animate": "^1.5.5",
-    "angular-bootstrap-nav-tree": "^0.2.1",
-    "angular-nvd3": "^1.0.9",
-    "angular-route": "^1.5.5",
-    "angular-sanitize": "^1.5.5",
-    "angular-ui-bootstrap": "^2.5.6",
+    "angular": "1.5.5",
+    "angular-animate": "1.5.5",
+    "angular-bootstrap-nav-tree": "0.2.1",
+    "angular-nvd3": "1.0.9",
+    "angular-route": "1.5.5",
+    "angular-sanitize": "1.5.5",
+    "angular-ui-bootstrap": "2.5.6",
     "blob": "0.0.4",
     "bootstrap": "^3.3.7",
     "d3": "^3.4.4",
@@ -41,7 +41,11 @@
     "url-loader": "^1.1.2",
     "webpack": "^4.20.2",
     "webpack-cli": "^3.1.2",
-    "webpack-dev-server": "^3.1.9"
+    "webpack-dev-server": "^3.1.9",
+    "regenerate": "^1.4.0",
+    "regjsgen": "^0.5.0",
+    "regjsparser": "^0.4.0",
+    "pify": "^4.0.1"
   },
   "pre-commit": [
     "refresh-translations-template"

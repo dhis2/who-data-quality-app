@@ -55,8 +55,8 @@ function DailyPeriodType( format_yyyymmdd, fnFilter )
 			offset = parseInt(config.offset),
 			isFilter = config.filterFuturePeriods,
 			isReverse = config.reversePeriods,
-			year = new Date().getFullYear() + offset;
-		date = new Date( "01 Jan " + year );
+			year = new Date().getFullYear() + offset,
+			date = new Date( "01 Jan " + year );
 
 		while ( date.getFullYear() === year )
 		{

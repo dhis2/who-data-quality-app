@@ -110,11 +110,7 @@ const webpackConfig = {
 			'process.env.NODE_ENV': '"production"',
 			DHIS_CONFIG: JSON.stringify({}),
 		}),
-		isDevBuild ? undefined : new webpack.optimize.OccurrenceOrderPlugin(),
-		isDevBuild ? undefined : new webpack.optimize.UglifyJsPlugin({
-			comments: false,
-			sourceMap: true
-		})
+		isDevBuild ? undefined : new webpack.optimize.OccurrenceOrderPlugin()
 	].filter(v => v),
 	devServer: {
 		port: devServerPort,
