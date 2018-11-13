@@ -64,6 +64,8 @@ export default function (requestService, d2Meta, d2Utils, $q) {
 	var _map;
 	var _d2Objects = {};
 	var _dataIDs;
+
+	// eslint-disable-next-line no-unused-vars
 	var _version;
 
 	/**
@@ -84,6 +86,7 @@ export default function (requestService, d2Meta, d2Utils, $q) {
 				_map = response.data;
 				if (_map && _map != "") {
 					d2CoreMeta().then(
+						// eslint-disable-next-line no-unused-vars
 						function (data) {
 							_ready = true;
 							versionUpgrade();
@@ -172,17 +175,17 @@ export default function (requestService, d2Meta, d2Utils, $q) {
 	}
 
 	/**
-				 * Upgrade metadata version
-				 */
+	 * Upgrade metadata version
+	 */
 	function versionUpgrade() {
 		var currentVersion = "1.1";
-		if (_map.metaDataVersion != currentVersion) {
+		if (_map.metaDataVersion != currentVersion) {
 			_map.metaDataVersion = currentVersion;
 			
 			//Do whatever upgrades are needed here
 			requestService.getSingleLocal("data/metaData.json").then(function(response) {
 				var reference = response.data;
-				for (let i = 0; i < reference.numerators.length; i++) {
+				for (let i = 0; i < reference.numerators.length; i++) {
 					var refNum = reference.numerators[i];
 					var current = indicators(refNum.code);
 					if (current) {
@@ -231,10 +234,12 @@ export default function (requestService, d2Meta, d2Utils, $q) {
 
 						//Save template to systemSettings
 						requestService.post("/dataStore/dataQualityTool/settings", angular.toJson(_map)).then(
+							// eslint-disable-next-line no-unused-vars
 							function (data) {
 								_ready = true;
 								deferred.resolve(true);
 							},
+							// eslint-disable-next-line no-unused-vars
 							function (data) {
 								_ready = false;
 								deferred.resolve(false);
@@ -256,11 +261,11 @@ export default function (requestService, d2Meta, d2Utils, $q) {
 	/** ===== GROUPS ===== **/
 
 	/**
-				 * Return specified group, or all if no group is specified
-				 *
-				 * @param code
-				 * @returns {*}
-				 */
+	 * Return specified group, or all if no group is specified
+	 *
+	 * @param code
+	 * @returns {*}
+	 */
 	function groups(code) {
 		if (code) {
 			for (let i = 0; i < _map.groups.length; i++) {
@@ -427,7 +432,7 @@ export default function (requestService, d2Meta, d2Utils, $q) {
 	function getNewIndicatorGroupCode() {
 
 		//Get and return next possible code
-		var current, found;
+		var current;
 		for (let i = 0; i <= _map.groups.length; i++) {
 
 			current = "G" + parseInt(i+1);
@@ -439,6 +444,8 @@ export default function (requestService, d2Meta, d2Utils, $q) {
 
 			if (!existing) return current;
 		}
+
+		//TODO: return something if getting here?
 	}
 
 
@@ -633,7 +640,7 @@ export default function (requestService, d2Meta, d2Utils, $q) {
 		var groups = [];
 		for (let i = 0; i < _map.groups.length; i++) {
 			for (let j = 0; j < _map.groups[i].members.length; j++) {
-				if (_map.groups[i].members[j] === code) {
+				if (_map.groups[i].members[j] === code) {
 					groups.push(_map.groups[i]);
 					break;
 				}
@@ -648,7 +655,7 @@ export default function (requestService, d2Meta, d2Utils, $q) {
 	function getNewIndicatorCode() {
 
 		//Get and return next possible code
-		var current, found;
+		var current;
 		for (let i = 0; i <= _map.numerators.length; i++) {
 
 			current = "C" + parseInt(i+1);
@@ -660,6 +667,8 @@ export default function (requestService, d2Meta, d2Utils, $q) {
 
 			if (!existing) return current;
 		}
+
+		//TODO: return something if getting here?
 	}
 
 
@@ -682,12 +691,12 @@ export default function (requestService, d2Meta, d2Utils, $q) {
 
 	function relations(code) {
 		if (code) {
-			var relations = [];
 			for (let i = 0; i < _map.numeratorRelations.length; i++) {
 				if (_map.numeratorRelations[i].code === code) {
 					return _map.numeratorRelations[i];
 				}
 			}
+			//TODO: return something if getting here?
 		}
 		else {
 			return _map.numeratorRelations;
@@ -746,8 +755,12 @@ export default function (requestService, d2Meta, d2Utils, $q) {
 
 	function removeFromRelations(code) {
 		for (let i = 0; i < _map.numeratorRelations.length; i++) {
-			if (_map.numeratorRelations[i].A === code) _map.numeratorRelations[i].A;
-					 	if (_map.numeratorRelations[i].B === code) _map.numeratorRelations[i].B;
+			if (_map.numeratorRelations[i].A === code) {
+				_map.numeratorRelations[i].A;
+			}
+			if (_map.numeratorRelations[i].B === code) {
+				_map.numeratorRelations[i].B;
+			}
 		}
 
 		return save();
@@ -755,7 +768,7 @@ export default function (requestService, d2Meta, d2Utils, $q) {
 
 
 	function relationCode() {
-		var current, found;
+		var current;
 		for (let i = 0; i <= _map.numeratorRelations.length; i++) {
 
 			current = "R" + parseInt(i+1);
@@ -767,6 +780,8 @@ export default function (requestService, d2Meta, d2Utils, $q) {
 
 			if (!existing) return current;
 		}
+
+		//TODO: return something if getting here?
 	}
 
 
@@ -779,6 +794,7 @@ export default function (requestService, d2Meta, d2Utils, $q) {
 					return _map.dataSets[i];
 				}
 			}
+			//TODO: return something if getting here?
 		}
 		else {
 			return _map.dataSets;
@@ -841,12 +857,12 @@ export default function (requestService, d2Meta, d2Utils, $q) {
 
 	function denominators(code) {
 		if (code) {
-			var relations = [];
 			for (let i = 0; i < _map.denominators.length; i++) {
 				if (_map.denominators[i].code === code) {
 					return _map.denominators[i];
 				}
 			}
+			//TODO: return something if getting here?
 		}
 		else {
 			return _map.denominators;
@@ -930,7 +946,7 @@ export default function (requestService, d2Meta, d2Utils, $q) {
 	function denominatorCode() {
 
 		//Get and return next possible code
-		var current, found;
+		var current;
 		for (let i = 0; i <= _map.denominators.length; i++) {
 
 			current = "P" + parseInt(i + 1);
@@ -942,6 +958,8 @@ export default function (requestService, d2Meta, d2Utils, $q) {
 
 			if (!existing) return current;
 		}
+
+		//TODO: return something if getting here?
 	}
 
 
@@ -1008,7 +1026,7 @@ export default function (requestService, d2Meta, d2Utils, $q) {
 	function denominatorRelationCode() {
 
 		//Get and return next possible code
-		var current, found;
+		var current;
 		for (let i = 0; i <= _map.denominatorRelations.length; i++) {
 
 			current = "PR" + parseInt(i + 1);
@@ -1020,6 +1038,8 @@ export default function (requestService, d2Meta, d2Utils, $q) {
 
 			if (!existing) return current;
 		}
+
+		//TODO: return something if getting here?
 	}
 
 
@@ -1070,7 +1090,7 @@ export default function (requestService, d2Meta, d2Utils, $q) {
 	function externalRelationCode() {
 
 		//Get and return next possible code
-		var current, found;
+		var current;
 		for (let i = 0; i <= _map.externalRelations.length; i++) {
 
 			current = "ER" + parseInt(i + 1);
@@ -1082,6 +1102,8 @@ export default function (requestService, d2Meta, d2Utils, $q) {
 
 			if (!existing) return current;
 		}
+
+		//TODO: return something if getting here.
 	}
 
 
@@ -1126,7 +1148,7 @@ export default function (requestService, d2Meta, d2Utils, $q) {
 
 
 	/** UTILITIES **/
-	function indicatorIsRelevant(dataCode, groupCode) {
+	/*function indicatorIsRelevant(dataCode, groupCode) {
 
 		var data = groupIndicators(groupCode);
 		for (let i = 0; i < data.length; i++) {
@@ -1134,7 +1156,7 @@ export default function (requestService, d2Meta, d2Utils, $q) {
 		}
 
 		return false;
-	}
+	} */
 
 
 

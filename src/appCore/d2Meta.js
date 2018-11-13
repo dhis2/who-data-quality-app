@@ -14,7 +14,7 @@ export default function (requestService, periodService, d2Utils, $q) {
 		objects: objects,
 		orgunitIDs: orgunitIDs,
 		orgunitCountEstimate: orgunitCountEstimate,
-		userOrgunit: userOrgunit,
+		//userOrgunit: userOrgunit,
 		userOrgunits: userOrgunits,
 		userOrgunitsHierarchy: userOrgunitsHierarchy,
 		userAnalysisOrgunits: userAnalysisOrgunits,
@@ -101,13 +101,13 @@ export default function (requestService, periodService, d2Utils, $q) {
 	/** ===== ORGUNITS ===== */
 
 	/**
-				 * Returns and array of orgunit IDs based on orgunit boundary and level and/or group. If both level
-				 * and group is specified, level will be used.
-				 *
-				 * @param ouBoundary
-				 * @param ouLevel
-				 * @param ouGroup
-				 */
+	 * Returns and array of orgunit IDs based on orgunit boundary and level and/or group. If both level
+	 * and group is specified, level will be used.
+	 *
+	 * @param ouBoundary
+	 * @param ouLevel
+	 * @param ouGroup
+	 */
 	function orgunitIDs(ouBoundary, ouLevel, ouGroup) {
 		var deferred = $q.defer();
 
@@ -131,7 +131,7 @@ export default function (requestService, periodService, d2Utils, $q) {
 			var boundary = [];
 			var subunits = [];
 
-			var ou, boundary;
+			var ou;
 			for (let i = 0; i < orgunits.length; i++) {
 				ou = orgunits[i];
 				var isBoundary = false;
@@ -188,13 +188,13 @@ export default function (requestService, periodService, d2Utils, $q) {
 
 
 	/**
-				 * Returns user orgunit. If user has multiple orgunits, the one at the lowest level is
-				 * returned. If there are multiple orgunits at the same level, the first returned from the
-				 * server is return.
-				 *
-				 * @returns {*}		User orgunit object
-				 */
-	function userOrgunit() {
+	 * Returns user orgunit. If user has multiple orgunits, the one at the lowest level is
+	 * returned. If there are multiple orgunits at the same level, the first returned from the
+	 * server is return.
+	 *
+	 * @returns {*}		User orgunit object
+	 */
+	/*function userOrgunit() {
 		var deferred = $q.defer();
 
 		var requestURL = "/organisationUnits.json?";
@@ -203,7 +203,6 @@ export default function (requestService, periodService, d2Utils, $q) {
 		requestService.getSingleData(requestURL).then(
 			function(data) { //success
 				var data = data.organisationUnits;
-
 				var minLevel = 100;
 				var lowestOrgunit = null;
 				for (let i = (data.length - 1); i >= 0; i--) {
@@ -221,14 +220,14 @@ export default function (requestService, periodService, d2Utils, $q) {
 		);
 
 		return deferred.promise;
-	}
+	}*/
 
 
 	/**
-				 * Returns user orgunits, i.e. an array of all user orgunits.
-				 *
-				 * @returns {*}		Array of user orgunit objects
-				 */
+	 * Returns user orgunits, i.e. an array of all user orgunits.
+	 *
+	 * @returns {*}		Array of user orgunit objects
+	 */
 	function userOrgunits() {
 		var deferred = $q.defer();
 
@@ -237,8 +236,12 @@ export default function (requestService, periodService, d2Utils, $q) {
 
 		requestService.getSingleData(requestURL).then(
 			function(data) { //success
-				var data = data.organisationUnits;
-				deferred.resolve(data);
+				var orgUnits = data.organisationUnits;
+				if ( orgUnits && orgUnits.length ) {
+					deferred.resolve(orgUnits);
+				} else {
+					deferred.reject("No orgUnits found");
+				}
 			},
 			function(error) { //error
 				deferred.reject("Error in userOrgunits()");
@@ -251,11 +254,11 @@ export default function (requestService, periodService, d2Utils, $q) {
 
 
 	/**
-				 * Returns user orgunits, i.e. an array of all user orgunits, including their childrena and
-				 * grandchildren. TODO: merge with userOrgunits, and have children as parameter
-				 *
-				 * @returns {*}
-				 */
+	 * Returns user orgunits, i.e. an array of all user orgunits, including their childrena and
+	 * grandchildren. TODO: merge with userOrgunits, and have children as parameter
+	 *
+	 * @returns {*}
+	 */
 	function userOrgunitsHierarchy() {
 		var deferred = $q.defer();
 
@@ -265,8 +268,8 @@ export default function (requestService, periodService, d2Utils, $q) {
 		requestService.getSingleData(requestURL).then(
 			function(data) { //success
 
-				var data = data.organisationUnits;
-				deferred.resolve(data);
+				//TODO: check if data.organisationUnits contain the expected results before resolving, such as being an array with items or something
+				deferred.resolve(data.organisationUnits);
 
 			},
 			function(error) { //error
@@ -280,11 +283,11 @@ export default function (requestService, periodService, d2Utils, $q) {
 
 
 	/**
-				 * Returns user view orgunits. Includes children, and a bool to indicate whether grandchildren
-				 * exists for each child.
-				 *
-				 * @returns {*}
-				 */
+	 * Returns user view orgunits. Includes children, and a bool to indicate whether grandchildren
+	 * exists for each child.
+	 *
+	 * @returns {*}
+	 */
 	function userAnalysisOrgunits() {
 		var deferred = $q.defer();
 
@@ -293,8 +296,9 @@ export default function (requestService, periodService, d2Utils, $q) {
 
 		requestService.getSingleData(requestURL).then(
 			function(data) { //success
-				var data = data.organisationUnits;
-				deferred.resolve(data);
+
+				//TODO: check if data.organisationUnits contain the expected results before resolving, such as being an array with items or something
+				deferred.resolve(data.organisationUnits);
 			},
 			function(error) { //error
 				deferred.reject("Error in userAnalysisOrgunits()");
@@ -574,9 +578,10 @@ export default function (requestService, periodService, d2Utils, $q) {
 
 				//Data
 				var matches = formula.match(/#{(.*?)}/g);
+				var match, id;
 				for (let i = 0; matches && i < matches.length; i++) {
-					var match = matches[i];
-					var id = match.slice(2,-1);
+					match = matches[i];
+					id = match.slice(2,-1);
 
 					var type;
 					if (id.length === 11) {
@@ -597,8 +602,8 @@ export default function (requestService, periodService, d2Utils, $q) {
 				//Constants
 				matches = formula.match(/C{(.*?)}/g);
 				for (let i = 0; matches && i < matches.length; i++) {
-					var match = matches[i];
-					var id = match.slice(2,-1);
+					match = matches[i];
+					id = match.slice(2,-1);
 
 					components[id] = "constant";
 					constants.push(id);
@@ -627,7 +632,7 @@ export default function (requestService, periodService, d2Utils, $q) {
 
 						for (id in components) {
 							var type = components[id];
-							switch (components[id]) {
+							switch (type) {
 							case "total":
 								formula = formula.replace("#{" + id + "}", displayDictionary[id] + " (total)");
 								break;

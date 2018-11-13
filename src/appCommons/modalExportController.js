@@ -99,11 +99,16 @@ angular.module("appCommons").controller("ModalExportController",
 			}
 
 
+			// eslint-disable-next-line no-unused-vars
 			function checkExportValue(value, separator) {
 				var innerValue =	value === null ? "" : value.toString();
 				var result = innerValue.replace(/"/g, "\"\"");
-				if (result.search(/("|separator|\n)/g) >= 0)
+
+				//TODO: bug in regex, separator not used as variable
+				if (result.search(/(|separator|\n)/g) >= 0) {
 					result = "\"" + result + "\"";
+				}
+				
 				return result;
 			}
 

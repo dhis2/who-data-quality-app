@@ -6,7 +6,7 @@
  immunities enjoyed by WHO under national or international law or submit to any national court jurisdiction.
  */
 
-export default function ($q) {
+export default function () {
 
 	var utils = {
 		isNumber: isNumber,

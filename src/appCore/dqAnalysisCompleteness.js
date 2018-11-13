@@ -6,7 +6,18 @@
  immunities enjoyed by WHO under national or international law or submit to any national court jurisdiction.
  */
  
+/**
+ * This is used for Domain 1 - Completeness / Annual report
+ * @param {*} d2Data 
+ * @param {*} d2Meta 
+ * @param {*} d2Utils 
+ * @param {*} mathService 
+ * @param {*} requestService 
+ * @param {*} $q 
+ */
 export default function (d2Data, d2Meta, d2Utils, mathService, requestService, $q) {
+
+	
 
 	var service = {
 		analyse: analyse
@@ -15,7 +26,7 @@ export default function (d2Data, d2Meta, d2Utils, mathService, requestService, $
 	var _dataID;
 	var _dataSetID;
 	var _pe;
-	var _peRef;
+	//var _peRef;
 	var _ouBoundary;
 	var _ouLevel;
 	var _ouGroup;
@@ -30,23 +41,20 @@ export default function (d2Data, d2Meta, d2Utils, mathService, requestService, $
 
 
 	//Variables for getting facility-level data completeness
-	var current;
 	var components = 0;
-	var completenessIDs;
-	var subunitQueue;
-	var facilitiesReporting = {};
+
 
 
 	/**
-				 * === === === === === ===
-				 * PUBLIC FUNCTIONS
-				 * === === === === === ===
-				 */
+	 * === === === === === ===
+	 * PUBLIC FUNCTIONS
+	 * === === === === === ===
+	 */
 
 
 	/**
-				 *
-				 */
+	 *
+	 */
 	function analyse(dataID, dataSetID, pe, peRef, ouBoundary, ouLevel, ouGroup, criteria, type, meta) {
 
 		//Store a new request object and queue it
@@ -75,22 +83,22 @@ export default function (d2Data, d2Meta, d2Utils, mathService, requestService, $
 
 
 	/**
-				 * === === === === === ===
-				 * PRIVATE FUNCTIONS
-				 * === === === === === ===
-				 */
+	 * === === === === === ===
+	 * PRIVATE FUNCTIONS
+	 * === === === === === ===
+	 */
 
 
 	/**
-				 * Gets the next request from the queue of requests, and requests if from the d2Data factory
-				 */
+	 * Gets the next request from the queue of requests, and requests if from the d2Data factory
+	 */
 	function requestData() {
 
 		//Check if we already have pending data, in which case we wait
 		if (_pendingRequest) return;
 
 		//Load next request from queue
-		var request = requests.pop();
+		request = requests.pop();
 		if (!request) return;
 
 		//We are now busy
@@ -105,7 +113,7 @@ export default function (d2Data, d2Meta, d2Utils, mathService, requestService, $
 			_dataID = request.dataID;
 			_dataSetID = request.dataSetID;
 			_pe = request.pe;
-			_peRef = request.peRef;
+			//_peRef = request.peRef;
 			_ouBoundary = request.ouBoundary;
 			_ouLevel = request.ouLevel;
 			_ouGroup = request.ouGroup;
@@ -127,8 +135,8 @@ export default function (d2Data, d2Meta, d2Utils, mathService, requestService, $
 
 				//Store subunits
 				subunits = datas[1].subunits;
-				subunitQueue = angular.copy(subunits);
-				completenessIDs = [_dataID];
+				//subunitQueue = angular.copy(subunits);
+				//completenessIDs = [_dataID];
 
 				//TODO: move this to d2Meta
 				if (datas[2] && datas[2].categoryCombo) {

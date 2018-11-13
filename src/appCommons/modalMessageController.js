@@ -157,9 +157,11 @@ angular.module("appCommons").controller("ModalMessageController",
 				console.log(message);
 
 				requestService.post(postURL, message).
+					// eslint-disable-next-line no-unused-vars
 					success(function(data, status, headers, config) {
 						self.alerts.push({type: "success", msg: "Message sent!"});
 					}).
+					// eslint-disable-next-line no-unused-vars
 					error(function(data, status, headers, config) {
 						self.alerts.push({type: "danger", msg: "Error sending message!"});
 					});

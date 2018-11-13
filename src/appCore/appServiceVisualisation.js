@@ -302,8 +302,7 @@ export default function (periodService, requestService, mathService, $q, d2Data,
 							"transitionDuration": 100,
 							"xAxis": {
 								"rotateLabels": -45
-							},
-							"transitionDuration": 100
+							}
 						},
 						"parameters": {
 							"dataIDs": dataIDs,
@@ -348,6 +347,9 @@ export default function (periodService, requestService, mathService, $q, d2Data,
 			d2Data.addRequest(dataID, periods[i], ouID, null, null);
 		}
 
+
+		//TODO: why isn't the loaded data used??
+		// eslint-disable-next-line no-unused-vars
 		d2Data.fetch().then(function (data) {
 			var yLen = 0, xLen = 0;
 
@@ -362,7 +364,7 @@ export default function (periodService, requestService, mathService, $q, d2Data,
 			var maxY = 0;
 
 			var minRange = 0, maxRange = 0;
-			var chartData = [], chartSeries, values, dataSet;
+			var chartData = [], chartSeries, values;
 			for (let i = 0; i < periods.length; i++) {
 
 				values = [];
@@ -375,7 +377,8 @@ export default function (periodService, requestService, mathService, $q, d2Data,
 					chartSeries.key = periods[i][0].substring(0, 4) + " - " + periods[i][periods[i].length-1].substring(0, 4);
 				}
 
-				var row, value, values = [];
+				var value;
+				values = [];
 				for (let j = 0; j < periods[i].length; j++) {
 					var pe = periods[i][j];
 					value = parseFloat(d2Data.value(dataID, pe, ouID, null));
@@ -401,11 +404,14 @@ export default function (periodService, requestService, mathService, $q, d2Data,
 				chartSeries.values = values;
 				chartSeries.periods = periods[i];
 
-
 				chartData.push(chartSeries);
 			}
 
+			
 			var toolTip = function(point) {
+				//TODO: find what's supposed to be used instead of undefined e variable below. This isn't used right now
+
+				// eslint-disable-next-line no-undef
 				return "<h3>" + periodService.shortPeriodName(e.series.periods[point.point.point.x]) + "</h3>" +
 					"<p>" + point.point.point.y + "</p>";
 			};
@@ -443,6 +449,7 @@ export default function (periodService, requestService, mathService, $q, d2Data,
 				}
 			};
 
+			//TODO: callback is right now never passed in (always null), but when we want to use it, verify and test all functionality above regarding the tooltip and chart options etc.
 			if (callback) {
 				callback(chartData, chartOptions);
 			}
@@ -522,7 +529,7 @@ export default function (periodService, requestService, mathService, $q, d2Data,
 			//else current = average/forecast
 			else {
 				ratio = 1;
-				key = result.subType === "constant" ? $i18next.t('Current = Average') : $i18next.t('Current = Forecast');
+				key = result.subType === "constant" ? $i18next.t("Current = Average") : $i18next.t("Current = Forecast");
 			}
 			chartSeries.push(scatterLine(ratio, key, "#000000", maxX, maxY));
 
@@ -533,8 +540,8 @@ export default function (periodService, requestService, mathService, $q, d2Data,
 		}
 
 		var xAxisLabel;
-		if (result.subType === "constant") xAxisLabel = $i18next.t('Average of ') + result.peRef.length  + $i18next.t(' previous periods');
-		else xAxisLabel = $i18next.t('Forecasted value');
+		if (result.subType === "constant") xAxisLabel = $i18next.t("Average of ") + result.peRef.length  + $i18next.t(" previous periods");
+		else xAxisLabel = $i18next.t("Forecasted value");
 
 
 
@@ -696,7 +703,6 @@ export default function (periodService, requestService, mathService, $q, d2Data,
 			var data = result.subunitDatapoints;
 			var ouID = point.point.z;
 			var ouName;
-			var data;
 			for (let i = 0; i < data.length; i++) {
 				if (data[i].id === ouID) {
 					ouName = data[i].name;
@@ -766,7 +772,9 @@ export default function (periodService, requestService, mathService, $q, d2Data,
 			var i, j;
 			for (j = 0; j < datapoints.length; j++) {
 
-				var externalShape = "circle", routineShape = "cross";
+				externalShape = "circle";
+				routineShape = "cross";
+
 				if (datapoints[j].violation) {
 					if (datapoints[j].value > datapoints[j].refValue) {
 						externalShape = "triangle-down";
@@ -852,7 +860,7 @@ export default function (periodService, requestService, mathService, $q, d2Data,
 		//No subunits, make bullet chart instead
 		else {
 
-			var toolTip = function(point) {
+			toolTip = function(point) {
 
 				if (point.label === "Range") return "";
 
@@ -876,7 +884,7 @@ export default function (periodService, requestService, mathService, $q, d2Data,
 				type: "bullet"
 			};
 
-			var maxY = 100;
+			maxY = 100;
 			if (result.boundaryValue > maxY) maxY =  result.boundaryValue;
 			if (result.boundaryRefValue > maxY) maxY = result.boundaryRefValue;
 			if (maxY != 100) maxY = getRange(maxY);
@@ -917,11 +925,8 @@ export default function (periodService, requestService, mathService, $q, d2Data,
 				"<p style=\"margin-bottom: 0px\">" + point.value + "%</p>";
 		};
 
-		var names = [];
 
-
-		var maxY = 0;
-		var chartSeries = [], tickValues = [0, 1], chartOptions = {};
+		var chartSeries = [], chartOptions = {};
 
 
 		chartOptions = {
@@ -1066,13 +1071,13 @@ export default function (periodService, requestService, mathService, $q, d2Data,
 	/** -- MODIFYING OPTIONS -- */
 	self.setChartTitle = function(options, title, subtitle) {
 		if (title) {
-			options.title = {
+			options.title = {
 				"enable": true,
 				"text": title
 			};
 		}
 		if (subtitle) {
-			options.subtitle = {
+			options.subtitle = {
 				"enable": true,
 				"text": subtitle
 			};
@@ -1165,13 +1170,13 @@ export default function (periodService, requestService, mathService, $q, d2Data,
 	 * @param ratio
 	 * @returns {boolean}
 	 */
-	function validRatio(ratio) {
+	/* function validRatio(ratio) {
 		if (!isNaN(ratio) && isFinite(ratio)) return true;
 		else {
 			return false;
 		}
 
-	}
+	} */
 
 
 	/**
@@ -1222,9 +1227,9 @@ export default function (periodService, requestService, mathService, $q, d2Data,
 
 		//Assume 7 pixels per digit if not rotated, 4 if rotated
 
-		var x = rotated ? parseInt(4.3*x) : 8*x;
+		x = rotated ? parseInt(4.3*x) : 8*x;
 		x = Math.max(x, 16);
-		var y = 8*y;
+		y = 8*y;
 		y = Math.max(y, 16);
 
 		return {

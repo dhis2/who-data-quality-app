@@ -21,16 +21,16 @@ require("./adminNumeratorRelationController.js");
 /**Controller: Parameters*/
 
 angular.module("admin").controller("AdminController",
-	["$uibModal", "notificationService", "d2Map", "d2Meta", "d2Utils",
-		function($uibModal, notificationService, d2Map, d2Meta, d2Utils) {
+	["$uibModal", "notificationService", "d2Map", "d2Meta",
+		function($uibModal, notificationService, d2Map, d2Meta) {
 
 			var self = this;
 
 			d2Map.load().then(
-				function(data) {
+				function() {
 					init();
 				},
-				function(error) {
+				function() {
 					console.log("Unable to get mapping");
 				}
 			);

@@ -269,7 +269,7 @@ angular.module("consistencyAnalysis").controller("ConsistencyAnalysisController"
 				self.chart.options.chart.height = 375;
 
 				//Look for click events in chart
-				$(document).on("click", "#mainChart", function(e) {
+				window.$(document).on("click", "#mainChart", function(e) {
 					var item = e.target.__data__;
 					if( Object.prototype.toString.call(item) === "[object Object]" ) {
 						if (item.hasOwnProperty("series") && item.hasOwnProperty("point")) {
@@ -439,7 +439,7 @@ angular.module("consistencyAnalysis").controller("ConsistencyAnalysisController"
 									}
 								}
 							});
-							modalInstance.result.then(function (result) {
+							modalInstance.result.then(function () {
 							
 							});
 							return;

@@ -101,7 +101,7 @@ export default function (d2Data, d2Meta, d2Utils, mathService, $q) {
 		if (_pendingRequest) return;
 
 		//Load next request from queue
-		var request = requests.pop();
+		request = requests.pop();
 		if (!request) return;
 
 		//We are now busy
@@ -432,14 +432,14 @@ export default function (d2Data, d2Meta, d2Utils, mathService, $q) {
 
 
 	/**
-				 * Calculates the ratio and percentage based on the given analysis type and criteria
-				 * @param valueA
-				 * @param valueB
-				 * @returns {{percent: (number|*), ratio: (number|*)}}
-				 */
+	 * Calculates the ratio and percentage based on the given analysis type and criteria
+	 * @param valueA
+	 * @param valueB
+	 * @returns {{percent: (number|*), ratio: (number|*)}}
+	 */
 	function getRatioAndPercentage(valueA, valueB) {
 
-		var ratio, percentage;
+		var ratio;
 		if (_subType === "do") {
 			ratio = mathService.dropOutRate(valueA, valueB);
 		}
@@ -454,13 +454,13 @@ export default function (d2Data, d2Meta, d2Utils, mathService, $q) {
 	}
 
 	/**
-				 * Returns either forecast based on refValue, or mean of revalues, limited by maxVal.
-				 *
-				 * @param values		array of reference values
-				 * @param type			type of consistency - constant (mean) or increase/decrease (forecast)
-				 * @param maxVal		optional - max value for forecast (e.g. 100% for completeness)
-				 * @returns {*}			average or forecasted value
-				 */
+	 * Returns either forecast based on refValue, or mean of revalues, limited by maxVal.
+	 *
+	 * @param values		array of reference values
+	 * @param type			type of consistency - constant (mean) or increase/decrease (forecast)
+	 * @param maxVal		optional - max value for forecast (e.g. 100% for completeness)
+	 * @returns {*}			average or forecasted value
+	 */
 	function referenceValue(values, type, maxVal) {
 
 		if (values.length === 0) return null;
@@ -483,13 +483,13 @@ export default function (d2Data, d2Meta, d2Utils, mathService, $q) {
 
 
 	/**
-				 * Checks if the ratio for a subunit is an "outlier" based on the given analysis type and criteria
-				 * @param thresholdRatio
-				 * @param subunitRatio
-				 * @returns {boolean}
-				 */
+	 * Checks if the ratio for a subunit is an "outlier" based on the given analysis type and criteria
+	 * @param thresholdRatio
+	 * @param subunitRatio
+	 * @returns {boolean}
+	 */
 	function isOutlier(thresholdRatio, subunitRatio) {
-
+		var ratioOfRatios;
 		if (_type === "data") {
 			switch (_subType) {
 			case "do":
@@ -499,12 +499,12 @@ export default function (d2Data, d2Meta, d2Utils, mathService, $q) {
 			case "eq":
 				return subunitRatio > (1.0 + _criteria * 0.01) || subunitRatio < (1.0 - _criteria * 0.01) ? true : false;
 			case "level":
-				var ratioOfRatios = subunitRatio/thresholdRatio;
+				ratioOfRatios = subunitRatio/thresholdRatio;
 				return ratioOfRatios > (1.0 + _criteria * 0.01) || ratioOfRatios < (1.0 - _criteria * 0.01) ? true : false;
 			}
 		}
 		else {
-			var ratioOfRatios = subunitRatio/thresholdRatio;
+			ratioOfRatios = subunitRatio/thresholdRatio;
 			return ratioOfRatios > (1.0 + _criteria * 0.01) || ratioOfRatios < (1.0 - _criteria * 0.01) ? true : false;
 		}
 
@@ -512,13 +512,13 @@ export default function (d2Data, d2Meta, d2Utils, mathService, $q) {
 
 
 	/**
-				 * Calculates the weight of an outlier
-				 *
-				 * @param valueA
-				 * @param valueB
-				 * @param boundaryRatio
-				 * @returns {number}
-				 */
+	 * Calculates the weight of an outlier
+	 *
+	 * @param valueA
+	 * @param valueB
+	 * @param boundaryRatio
+	 * @returns {number}
+	 */
 	function outlierWeight(valueA, valueB, boundaryRatio) {
 
 		var weight = 0;
@@ -536,12 +536,12 @@ export default function (d2Data, d2Meta, d2Utils, mathService, $q) {
 
 
 	/**
-				 * Makes an "error object" that is returned with the result, highlighting areas with missing data etc
-				 * @param dx
-				 * @param pe
-				 * @param ou
-				 * @returns {{}}
-				 */
+	 * Makes an "error object" that is returned with the result, highlighting areas with missing data etc
+	 * @param dx
+	 * @param pe
+	 * @param ou
+	 * @returns {{}}
+	 */
 	function makeError(dx, pe, ou) {
 
 		var error = {};
@@ -563,12 +563,12 @@ export default function (d2Data, d2Meta, d2Utils, mathService, $q) {
 	}
 
 	/**
-				 * Makes an "error object" that is returned with the result, highlighting subunit with missing data
-				 * (that are therefore ignored from the analysis)
-				 *
-				 * @param orunits
-				 * @returns {*}
-				 */
+	 * Makes an "error object" that is returned with the result, highlighting subunit with missing data
+	 * (that are therefore ignored from the analysis)
+	 *
+	 * @param orunits
+	 * @returns {*}
+	 */
 	function makeSubunitError(orunits) {
 
 		var error;

@@ -19,5 +19,5 @@ angular.module("appService", ["d2", "nvd3"])
 	.service("mathService", [math])
 	.service("notificationService", ["$uibModal", notification])
 	.service("periodService", ["$i18next", period])
-	.service("requestService", ["BASE_URL", "API_VERSION", "$http", "$q", "notificationService", request])
+	.service("requestService", ["BASE_URL", "API_VERSION", "$http", "$q", "notificationService", "$i18next", request])
 	.service("visualisationService", ["periodService", "requestService", "mathService", "$q", "d2Data", "$i18next", viz]);
