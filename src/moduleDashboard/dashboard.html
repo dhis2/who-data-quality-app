@@ -62,14 +62,14 @@ immunities enjoyed by WHO under national or international law or submit to any n
 				style="display: inline-block; width: 100%; margin-top: 10px"
 				ng-repeat="dataset in dashCtrl.completenessCharts|orderBy:'name'">
 				<h5>"{{dataset.name}}" {{ 'completeness' | i18next}}</h5>
-				<div ng-style="{width: dashCtrl.halfChart}" style="display: inline-block; border: 1px dotted gray; height: 400px">
+				<div ng-style="{width: dashCtrl.halfChart}" class="nvd3-chart-dotted">
 					<nvd3
 						options='dataset.trendChartOptions'
 						data='dataset.trendChartData'>
 					</nvd3>
 				</div>
 				<h5 ng-if="dashCtrl.singleCol">"{{dataset.name}}" {{ 'completeness' | i18next}}</h5>
-				<div ng-style="{width: dashCtrl.halfChart}" style="display: inline-block; border: 1px dotted gray; height: 400px">
+				<div ng-style="{width: dashCtrl.halfChart}" class="nvd3-chart-dotted">
 					<nvd3 style="width: 100%"
 						options='dataset.ouChartOptions'
 						data='dataset.ouChartData'>
@@ -81,18 +81,37 @@ immunities enjoyed by WHO under national or international law or submit to any n
 			<div
 				style="display: inline-block; width: 100%; margin-top: 10px"
 				ng-repeat="data in dashCtrl.consistencyCharts|orderBy:'name'|limitTo: 100">
-				<h5>{{data.name}}</h5>
-				<nvd3 style="display: inline-block; border: 1px dotted gray; height: 400px"
-					  ng-style="{width: dashCtrl.halfChart}"
-					options='data.yyChartOptions'
-					data='data.yyChartData'>
-				</nvd3>
-				<h5 ng-if="dashCtrl.singleCol">{{data.name}}</h5>
-				<nvd3 style="display: inline-block; border: 1px dotted gray; height: 400px"
-					  ng-style="{width: dashCtrl.halfChart}"
-					  options='data.consistencyChartOptions'
-					data='data.consistencyChartData'>
-				</nvd3>
+
+					<h5>{{data.name}}</h5>
+					
+					<nvd3 ng-if="!data.yyChart.loading"
+						class="nvd3-chart-dotted"
+						ng-style="{width: dashCtrl.halfChart}"
+						options='data.yyChart.options'
+						data='data.yyChart.data'>
+					</nvd3>
+					<div ng-if="data.yyChart.loading" class="chart-placeholder nvd3-chart-dotted" ng-style="{width: dashCtrl.halfChart}">
+						<div class="chart-placeholder-loading-notificator">
+							<img src="../img/ajax-loader.gif" />
+							<p>{{ 'Loading data' | i18next }}</p>
+						</div>
+					</div>
+
+
+					<h5 ng-if="dashCtrl.singleCol">{{data.name}}</h5>
+					<nvd3 ng-if="!data.consistencyChart.loading"
+						class="nvd3-chart-dotted"
+						ng-style="{width: dashCtrl.halfChart}"
+						options='data.consistencyChart.options'
+						data='data.consistencyChart.data'>
+					</nvd3>
+					<div ng-if="data.consistencyChart.loading" class="chart-placeholder nvd3-chart-dotted" ng-style="{width: dashCtrl.halfChart}">
+						<div class="chart-placeholder-loading-notificator">
+							<img src="../img/ajax-loader.gif" />
+							<p>{{ 'Loading data' | i18next }}</p>
+						</div>
+					</div>
+
 			</div>
 		</uib-tab>
 		<uib-tab heading="{{ 'Consistency - data' | i18next}}" select="dashCtrl.selectedTab = 2; dashCtrl.makeDataConsistencyCharts();">
@@ -100,8 +119,7 @@ immunities enjoyed by WHO under national or international law or submit to any n
 					ng-repeat="data in dashCtrl.dataConsistencyCharts|orderBy:'name'|limitTo: 100">
 				<h5>{{data.name}} - {{data.period}}</h5>
 				<nvd3
-						class="fullWidth"
-						style="display: inline-block; border: 1px dotted gray; height: 400px"
+						class="fullWidth nvd3-chart-dotted"
 						options='data.chartOptions'
 						data='data.chartData'>
 				</nvd3>

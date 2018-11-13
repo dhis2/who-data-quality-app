@@ -30,20 +30,20 @@ export default function (requestService, d2Utils, $q) {
 
 
 	/**
-				 * === === === === === ===
-				 * PUBLIC FUNCTIONS
-				 * === === === === === ===
-				 */
+	 * === === === === === ===
+	 * PUBLIC FUNCTIONS
+	 * === === === === === ===
+	 */
 
 	/**
-				 * Add request for data to be fetched
-				 *
-				 * @param dx			(Array of) data IDs - data element, indicator, data element operand, dataset
-				 * @param pe			(Array of) periods in ISO format
-				 * @param ouBoundary	(Array of) boundary orgunit IDs
-				 * @param ouLevel		Optional - level (int) for orgunit disaggregation.
-				 * @param ouGroup		Optional - group (id) for orgunit disaggregation
-				 */
+	 * Add request for data to be fetched
+	 *
+	 * @param dx			(Array of) data IDs - data element, indicator, data element operand, dataset
+	 * @param pe			(Array of) periods in ISO format
+	 * @param ouBoundary	(Array of) boundary orgunit IDs
+	 * @param ouLevel		Optional - level (int) for orgunit disaggregation.
+	 * @param ouGroup		Optional - group (id) for orgunit disaggregation
+	 */
 	function addRequest(dx, pe, ouBoundary, ouLevel, ouGroup, aggregationType) {
 
 		_newRequests = d2Utils.arrayMerge(_newRequests,
@@ -60,10 +60,10 @@ export default function (requestService, d2Utils, $q) {
 
 
 	/**
-				 * Fetch data, based on requests that have already been added
-				 *
-				 * @returns {* promise}
-				 */
+	 * Fetch data, based on requests that have already been added
+	 *
+	 * @returns {* promise}
+	 */
 	function fetch() {
 
 		var newBatch = new Batch(_newRequests);
@@ -77,12 +77,12 @@ export default function (requestService, d2Utils, $q) {
 
 
 	/**
-				 * Look up individual data values from the current result.
-				 *
-				 * @param de, pe, ou, co	IDs
-				 * @param aggregationType
-				 * @returns float of datavalue, or null if not found
-				 */
+	 * Look up individual data values from the current result.
+	 *
+	 * @param de, pe, ou, co	IDs
+	 * @param aggregationType
+	 * @returns float of datavalue, or null if not found
+	 */
 	function dataValue(de, pe, ou, co, at) {
 		if (co === undefined) co = null;
 		if (at === undefined) at = null;

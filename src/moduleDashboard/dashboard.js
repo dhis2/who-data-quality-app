@@ -78,7 +78,7 @@ angular.module("dashboard").controller("DashboardController",
 					promises.push(visualisationService.barChart(null, [dataSetQueryID[0]], [ouPeriod], [ouBoundaryID], "ou", level));
 
 					$q.all(promises).then(function(datas) {
-
+						
 						var datasetCompletenessChart = {
 							name: d2Map.d2NameFromID(datas[0].id),
 							id: datas[0].id,
@@ -116,7 +116,7 @@ angular.module("dashboard").controller("DashboardController",
 				else if (self.tcLoading) {
 					return;
 				}
-				else if (self.consistency  && !self.widthChanged[1]) {
+				else if (self.consistency && !self.widthChanged[1]) {
 					return;
 				}
 				else {
@@ -135,7 +135,7 @@ angular.module("dashboard").controller("DashboardController",
 				self.expectedConsistencyCharts = datas.length;
 				if (datas.length > 0) self.tcLoading = true;
 				for (let i = 0; i < datas.length; i++) {
-
+					
 					data = datas[i];
 					periodType = d2Map.dataSets(data.dataSetID).periodType;
 
@@ -152,46 +152,54 @@ angular.module("dashboard").controller("DashboardController",
 						yyPeriods.push(periodService.getISOPeriods(startDate, endDate, periodType));
 					}
 
-					var promises = [];
-					promises.push(promiseObject(data));
-					promises.push(visualisationService.yyLineChart(null, yyPeriods, data.dataID, ouBoundaryID));
-					promises.push(dqAnalysisConsistency.analyse(data.dataID, null, period, refPeriods, ouBoundaryID, ouLevel, null, "time", data.trend, data.comparison, data.consistency, null));
-					$q.all(promises).then(function(datas) {
+					let chartModel = {
+						yyChart: {
+							loading: true,
+							options: null,
+							data: null
+						},
+						consistencyChart: {
+							loading: true,
+							options: null,
+							data: null
+						},
+						name: d2Map.d2NameFromID(data.dataID)
+					};	
+					self.consistencyCharts.push(chartModel);
 
-						var data = datas[0];
-						var yyLine = datas[1];
-						var tConsistency = datas[2];
-
-						//Add chart data to time consistency result object
-						visualisationService.makeTimeConsistencyChart(null, tConsistency.result, null);
-
-
-						var consistencyChart = {
-							name: d2Map.d2NameFromID(data.dataID),
-							id: data.id,
-							yyChartOptions: yyLine.opts,
-							yyChartData: yyLine.data,
-							consistencyChartOptions: tConsistency.result.chartOptions,
-							consistencyChartData: tConsistency.result.chartData
+					visualisationService.yyLineChart(null, yyPeriods, data.dataID, ouBoundaryID).then((x) => {
+						chartModel.yyChart = { 
+							loading: false,
+							options: x.opts, 
+							data: x.data 
 						};
+						visualisationService.setChartHeight(chartModel.yyChart.options, 400);
+						visualisationService.setChartLegend(chartModel.yyChart.options, false);
 
-
-						visualisationService.setChartHeight(consistencyChart.yyChartOptions, 400);
-						visualisationService.setChartLegend(consistencyChart.yyChartOptions, false);
-
-						visualisationService.setChartHeight(consistencyChart.consistencyChartOptions, 400);
-						visualisationService.setChartLegend(consistencyChart.consistencyChartOptions, true);
-						visualisationService.setChartYAxis(consistencyChart.consistencyChartOptions, 0, 100);
-						visualisationService.setChartMargins(consistencyChart.consistencyChartOptions, 60, 30, 90, 110);
-
-
-						self.consistencyCharts.push(consistencyChart);
-						if (self.consistencyCharts.length === self.expectedConsistencyCharts) self.tcLoading = false;
-
+						const chartsLoading = self.consistencyCharts.filter(x => x.yyChart.loading || x.consistencyChart.loading);
+						self.tcLoading = chartsLoading.length > 0;
 					});
 
-				}
+					dqAnalysisConsistency.analyse(data.dataID, null, period, refPeriods, ouBoundaryID, ouLevel, null, "time", data.trend, data.comparison, data.consistency, null).then((x) => {
+						
+						visualisationService.makeTimeConsistencyChart(null, x.result, null);
 
+						chartModel.consistencyChart = { 
+							loading: false,
+							options: x.result.chartOptions, 
+							data: x.result.chartData 
+						};
+						
+
+						visualisationService.setChartHeight(chartModel.consistencyChart.options, 400);
+						visualisationService.setChartLegend(chartModel.consistencyChart.options, true);
+						visualisationService.setChartYAxis(chartModel.consistencyChart.options, 0, 100);
+						visualisationService.setChartMargins(chartModel.consistencyChart.options, 60, 30, 90, 110);
+
+						const chartsLoading = self.consistencyCharts.filter(x => x.yyChart.loading || x.consistencyChart.loading);
+						self.tcLoading = chartsLoading.length > 0;
+					});
+				}
 			};
 
 
