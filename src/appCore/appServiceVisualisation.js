@@ -34,13 +34,13 @@ export default function (periodService, requestService, mathService, $q, d2Data,
 
 
 					var yLen = 0, xLen = 0;
-					for (var i = 0; i < dataIDs.length; i++) {
+					for (let i = 0; i < dataIDs.length; i++) {
 						var chartSerie = {
 							"key": d2Data.name(dataIDs[i]),
 							"values": []
 						};
 
-						for (var j = 0; j < periodIDs.length; j++) {
+						for (let j = 0; j < periodIDs.length; j++) {
 							var value = d2Data.value(dataIDs[i], periodIDs[j], orgunitIDs[0], null);
 							var y = mathService.round(value, 2);
 							chartSerie.values.push({
@@ -63,7 +63,7 @@ export default function (periodService, requestService, mathService, $q, d2Data,
 
 					//Get XAxis labels = periods from series[0]
 					var periodNames = [];
-					for (var i = 0; i < periodIDs.length; i++) {
+					for (let i = 0; i < periodIDs.length; i++) {
 						var name = periodService.shortPeriodName(periodIDs[i].toString());
 						periodNames.push(name);
 						xLen = Math.max(xLen, name.length);
@@ -146,13 +146,13 @@ export default function (periodService, requestService, mathService, $q, d2Data,
 
 				if (orgunitIDs.length > 1) console.log("Warning: more than one orgunit for dataOverTime chart");
 
-				for (var i = 0; i < dataIDs.length; i++) {
+				for (let i = 0; i < dataIDs.length; i++) {
 					var chartSerie = {
 						"key": items[dataIDs[i]].name,
 						"values": []
 					};
 
-					for (var j = 0; j < periodIDs.length; j++) {
+					for (let j = 0; j < periodIDs.length; j++) {
 						var value = dataValue(header, data, dataIDs[i], periodIDs[j], orgunitIDs[0], null);
 
 						if (isNaN(value)) value = null;
@@ -173,7 +173,7 @@ export default function (periodService, requestService, mathService, $q, d2Data,
 
 				//Get XAxis labels = periods from series[0]
 				var periodNames = [];
-				for (var i = 0; i < periodIDs.length; i++) {
+				for (let i = 0; i < periodIDs.length; i++) {
 					periodNames.push(periodService.shortPeriodName(periodIDs[i].toString()));
 				}
 
@@ -252,13 +252,13 @@ export default function (periodService, requestService, mathService, $q, d2Data,
 					var dx = dataIDs[0];
 					var pe = periodIDs[0];
 
-					for (var i = 0; i < dataIDs.length; i++) {
+					for (let i = 0; i < dataIDs.length; i++) {
 						var chartSerie = {
 							"key": d2Data.name(dx),
 							"values": []
 						};
 
-						for (var j = 0; j < orgunitIDs.length; j++) {
+						for (let j = 0; j < orgunitIDs.length; j++) {
 							var value = d2Data.value(dx, pe, orgunitIDs[j], null);
 
 							if (isNaN(value)) value = null;
@@ -302,8 +302,7 @@ export default function (periodService, requestService, mathService, $q, d2Data,
 							"transitionDuration": 100,
 							"xAxis": {
 								"rotateLabels": -45
-							},
-							"transitionDuration": 100
+							}
 						},
 						"parameters": {
 							"dataIDs": dataIDs,
@@ -344,16 +343,19 @@ export default function (periodService, requestService, mathService, $q, d2Data,
 
 		var deferred = $q.defer();
 
-		for (var i = 0; i < periods.length; i++) {
+		for (let i = 0; i < periods.length; i++) {
 			d2Data.addRequest(dataID, periods[i], ouID, null, null);
 		}
 
+
+		//TODO: why isn't the loaded data used??
+		// eslint-disable-next-line no-unused-vars
 		d2Data.fetch().then(function (data) {
 			var yLen = 0, xLen = 0;
 
 			//Get XAxis labels = periods from series[0]
 			var periodNames = [];
-			for (var i = 0; i < periods[0].length; i++) {
+			for (let i = 0; i < periods[0].length; i++) {
 				var name = periodService.shortPeriodName(periods[0][i]).split(" ")[0];
 				periodNames.push(name);
 				xLen = Math.max(xLen, name.length);
@@ -362,8 +364,8 @@ export default function (periodService, requestService, mathService, $q, d2Data,
 			var maxY = 0;
 
 			var minRange = 0, maxRange = 0;
-			var chartData = [], chartSeries, values, dataSet;
-			for (var i = 0; i < periods.length; i++) {
+			var chartData = [], chartSeries, values;
+			for (let i = 0; i < periods.length; i++) {
 
 				values = [];
 				chartSeries = {};
@@ -375,8 +377,9 @@ export default function (periodService, requestService, mathService, $q, d2Data,
 					chartSeries.key = periods[i][0].substring(0, 4) + " - " + periods[i][periods[i].length-1].substring(0, 4);
 				}
 
-				var row, value, values = [];
-				for (var j = 0; j < periods[i].length; j++) {
+				var value;
+				values = [];
+				for (let j = 0; j < periods[i].length; j++) {
 					var pe = periods[i][j];
 					value = parseFloat(d2Data.value(dataID, pe, ouID, null));
 					if (isNaN(value)) value = null;
@@ -401,11 +404,14 @@ export default function (periodService, requestService, mathService, $q, d2Data,
 				chartSeries.values = values;
 				chartSeries.periods = periods[i];
 
-
 				chartData.push(chartSeries);
 			}
 
+			
 			var toolTip = function(point) {
+				//TODO: find what's supposed to be used instead of undefined e variable below. This isn't used right now
+
+				// eslint-disable-next-line no-undef
 				return "<h3>" + periodService.shortPeriodName(e.series.periods[point.point.point.x]) + "</h3>" +
 					"<p>" + point.point.point.y + "</p>";
 			};
@@ -443,6 +449,7 @@ export default function (periodService, requestService, mathService, $q, d2Data,
 				}
 			};
 
+			//TODO: callback is right now never passed in (always null), but when we want to use it, verify and test all functionality above regarding the tooltip and chart options etc.
 			if (callback) {
 				callback(chartData, chartOptions);
 			}
@@ -478,7 +485,7 @@ export default function (periodService, requestService, mathService, $q, d2Data,
 			var data = result.subunitDatapoints;
 			var ouID = point.point.z;
 			var ouName;
-			for (var i = 0; i < data.length; i++) {
+			for (let i = 0; i < data.length; i++) {
 				if (data[i].id === ouID) {
 					ouName = data[i].name;
 					break;
@@ -522,7 +529,7 @@ export default function (periodService, requestService, mathService, $q, d2Data,
 			//else current = average/forecast
 			else {
 				ratio = 1;
-				key = result.subType === "constant" ? $i18next.t('Current = Average') : $i18next.t('Current = Forecast');
+				key = result.subType === "constant" ? $i18next.t("Current = Average") : $i18next.t("Current = Forecast");
 			}
 			chartSeries.push(scatterLine(ratio, key, "#000000", maxX, maxY));
 
@@ -533,8 +540,8 @@ export default function (periodService, requestService, mathService, $q, d2Data,
 		}
 
 		var xAxisLabel;
-		if (result.subType === "constant") xAxisLabel = $i18next.t('Average of ') + result.peRef.length  + $i18next.t(' previous periods');
-		else xAxisLabel = $i18next.t('Forecasted value');
+		if (result.subType === "constant") xAxisLabel = $i18next.t("Average of ") + result.peRef.length  + $i18next.t(" previous periods");
+		else xAxisLabel = $i18next.t("Forecasted value");
 
 
 
@@ -599,7 +606,7 @@ export default function (periodService, requestService, mathService, $q, d2Data,
 			var data = result.subunitDatapoints;
 			var ouID = point.point.z;
 			var ouName;
-			for (var i = 0; i < data.length; i++) {
+			for (let i = 0; i < data.length; i++) {
 				if (data[i].id === ouID) {
 					ouName = data[i].name;
 					break;
@@ -696,8 +703,7 @@ export default function (periodService, requestService, mathService, $q, d2Data,
 			var data = result.subunitDatapoints;
 			var ouID = point.point.z;
 			var ouName;
-			var data;
-			for (var i = 0; i < data.length; i++) {
+			for (let i = 0; i < data.length; i++) {
 				if (data[i].id === ouID) {
 					ouName = data[i].name;
 					data = data[i];
@@ -766,7 +772,9 @@ export default function (periodService, requestService, mathService, $q, d2Data,
 			var i, j;
 			for (j = 0; j < datapoints.length; j++) {
 
-				var externalShape = "circle", routineShape = "cross";
+				externalShape = "circle";
+				routineShape = "cross";
+
 				if (datapoints[j].violation) {
 					if (datapoints[j].value > datapoints[j].refValue) {
 						externalShape = "triangle-down";
@@ -852,7 +860,7 @@ export default function (periodService, requestService, mathService, $q, d2Data,
 		//No subunits, make bullet chart instead
 		else {
 
-			var toolTip = function(point) {
+			toolTip = function(point) {
 
 				if (point.label === "Range") return "";
 
@@ -876,7 +884,7 @@ export default function (periodService, requestService, mathService, $q, d2Data,
 				type: "bullet"
 			};
 
-			var maxY = 100;
+			maxY = 100;
 			if (result.boundaryValue > maxY) maxY =  result.boundaryValue;
 			if (result.boundaryRefValue > maxY) maxY = result.boundaryRefValue;
 			if (maxY != 100) maxY = getRange(maxY);
@@ -917,11 +925,8 @@ export default function (periodService, requestService, mathService, $q, d2Data,
 				"<p style=\"margin-bottom: 0px\">" + point.value + "%</p>";
 		};
 
-		var names = [];
 
-
-		var maxY = 0;
-		var chartSeries = [], tickValues = [0, 1], chartOptions = {};
+		var chartSeries = [], chartOptions = {};
 
 
 		chartOptions = {
@@ -1001,7 +1006,7 @@ export default function (periodService, requestService, mathService, $q, d2Data,
 			var minVal = -10;
 			var maxVal = 50;
 			var point, value;
-			for (var i = 0; i < result.subunitDatapoints.length; i++) {
+			for (let i = 0; i < result.subunitDatapoints.length; i++) {
 				point = result.subunitDatapoints[i];
 				value = 100*mathService.dropOutRate(point.value, point.refValue);
 
@@ -1066,13 +1071,13 @@ export default function (periodService, requestService, mathService, $q, d2Data,
 	/** -- MODIFYING OPTIONS -- */
 	self.setChartTitle = function(options, title, subtitle) {
 		if (title) {
-			options.title = {
+			options.title = {
 				"enable": true,
 				"text": title
 			};
 		}
 		if (subtitle) {
-			options.subtitle = {
+			options.subtitle = {
 				"enable": true,
 				"text": subtitle
 			};
@@ -1115,7 +1120,7 @@ export default function (periodService, requestService, mathService, $q, d2Data,
 		*/
 	function dataValue(header, dataValues, de, pe, ou, co) {
 		var dxi, pei, oui, coi, vali;
-		for (var i = 0; i < header.length; i++) {
+		for (let i = 0; i < header.length; i++) {
 			if (header[i].name === "dx" && !header[i].hidden) dxi = i;
 			if (header[i].name === "ou" && !header[i].hidden) oui = i;
 			if (header[i].name === "pe" && !header[i].hidden) pei = i;
@@ -1124,7 +1129,7 @@ export default function (periodService, requestService, mathService, $q, d2Data,
 		}
 
 		var data;
-		for (var i = 0; i < dataValues.length; i++) {
+		for (let i = 0; i < dataValues.length; i++) {
 			data = dataValues[i];
 			if (
 				(dxi === undefined || data[dxi] === de) &&
@@ -1165,13 +1170,13 @@ export default function (periodService, requestService, mathService, $q, d2Data,
 	 * @param ratio
 	 * @returns {boolean}
 	 */
-	function validRatio(ratio) {
+	/* function validRatio(ratio) {
 		if (!isNaN(ratio) && isFinite(ratio)) return true;
 		else {
 			return false;
 		}
 
-	}
+	} */
 
 
 	/**
@@ -1222,9 +1227,9 @@ export default function (periodService, requestService, mathService, $q, d2Data,
 
 		//Assume 7 pixels per digit if not rotated, 4 if rotated
 
-		var x = rotated ? parseInt(4.3*x) : 8*x;
+		x = rotated ? parseInt(4.3*x) : 8*x;
 		x = Math.max(x, 16);
-		var y = 8*y;
+		y = 8*y;
 		y = Math.max(y, 16);
 
 		return {
@@ -1250,7 +1255,7 @@ export default function (periodService, requestService, mathService, $q, d2Data,
 			"key": "Orgunits",
 			"values": []
 		};
-		for (var i = 0; i < Math.min(datapoints.length, maxScatterPoints); i++) {
+		for (let i = 0; i < Math.min(datapoints.length, maxScatterPoints); i++) {
 			var datapoint = {
 				"x": datapoints[i].refValue,
 				"y": datapoints[i].value,

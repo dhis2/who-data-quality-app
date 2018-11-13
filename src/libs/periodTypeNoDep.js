@@ -17,7 +17,7 @@ export default function PeriodType()
 			var array = [],
 				now = new Date();
 
-			for ( var i = 0; i < periods.length; i++ )
+			for ( let i = 0; i < periods.length; i++ )
 			{
 				if ( new Date( periods[i]["startDate"] ) <= now )
 				{
@@ -55,8 +55,8 @@ function DailyPeriodType( format_yyyymmdd, fnFilter )
 			offset = parseInt(config.offset),
 			isFilter = config.filterFuturePeriods,
 			isReverse = config.reversePeriods,
-			year = new Date().getFullYear() + offset;
-		date = new Date( "01 Jan " + year );
+			year = new Date().getFullYear() + offset,
+			date = new Date( "01 Jan " + year );
 
 		while ( date.getFullYear() === year )
 		{
@@ -354,7 +354,7 @@ function FinancialOctoberPeriodType( format_yyyymmdd, monthNames, fnFilter )
 			year = new Date().getFullYear() + offset,
 			date = new Date( "30 Sep " + ( year + 1 ) );
 
-		for ( var i = 0; i < 10; i++ )
+		for ( let i = 0; i < 10; i++ )
 		{
 			var period = {};
 			period["endDate"] = format_yyyymmdd( date );
@@ -386,7 +386,7 @@ function FinancialJulyPeriodType( format_yyyymmdd, monthNames, fnFilter )
 			year = new Date().getFullYear() + offset,
 			date = new Date( "30 Jun " + ( year + 1 ) );
 
-		for ( var i = 0; i < 10; i++ )
+		for ( let i = 0; i < 10; i++ )
 		{
 			var period = {};
 			period["endDate"] = format_yyyymmdd( date );
@@ -418,7 +418,7 @@ function FinancialAprilPeriodType( format_yyyymmdd, monthNames, fnFilter )
 			year = new Date().getFullYear() + offset,
 			date = new Date( "31 Mar " + ( year + 1 ) );
 
-		for ( var i = 0; i < 10; i++ )
+		for ( let i = 0; i < 10; i++ )
 		{
 			var period = {};
 			period["endDate"] = format_yyyymmdd( date );

@@ -16,7 +16,7 @@ angular.module("admin").controller("ModalMappingController",
 
 			self.groups = angular.copy(d2Map.groups());
 
-			for (var i = 0; i < self.groups.length; i++) {
+			for (let i = 0; i < self.groups.length; i++) {
 				self.groups[i]["displayName"] = self.groups[i]["name"];
 			}
 
@@ -40,7 +40,7 @@ angular.module("admin").controller("ModalMappingController",
 			self.name = indicator.name;
 			self.definition = indicator.definition;
 			self.groupsSelected = d2Map.numeratorGroups(indicator.code);
-			for (var i = 0; i < self.groupsSelected.length; i++) {
+			for (let i = 0; i < self.groupsSelected.length; i++) {
 				self.groupsSelected[i]["displayName"] = self.groupsSelected[i]["name"];
 			}
 			self.dataTypeSelected = "dataElements";
@@ -65,7 +65,7 @@ angular.module("admin").controller("ModalMappingController",
 							if (data.hasOwnProperty("dataSets")) self.dataSets = data.dataSets;
 							else {
 								var dataset = [];
-								for (var i = 0; i < data.dataSetElements.length; i++) {
+								for (let i = 0; i < data.dataSetElements.length; i++) {
 									dataset.push(data.dataSetElements[i].dataSet);
 								}
 

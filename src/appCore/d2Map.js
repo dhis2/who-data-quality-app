@@ -64,6 +64,8 @@ export default function (requestService, d2Meta, d2Utils, $q) {
 	var _map;
 	var _d2Objects = {};
 	var _dataIDs;
+
+	// eslint-disable-next-line no-unused-vars
 	var _version;
 
 	/**
@@ -84,6 +86,7 @@ export default function (requestService, d2Meta, d2Utils, $q) {
 				_map = response.data;
 				if (_map && _map != "") {
 					d2CoreMeta().then(
+						// eslint-disable-next-line no-unused-vars
 						function (data) {
 							_ready = true;
 							versionUpgrade();
@@ -143,7 +146,7 @@ export default function (requestService, d2Meta, d2Utils, $q) {
 			function(response) { //success
 				var data = response.data.userCredentials.userRoles;
 				var IDs = [];
-				for (var i = 0; i < data.length; i++) {
+				for (let i = 0; i < data.length; i++) {
 					IDs.push(data[i].id);
 				}
 
@@ -152,8 +155,8 @@ export default function (requestService, d2Meta, d2Utils, $q) {
 						var authorized = false;
 
 						var data = response.data.userRoles;
-						for (var i = 0; !authorized && i < data.length; i++) {
-							for (var j = 0; !authorized && j < data[i].authorities.length; j++) {
+						for (let i = 0; !authorized && i < data.length; i++) {
+							for (let j = 0; !authorized && j < data[i].authorities.length; j++) {
 								if (data[i].authorities[j] === "F_INDICATOR_PUBLIC_ADD") {
 									authorized = true;
 								}
@@ -172,17 +175,17 @@ export default function (requestService, d2Meta, d2Utils, $q) {
 	}
 
 	/**
-				 * Upgrade metadata version
-				 */
+	 * Upgrade metadata version
+	 */
 	function versionUpgrade() {
 		var currentVersion = "1.1";
-		if (_map.metaDataVersion != currentVersion) {
+		if (_map.metaDataVersion != currentVersion) {
 			_map.metaDataVersion = currentVersion;
 			
 			//Do whatever upgrades are needed here
 			requestService.getSingleLocal("data/metaData.json").then(function(response) {
 				var reference = response.data;
-				for (var i = 0; i < reference.numerators.length; i++) {
+				for (let i = 0; i < reference.numerators.length; i++) {
 					var refNum = reference.numerators[i];
 					var current = indicators(refNum.code);
 					if (current) {
@@ -191,7 +194,7 @@ export default function (requestService, d2Meta, d2Utils, $q) {
 					else {
 					//Needs to be added
 						console.log(refNum.name);
-						for (var j = 0; j < reference.groups.length; j++) {
+						for (let j = 0; j < reference.groups.length; j++) {
 							var refGroup = reference.groups[j];
 							for (var k = 0; k < refGroup.members.length; k++) {
 								var groupMem = refGroup.members[k];
@@ -231,10 +234,12 @@ export default function (requestService, d2Meta, d2Utils, $q) {
 
 						//Save template to systemSettings
 						requestService.post("/dataStore/dataQualityTool/settings", angular.toJson(_map)).then(
+							// eslint-disable-next-line no-unused-vars
 							function (data) {
 								_ready = true;
 								deferred.resolve(true);
 							},
+							// eslint-disable-next-line no-unused-vars
 							function (data) {
 								_ready = false;
 								deferred.resolve(false);
@@ -256,14 +261,14 @@ export default function (requestService, d2Meta, d2Utils, $q) {
 	/** ===== GROUPS ===== **/
 
 	/**
-				 * Return specified group, or all if no group is specified
-				 *
-				 * @param code
-				 * @returns {*}
-				 */
+	 * Return specified group, or all if no group is specified
+	 *
+	 * @param code
+	 * @returns {*}
+	 */
 	function groups(code) {
 		if (code) {
-			for (var i = 0; i < _map.groups.length; i++) {
+			for (let i = 0; i < _map.groups.length; i++) {
 				if (_map.groups[i].code === code) return _map.groups[i];
 			}
 		}
@@ -276,7 +281,7 @@ export default function (requestService, d2Meta, d2Utils, $q) {
 
 	function configuredGroups() {
 		var groups = [];
-		for (var i = 0; i < _map.groups.length; i++) {
+		for (let i = 0; i < _map.groups.length; i++) {
 			var indicators = groupIndicators(_map.groups[i].code, true);
 			if (indicators.length > 0) groups.push(_map.groups[i]);
 		}
@@ -285,7 +290,7 @@ export default function (requestService, d2Meta, d2Utils, $q) {
 
 
 	function deleteGroup(code) {
-		for (var i = 0; i < _map.groups.length; i++) {
+		for (let i = 0; i < _map.groups.length; i++) {
 			if (_map.groups[i].code === code) {
 				_map.groups.splice(i, 1);
 				break;
@@ -319,7 +324,7 @@ export default function (requestService, d2Meta, d2Utils, $q) {
 
 		var data = [], dataCodes = [];
 		if (code != "core") {
-			for (var i = 0; i < _map.groups.length; i++) {
+			for (let i = 0; i < _map.groups.length; i++) {
 				if (_map.groups[i].code === code) {
 					dataCodes = d2Utils.arrayMerge(dataCodes, _map.groups[i].members);
 				}
@@ -329,7 +334,7 @@ export default function (requestService, d2Meta, d2Utils, $q) {
 			dataCodes = _map.coreIndicators;
 		}
 
-		for (var i = 0; i < dataCodes.length; i++) {
+		for (let i = 0; i < dataCodes.length; i++) {
 
 			if (configuredOnly) {
 				if (configuredIndicators(dataCodes[i])) {
@@ -349,7 +354,7 @@ export default function (requestService, d2Meta, d2Utils, $q) {
 
 		var dataSets = [];
 		var data = groupIndicators(code, true);
-		for (var i = 0; i < data.length; i++ ) {
+		for (let i = 0; i < data.length; i++ ) {
 			dataSets.push(indicatorDataSet(data[i].code));
 		}
 
@@ -361,9 +366,9 @@ export default function (requestService, d2Meta, d2Utils, $q) {
 		var relevantRelations = [];
 		var indicators = groupIndicators(code, false);
 		var relations = configuredRelations();
-		for (var i = 0; i < relations.length; i++) {
+		for (let i = 0; i < relations.length; i++) {
 			var aFound = false, bFound = false;
-			for (var j = 0; j < indicators.length; j++) {
+			for (let j = 0; j < indicators.length; j++) {
 				if (relations[i].A === indicators[j].code) aFound = true;
 				if (relations[i].B === indicators[j].code) bFound = true;
 			}
@@ -386,7 +391,7 @@ export default function (requestService, d2Meta, d2Utils, $q) {
 
 		//check if already in group
 		var current = groups(groupCode).members;
-		for (var i = 0; i < current.length; i++) {
+		for (let i = 0; i < current.length; i++) {
 			if (current[i] === dataCode) return;
 		}
 
@@ -398,7 +403,7 @@ export default function (requestService, d2Meta, d2Utils, $q) {
 
 	function removeFromGroup(groupCode, dataCode) {
 		var members = groups(groupCode).members;
-		for (var i = 0; i < members.length; i++) {
+		for (let i = 0; i < members.length; i++) {
 			if (members[i] === dataCode) {
 				members.splice(i, 1);
 			}
@@ -409,14 +414,14 @@ export default function (requestService, d2Meta, d2Utils, $q) {
 
 
 	function removeFromGroups(code) {
-		for (var i = 0; i < _map.groups.length; i++) {
-			for (var j = 0; j < _map.groups[i].members.length; j++) {
+		for (let i = 0; i < _map.groups.length; i++) {
+			for (let j = 0; j < _map.groups[i].members.length; j++) {
 				if (_map.groups[i].members[j] === code) _map.groups[i].members.splice(j, 1);
 			}
 		}
 
 		//Remove from core
-		for (var i = 0; i < _map.coreIndicators.length; i++) {
+		for (let i = 0; i < _map.coreIndicators.length; i++) {
 			if (_map.coreIndicators[i] === code) _map.coreIndicators.splice(i, 1);
 		}
 
@@ -427,18 +432,20 @@ export default function (requestService, d2Meta, d2Utils, $q) {
 	function getNewIndicatorGroupCode() {
 
 		//Get and return next possible code
-		var current, found;
-		for (var i = 0; i <= _map.groups.length; i++) {
+		var current;
+		for (let i = 0; i <= _map.groups.length; i++) {
 
 			current = "G" + parseInt(i+1);
 			var existing = false;
 
-			for (var j = 0; j < _map.groups.length; j++) {
+			for (let j = 0; j < _map.groups.length; j++) {
 				if (_map.groups[j].code === current) existing = true;
 			}
 
 			if (!existing) return current;
 		}
+
+		//TODO: return something if getting here?
 	}
 
 
@@ -448,7 +455,7 @@ export default function (requestService, d2Meta, d2Utils, $q) {
 
 	function indicators(code) {
 		if (code) {
-			for (var i = 0; i < _map.numerators.length; i++) {
+			for (let i = 0; i < _map.numerators.length; i++) {
 				if (_map.numerators[i].code === code) return _map.numerators[i];
 			}
 		}
@@ -487,7 +494,7 @@ export default function (requestService, d2Meta, d2Utils, $q) {
 
 	function configuredIndicators(code) {
 		if (code) {
-			for (var i = 0; i < _map.numerators.length; i++) {
+			for (let i = 0; i < _map.numerators.length; i++) {
 				if (_map.numerators[i].code === code) {
 					if (_map.numerators[i].dataID) {
 						return true;
@@ -499,7 +506,7 @@ export default function (requestService, d2Meta, d2Utils, $q) {
 		}
 		else {
 			var configured = [];
-			for (var i = 0; i < _map.numerators.length; i++) {
+			for (let i = 0; i < _map.numerators.length; i++) {
 				if (_map.numerators[i].dataID) {
 					configured.push(indicators(_map.numerators[i].code));
 				}
@@ -525,7 +532,7 @@ export default function (requestService, d2Meta, d2Utils, $q) {
 
 	function numeratorDelete(code) {
 		var dataSetID;
-		for (var i = 0; i < _map.numerators.length; i++) {
+		for (let i = 0; i < _map.numerators.length; i++) {
 			if (_map.numerators[i].code === code) {
 				dataSetID = _map.numerators[i].dataSetID;
 				_map.numerators.splice(i, 1);
@@ -540,7 +547,7 @@ export default function (requestService, d2Meta, d2Utils, $q) {
 	function numeratorIsCore(code) {
 
 		var core = _map.coreIndicators;
-		for (var i = 0; i < core.length; i++) {
+		for (let i = 0; i < core.length; i++) {
 			if (core[i] === code) return true;
 		}
 
@@ -551,7 +558,7 @@ export default function (requestService, d2Meta, d2Utils, $q) {
 	function makeIndicatorCore(code) {
 
 		var core = _map.coreIndicators;
-		for (var i = 0; i < core.length; i++) {
+		for (let i = 0; i < core.length; i++) {
 			if (core[i] === code) return;
 		}
 
@@ -562,7 +569,7 @@ export default function (requestService, d2Meta, d2Utils, $q) {
 
 	function removeIndicatorCore(code) {
 		var core = _map.coreIndicators;
-		for (var i = 0; i < core.length; i++) {
+		for (let i = 0; i < core.length; i++) {
 			if (core[i] === code) {
 				_map.coreIndicators.splice(i, 1);
 				break;
@@ -587,7 +594,7 @@ export default function (requestService, d2Meta, d2Utils, $q) {
 		}
 
 
-		for (var i = 0; i < _map.numerators.length; i++) {
+		for (let i = 0; i < _map.numerators.length; i++) {
 			if (_map.numerators[i].code === indicator.code) {
 				_map.numerators[i] = indicator;
 				break;
@@ -614,7 +621,7 @@ export default function (requestService, d2Meta, d2Utils, $q) {
 	function indicatorOutlierCriteria(dataID) {
 		var criteria = {};
 		var numerators = indicators(null);
-		for (var i = 0; i < numerators.length; i++) {
+		for (let i = 0; i < numerators.length; i++) {
 			if (numerators[i].dataID == dataID) {
 
 				criteria.moderate = numerators[i].moderateOutlier;
@@ -631,9 +638,9 @@ export default function (requestService, d2Meta, d2Utils, $q) {
 
 	function indicatorGroups(code) {
 		var groups = [];
-		for (var i = 0; i < _map.groups.length; i++) {
-			for (var j = 0; j < _map.groups[i].members.length; j++) {
-				if (_map.groups[i].members[j] === code) {
+		for (let i = 0; i < _map.groups.length; i++) {
+			for (let j = 0; j < _map.groups[i].members.length; j++) {
+				if (_map.groups[i].members[j] === code) {
 					groups.push(_map.groups[i]);
 					break;
 				}
@@ -648,18 +655,20 @@ export default function (requestService, d2Meta, d2Utils, $q) {
 	function getNewIndicatorCode() {
 
 		//Get and return next possible code
-		var current, found;
-		for (var i = 0; i <= _map.numerators.length; i++) {
+		var current;
+		for (let i = 0; i <= _map.numerators.length; i++) {
 
 			current = "C" + parseInt(i+1);
 			var existing = false;
 
-			for (var j = 0; j < _map.numerators.length; j++) {
+			for (let j = 0; j < _map.numerators.length; j++) {
 				if (_map.numerators[j].code === current) existing = true;
 			}
 
 			if (!existing) return current;
 		}
+
+		//TODO: return something if getting here?
 	}
 
 
@@ -670,7 +679,7 @@ export default function (requestService, d2Meta, d2Utils, $q) {
 		removeFromGroups(indicator.code);
 
 		//Add to specified groups
-		for (var i = 0; i < groups.length; i++) {
+		for (let i = 0; i < groups.length; i++) {
 			addToGroup(groups[i].code, indicator.code );
 		}
 
@@ -682,12 +691,12 @@ export default function (requestService, d2Meta, d2Utils, $q) {
 
 	function relations(code) {
 		if (code) {
-			var relations = [];
-			for (var i = 0; i < _map.numeratorRelations.length; i++) {
+			for (let i = 0; i < _map.numeratorRelations.length; i++) {
 				if (_map.numeratorRelations[i].code === code) {
 					return _map.numeratorRelations[i];
 				}
 			}
+			//TODO: return something if getting here?
 		}
 		else {
 			return _map.numeratorRelations;
@@ -697,7 +706,7 @@ export default function (requestService, d2Meta, d2Utils, $q) {
 
 	function configuredRelations(code) {
 		var confRel = [];
-		for (var i = 0; i < _map.numeratorRelations.length; i++) {
+		for (let i = 0; i < _map.numeratorRelations.length; i++) {
 			var rel = _map.numeratorRelations[i];
 
 			if (code && rel.code === code) {
@@ -718,7 +727,7 @@ export default function (requestService, d2Meta, d2Utils, $q) {
 
 	function addEditRelation(relation) {
 		if (relation.code != null) {
-			for (var i = 0; i < _map.numeratorRelations.length; i++) {
+			for (let i = 0; i < _map.numeratorRelations.length; i++) {
 				if (_map.numeratorRelations[i].code === relation.code) {
 					_map.numeratorRelations[i] = relation;
 				}
@@ -734,7 +743,7 @@ export default function (requestService, d2Meta, d2Utils, $q) {
 
 
 	function deleteRelation(code) {
-		for (var i = 0; i < _map.numeratorRelations.length; i++) {
+		for (let i = 0; i < _map.numeratorRelations.length; i++) {
 			if (_map.numeratorRelations[i].code === code) {
 				_map.numeratorRelations.splice(i, 1);
 			}
@@ -745,9 +754,13 @@ export default function (requestService, d2Meta, d2Utils, $q) {
 
 
 	function removeFromRelations(code) {
-		for (var i = 0; i < _map.numeratorRelations.length; i++) {
-			if (_map.numeratorRelations[i].A === code) _map.numeratorRelations[i].A;
-					 	if (_map.numeratorRelations[i].B === code) _map.numeratorRelations[i].B;
+		for (let i = 0; i < _map.numeratorRelations.length; i++) {
+			if (_map.numeratorRelations[i].A === code) {
+				_map.numeratorRelations[i].A;
+			}
+			if (_map.numeratorRelations[i].B === code) {
+				_map.numeratorRelations[i].B;
+			}
 		}
 
 		return save();
@@ -755,18 +768,20 @@ export default function (requestService, d2Meta, d2Utils, $q) {
 
 
 	function relationCode() {
-		var current, found;
-		for (var i = 0; i <= _map.numeratorRelations.length; i++) {
+		var current;
+		for (let i = 0; i <= _map.numeratorRelations.length; i++) {
 
 			current = "R" + parseInt(i+1);
 			var existing = false;
 
-			for (var j = 0; j < _map.numeratorRelations.length; j++) {
+			for (let j = 0; j < _map.numeratorRelations.length; j++) {
 				if (_map.numeratorRelations[j].code === current) existing = true;
 			}
 
 			if (!existing) return current;
 		}
+
+		//TODO: return something if getting here?
 	}
 
 
@@ -774,11 +789,12 @@ export default function (requestService, d2Meta, d2Utils, $q) {
 	/** ===== DATASETS ===== **/
 	function dataSets(id) {
 		if (id) {
-			for (var i = 0; i < _map.dataSets.length; i++) {
+			for (let i = 0; i < _map.dataSets.length; i++) {
 				if (_map.dataSets[i].id === id) {
 					return _map.dataSets[i];
 				}
 			}
+			//TODO: return something if getting here?
 		}
 		else {
 			return _map.dataSets;
@@ -792,7 +808,7 @@ export default function (requestService, d2Meta, d2Utils, $q) {
 
 	function addDataset(id) {
 		//Check if it exists
-		for (var i = 0; i < _map.dataSets.length; i++) {
+		for (let i = 0; i < _map.dataSets.length; i++) {
 
 			if (_map.dataSets[i].id === id) return;
 
@@ -818,14 +834,14 @@ export default function (requestService, d2Meta, d2Utils, $q) {
 	function deleteDataset(id) {
 
 		// 1 check that no remaining indicators still use it
-		for (var i = 0; i < _map.numerators.length; i++) {
+		for (let i = 0; i < _map.numerators.length; i++) {
 			if (_map.numerators[i].dataID && _map.numerators[i].dataID === id) {
 				return;
 			}
 		}
 
 		// 2 if not used by other indicators, remove
-		for (var i = 0; i < _map.dataSets.length; i++) {
+		for (let i = 0; i < _map.dataSets.length; i++) {
 			if (_map.dataSets[i].id === id) {
 				_map.dataSets.slice(i, 1);
 				break;
@@ -841,12 +857,12 @@ export default function (requestService, d2Meta, d2Utils, $q) {
 
 	function denominators(code) {
 		if (code) {
-			var relations = [];
-			for (var i = 0; i < _map.denominators.length; i++) {
+			for (let i = 0; i < _map.denominators.length; i++) {
 				if (_map.denominators[i].code === code) {
 					return _map.denominators[i];
 				}
 			}
+			//TODO: return something if getting here?
 		}
 		else {
 			return _map.denominators;
@@ -856,7 +872,7 @@ export default function (requestService, d2Meta, d2Utils, $q) {
 
 	function denominatorsConfigured(code) {
 		if (code) {
-			for (var i = 0; i < _map.denominators.length; i++) {
+			for (let i = 0; i < _map.denominators.length; i++) {
 				if (_map.denominators[i].code === code) {
 					if (_map.denominators[i].dataID != "") return true;
 					else return false;
@@ -866,7 +882,7 @@ export default function (requestService, d2Meta, d2Utils, $q) {
 		}
 		else {
 			var configured = [];
-			for (var i = 0; i < _map.denominators.length; i++) {
+			for (let i = 0; i < _map.denominators.length; i++) {
 				if (_map.denominators[i].dataID != "") {
 					configured.push(_map.denominators[i]);
 				}
@@ -878,7 +894,7 @@ export default function (requestService, d2Meta, d2Utils, $q) {
 
 	function addEditDenominator(denominator) {
 		if (denominator.code != null) {
-			for (var i = 0; i < _map.denominators.length; i++) {
+			for (let i = 0; i < _map.denominators.length; i++) {
 				if (_map.denominators[i].code === denominator.code) {
 					_map.denominators[i] = denominator;
 				}
@@ -894,7 +910,7 @@ export default function (requestService, d2Meta, d2Utils, $q) {
 
 
 	function deleteDenominator(code) {
-		for (var i = 0; i < _map.denominators.length; i++) {
+		for (let i = 0; i < _map.denominators.length; i++) {
 			if (_map.denominators[i].code === code) {
 				_map.denominators.splice(i, 1);
 			}
@@ -918,7 +934,7 @@ export default function (requestService, d2Meta, d2Utils, $q) {
 
 	function denominatorType(code) {
 		var types = denominatorTypes();
-		for (var i = 0; i < types.length; i++) {
+		for (let i = 0; i < types.length; i++) {
 			if (types[i].code === code) return types[i];
 		}
 
@@ -930,25 +946,27 @@ export default function (requestService, d2Meta, d2Utils, $q) {
 	function denominatorCode() {
 
 		//Get and return next possible code
-		var current, found;
-		for (var i = 0; i <= _map.denominators.length; i++) {
+		var current;
+		for (let i = 0; i <= _map.denominators.length; i++) {
 
 			current = "P" + parseInt(i + 1);
 			var existing = false;
 
-			for (var j = 0; j < _map.denominators.length; j++) {
+			for (let j = 0; j < _map.denominators.length; j++) {
 				if (_map.denominators[j].code === current) existing = true;
 			}
 
 			if (!existing) return current;
 		}
+
+		//TODO: return something if getting here?
 	}
 
 
 	/** ====== DENOMINATOR RELATIONS ===== **/
 	function denominatorRelations(code) {
 		if (code) {
-			for (var i = 0; i < _map.denominatorRelations.length; i++) {
+			for (let i = 0; i < _map.denominatorRelations.length; i++) {
 				if (_map.denominatorRelations[i].code === code) {
 					return _map.denominatorRelations[i];
 				}
@@ -962,7 +980,7 @@ export default function (requestService, d2Meta, d2Utils, $q) {
 
 	function denominatorRelationDenominators(code) {
 		if (code) {
-			for (var i = 0; i < _map.denominatorRelations.length; i++) {
+			for (let i = 0; i < _map.denominatorRelations.length; i++) {
 				if (_map.denominatorRelations[i].code === code) {
 					return {
 						"a": denominators(_map.denominatorRelations[i].A),
@@ -979,7 +997,7 @@ export default function (requestService, d2Meta, d2Utils, $q) {
 
 	function addEditDenominatorRelation(denominatorRelation) {
 		if (denominatorRelation.code != null) {
-			for (var i = 0; i < _map.denominatorRelations.length; i++) {
+			for (let i = 0; i < _map.denominatorRelations.length; i++) {
 				if (_map.denominatorRelations[i].code === denominatorRelation.code) {
 					_map.denominatorRelations[i] = denominatorRelation;
 				}
@@ -995,7 +1013,7 @@ export default function (requestService, d2Meta, d2Utils, $q) {
 
 
 	function deleteDenominatorRelation(code) {
-		for (var i = 0; i < _map.denominatorRelations.length; i++) {
+		for (let i = 0; i < _map.denominatorRelations.length; i++) {
 			if (_map.denominatorRelations[i].code === code) {
 				_map.denominatorRelations.splice(i, 1);
 			}
@@ -1008,18 +1026,20 @@ export default function (requestService, d2Meta, d2Utils, $q) {
 	function denominatorRelationCode() {
 
 		//Get and return next possible code
-		var current, found;
-		for (var i = 0; i <= _map.denominatorRelations.length; i++) {
+		var current;
+		for (let i = 0; i <= _map.denominatorRelations.length; i++) {
 
 			current = "PR" + parseInt(i + 1);
 			var existing = false;
 
-			for (var j = 0; j < _map.denominatorRelations.length; j++) {
+			for (let j = 0; j < _map.denominatorRelations.length; j++) {
 				if (_map.denominatorRelations[j].code === current) existing = true;
 			}
 
 			if (!existing) return current;
 		}
+
+		//TODO: return something if getting here?
 	}
 
 
@@ -1027,7 +1047,7 @@ export default function (requestService, d2Meta, d2Utils, $q) {
 	/** ====== EXTERNAL RELATIONS ===== **/
 	function externalRelations(code) {
 		if (code) {
-			for (var i = 0; i < _map.externalRelations.length; i++) {
+			for (let i = 0; i < _map.externalRelations.length; i++) {
 				if (_map.externalRelations[i].code === code) {
 					return _map.externalRelations[i];
 				}
@@ -1041,7 +1061,7 @@ export default function (requestService, d2Meta, d2Utils, $q) {
 
 	function addEditExternalRelation(externalRelation) {
 		if (externalRelation.code != null) {
-			for (var i = 0; i < _map.externalRelations.length; i++) {
+			for (let i = 0; i < _map.externalRelations.length; i++) {
 				if (_map.externalRelations[i].code === externalRelation.code) {
 					_map.externalRelations[i] = externalRelation;
 				}
@@ -1057,7 +1077,7 @@ export default function (requestService, d2Meta, d2Utils, $q) {
 
 
 	function deleteExternalRelation(code) {
-		for (var i = 0; i < _map.externalRelations.length; i++) {
+		for (let i = 0; i < _map.externalRelations.length; i++) {
 			if (_map.externalRelations[i].code === code) {
 				_map.externalRelations.splice(i, 1);
 			}
@@ -1070,18 +1090,20 @@ export default function (requestService, d2Meta, d2Utils, $q) {
 	function externalRelationCode() {
 
 		//Get and return next possible code
-		var current, found;
-		for (var i = 0; i <= _map.externalRelations.length; i++) {
+		var current;
+		for (let i = 0; i <= _map.externalRelations.length; i++) {
 
 			current = "ER" + parseInt(i + 1);
 			var existing = false;
 
-			for (var j = 0; j < _map.externalRelations.length; j++) {
+			for (let j = 0; j < _map.externalRelations.length; j++) {
 				if (_map.externalRelations[j].code === current) existing = true;
 			}
 
 			if (!existing) return current;
 		}
+
+		//TODO: return something if getting here.
 	}
 
 
@@ -1119,39 +1141,39 @@ export default function (requestService, d2Meta, d2Utils, $q) {
 
 	function dataRelationType(code) {
 		var types = dataRelationTypes();
-		for (var i = 0; i < types.length; i++) {
+		for (let i = 0; i < types.length; i++) {
 			if (types[i].code === code) return types[i];
 		}
 	}
 
 
 	/** UTILITIES **/
-	function indicatorIsRelevant(dataCode, groupCode) {
+	/*function indicatorIsRelevant(dataCode, groupCode) {
 
 		var data = groupIndicators(groupCode);
-		for (var i = 0; i < data.length; i++) {
+		for (let i = 0; i < data.length; i++) {
 			if (data[i].code === dataCode) return true;
 		}
 
 		return false;
-	}
+	} */
 
 
 
 	function d2IDs() {
 		var dataIDs = [];
-		for (var i = 0; i < _map.numerators.length; i++) {
+		for (let i = 0; i < _map.numerators.length; i++) {
 			if (_map.numerators[i].dataID) {
 				dataIDs.push(_map.numerators[i].dataID);
 			}
 		}
-		for (var i = 0; i < _map.dataSets.length; i++) {
+		for (let i = 0; i < _map.dataSets.length; i++) {
 			dataIDs.push(_map.dataSets[i].id);
 		}
-		for (var i = 0; i < _map.denominators.length; i++) {
+		for (let i = 0; i < _map.denominators.length; i++) {
 			if (_map.denominators[i].dataID != "") dataIDs.push(_map.denominators[i].dataID);
 		}
-		for (var i = 0; i < _map.externalRelations.length; i++) {
+		for (let i = 0; i < _map.externalRelations.length; i++) {
 			if (_map.externalRelations[i].externalData != "") dataIDs.push(_map.externalRelations[i].externalData);
 		}
 		return dataIDs.sort();
@@ -1171,7 +1193,7 @@ export default function (requestService, d2Meta, d2Utils, $q) {
 
 		//Remove non-operands, to speed things up
 		var operands = [];
-		for (var i = 0; i < dataIDs.length; i++) {
+		for (let i = 0; i < dataIDs.length; i++) {
 			if (dataIDs[i].length === 23) { //11 + . + 11
 				operands.push(dataIDs[i]);
 			}
@@ -1185,8 +1207,8 @@ export default function (requestService, d2Meta, d2Utils, $q) {
 		$q.all(promises).then(
 			function(datas) {
 				_d2Objects = {};
-				for (var i = 0; i < datas.length; i++) {
-					for (var j = 0; j < datas[i].length; j++) {
+				for (let i = 0; i < datas.length; i++) {
+					for (let j = 0; j < datas[i].length; j++) {
 						_d2Objects[datas[i][j].id] = datas[i][j];
 					}
 				}

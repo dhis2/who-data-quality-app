@@ -201,8 +201,8 @@ export default function ($q, requestService, mathService, d2Meta, d2Map) {
 							function(data) {
 
 								var children = [];
-								for (var i = 0; i < data.length; i++) {
-									for (var j = 0; j < data[i].children.length; j++) {
+								for (let i = 0; i < data.length; i++) {
+									for (let j = 0; j < data[i].children.length; j++) {
 										children.push(data[i].children[j].id);
 									}
 								}
@@ -293,8 +293,8 @@ export default function ($q, requestService, mathService, d2Meta, d2Map) {
 		var result = self.og.result;
 
 		//Get the index of the important columns
-		var ou, dx, co, valStart;
-		for (var i = 0; i < headers.length; i++) {
+		var ou, dx, valStart;
+		for (let i = 0; i < headers.length; i++) {
 			switch (headers[i].column) {
 			case "organisationunitid":
 				ou = i;
@@ -312,7 +312,7 @@ export default function ($q, requestService, mathService, d2Meta, d2Map) {
 
 		//Process the actual data
 		var row, newRow;
-		for (var i = 0; i < rows.length; i++) {
+		for (let i = 0; i < rows.length; i++) {
 			row = rows[i];
 
 
@@ -325,7 +325,7 @@ export default function ($q, requestService, mathService, d2Meta, d2Map) {
 
 			//Iterate to get all values, and look for gaps at the same time
 			var value, valueSet = [], gaps = 0;
-			for (var j = row.length - 1; j >= valStart; j--) {
+			for (let j = row.length - 1; j >= valStart; j--) {
 				value = row[j];
 				newRow.data.unshift(value);
 
@@ -414,7 +414,7 @@ export default function ($q, requestService, mathService, d2Meta, d2Map) {
 
 		//Look for outliers
 		var standardScore, zScore, maxSscore = 0, maxZscore = 0, outliers = 0, value;
-		for (var j = 0; j < valueSet.length; j++) {
+		for (let j = 0; j < valueSet.length; j++) {
 
 			value = parseFloat(valueSet[j]);
 
@@ -458,7 +458,7 @@ export default function ($q, requestService, mathService, d2Meta, d2Map) {
 		hierarchyIDs.splice(0,2); //Get rid of leading "" and root, which is not needed
 
 		var hierarchyNames = [];
-		for (var i = 0; i < hierarchyIDs.length; i++) {
+		for (let i = 0; i < hierarchyIDs.length; i++) {
 
 			hierarchyNames.push(metaData.items[hierarchyIDs[i]].name);
 
@@ -501,7 +501,7 @@ export default function ($q, requestService, mathService, d2Meta, d2Map) {
 			return b.result.totalWeight - a.result.totalWeight;
 		});
 
-		for (var i = resultLimit; i < result.rows.length; i++) {
+		for (let i = resultLimit; i < result.rows.length; i++) {
 			result.rows[i] = null;
 		}
 		result.rows.splice(resultLimit, result.rows.length - resultLimit);
@@ -517,7 +517,7 @@ export default function ($q, requestService, mathService, d2Meta, d2Map) {
 			"c1000+": 0
 		};
 		var w;
-		for (var i = 0; i < result.rows.length; i++) {
+		for (let i = 0; i < result.rows.length; i++) {
 			w = result.rows[i].result.totalWeight;
 			if (w <= 100) {
 				weights["c0-100"]++;
@@ -561,6 +561,7 @@ export default function ($q, requestService, mathService, d2Meta, d2Map) {
 
 		outlierGapResultHistorgram(result); //Only for dev purposes
 
+		// eslint-disable-next-line no-unused-vars
 		outlierGapMetaData(result).then(function(success) {
 			self.og.callback(result);
 
@@ -577,7 +578,7 @@ export default function ($q, requestService, mathService, d2Meta, d2Map) {
 		//Check how many levels we need - might have orgunits at different levels when using group selection
 		var maxLevels = 0;
 		var row;
-		for (var i = 0; i < result.rows.length; i++) {
+		for (let i = 0; i < result.rows.length; i++) {
 			row = result.rows[i];
 			if (row.metaData.ou.hierarchy.length > maxLevels) maxLevels = row.metaData.ou.hierarchy.length;
 		}
@@ -585,12 +586,11 @@ export default function ($q, requestService, mathService, d2Meta, d2Map) {
 
 		d2Meta.objects("organisationUnitLevels", null, "name,id,level").then(function(levels) {
 
-			var levels = levels;
 			levels.sort(function(a, b) { return a.level - b.level;});
 			levels.splice(0,1); //remove root
 
 			var levelNames = [];
-			for (var i = 0; i < maxLevels; i++) {
+			for (let i = 0; i < maxLevels; i++) {
 				if (levels[i] && levels[i].name) levelNames.push(levels[i].name);
 			}
 
@@ -659,6 +659,7 @@ export default function ($q, requestService, mathService, d2Meta, d2Map) {
 				startDatasetCompletenessAnalysis();
 			},
 			//error
+			// eslint-disable-next-line no-unused-vars
 			function (response) {
 				console.log("Error fetching data");
 			}
@@ -667,11 +668,11 @@ export default function ($q, requestService, mathService, d2Meta, d2Map) {
 		//2 request subunit completeness data
 		var ou;
 		if (self.dsco.ouBoundary) ou = self.dsco.ouBoundary + ";LEVEL-" + self.dsco.ouLevel;
-		else ou = LEVEL - self.dsco.ouLevel; //TODO - LEVEL is what?
+		else ou = "LEVEL-" + self.dsco.ouLevel;
 
-		var requestURL = "/analytics.json?dimension=dx:" + self.dsco.dsID + "&dimension=ou:" + ou + "&dimension=pe:" + self.dsco.pe + "&displayProperty=NAME";
+		var requestURL2 = "/analytics.json?dimension=dx:" + self.dsco.dsID + "&dimension=ou:" + ou + "&dimension=pe:" + self.dsco.pe + "&displayProperty=NAME";
 
-		requestService.getSingle(requestURL).then(
+		requestService.getSingle(requestURL2).then(
 			//success
 			function (response) {
 				if (!requestService.validResponse(response)) return;
@@ -679,6 +680,7 @@ export default function ($q, requestService, mathService, d2Meta, d2Map) {
 				startDatasetCompletenessAnalysis();
 			},
 			//error
+			// eslint-disable-next-line no-unused-vars
 			function (response) {
 				console.log("Error fetching data");
 			}
@@ -720,7 +722,7 @@ export default function ($q, requestService, mathService, d2Meta, d2Map) {
 
 		//Get subunit values
 		var value;
-		for (var j = 0; j < ouSubunitIDs.length; j++) {
+		for (let j = 0; j < ouSubunitIDs.length; j++) {
 			value = dataValue(headers, data, dsID, pe, ouSubunitIDs[j], null);
 			if (isNumber(value)) {
 				if (value > threshold) subunitsWithinThreshold++;
@@ -810,6 +812,7 @@ export default function ($q, requestService, mathService, d2Meta, d2Map) {
 				startDataCompletenessAnalysis();
 			},
 			//error
+			// eslint-disable-next-line no-unused-vars
 			function (response) {
 				console.log("Error fetching data");
 			}
@@ -839,10 +842,10 @@ export default function ($q, requestService, mathService, d2Meta, d2Map) {
 		var subunitViolationNames = [];
 
 		var valid, value, completeness;
-		for (var i = 0; i < subunits.length; i++) {
+		for (let i = 0; i < subunits.length; i++) {
 
 			valid = 0;
-			for (var j = 0; j < periods.length; j++) {
+			for (let j = 0; j < periods.length; j++) {
 
 				value = dataValue(headers, rows, dxID, periods[j], subunits[i], null);
 				if (isNumber(value) && parseFloat(value) != 0) valid++;
@@ -937,6 +940,7 @@ export default function ($q, requestService, mathService, d2Meta, d2Map) {
 				startIndicatorOutlierAnalysis();
 			},
 			//error
+			// eslint-disable-next-line no-unused-vars
 			function (response) {
 				console.log("Error fetching data");
 			}
@@ -970,13 +974,13 @@ export default function ($q, requestService, mathService, d2Meta, d2Map) {
 		var moderateLimit = self.io.indicator.moderateOutlier;
 
 		var value, valueSet, extremeCount, moderateCount, zCount;
-		for (var i = 0; i < subunits.length; i++) {
+		for (let i = 0; i < subunits.length; i++) {
 			valueSet = [];
 			extremeCount = 0;
 			moderateCount = 0;
 			zCount = 0;
 
-			for (var j = 0; j < periods.length; j++) {
+			for (let j = 0; j < periods.length; j++) {
 				value = dataValue(headers, rows, de, periods[j], subunits[i], null);
 				if (isNumber(value)) valueSet.push(parseFloat(value));
 			}
@@ -988,7 +992,7 @@ export default function ($q, requestService, mathService, d2Meta, d2Map) {
 			var extMax = stats.mean + stats.sd * extremeLimit;
 			var extMin = stats.mean - stats.sd * extremeLimit;
 
-			for (var j = 0; j < valueSet.length; j++) {
+			for (let j = 0; j < valueSet.length; j++) {
 				if (valueSet[j] > extMax || valueSet[j] < extMin) {
 					extremeCount++;
 					totalExtremeOutliers++;
@@ -1055,7 +1059,7 @@ export default function ($q, requestService, mathService, d2Meta, d2Map) {
 			 */
 	function dataValue(header, dataValues, de, pe, ou, co) {
 		var dxi, pei, oui, coi, vali;
-		for (var i = 0; i < header.length; i++) {
+		for (let i = 0; i < header.length; i++) {
 			if (header[i].name === "dx" && !header[i].hidden) dxi = i;
 			if (header[i].name === "ou" && !header[i].hidden) oui = i;
 			if (header[i].name === "pe" && !header[i].hidden) pei = i;
@@ -1064,7 +1068,7 @@ export default function ($q, requestService, mathService, d2Meta, d2Map) {
 		}
 
 		var data;
-		for (var i = 0; i < dataValues.length; i++) {
+		for (let i = 0; i < dataValues.length; i++) {
 			data = dataValues[i];
 			if (
 				(dxi === undefined || data[dxi] === de) &&
@@ -1086,7 +1090,7 @@ export default function ($q, requestService, mathService, d2Meta, d2Map) {
 		}
 
 		var normCount = 0, normSum = 0, total = 0;
-		for (var i = 0; i < valueSet.length; i++) {
+		for (let i = 0; i < valueSet.length; i++) {
 			var value = valueSet[i];
 			var standardScore = Math.abs(mathService.calculateStandardScore(value, stats));
 			var zScore = Math.abs(mathService.calculateZScore(value, stats));
@@ -1140,7 +1144,7 @@ export default function ($q, requestService, mathService, d2Meta, d2Map) {
 
 	function getNextRequest() {
 
-		for (var i = 0; i < self.requests.queue.length; i++) {
+		for (let i = 0; i < self.requests.queue.length; i++) {
 			if (!self.requests.queue[i].pending) {
 				return self.requests.queue[i];
 			}
@@ -1150,7 +1154,7 @@ export default function ($q, requestService, mathService, d2Meta, d2Map) {
 
 
 	function requestSucceeded(url) {
-		for (var i = 0; i < self.requests.queue.length; i++) {
+		for (let i = 0; i < self.requests.queue.length; i++) {
 
 			if (url.indexOf(self.requests.queue[i].url) > -1) {
 
@@ -1166,7 +1170,7 @@ export default function ($q, requestService, mathService, d2Meta, d2Map) {
 
 
 	function requestFailed(url) {
-		for (var i = 0; i < self.requests.queue.length; i++) {
+		for (let i = 0; i < self.requests.queue.length; i++) {
 			if (url.indexOf(self.requests.queue[i].url) > -1) {
 
 				self.requests.queue[i].pending = false;
@@ -1232,7 +1236,7 @@ export default function ($q, requestService, mathService, d2Meta, d2Map) {
 			self.status.done++;
 
 			//Mark item in queue as downloaded
-			var requestType = requestSucceeded(requestURL);
+			requestType = requestSucceeded(requestURL);
 			if (requestType != null) {
 				//Queue data for processing
 				self.process.queue.push({
@@ -1270,7 +1274,7 @@ export default function ($q, requestService, mathService, d2Meta, d2Map) {
 
 	function getNextData() {
 
-		for (var i = 0; i < self.process.queue.length; i++) {
+		for (let i = 0; i < self.process.queue.length; i++) {
 			if (!self.process.queue[i].pending) {
 				return self.process.queue[i];
 			}
@@ -1281,7 +1285,7 @@ export default function ($q, requestService, mathService, d2Meta, d2Map) {
 
 	//OKAY - remove object
 	function processingSucceeded(id) {
-		for (var i = 0; i < self.process.queue.length; i++) {
+		for (let i = 0; i < self.process.queue.length; i++) {
 			if (self.process.queue[i].id === id) {
 				self.process.queue[i].data = null;
 				self.process.queue[i] = null;
@@ -1299,14 +1303,14 @@ export default function ($q, requestService, mathService, d2Meta, d2Map) {
 	function processingDone(type) {
 
 		//Check if all requests haver returned
-		for (var i = 0; i < self.requests.queue.length; i++) {
+		for (let i = 0; i < self.requests.queue.length; i++) {
 			if (self.requests.queue[i].type === type) {
 				return false;
 			}
 		}
 
 		//Check if all processing is done
-		for (var i = 0; i < self.process.queue.length; i++) {
+		for (let i = 0; i < self.process.queue.length; i++) {
 			if (self.process.queue[i].type === type) {
 				return false;
 			}

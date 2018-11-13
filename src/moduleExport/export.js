@@ -43,7 +43,7 @@ angular.module("dataExport").controller("ExportController",
 
 						var data = [];
 						var parent, row;
-						for (var i = 0; i < ouData.length; i++) {
+						for (let i = 0; i < ouData.length; i++) {
 							row = [];
 							row.push((i+1));
 							row.push(ouData[i].name);

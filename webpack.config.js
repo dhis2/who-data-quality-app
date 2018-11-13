@@ -41,30 +41,30 @@ const webpackConfig = {
 		publicPath: isDevBuild ? 'http://localhost:8081/' : './'
 	},
 	module: {
-		loaders: [
+		rules: [
 			{
 				test: /\.css$/,
-				loader: 'style-loader!css-loader',
+				use: ['style-loader', 'css-loader' ],
 			},
 			{
 				test: /\.scss$/,
-				loader: 'style-loader!css-loader!sass-loader',
+				use: ['style-loader', 'css-loader', 'sass-loader' ],
 			},
 			{
 				test: /\.html$/,
-				loader: "html-loader"
+				use: { loader: "html-loader" }
 			},
 			{
 				test: /\.png$/,
-				loader: "url-loader?limit=100000"
+				use: { loader: "url-loader?limit=100000" }
 			},
 			{
 				test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
-				loader: "url-loader?limit=10000&mimetype=application/font-woff"
+				use: { loader: "url-loader?limit=10000&mimetype=application/font-woff" }
 			},
 			{
 				test: /\.(ttf|otf|eot|svg)(\?v=[0-9]\.[0-9]\.[0-9])?|(jpg|gif)$/,
-				loader: "file-loader"
+				use: { loader: "file-loader" }
 			}
 		]
 	},
@@ -110,11 +110,7 @@ const webpackConfig = {
 			'process.env.NODE_ENV': '"production"',
 			DHIS_CONFIG: JSON.stringify({}),
 		}),
-		isDevBuild ? undefined : new webpack.optimize.OccurrenceOrderPlugin(),
-		isDevBuild ? undefined : new webpack.optimize.UglifyJsPlugin({
-			comments: false,
-			sourceMap: true
-		})
+		isDevBuild ? undefined : new webpack.optimize.OccurrenceOrderPlugin()
 	].filter(v => v),
 	devServer: {
 		port: devServerPort,

@@ -46,8 +46,8 @@ app.controller("OutlierResultController",
 					self.alerts = [];
 					console.log("Received " + result.rows.length + " rows");
 					if (result.trimmed) {
-						var message = $i18next.t('Due to its size, the result was trimmed down to ') + result.rows.length + $i18next.t(' rows. ');
-						message += $i18next.t('Rows were prioritized based on total weight (significance of missing data and outliers), with rows with the lowest weight being left out of the result.');
+						var message = $i18next.t("Due to its size, the result was trimmed down to ") + result.rows.length + $i18next.t(" rows. ");
+						message += $i18next.t("Rows were prioritized based on total weight (significance of missing data and outliers), with rows with the lowest weight being left out of the result.");
 						notification("Warning", message);
 					}
 				}
@@ -79,7 +79,7 @@ app.controller("OutlierResultController",
 
 				//Get nice period names
 				self.periods = [];
-				for (var i = 0; i < self.result.metaData.periods.length; i++) {
+				for (let i = 0; i < self.result.metaData.periods.length; i++) {
 					var period = self.result.metaData.periods[i];
 					self.periods.push(periodService.shortPeriodName(period));
 				}
@@ -128,7 +128,7 @@ app.controller("OutlierResultController",
 
 			self.updateFilter = function () {
 				self.filteredRows = [];
-				for (var i = 0; i < self.result.rows.length; i++) {
+				for (let i = 0; i < self.result.rows.length; i++) {
 					if (includeRow(self.result.rows[i])) {
 						self.filteredRows.push(self.result.rows[i]);
 					}
@@ -175,7 +175,7 @@ app.controller("OutlierResultController",
 					"color": "green",
 					"values": []
 				}];
-				for (var i = 0; i < row.data.length; i++) {
+				for (let i = 0; i < row.data.length; i++) {
 					var value = row.data[i];
 					if (value === "") value = null;
 					else value = parseFloat(value);
@@ -228,6 +228,7 @@ app.controller("OutlierResultController",
 					}
 				});
 
+				// eslint-disable-next-line no-unused-vars
 				modalInstance.result.then(function (result) {
 				});
 			};
@@ -249,6 +250,7 @@ app.controller("OutlierResultController",
 					}
 				});
 
+				// eslint-disable-next-line no-unused-vars
 				modalInstance.result.then(function (result) {
 				});
 			};
@@ -265,7 +267,7 @@ app.controller("OutlierResultController",
 					if (children.length > 0) {
 
 						var orgunits = [];
-						for (var i = 0; i < children.length; i++) {
+						for (let i = 0; i < children.length; i++) {
 							orgunits.push(children[i].id);
 						}
 
@@ -281,7 +283,7 @@ app.controller("OutlierResultController",
 					}
 
 					else {
-						notification($i18next.t('Warning'), $i18next.t('Not possible to drill down, ') + rowMetaData.ou.name + $i18next.t(' has no children.'));
+						notification($i18next.t("Warning"), $i18next.t("Not possible to drill down, ") + rowMetaData.ou.name + $i18next.t(" has no children."));
 					}
 				});
 
@@ -304,6 +306,7 @@ app.controller("OutlierResultController",
 					}
 				});
 
+				// eslint-disable-next-line no-unused-vars
 				modalInstance.result.then(function (result) {
 					console.log("Export done");
 				});
@@ -321,18 +324,19 @@ app.controller("OutlierResultController",
 				headers = headers.concat(["Max Z score", "Max modified Z score", "Gap weight", "Outlier weight", "Total weight"]);
 
 				var data = self.result.rows;
-				for (var i = 0; i < data.length; i++) {
+				var j;
+				for (let i = 0; i < data.length; i++) {
 					var row = [];
 					var value = data[i];
 
 					row.push(value.metaData.ou.id);
 					row.push(value.metaData.dx.id);
-					for (var j = 0; j < self.result.metaData.hierarchy.length; j++) {
+					for (j = 0; j < self.result.metaData.hierarchy.length; j++) {
 						value.metaData.ou.hierarchy[j] ? row.push(value.metaData.ou.hierarchy[j]) : row.push("");
 					}
 					row.push(value.metaData.ou.name);
 					row.push(value.metaData.dx.name);
-					for (var j = 0; j < value.data.length; j++) {
+					for (j = 0; j < value.data.length; j++) {
 						row.push(value.data[j]);
 					}
 					row.push(value.result.maxSscore);
@@ -364,6 +368,7 @@ app.controller("OutlierResultController",
 					}
 				});
 
+				// eslint-disable-next-line no-unused-vars
 				modalInstance.result.then(function (result) {
 				});
 			}

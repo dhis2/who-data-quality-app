@@ -21,16 +21,16 @@ require("./adminNumeratorRelationController.js");
 /**Controller: Parameters*/
 
 angular.module("admin").controller("AdminController",
-	["$uibModal", "notificationService", "d2Map", "d2Meta", "d2Utils",
-		function($uibModal, notificationService, d2Map, d2Meta, d2Utils) {
+	["$uibModal", "notificationService", "d2Map", "d2Meta",
+		function($uibModal, notificationService, d2Map, d2Meta) {
 
 			var self = this;
 
 			d2Map.load().then(
-				function(data) {
+				function() {
 					init();
 				},
-				function(error) {
+				function() {
 					console.log("Unable to get mapping");
 				}
 			);
@@ -196,7 +196,7 @@ angular.module("admin").controller("AdminController",
 			self.groupFilterNumerators = function (currentMembers) {
 				return function(item) {
 
-					for (var i = 0; i < currentMembers.length; i++) {
+					for (let i = 0; i < currentMembers.length; i++) {
 						if (currentMembers[i] === item.code) return false;
 					}
 					return true;
@@ -334,7 +334,7 @@ angular.module("admin").controller("AdminController",
 			/** ==== D2META WRAPPERS FOR PRESENTATION ==== **/
 			self.d2OrgunitLevelNameFromLevel = function(level) {
 
-				for (var i = 0; self.orgunitLevels && i < self.orgunitLevels.length; i++) {
+				for (let i = 0; self.orgunitLevels && i < self.orgunitLevels.length; i++) {
 					if (self.orgunitLevels[i].level === level) {
 						return self.orgunitLevels[i].displayName;
 					}
@@ -349,7 +349,7 @@ angular.module("admin").controller("AdminController",
 			self.dataGroups = function(code) {
 				var groups = d2Map.numeratorGroups(code);
 				var groupNames = [];
-				for (var i = 0; i < groups.length; i++) {
+				for (let i = 0; i < groups.length; i++) {
 					groupNames.push(groups[i].name);
 				}
 				return groupNames.sort().join(", ");
@@ -405,7 +405,7 @@ angular.module("admin").controller("AdminController",
 			function makeOutlierOptions() {
 				var opts = [];
 				opts.push({"val": -1, "label": "Ignore"});
-				for (var i = 1.5; i <= 4.05; i += 0.1) {
+				for (let i = 1.5; i <= 4.05; i += 0.1) {
 					opts.push({"val": (Math.round(10*i)/10), "label": (Math.round(10*i)/10).toString()});
 				}
 				return opts;

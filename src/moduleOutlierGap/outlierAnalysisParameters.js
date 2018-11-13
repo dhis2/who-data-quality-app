@@ -9,8 +9,8 @@
 const moment = require("moment");
 
 angular.module("outlierGapAnalysis").controller("OutlierGapAnalysisController",
-	["d2Meta", "d2Utils", "d2Map", "periodService", "requestService", "dataAnalysisService", "$scope",
-		function(d2Meta, d2Utils, d2Map, periodService, requestService, dataAnalysisService, $scope) {
+	["d2Meta", "d2Utils", "d2Map", "periodService", "requestService", "dataAnalysisService",
+		function(d2Meta, d2Utils, d2Map, periodService, requestService, dataAnalysisService) {
 
 			var self = this;
 

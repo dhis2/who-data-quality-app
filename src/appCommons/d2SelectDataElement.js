@@ -36,7 +36,7 @@
 				self.element;
 				self.disaggregation = 0;
 
-				self.placeholder = $i18next.t('Select data element...');
+				self.placeholder = $i18next.t("Select data element...");
 
 				self.getElements = getElements;
 				self.frameWidth = frameWidth;
@@ -60,7 +60,7 @@
 						//Check if "all" is included
 						if (self.multiple) {
 							var currentModel = [];
-							for (var i = 0; i < self.element.length; i++) {
+							for (let i = 0; i < self.element.length; i++) {
 								if (self.element[i].id === "all") {
 									d2Utils.arrayMerge(currentModel, self.element[i].elements);
 								}
@@ -84,11 +84,11 @@
 				function getElements() {
 					if (!self.group) return;
 
-					self.placeholder = $i18next.t('Loading...');
+					self.placeholder = $i18next.t("Loading...");
 
+					var fields;
 
 					if (self.disaggregation === 0) {
-						var fields;
 						if (self.dataset) {
 							fields = "dataSetElements[dataElement[displayName,id]]";
 						}
@@ -99,7 +99,7 @@
 						d2Meta.object(object, self.group.id, fields).then(function(data) {
 							if (self.dataset) {
 								var elements = [];
-								for (var i = 0; i < data.dataSetElements.length; i++) {
+								for (let i = 0; i < data.dataSetElements.length; i++) {
 									elements.push(data.dataSetElements[i].dataElement);
 								}
 								saveElements(elements);
@@ -118,15 +118,15 @@
 						else {
 							filter = "dataElement.dataElementGroups.id:eq:" + self.group.id;
 						}
-						var fields = "displayName,id,dataElementId,optionComboId";
+						fields = "displayName,id,dataElementId,optionComboId";
 						d2Meta.objects("dataElementOperands", null, fields, filter).then(function(data) {saveElements(data);});
 					}
 				}
 
 
 				function saveElements(data) {
-					if (data.length === 0) self.placeholder = $i18next.t('No data elements in ') + self.group.name;
-					else self.placeholder = $i18next.t('Select data element...');
+					if (data.length === 0) self.placeholder = $i18next.t("No data elements in ") + self.group.name;
+					else self.placeholder = $i18next.t("Select data element...");
 
 
 					if (self.multiple) filterElements(data);
@@ -134,7 +134,7 @@
 
 					if (self.multiple != undefined && self.multiple) {
 						data.unshift({
-							displayName: $i18next.t('[All data elements]'),
+							displayName: $i18next.t("[All data elements]"),
 							id: "all",
 							group: self.group.id,
 							elements: angular.copy(data)
@@ -146,8 +146,8 @@
 
 
 				function filterElements(data) {
-					for (var i = 0; i < data.length; i++) {
-						for (var j = 0; self.element && j < self.element.length; j++) {
+					for (let i = 0; i < data.length; i++) {
+						for (let j = 0; self.element && j < self.element.length; j++) {
 
 							var remove = false;
 							if (data[i].id === self.element[j].id) {

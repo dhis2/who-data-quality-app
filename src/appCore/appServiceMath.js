@@ -19,7 +19,7 @@ export default function () {
 	self.getMean = function(valueSet) {
 		var total = 0;
 
-		for (var i = 0; i < valueSet.length; i++) {
+		for (let i = 0; i < valueSet.length; i++) {
 			total += parseFloat(valueSet[i]);
 		}
 
@@ -35,7 +35,7 @@ export default function () {
 		if (!mean) mean = self.getMean(valueSet);
 
 		var variance = 0;
-		for (var i = 0; i < valueSet.length; i++) {
+		for (let i = 0; i < valueSet.length; i++) {
 			variance += Math.pow((valueSet[i] - mean), 2);
 		}
 
@@ -58,7 +58,7 @@ export default function () {
 		if (!median) median = self.median(valueSet);
 
 		var absoluteDeviations = [];
-		for (var i = 0; i < valueSet.length; i++) {
+		for (let i = 0; i < valueSet.length; i++) {
 			absoluteDeviations.push(Math.abs(valueSet[i]-median));
 		}
 
@@ -72,7 +72,7 @@ export default function () {
 		if (!median) median = self.median(valueSet);
 
 		var absoluteDeviations = [];
-		for (var i = 0; i < valueSet.length; i++) {
+		for (let i = 0; i < valueSet.length; i++) {
 			absoluteDeviations.push(Math.abs(valueSet[i]-median));
 		}
 

@@ -14,7 +14,7 @@ export default function (requestService, periodService, d2Utils, $q) {
 		objects: objects,
 		orgunitIDs: orgunitIDs,
 		orgunitCountEstimate: orgunitCountEstimate,
-		userOrgunit: userOrgunit,
+		//userOrgunit: userOrgunit,
 		userOrgunits: userOrgunits,
 		userOrgunitsHierarchy: userOrgunitsHierarchy,
 		userAnalysisOrgunits: userAnalysisOrgunits,
@@ -101,13 +101,13 @@ export default function (requestService, periodService, d2Utils, $q) {
 	/** ===== ORGUNITS ===== */
 
 	/**
-				 * Returns and array of orgunit IDs based on orgunit boundary and level and/or group. If both level
-				 * and group is specified, level will be used.
-				 *
-				 * @param ouBoundary
-				 * @param ouLevel
-				 * @param ouGroup
-				 */
+	 * Returns and array of orgunit IDs based on orgunit boundary and level and/or group. If both level
+	 * and group is specified, level will be used.
+	 *
+	 * @param ouBoundary
+	 * @param ouLevel
+	 * @param ouGroup
+	 */
 	function orgunitIDs(ouBoundary, ouLevel, ouGroup) {
 		var deferred = $q.defer();
 
@@ -131,11 +131,11 @@ export default function (requestService, periodService, d2Utils, $q) {
 			var boundary = [];
 			var subunits = [];
 
-			var ou, boundary;
-			for (var i = 0; i < orgunits.length; i++) {
+			var ou;
+			for (let i = 0; i < orgunits.length; i++) {
 				ou = orgunits[i];
 				var isBoundary = false;
-				for (var j = 0; !isBoundary && j < ouBoundary.length; j++) {
+				for (let j = 0; !isBoundary && j < ouBoundary.length; j++) {
 
 					if (ou == ouBoundary[j]) isBoundary = true;
 
@@ -188,13 +188,13 @@ export default function (requestService, periodService, d2Utils, $q) {
 
 
 	/**
-				 * Returns user orgunit. If user has multiple orgunits, the one at the lowest level is
-				 * returned. If there are multiple orgunits at the same level, the first returned from the
-				 * server is return.
-				 *
-				 * @returns {*}		User orgunit object
-				 */
-	function userOrgunit() {
+	 * Returns user orgunit. If user has multiple orgunits, the one at the lowest level is
+	 * returned. If there are multiple orgunits at the same level, the first returned from the
+	 * server is return.
+	 *
+	 * @returns {*}		User orgunit object
+	 */
+	/*function userOrgunit() {
 		var deferred = $q.defer();
 
 		var requestURL = "/organisationUnits.json?";
@@ -203,10 +203,9 @@ export default function (requestService, periodService, d2Utils, $q) {
 		requestService.getSingleData(requestURL).then(
 			function(data) { //success
 				var data = data.organisationUnits;
-
 				var minLevel = 100;
 				var lowestOrgunit = null;
-				for (var i = (data.length - 1); i >= 0; i--) {
+				for (let i = (data.length - 1); i >= 0; i--) {
 					if (data[i].level < minLevel) {
 						minLevel = data[i].level;
 						lowestOrgunit = data[i];
@@ -221,14 +220,14 @@ export default function (requestService, periodService, d2Utils, $q) {
 		);
 
 		return deferred.promise;
-	}
+	}*/
 
 
 	/**
-				 * Returns user orgunits, i.e. an array of all user orgunits.
-				 *
-				 * @returns {*}		Array of user orgunit objects
-				 */
+	 * Returns user orgunits, i.e. an array of all user orgunits.
+	 *
+	 * @returns {*}		Array of user orgunit objects
+	 */
 	function userOrgunits() {
 		var deferred = $q.defer();
 
@@ -237,8 +236,12 @@ export default function (requestService, periodService, d2Utils, $q) {
 
 		requestService.getSingleData(requestURL).then(
 			function(data) { //success
-				var data = data.organisationUnits;
-				deferred.resolve(data);
+				var orgUnits = data.organisationUnits;
+				if ( orgUnits && orgUnits.length ) {
+					deferred.resolve(orgUnits);
+				} else {
+					deferred.reject("No orgUnits found");
+				}
 			},
 			function(error) { //error
 				deferred.reject("Error in userOrgunits()");
@@ -251,11 +254,11 @@ export default function (requestService, periodService, d2Utils, $q) {
 
 
 	/**
-				 * Returns user orgunits, i.e. an array of all user orgunits, including their childrena and
-				 * grandchildren. TODO: merge with userOrgunits, and have children as parameter
-				 *
-				 * @returns {*}
-				 */
+	 * Returns user orgunits, i.e. an array of all user orgunits, including their childrena and
+	 * grandchildren. TODO: merge with userOrgunits, and have children as parameter
+	 *
+	 * @returns {*}
+	 */
 	function userOrgunitsHierarchy() {
 		var deferred = $q.defer();
 
@@ -265,8 +268,8 @@ export default function (requestService, periodService, d2Utils, $q) {
 		requestService.getSingleData(requestURL).then(
 			function(data) { //success
 
-				var data = data.organisationUnits;
-				deferred.resolve(data);
+				//TODO: check if data.organisationUnits contain the expected results before resolving, such as being an array with items or something
+				deferred.resolve(data.organisationUnits);
 
 			},
 			function(error) { //error
@@ -280,11 +283,11 @@ export default function (requestService, periodService, d2Utils, $q) {
 
 
 	/**
-				 * Returns user view orgunits. Includes children, and a bool to indicate whether grandchildren
-				 * exists for each child.
-				 *
-				 * @returns {*}
-				 */
+	 * Returns user view orgunits. Includes children, and a bool to indicate whether grandchildren
+	 * exists for each child.
+	 *
+	 * @returns {*}
+	 */
 	function userAnalysisOrgunits() {
 		var deferred = $q.defer();
 
@@ -293,8 +296,9 @@ export default function (requestService, periodService, d2Utils, $q) {
 
 		requestService.getSingleData(requestURL).then(
 			function(data) { //success
-				var data = data.organisationUnits;
-				deferred.resolve(data);
+
+				//TODO: check if data.organisationUnits contain the expected results before resolving, such as being an array with items or something
+				deferred.resolve(data.organisationUnits);
 			},
 			function(error) { //error
 				deferred.reject("Error in userAnalysisOrgunits()");
@@ -316,7 +320,7 @@ export default function (requestService, periodService, d2Utils, $q) {
 		var operandDictionary = {};
 		var categoryOptionCombos = [];
 		var dataElements = [];
-		for (var i = 0; i < ids.length; i++) {
+		for (let i = 0; i < ids.length; i++) {
 			operandDictionary[ids[i]] = true;
 			var parts = ids[i].split(".");
 			dataElements.push(parts[0]);
@@ -331,7 +335,7 @@ export default function (requestService, periodService, d2Utils, $q) {
 			function(data) {
 				var allOperands = data.dataElementOperands;
 				var operands = [];
-				for (var i = 0; i < allOperands.length; i++) {
+				for (let i = 0; i < allOperands.length; i++) {
 					if (operandDictionary[allOperands[i].id]) operands.push(allOperands[i]);
 				}
 				deferred.resolve(operands);
@@ -360,10 +364,10 @@ export default function (requestService, periodService, d2Utils, $q) {
 
 				var datasets = [];
 				var dataElements = data.dataElements;
-				for (var i = 0; i < dataElements.length; i++) {
+				for (let i = 0; i < dataElements.length; i++) {
 					var de = dataElements[i];
 
-					for (var j = 0; j < de.dataSetElements.length; j++) {
+					for (let j = 0; j < de.dataSetElements.length; j++) {
 						datasets.push(de.dataSetElements[j].dataSet);
 					}
 
@@ -458,7 +462,7 @@ export default function (requestService, periodService, d2Utils, $q) {
 				objects("dataElements", dataElementIDs).then(function (data) {
 
 					var ids = [];
-					for (var i = 0; i < data.length; i++) {
+					for (let i = 0; i < data.length; i++) {
 						ids.push(data[i].id);
 					}
 
@@ -466,8 +470,8 @@ export default function (requestService, periodService, d2Utils, $q) {
 						function (data) {
 
 							var included = [];
-							for (var i = 0; i < data.length; i++) {
-								for (var j = 0; j < dataElementAndOperandIDs.length; j++) {
+							for (let i = 0; i < data.length; i++) {
+								for (let j = 0; j < dataElementAndOperandIDs.length; j++) {
 									var op = dataElementAndOperandIDs[j];
 									if (op.indexOf(".") > 0) {
 										if (data[i].dimensionItem === op) {
@@ -532,7 +536,7 @@ export default function (requestService, periodService, d2Utils, $q) {
 			function (data) {
 
 				var ids = [];
-				for (var i = 0; i < data.length; i++) {
+				for (let i = 0; i < data.length; i++) {
 					ids.push(data[i].id);
 				}
 
@@ -574,9 +578,10 @@ export default function (requestService, periodService, d2Utils, $q) {
 
 				//Data
 				var matches = formula.match(/#{(.*?)}/g);
-				for (var i = 0; matches && i < matches.length; i++) {
-					var match = matches[i];
-					var id = match.slice(2,-1);
+				var match, id;
+				for (let i = 0; matches && i < matches.length; i++) {
+					match = matches[i];
+					id = match.slice(2,-1);
 
 					var type;
 					if (id.length === 11) {
@@ -596,9 +601,9 @@ export default function (requestService, periodService, d2Utils, $q) {
 
 				//Constants
 				matches = formula.match(/C{(.*?)}/g);
-				for (var i = 0; matches && i < matches.length; i++) {
-					var match = matches[i];
-					var id = match.slice(2,-1);
+				for (let i = 0; matches && i < matches.length; i++) {
+					match = matches[i];
+					id = match.slice(2,-1);
 
 					components[id] = "constant";
 					constants.push(id);
@@ -615,19 +620,19 @@ export default function (requestService, periodService, d2Utils, $q) {
 					function(datas) {
 
 						var displayDictionary = {};
-						for (var i = 0; i < datas[0].length; i++) {
+						for (let i = 0; i < datas[0].length; i++) {
 							displayDictionary[datas[0][i].id] = datas[0][i].displayName;
 						}
-						for (var i = 0; i < datas[1].length; i++) {
+						for (let i = 0; i < datas[1].length; i++) {
 							displayDictionary[datas[1][i].id] = datas[1][i].displayName;
 						}
-						for (var i = 0; i < datas[2].length; i++) {
+						for (let i = 0; i < datas[2].length; i++) {
 							displayDictionary[datas[2][i].id] = datas[2][i].value;
 						}
 
 						for (id in components) {
 							var type = components[id];
-							switch (components[id]) {
+							switch (type) {
 							case "total":
 								formula = formula.replace("#{" + id + "}", displayDictionary[id] + " (total)");
 								break;
@@ -662,7 +667,7 @@ export default function (requestService, periodService, d2Utils, $q) {
 		indicatorDataSets(id).then(
 			function(dataSets) {
 				var periodTypes = {};
-				for (var i = 0; i < dataSets.length; i++) {
+				for (let i = 0; i < dataSets.length; i++) {
 					periodTypes[dataSets[i].periodType] = true;
 				}
 				periodTypes = d2Utils.arrayFromKeys(periodTypes);

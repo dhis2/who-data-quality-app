@@ -74,22 +74,22 @@ export default function (d2Data, d2Meta, d2Utils, mathService, $i18next, $q) {
 
 
 	/**
-				 * === === === === === ===
-				 * PRIVATE FUNCTIONS
-				 * === === === === === ===
-				 */
+	 * === === === === === ===
+	 * PRIVATE FUNCTIONS
+	 * === === === === === ===
+	 */
 
 
 	/**
-				 * Gets the next request from the queue of requests, and requests if from the d2Data factory
-				 */
+	 * Gets the next request from the queue of requests, and requests if from the d2Data factory
+	 */
 	function requestData() {
 
 		//Check if we already have pending data, in which case we wait
 		if (_pendingRequest) return;
 
 		//Load next request from queue
-		var request = requests.pop();
+		request = requests.pop();
 		if (!request) return;
 
 		//We are now busy
@@ -252,7 +252,7 @@ export default function (d2Data, d2Meta, d2Utils, mathService, $i18next, $q) {
 			datapoints: []
 		};
 
-		for (var j = 0; j < subunits.length; j++) {
+		for (let j = 0; j < subunits.length; j++) {
 			var subunit = subunits[j];
 
 			var valueA = d2Data.value(_dataIdExternal, _pe, subunit, null);
@@ -301,15 +301,14 @@ export default function (d2Data, d2Meta, d2Utils, mathService, $i18next, $q) {
 	/** ===== UTILITIES ===== **/
 
 	/**
-				 * Calculates the ratio and percentage based on the given analysis type and criteria
-				 * @param valueA
-				 * @param valueB
-				 * @returns {{percent: (number|*), ratio: (number|*)}}
-				 */
+	 * Calculates the ratio and percentage based on the given analysis type and criteria
+	 * @param valueA
+	 * @param valueB
+	 * @returns {{percent: (number|*), ratio: (number|*)}}
+	 */
 	function getRatioAndPercentage(valueA, valueB) {
 
-		var ratio, percentage;
-		ratio = valueA/valueB;
+		var ratio = valueA/valueB;
 
 		return {
 			percent: mathService.round(100*ratio, 1),
@@ -320,55 +319,24 @@ export default function (d2Data, d2Meta, d2Utils, mathService, $i18next, $q) {
 
 
 	/**
-				 * Checks if the ratio for a subunit is an "outlier" based on the given analysis type and criteria
-				 * @param subunitRatio
-				 * @returns {boolean}
-				 */
+	 * Checks if the ratio for a subunit is an "outlier" based on the given analysis type and criteria
+	 * @param subunitRatio
+	 * @returns {boolean}
+	 */
 	function isOutlier(subunitRatio) {
 
 		return subunitRatio > (1.0 + _criteria * 0.01) || subunitRatio < (1.0 - _criteria * 0.01) ? true : false;
 
 	}
 
-
 	/**
-				 * Calculates the weight of an outlier
-				 *
-				 * @param valueA
-				 * @param valueB
-				 * @param boundaryRatio
-				 * @returns {number}
-				 */
-	function outlierWeight(valueA, valueB, boundaryRatio) {
-
-		var weight = 0;
-
-		/*if (_subType === 'level') {
-
-						if (valueA/valueB > boundaryRatio) {
-							weight = valueB*boundaryRatio - valueA;
-						}
-						else {
-							weight = valueA*boundaryRatio - valueB;
-						}
-					}
-					else {
-						weight = Math.abs(valueA - valueB);
-					}
-					weight = Math.abs(weight);
-					weight = mathService.round(weight, 0);*/
-
-		return weight;
-	}
-
-
-	/**
-				 * Makes an "error object" that is returned with the result, highlighting areas with missing data etc
-				 * @param dx
-				 * @param pe
-				 * @param ou
-				 * @returns {{}}
-				 */
+	 * Makes an "error object" that is returned with the result, highlighting areas with missing data etc
+	 * @param dx
+	 * @param pe
+	 * @param ou
+	 * @returns {{}}
+	 */
+	// eslint-disable-next-line no-unused-vars
 	function makeError(dx, pe, ou) {
 
 		var error = {};
@@ -377,18 +345,18 @@ export default function (d2Data, d2Meta, d2Utils, mathService, $i18next, $q) {
 		error.item = d2Data.name(_dataIdExternal);
 
 		error.type = "External consistency";
-		error.msg = $i18next.t('Skipped due to missing data for ') + d2Data.name(dx) + ".";
+		error.msg = $i18next.t("Skipped due to missing data for ") + d2Data.name(dx) + ".";
 
 		return error;
 	}
 
 	/**
-				 * Makes an "error object" that is returned with the result, highlighting subunit with missing data
-				 * (that are therefore ignored from the analysis)
-				 *
-				 * @param orunits
-				 * @returns {*}
-				 */
+	 * Makes an "error object" that is returned with the result, highlighting subunit with missing data
+	 * (that are therefore ignored from the analysis)
+	 *
+	 * @param orunits
+	 * @returns {*}
+	 */
 	function makeSubunitError(orgunits) {
 
 		var error;
@@ -398,7 +366,7 @@ export default function (d2Data, d2Meta, d2Utils, mathService, $i18next, $q) {
 				"severity": "warning",
 				"type": "External consistency",
 				"item": d2Data.name(_dataIdExternal),
-				"msg": $i18next.t('Skipped for the following units due to missing data: ') + orgunits.join(", ")
+				"msg": $i18next.t("Skipped for the following units due to missing data: ") + orgunits.join(", ")
 			};
 
 

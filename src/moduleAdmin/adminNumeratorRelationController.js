@@ -21,7 +21,7 @@ angular.module("admin").controller("ModalAddEditRelationController",
 
 			//Make a uib-dropdown list with numerator codes and DHIS names
 			self.numeratorList = [];
-			for (var i = 0; i < indicators.length; i++) {
+			for (let i = 0; i < indicators.length; i++) {
 				if (indicators[i].dataID) {
 					self.numeratorList.push(
 						{
@@ -66,7 +66,7 @@ angular.module("admin").controller("ModalAddEditRelationController",
 			}
 
 			function getData(dataCode) {
-				for (var i = 0; i < self.numeratorList.length; i++) {
+				for (let i = 0; i < self.numeratorList.length; i++) {
 					if (self.numeratorList[i].code === dataCode) return self.numeratorList[i];
 				}
 			}

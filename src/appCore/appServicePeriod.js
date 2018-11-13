@@ -34,7 +34,7 @@ export default function ($i18next) {
 			var pTypeTool = periodTool.get(periodType);
 			periodsInYear = pTypeTool.generatePeriods({"offset": current - thisYear, "filterFuturePeriods": true, "reversePeriods": false});
 
-			for (var i = 0; i < periodsInYear.length; i++) {
+			for (let i = 0; i < periodsInYear.length; i++) {
 				if (periodsInYear[i].endDate >= startDate && periodsInYear[i].endDate <= endDate) {
 					periods.push(periodsInYear[i]);
 				}
@@ -44,11 +44,11 @@ export default function ($i18next) {
 		}
 		var isoPeriods = [];
 		if (periodType === "Yearly") {
-			for (var i = startYear; i <= endYear; i++) {
+			for (let i = startYear; i <= endYear; i++) {
 				isoPeriods.push(i.toString());
 			}
 		}
-		for (var i = 0; i < periods.length; i++) {
+		for (let i = 0; i < periods.length; i++) {
 			isoPeriods.push(periods[i].iso);
 		}
 
@@ -57,8 +57,8 @@ export default function ($i18next) {
 
 
 	self.shortPeriodName = function(periodISO) {
-		var monthNames = [$i18next.t('Jan'), $i18next.t('Feb'), $i18next.t('Mar'), $i18next.t('Apr'), $i18next.t('May'), $i18next.t('Jun'), 
-			$i18next.t('Jul'), $i18next.t('Aug'), $i18next.t('Sep'), $i18next.t('Oct'), $i18next.t('Nov'), $i18next.t('Dec')];
+		var monthNames = [$i18next.t("Jan"), $i18next.t("Feb"), $i18next.t("Mar"), $i18next.t("Apr"), $i18next.t("May"), $i18next.t("Jun"), 
+			$i18next.t("Jul"), $i18next.t("Aug"), $i18next.t("Sep"), $i18next.t("Oct"), $i18next.t("Nov"), $i18next.t("Dec")];
 		periodISO = periodISO.toString();
 
 		var periodType = self.periodTypeFromPeriod(periodISO);
@@ -79,10 +79,10 @@ export default function ($i18next) {
 		case "SixMonthly":
 			part = periodISO.substring(5);
 			if (part === "1") {
-				part = $i18next.t('Jan-Jun');
+				part = $i18next.t("Jan-Jun");
 			}
 			else {
-				part = $i18next.t('Jul-Dec');
+				part = $i18next.t("Jul-Dec");
 			}
 			break;
 		case "BiMonthly":
@@ -104,11 +104,11 @@ export default function ($i18next) {
 		//, {'name': 'Bimonthly', 'id':'BiMonthly'} <= Waiting for fix
 
 		var periodTypes = [
-			{"name": $i18next.t('Weeks'), "id":"Weekly"},
-			{"name": $i18next.t('Months'), "id":"Monthly"},
-			{"name": $i18next.t('Quarters'), "id":"Quarterly"},
-			{"name": $i18next.t('Six-months'), "id":"SixMonthly"},
-			{"name": $i18next.t('Years'), "id":"Yearly"}
+			{"name": $i18next.t("Weeks"), "id":"Weekly"},
+			{"name": $i18next.t("Months"), "id":"Monthly"},
+			{"name": $i18next.t("Quarters"), "id":"Quarterly"},
+			{"name": $i18next.t("Six-months"), "id":"SixMonthly"},
+			{"name": $i18next.t("Years"), "id":"Yearly"}
 		];
 
 		return periodTypes;
@@ -117,7 +117,7 @@ export default function ($i18next) {
 
 	self.getPeriodCount = function() {
 		var objects = [];
-		for (var i = 1; i <= 12; i++) {
+		for (let i = 1; i <= 12; i++) {
 			objects.push({"name": i.toString(), "value": i});
 		}
 
@@ -128,7 +128,7 @@ export default function ($i18next) {
 	self.getYears = function () {
 
 		var objects = [];
-		for (var i = parseInt(moment().format("YYYY")); i >= 1990; i--) {
+		for (let i = parseInt(moment().format("YYYY")); i >= 1990; i--) {
 			objects.push({"name": i, "id": i});
 		}
 
@@ -187,7 +187,7 @@ export default function ($i18next) {
 
 	self.shortestPeriod = function (periodTypes) {
 		var w = false, m = false, q = false, s = false, y = false, pt;
-		for (var i = 0; i < periodTypes.length; i++) {
+		for (let i = 0; i < periodTypes.length; i++) {
 			pt = periodTypes[i];
 			switch (pt) {
 			case "Quarterly":
@@ -219,7 +219,7 @@ export default function ($i18next) {
 
 	self.longestPeriod = function (periodTypes) {
 		var w = false, m = false, q = false, s = false, y = false, pt;
-		for (var i = 0; i < periodTypes.length; i++) {
+		for (let i = 0; i < periodTypes.length; i++) {
 			pt = periodTypes[i];
 			switch (pt) {
 			case "Quarterly":
@@ -259,7 +259,7 @@ export default function ($i18next) {
 		var sourcePeriods = periodTool.get(pt).generatePeriods({"offset": year-thisYear, "filterFuturePeriods": true, "reversePeriods": false});
 
 		var startDate, endDate;
-		for (var i = 0; i < sourcePeriods.length; i++) {
+		for (let i = 0; i < sourcePeriods.length; i++) {
 			if (sourcePeriods[i].iso === period) {
 				startDate = sourcePeriods[i].startDate;
 				endDate = sourcePeriods[i].endDate;
@@ -321,7 +321,7 @@ export default function ($i18next) {
 		var thisYear = parseInt(moment().format("YYYY"));
 
 		var periodsInYear = periodTool.get(pType).generatePeriods({"offset": year-thisYear, "filterFuturePeriods": true, "reversePeriods": false});
-		for (var i = 0; i < periodsInYear.length; i++) {
+		for (let i = 0; i < periodsInYear.length; i++) {
 			if (periodsInYear[i].iso === period) {
 				return periodsInYear[i];
 			}

@@ -24,14 +24,14 @@ angular.module("admin").controller("ModalAddEditExternalRelationController",
 
 			self.numerators = d2Map.numeratorsConfigured();
 			//Add name
-			for (var i = 0; i < self.numerators.length; i++) {
+			for (let i = 0; i < self.numerators.length; i++) {
 				self.numerators[i]["name"] = d2Map.d2NameFromID(self.numerators[i].dataID);
 			}
 
 
 			self.denominators = d2Map.denominatorsConfigured();
 			//Add name
-			for (var i = 0; i < self.denominators.length; i++) {
+			for (let i = 0; i < self.denominators.length; i++) {
 				self.denominators[i]["name"] = d2Map.d2NameFromID(self.denominators[i].dataID);
 			}
 
@@ -67,7 +67,7 @@ angular.module("admin").controller("ModalAddEditExternalRelationController",
 				self.levels = levels;
 
 				if (externalRelation.level) {
-					for (var i = 0; i < self.levels.length; i++) {
+					for (let i = 0; i < self.levels.length; i++) {
 
 						if (self.levels[i].level === externalRelation.level) {
 							self.levelSelected = self.levels[i];

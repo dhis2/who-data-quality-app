@@ -36,7 +36,7 @@
 				self.element;
 				self.disaggregation = 0;
 
-				self.placeholder = $i18next.t('Select indicator...');
+				self.placeholder = $i18next.t("Select indicator...");
 
 				self.getElements = getElements;
 
@@ -58,7 +58,7 @@
 						//Check if "all" is included
 						if (self.multiple) {
 							var currentModel = [];
-							for (var i = 0; i < self.element.length; i++) {
+							for (let i = 0; i < self.element.length; i++) {
 								if (self.element[i].id === "all") {
 									d2Utils.arrayMerge(currentModel, self.element[i].elements);
 								}
@@ -85,7 +85,7 @@
 				function getElements() {
 					if (!self.group) return;
 
-					self.placeholder = $i18next.t('Loading...');
+					self.placeholder = $i18next.t("Loading...");
 
 
 					var fields = "indicators[displayName,id]";
@@ -97,15 +97,15 @@
 
 
 				function saveElements(data) {
-					if (data.length === 0) self.placeholder = $i18next.t('No indicators in ') + self.group.name;
-					else self.placeholder = $i18next.t('Select indicator...');
+					if (data.length === 0) self.placeholder = $i18next.t("No indicators in ") + self.group.name;
+					else self.placeholder = $i18next.t("Select indicator...");
 
 					if (self.multiple) filterElements(data);
 					d2Utils.arraySortByProperty(data, "displayName", false);
 
 					if (self.multiple != undefined && self.multiple) {
 						data.unshift({
-							displayName: $i18next.t('[All indicators]'),
+							displayName: $i18next.t("[All indicators]"),
 							id: "all",
 							group: self.group.id,
 							elements: angular.copy(data)
@@ -117,8 +117,8 @@
 
 
 				function filterElements(data) {
-					for (var i = 0; i < data.length; i++) {
-						for (var j = 0; self.element && j < self.element.length; j++) {
+					for (let i = 0; i < data.length; i++) {
+						for (let j = 0; self.element && j < self.element.length; j++) {
 
 							var remove = false;
 							if (data[i].id === self.element[j].id) {

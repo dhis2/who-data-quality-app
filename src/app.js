@@ -73,6 +73,7 @@ angular.element(document).ready(
 			function(response) {
 
 				//Not production => rely on webpack-dev-server proxy
+				// eslint-disable-next-line no-undef
 				const baseUrl = process.env.NODE_ENV === "production" ?
 					response.data.activities.dhis.href : "";
 				app.constant("BASE_URL", baseUrl);

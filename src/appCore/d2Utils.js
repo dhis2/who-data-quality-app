@@ -6,7 +6,7 @@
  immunities enjoyed by WHO under national or international law or submit to any national court jurisdiction.
  */
 
-export default function ($q) {
+export default function () {
 
 	var utils = {
 		isNumber: isNumber,
@@ -63,7 +63,7 @@ export default function ($q) {
 		if (!a && b) return b;
 		if (!b && a) return a;
 
-		for (var i = 0;a && b &&  i < b.length; i++) {
+		for (let i = 0;a && b &&  i < b.length; i++) {
 			a.push(b[i]);
 		}
 		return a;
@@ -98,7 +98,7 @@ export default function ($q) {
 
 	function arrayProperties(array, property) {
 		var properties = [];
-		for (var i = 0; i < array.length; i++) {
+		for (let i = 0; i < array.length; i++) {
 			properties.push(array[i][property]);
 		}
 		return properties;
@@ -111,7 +111,7 @@ export default function ($q) {
 		var matches = arrayMerge(numeratorFormula.match(/#{(.*?)}/g), denominatorFormula.match(/#{(.*?)}/g));
 		if (!matches) return [];
 
-		for (var i = 0; i < matches.length; i++ ) {
+		for (let i = 0; i < matches.length; i++ ) {
 			matches[i] = matches[i].slice(2, -1);
 			if (dataElementOnly) matches[i] = matches[i].split(".")[0];
 		}

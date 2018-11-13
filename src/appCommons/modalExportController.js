@@ -5,7 +5,7 @@
  copied verbatim in the file “COPYING”.  In applying this license, WHO does not waive any of the privileges and
  immunities enjoyed by WHO under national or international law or submit to any national court jurisdiction.
  */
-
+import { saveAs } from "file-saver";
 
 /**Controller: Parameters*/
 angular.module("appCommons").controller("ModalExportController",
@@ -47,23 +47,23 @@ angular.module("appCommons").controller("ModalExportController",
 			function makeExportFile() {
 				var string, csvContent = "";
 				var s = self.options.separator;
-				var IDs = self.options.includeIDs;
-				var fileName = self.options.fileName;
+				//var IDs = self.options.includeIDs;
+				//var fileName = self.options.fileName;
 				var headers = self.fileContent.headers;
 				var rows = self.fileContent.rows;
 
 				//Header
 				string = "";
-				for (var i = 0; i < headers.length; i++) {
+				for (let i = 0; i < headers.length; i++) {
 					string += checkExportValue(headers[i]);
 					if (i+1 < headers.length) string += s;
 					else string += "\n";
 				}
 				csvContent += string;
-				for (var i = 0; i < rows.length; i++) {
+				for (let i = 0; i < rows.length; i++) {
 					string = "";
 					var row = rows[i];
-					for (var j = 0; j < row.length; j++) {
+					for (let j = 0; j < row.length; j++) {
 						var value = row[j];
 						if (isNumeric(value)) {
 							value = fixDecimalsForExport(value);
@@ -99,11 +99,16 @@ angular.module("appCommons").controller("ModalExportController",
 			}
 
 
+			// eslint-disable-next-line no-unused-vars
 			function checkExportValue(value, separator) {
 				var innerValue =	value === null ? "" : value.toString();
 				var result = innerValue.replace(/"/g, "\"\"");
-				if (result.search(/("|separator|\n)/g) >= 0)
+
+				//TODO: bug in regex, separator not used as variable
+				if (result.search(/(|separator|\n)/g) >= 0) {
 					result = "\"" + result + "\"";
+				}
+				
 				return result;
 			}
 
