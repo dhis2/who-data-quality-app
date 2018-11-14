@@ -72,40 +72,55 @@ angular.module("dashboard").controller("DashboardController",
 					dataSetQueryID.push(dataset.id + ".REPORTING_RATE_ON_TIME");
 
 
-					var promises = [];
-					promises.push(promiseObject(dataset));
-					promises.push(visualisationService.lineChart(null, dataSetQueryID, periods, [ouBoundaryID], "dataOverTime"));
-					promises.push(visualisationService.barChart(null, [dataSetQueryID[0]], [ouPeriod], [ouBoundaryID], "ou", level));
+					let chartModel = {
+						name: d2Map.d2NameFromID(dataset.id),
+						trendChart: {
+							loading: true,
+							options: null,
+							data: null
+						},
+						ouChart: {
+							loading: true,
+							options: null,
+							data: null
+						}
+					};
 
-					$q.all(promises).then(function(datas) {
-						
-						var datasetCompletenessChart = {
-							name: d2Map.d2NameFromID(datas[0].id),
-							id: datas[0].id,
-							trendChartOptions: datas[1].opts,
-							trendChartData: datas[1].data,
-							ouChartOptions: datas[2].opts,
-							ouChartData: datas[2].data
+					self.completenessCharts.push(chartModel);
+
+
+					visualisationService.lineChart(null, dataSetQueryID, periods, [ouBoundaryID], "dataOverTime").then((x) => {
+						let trendChartData = [...x.data];
+						trendChartData[0].key = $i18next.t("Completeness");
+						trendChartData[1].key = $i18next.t("Timeliness");
+
+						chartModel.trendChart = {
+							loading: false,
+							options: x.opts,
+							data: trendChartData
 						};
 
-						visualisationService.setChartYAxis(datasetCompletenessChart.trendChartOptions, 0, 100);
-						datasetCompletenessChart.trendChartData[0].key = $i18next.t("Completeness");
-						datasetCompletenessChart.trendChartData[1].key = $i18next.t("Timeliness");
-
-						visualisationService.setChartLegend(datasetCompletenessChart.ouChartOptions, true);
-						visualisationService.setChartYAxis(datasetCompletenessChart.ouChartOptions, 0, 100);
-						datasetCompletenessChart.ouChartData[0].key = periodService.shortPeriodName(ouPeriod);
-
-						self.completenessCharts.push(datasetCompletenessChart);
-
-						if (self.completenessCharts.length === self.expectedCompletenessCharts) self.cmpLoading = false;
-
+						const chartsLoading = self.completenessCharts.filter(x => x.ouChart.loading || x.trendChart.loading);
+						self.cmpLoading = chartsLoading.length > 0;
 					});
 
+					visualisationService.barChart(null, [dataSetQueryID[0]], [ouPeriod], [ouBoundaryID], "ou", level).then((x) => {
+						let ouChartData = [...x.data];
+						ouChartData[0].key = periodService.shortPeriodName(ouPeriod);
+						visualisationService.setChartLegend(x.opts, true);
+						visualisationService.setChartYAxis(x.opts, 0, 100);
+
+						chartModel.ouChart = {
+							loading: false,
+							options: x.opts,
+							data: ouChartData
+						};
+
+						const chartsLoading = self.completenessCharts.filter(x => x.ouChart.loading || x.trendChart.loading);
+						self.cmpLoading = chartsLoading.length > 0;
+					});
 				}
-
 			};
-
 
 
 			/** CONSISTENCY OVER TIME */
@@ -331,13 +346,6 @@ angular.module("dashboard").controller("DashboardController",
 
 			/** ===== UTILITIES ===== */
 
-			function promiseObject(object) {
-				var deferred = $q.defer();
-				deferred.resolve(object);
-				return deferred.promise;
-			}
-
-
 			self.setWindowWidth = function() {
 
 				var contentWidth = angular.element(".mainView").width();
@@ -473,7 +481,7 @@ angular.module("dashboard").controller("DashboardController",
 				}
 
 				self.setWindowWidth();
-				window.jQuery( window ).resize(function() {
+				window.addEventListener("resize", () => {
 					self.setWindowWidth();
 					$scope.$apply();
 				});

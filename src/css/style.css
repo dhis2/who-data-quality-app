@@ -286,8 +286,16 @@
 	height: 400px;
 }
 
+
+/* directive scope container */
+chart-loading-placeholder {
+	display: inline-block;
+	vertical-align: top;
+}
+/* directive template */
 .chart-placeholder {
 	vertical-align: top;
+	width: 100%;
 }
 .chart-placeholder-loading-notificator {
 	height: 400px;

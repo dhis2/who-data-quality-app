@@ -17,3 +17,4 @@ require("./modalExportController.js");
 require("./modalMessageController.js");
 require("./modalNotificationController.js");
 require("./viewOuTree.js");
+require("./chartLoadingPlaceholder.js");

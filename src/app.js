@@ -77,7 +77,7 @@ angular.element(document).ready(
 				const baseUrl = process.env.NODE_ENV === "production" ?
 					response.data.activities.dhis.href : "";
 				app.constant("BASE_URL", baseUrl);
-				app.constant("API_VERSION", "27");
+				app.constant("API_VERSION", "29");
 				angular.bootstrap(document, ["dataQualityApp"]);
 			}
 		);
