@@ -40,7 +40,7 @@ export default function (requestService, d2Utils, $q) {
 		var name;
 		//data element operand
 		if (id.length === 23) {
-			name = items[id.substr(0,11)].name + " " + items[id.substr(12,11)].name;
+			name = items[id.substr(0, 11)].name + " " + items[id.substr(12, 11)].name;
 		}
 		else {
 			name = items[id].name;
@@ -48,7 +48,7 @@ export default function (requestService, d2Utils, $q) {
 		return name;
 	}
 
-			
+
 
 	/**
 	 * Add request for data to be fetched
@@ -105,8 +105,8 @@ export default function (requestService, d2Utils, $q) {
 
 		//Make it possible to work with both de and co separately, and in . format
 		if (de.length === 23) {
-			co = de.substr(12,11);
-			de = de.substr(0,11);
+			co = de.substr(12, 11);
+			de = de.substr(0, 11);
 		}
 
 		var header = mergedData.headers;
@@ -127,10 +127,10 @@ export default function (requestService, d2Utils, $q) {
 			data = dataValues[i];
 			if (
 				(dxi === undefined || data[dxi] === de) &&
-							(pei === undefined || data[pei] === pe.toString()) &&
-							(oui === undefined || data[oui] === ou) &&
-							(co === undefined || coi === undefined || data[coi] === co) &&
-							(at === undefined || ati === undefined || data[ati] === at)
+				(pei === undefined || data[pei] === pe.toString()) &&
+				(oui === undefined || data[oui] === ou) &&
+				(co === undefined || coi === undefined || data[coi] === co) &&
+				(at === undefined || ati === undefined || data[ati] === at)
 			)
 				return parseFloat(data[vali]);
 		}
@@ -265,7 +265,7 @@ export default function (requestService, d2Utils, $q) {
 
 
 
-	
+
 
 
 	/**
@@ -294,38 +294,38 @@ export default function (requestService, d2Utils, $q) {
 		this._batchMeta = null;
 	}
 
-	Batch.prototype.promise = function() {
+	Batch.prototype.promise = function () {
 		return this._deferred.promise;
 	};
 
-	Batch.prototype.resolve = function() {
+	Batch.prototype.resolve = function () {
 		this._deferred.resolve(this);
 	};
 
-	Batch.prototype.getMeta = function() { 
-		return this._batchMeta; 
+	Batch.prototype.getMeta = function () {
+		return this._batchMeta;
 	};
 
-	Batch.prototype.request = function() {
+	Batch.prototype.request = function () {
 		return this._requests.pop();
 	};
 
-	Batch.prototype.done = function() {
+	Batch.prototype.done = function () {
 		return this._requests.length === 0 ? true : false;
 	};
 
-	Batch.prototype.id = function() {
+	Batch.prototype.id = function () {
 		return this._id;
 	};
 
-	Batch.prototype.start = function() {
-		if ( !this._started ) {
+	Batch.prototype.start = function () {
+		if (!this._started) {
 			this._started = true;
 			this._fetchNext();
-		}		
+		}
 	};
 
-	Batch.prototype._fetchNext = function() {
+	Batch.prototype._fetchNext = function () {
 
 		console.log("Batch::_fetchNext");
 		let aggregationType = false;
@@ -343,7 +343,7 @@ export default function (requestService, d2Utils, $q) {
 		}
 
 		var self = this;
-		requestService.getSingleData(request).then( function(data) {
+		requestService.getSingleData(request).then(function (data) {
 
 			if (data) {
 				if (aggregationType) {
@@ -370,9 +370,9 @@ export default function (requestService, d2Utils, $q) {
 	/**
 	 * Add info about aggregationtype to result
 	 */
-	Batch.prototype.addAggregationInfo = function(data, aggregationType) {
+	Batch.prototype.addAggregationInfo = function (data, aggregationType) {
 
-		data.headers.push({"name": "at"});
+		data.headers.push({ "name": "at" });
 		for (let i = 0; i < data.rows.length; i++) {
 			data.rows[i].push(aggregationType);
 		}
@@ -384,44 +384,44 @@ export default function (requestService, d2Utils, $q) {
 	/**
 	* Merges the metadata from one or more request results into one result set.
 	*/
-	Batch.prototype.mergeBatchMetaData = function() {
+	Batch.prototype.mergeBatchMetaData = function () {
 
 		let receivedData = this._receivedData;
 
 		//Create "skeleton" if it does not exist
-	   var meta = {
-		   co: [],
-		   dx: [],
-		   items: {},
-		   ou: [],
-		   pe: []
-	   };
+		var meta = {
+			co: [],
+			dx: [],
+			items: {},
+			ou: [],
+			pe: []
+		};
 
-	   for (let i = 0; i < receivedData.length; i++) {
-		   var metaData = receivedData[i].metaData;
+		for (let i = 0; i < receivedData.length; i++) {
+			var metaData = receivedData[i].metaData;
 
-		   //Transfer metadata
-		   meta.co.push.apply(meta.co, metaData.dimensions.co);
-		   meta.dx.push.apply(meta.dx, metaData.dimensions.dx);
-		   meta.ou.push.apply(meta.ou, metaData.dimensions.ou);
-		   meta.pe.push.apply(meta.pe, metaData.dimensions.pe);
+			//Transfer metadata
+			meta.co.push.apply(meta.co, metaData.dimensions.co);
+			meta.dx.push.apply(meta.dx, metaData.dimensions.dx);
+			meta.ou.push.apply(meta.ou, metaData.dimensions.ou);
+			meta.pe.push.apply(meta.pe, metaData.dimensions.pe);
 
-		   for (var key in metaData.items) {
-			   if (metaData.items.hasOwnProperty(key)) {
-				   meta.items[key] = metaData.items[key];
-			   }
+			for (var key in metaData.items) {
+				if (metaData.items.hasOwnProperty(key)) {
+					meta.items[key] = metaData.items[key];
+				}
 
-		    }
-	   }
+			}
+		}
 
-	   //Remove duplicates in metaData
-	   meta.co = d2Utils.arrayRemoveDuplicates(meta.co);
-	   meta.dx = d2Utils.arrayRemoveDuplicates(meta.dx);
-	   meta.ou = d2Utils.arrayRemoveDuplicates(meta.ou);
-	   meta.pe = d2Utils.arrayRemoveDuplicates(meta.pe);
+		//Remove duplicates in metaData
+		meta.co = d2Utils.arrayRemoveDuplicates(meta.co);
+		meta.dx = d2Utils.arrayRemoveDuplicates(meta.dx);
+		meta.ou = d2Utils.arrayRemoveDuplicates(meta.ou);
+		meta.pe = d2Utils.arrayRemoveDuplicates(meta.pe);
 
-	   //Clear the data we have now merged
-	   this._batchMeta = meta;
+		//Clear the data we have now merged
+		this._batchMeta = meta;
 	};
 
 	/**
@@ -431,84 +431,84 @@ export default function (requestService, d2Utils, $q) {
    * In cases where the format is different (e.g. one request is disaggergated and the other not),
    * the "maximum" will be used and the missing fields will be empty.
    */
-	Batch.prototype.mergeAnalyticsResults = function(){
+	Batch.prototype.mergeAnalyticsResults = function () {
 
-	  //let mergedData = this._mergedData;
-	  let receivedData = this._receivedData;
+		//let mergedData = this._mergedData;
+		let receivedData = this._receivedData;
 
-	  //Create "skeleton" if it does not exist
-	  if (!mergedData) {
-		  mergedData = {
-			  headers: [
-				  {name: "dx"},
-				  {name: "co"},
-				  {name: "ou"},
-				  {name: "pe"},
-				  {name: "value"},
-				  {name: "at"}
-			  ],
-			  metaData: {
-				  co: [],
-				  dx: [],
-				  items: {},
-				  ou: [],
-				  pe: []
-			  },
-			  rows: []
-		  };
-	  }
+		//Create "skeleton" if it does not exist
+		if (!mergedData) {
+			mergedData = {
+				headers: [
+					{ name: "dx" },
+					{ name: "co" },
+					{ name: "ou" },
+					{ name: "pe" },
+					{ name: "value" },
+					{ name: "at" }
+				],
+				metaData: {
+					co: [],
+					dx: [],
+					items: {},
+					ou: [],
+					pe: []
+				},
+				rows: []
+			};
+		}
 
-	  for (let i = 0; i < receivedData.length; i++) {
-		  var header = receivedData[i].headers;
-		  var metaData = receivedData[i].metaData;
-		  var rows = receivedData[i].rows;
+		for (let i = 0; i < receivedData.length; i++) {
+			var header = receivedData[i].headers;
+			var metaData = receivedData[i].metaData;
+			var rows = receivedData[i].rows;
 
-		  var dxi = null, pei = null, oui = null, coi = null, vali = null, ati = null;
-		  for (let j = 0; j < header.length; j++) {
-			  if (header[j].name === "dx" && !header[j].hidden) dxi = j;
-			  if (header[j].name === "ou" && !header[j].hidden) oui = j;
-			  if (header[j].name === "pe" && !header[j].hidden) pei = j;
-			  if (header[j].name === "co" && !header[j].hidden) coi = j;
-			  if (header[j].name === "value" && !header[j].hidden) vali = j;
-			  if (header[j].name === "at") ati = j;
-		  }
+			var dxi = null, pei = null, oui = null, coi = null, vali = null, ati = null;
+			for (let j = 0; j < header.length; j++) {
+				if (header[j].name === "dx" && !header[j].hidden) dxi = j;
+				if (header[j].name === "ou" && !header[j].hidden) oui = j;
+				if (header[j].name === "pe" && !header[j].hidden) pei = j;
+				if (header[j].name === "co" && !header[j].hidden) coi = j;
+				if (header[j].name === "value" && !header[j].hidden) vali = j;
+				if (header[j].name === "at") ati = j;
+			}
 
-		  //Transfer data to result object
-		  var transVal;
-		  for (let j = 0; j < rows.length; j++) {
-			  transVal = [];
-			  transVal[0] = rows[j][dxi];
-			  coi ? transVal[1] = rows[j][coi] : transVal[1] = null;
-			  ati ? transVal[5] = rows[j][ati] : transVal[5] = null;
-			  transVal[2] = rows[j][oui];
-			  transVal[3] = rows[j][pei];
-			  transVal[4] = rows[j][vali];
+			//Transfer data to result object
+			var transVal;
+			for (let j = 0; j < rows.length; j++) {
+				transVal = [];
+				transVal[0] = rows[j][dxi];
+				coi ? transVal[1] = rows[j][coi] : transVal[1] = null;
+				ati ? transVal[5] = rows[j][ati] : transVal[5] = null;
+				transVal[2] = rows[j][oui];
+				transVal[3] = rows[j][pei];
+				transVal[4] = rows[j][vali];
 
-			  mergedData.rows.push(transVal);
-		  }
+				mergedData.rows.push(transVal);
+			}
 
-		  //Transfer metadata
-		  mergedData.metaData.co.push.apply(mergedData.metaData.co, metaData.dimensions.co);
-		  mergedData.metaData.dx.push.apply(mergedData.metaData.dx, metaData.dimensions.dx);
-		  mergedData.metaData.ou.push.apply(mergedData.metaData.ou, metaData.dimensions.ou);
-		  mergedData.metaData.pe.push.apply(mergedData.metaData.pe, metaData.dimensions.pe);
+			//Transfer metadata
+			mergedData.metaData.co.push.apply(mergedData.metaData.co, metaData.dimensions.co);
+			mergedData.metaData.dx.push.apply(mergedData.metaData.dx, metaData.dimensions.dx);
+			mergedData.metaData.ou.push.apply(mergedData.metaData.ou, metaData.dimensions.ou);
+			mergedData.metaData.pe.push.apply(mergedData.metaData.pe, metaData.dimensions.pe);
 
-		  for (var key in metaData.items) {
-			  if (metaData.items.hasOwnProperty(key)) {
-				  mergedData.metaData.items[key] = metaData.items[key];
-			  }
+			for (var key in metaData.items) {
+				if (metaData.items.hasOwnProperty(key)) {
+					mergedData.metaData.items[key] = metaData.items[key];
+				}
 
-		  }
-	  }
+			}
+		}
 
-	  //Remove duplicates in metaData
-	  mergedData.metaData.co = d2Utils.arrayRemoveDuplicates(mergedData.metaData.co);
-	  mergedData.metaData.dx = d2Utils.arrayRemoveDuplicates(mergedData.metaData.dx);
-	  mergedData.metaData.ou = d2Utils.arrayRemoveDuplicates(mergedData.metaData.ou);
-	  mergedData.metaData.pe = d2Utils.arrayRemoveDuplicates(mergedData.metaData.pe);
+		//Remove duplicates in metaData
+		mergedData.metaData.co = d2Utils.arrayRemoveDuplicates(mergedData.metaData.co);
+		mergedData.metaData.dx = d2Utils.arrayRemoveDuplicates(mergedData.metaData.dx);
+		mergedData.metaData.ou = d2Utils.arrayRemoveDuplicates(mergedData.metaData.ou);
+		mergedData.metaData.pe = d2Utils.arrayRemoveDuplicates(mergedData.metaData.pe);
 
-	  //Clear the data we have now merged
-	  this._receivedData = [];
+		//Clear the data we have now merged
+		this._receivedData = [];
 	};
 
 	/**
