@@ -1200,14 +1200,14 @@ export default function ($q, requestService, mathService, d2Meta, d2Map) {
 		if (status != 200) {
 
 			//TODO: Should split it instead
-			if (status === 409 && (data.indexOf("Table exceeds") > -1)) {
+			if (status === 409 && (data && data.indexOf("Table exceeds") > -1)) {
 				console.log("Query result too big");
 				requestSucceeded(requestURL);
 
 			}
 
 			//No children for this boundary ou - no worries..
-			else if (status === 409 && (data.indexOf("Dimension ou is present") > -1)) {
+			else if (status === 409 && (data && data.indexOf("Dimension ou is present") > -1)) {
 				console.log("Requested child data for a unit without children");
 				requestSucceeded(requestURL);
 			}

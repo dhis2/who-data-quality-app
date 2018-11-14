@@ -19,9 +19,6 @@ export default function (requestService, d2Utils, $q) {
 
 	//Private variables
 	var _newRequests = [];		//Store new requests
-	var _requestBatches = [];	//Batches of requests are queued here
-	//var _currentBatch;			//Batch currently being fetched
-	//var _currentBatchMeta;
 	let mergedData;
 
 
@@ -80,13 +77,10 @@ export default function (requestService, d2Utils, $q) {
 	 * @returns {* promise}
 	 */
 	function fetch() {
-		console.log("d2Data::fetch - adding new Batch");
 		var newBatch = new Batch(_newRequests);
-		_requestBatches.push(newBatch);
 		_newRequests = [];
 
 		newBatch.start();
-		//if (!_currentBatch) fetchNextRequest();
 
 		return newBatch.promise();
 	}
@@ -327,7 +321,7 @@ export default function (requestService, d2Utils, $q) {
 
 	Batch.prototype._fetchNext = function () {
 
-		console.log("Batch::_fetchNext");
+		//console.log("Batch::_fetchNext");
 		let aggregationType = false;
 
 		//Get next request in batch
@@ -511,23 +505,5 @@ export default function (requestService, d2Utils, $q) {
 		this._receivedData = [];
 	};
 
-	/**
-	 * Look up names based on ID.
-	 */
-	/*Batch.prototype.getNameForId = function(id) {
-		var items = this.mergedData.metaData.items;
-		var name;
-		//data element operand
-		if (id.length === 23) {
-			name = items[id.substr(0,11)].name + " " + items[id.substr(12,11)].name;
-		}
-		else {
-			name = items[id].name;
-		}
-		return name;
-	};*/
-
-
 	return service;
-
 }

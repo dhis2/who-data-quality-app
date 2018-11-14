@@ -115,10 +115,12 @@ immunities enjoyed by WHO under national or international law or submit to any n
 					ng-repeat="data in dashCtrl.dataConsistencyCharts|orderBy:'name'|limitTo: 100">
 				<h5>{{data.name}} - {{data.period}}</h5>
 				<nvd3
-						class="fullWidth nvd3-chart-dotted"
-						options='data.chartOptions'
-						data='data.chartData'>
+					ng-if="!data.loading" 
+					class="fullWidth nvd3-chart-dotted"
+					options='data.chartOptions'
+					data='data.chartData'>
 				</nvd3>
+				<chart-loading-placeholder class="fullWidth" ng-if="data.loading" />
 			</div>
 		</uib-tab>
 		<uib-tab heading="{{ 'Outliers' | i18next }}" select=" dashCtrl.selectedTab = 3; dashCtrl.makeOutlierTable();">

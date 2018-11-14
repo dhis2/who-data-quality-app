@@ -251,44 +251,43 @@ angular.module("dashboard").controller("DashboardController",
 					var indicatorB = d2Map.numerators(relation.B);
 
 
-					var periodType = periodService.longestPeriod([d2Map.dataSets(indicatorA.dataSetID).periodType,
-						d2Map.dataSets(indicatorB.dataSetID).periodType]);
+					var periodType = periodService.longestPeriod([d2Map.dataSets(indicatorA.dataSetID).periodType, d2Map.dataSets(indicatorB.dataSetID).periodType]);
 					var period = periodService.getISOPeriods(self.startDate, self.endDate, periodType);
 
-					var promises = [];
-					promises.push(relation);
-					promises.push(dqAnalysisConsistency.analyse(indicatorA.dataID, indicatorB.dataID, period, null, ouBoundaryID, ouLevel, null, "data", relation.type, null, relation.criteria, null));
-					$q.all(promises).then(function(datas) {
-						var data = datas[0];
-						var result = datas[1];
+					let data = relation;
 
-						if (result.result.subType != "do") {
-							visualisationService.makeDataConsistencyChart(null, result.result, null);
-						}
-						else {
-							visualisationService.makeDropoutRateChart(null, result.result, null);
-						}
+					let chartModel = {
+						loading: true,
+						name: data.name,
+						period: "",
+						chartOtions: null,
+						chartData: null
+					};
 
-						var dataConsistencyChart = {
-							name: data.name,
-							period: periodService.shortPeriodName(result.result.pe[0]) + " to " +
-							periodService.shortPeriodName(result.result.pe[result.result.pe.length - 1]),
-							chartOptions: result.result.chartOptions,
-							chartData: result.result.chartData
-						};
+					self.dataConsistencyCharts.push(chartModel);
+					
+					dqAnalysisConsistency.analyse(indicatorA.dataID, indicatorB.dataID, period, null, ouBoundaryID, ouLevel, null, "data", relation.type, null, relation.criteria, null)
+						.then((result) => {
+							if (result.result.subType != "do") {
+								visualisationService.makeDataConsistencyChart(null, result.result, null);
+								visualisationService.setChartLegend(result.result.chartOptions, true);
+							}
+							else {
+								visualisationService.makeDropoutRateChart(null, result.result, null);
+							}
 
-						if (result.result.subType != "do") {
-							visualisationService.setChartLegend(dataConsistencyChart.chartOptions, true);
-						}
+							chartModel.period = periodService.shortPeriodName(result.result.pe[0]) + " to " + periodService.shortPeriodName(result.result.pe[result.result.pe.length - 1]);
+							chartModel.chartOptions = result.result.chartOptions;
+							chartModel.chartData = result.result.chartData;
+							chartModel.loading = false;
 
-						visualisationService.setChartHeight(dataConsistencyChart.chartOptions, 400);
-						visualisationService.setChartYAxis(dataConsistencyChart.chartOptions, 0, 100);
-						visualisationService.setChartMargins(dataConsistencyChart.chartOptions, 60, 20, 100, 100);
+							visualisationService.setChartHeight(chartModel.chartOptions, 400);
+							visualisationService.setChartYAxis(chartModel.chartOptions, 0, 100);
+							visualisationService.setChartMargins(chartModel.chartOptions, 60, 20, 100, 100);
 
-						self.dataConsistencyCharts.push(dataConsistencyChart);
-
-						if (self.dataConsistencyCharts.length === self.expectedDataConsistencyCharts) self.dcLoading = false;
-					});
+							let chartsLoadingCount = self.dataConsistencyCharts.filter(x => x.loading).length;
+							if (chartsLoadingCount === self.expectedDataConsistencyCharts) self.dcLoading = false;
+						});
 
 				}
 
