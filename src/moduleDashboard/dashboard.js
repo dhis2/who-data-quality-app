@@ -53,7 +53,6 @@ angular.module("dashboard").controller("DashboardController",
 
 				var datasets = d2Map.groupDataSets(self.group.code);
 				self.completenessCharts = [];
-				self.expectedCompletenessCharts = datasets.length;
 				var ouBoundaryID = self.selectedOrgunit.boundary.id;
 
 				var dataset, periods, ouPeriod;
@@ -147,7 +146,7 @@ angular.module("dashboard").controller("DashboardController",
 				if (self.selectedOrgunit.level) ouLevel = self.selectedOrgunit.level.level;
 				var data, endDate, startDate, periodType, yyPeriods, period, refPeriods;
 				var datas = d2Map.groupNumerators(self.group.code, true);
-				self.expectedConsistencyCharts = datas.length;
+
 				if (datas.length > 0) self.tcLoading = true;
 				for (let i = 0; i < datas.length; i++) {
 					
@@ -243,7 +242,7 @@ angular.module("dashboard").controller("DashboardController",
 
 
 				var relations = d2Map.groupRelations(self.group.code, false);
-				self.expectedDataConsistencyCharts = relations.length;
+
 				if (relations.length > 0) self.dcLoading = true;
 				for (let i = 0; i < relations.length; i++) {
 					var relation = relations[i];
@@ -286,7 +285,7 @@ angular.module("dashboard").controller("DashboardController",
 							visualisationService.setChartMargins(chartModel.chartOptions, 60, 20, 100, 100);
 
 							let chartsLoadingCount = self.dataConsistencyCharts.filter(x => x.loading).length;
-							if (chartsLoadingCount === self.expectedDataConsistencyCharts) self.dcLoading = false;
+							self.dcLoading = chartsLoadingCount > 0;
 						});
 
 				}
