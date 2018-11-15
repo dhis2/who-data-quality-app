@@ -494,7 +494,6 @@ angular.module("dashboard").controller("DashboardController",
 
 			}
 
-
 			uiInit();
 			if (d2Map.ready()) {
 				init();

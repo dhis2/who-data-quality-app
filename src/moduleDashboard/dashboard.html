@@ -7,7 +7,7 @@ immunities enjoyed by WHO under national or international law or submit to any n
 -->
 
 <table style="width: 100%">
-	<tr  height="60px">
+	<tr height="60px">
 		<td>
 			<h4>{{ 'Dashboard' | i18next }}</h4>
 		</td>
@@ -29,7 +29,7 @@ immunities enjoyed by WHO under national or international law or submit to any n
 </table>
 
 <div style="width: 100%; display: inline-block;">
-<div ng-show="dashCtrl.innerWidth <= 600" uib-collapse="!dashCtrl.showParameters" class="well well-sm no-print" style="vertical-align: top; height: auto; width: 320px; clear: right">
+	<div ng-show="dashCtrl.innerWidth <= 600" uib-collapse="!dashCtrl.showParameters" class="well well-sm no-print" style="vertical-align: top; height: auto; width: 320px; clear: right">
 		<div style="height: auto;">
 			<h4>
 				{{ 'Data' | i18next }}
@@ -127,6 +127,10 @@ immunities enjoyed by WHO under national or international law or submit to any n
 			<div style="margin-bottom: 20px"></div>
 			<outlier-result  result-control="dashCtrl.resultControl"></outlier-result>
 		</uib-tab>
+		<div ng-if="!dashCtrl.ready || dashCtrl.outLoading" style="text-align: center; padding: 120px;">
+			<img src="../img/ajax-loader.gif" />
+			<p style="margin-top: 12px;">{{ 'Loading data' | i18next }}</p>
+		</div>
 	</uib-tabset>
 	
 	<div ng-show="dashCtrl.innerWidth > 600" uib-collapse="!dashCtrl.showParameters" class="well well-sm no-print" style="vertical-align: top; margin-left: 10px; width: 320px; margin-top: 42px; float:right">
