@@ -60,11 +60,11 @@ immunities enjoyed by WHO under national or international law or submit to any n
 				<th ng-if="resultCtrl.result.metaData.hierarchy.length > 0" colspan="{{resultCtrl.result.metaData.hierarchy.length}}">{{ Hierarchy | i18next }}</th>
 				<th style="white-space:nowrap;" rowspan="2" ng-click="resultCtrl.sortByColumn('metaData.ou.name')">
 					{{ 'Unit' | i18next }}
-					<span ng-if="resultCtrl.sortCol === 'metaData.ou.name'" class="glyphicon glyphicon-sort-by-attributes"></span>
+					<span ng-if="resultCtrl.sortCol === 'metaData.ou.name'" class="{{'glyphicon ' + (resultCtrl.reverse ? 'glyphicon-sort-by-attributes-alt' : 'glyphicon-sort-by-attributes') }}"></span>
 				</th>
 				<th style="white-space:nowrap;" rowspan="2" style="max-width: 200px;" ng-click="resultCtrl.sortByColumn('metaData.dx.name')">
 					{{ 'Data' | i18next }}
-					<span ng-if="resultCtrl.sortCol === 'metaData.dx.name'" class="glyphicon glyphicon-sort-by-attributes"></span>
+					<span ng-if="resultCtrl.sortCol === 'metaData.dx.name'" class="{{'glyphicon ' + (resultCtrl.reverse ? 'glyphicon-sort-by-attributes-alt' : 'glyphicon-sort-by-attributes') }}"></span>
 				</th>
 				<th rowspan="2" ng-repeat="period in resultCtrl.periods" nowrap>{{period}}</th>
 				<th style="white-space:nowrap;" colspan="2"
@@ -90,27 +90,27 @@ immunities enjoyed by WHO under national or international law or submit to any n
 				<th style="white-space:nowrap;" ng-click='resultCtrl.sortByColumn("metaData.ou.hierarchy[" + $index + "]")'
 					ng-repeat="levelName in resultCtrl.result.metaData.hierarchy track by $index">
 					{{levelName}}
-					<span ng-if='resultCtrl.sortCol === "metaData.ou.hierarchy[" + $index + "]"' class="glyphicon glyphicon-sort-by-attributes"></span>
+					<span ng-if='resultCtrl.sortCol === "metaData.ou.hierarchy[" + $index + "]"' class="{{'glyphicon ' + (resultCtrl.reverse ? 'glyphicon-sort-by-attributes-alt' : 'glyphicon-sort-by-attributes') }}"></span>
 				</th>
 				<th style="white-space:nowrap;" ng-if="resultCtrl.typeFilter != 1 && resultCtrl.zScoreColumns" ng-click="resultCtrl.sortByColumn('result.maxSscore')">
 					{{ 'Standard' | i18next }}
-					<span ng-if="resultCtrl.sortCol === 'result.maxSscore'" class="glyphicon glyphicon-sort-by-attributes"></span>
+					<span ng-if="resultCtrl.sortCol === 'result.maxSscore'" class="{{'glyphicon ' + (resultCtrl.reverse ? 'glyphicon-sort-by-attributes-alt' : 'glyphicon-sort-by-attributes') }}"></span>
 				</th>
 				<th style="white-space:nowrap;" ng-if="resultCtrl.typeFilter != 1 && resultCtrl.zScoreColumns" ng-click="resultCtrl.sortByColumn('result.maxZscore')">
 					{{ 'Modified' | i18next }}
-					<span ng-if="resultCtrl.sortCol === 'result.maxZscore'" class="glyphicon glyphicon-sort-by-attributes"></span>
+					<span ng-if="resultCtrl.sortCol === 'result.maxZscore'" class="{{'glyphicon ' + (resultCtrl.reverse ? 'glyphicon-sort-by-attributes-alt' : 'glyphicon-sort-by-attributes') }}"></span>
 				</th>
 				<th style="white-space:nowrap;" ng-if="resultCtrl.typeFilter != 2" ng-click="resultCtrl.sortByColumn('result.gapWeight')">
 					{{ 'Missing' | i18next }}
-					<span ng-if="resultCtrl.sortCol === 'result.gapWeight'" class="glyphicon glyphicon-sort-by-attributes"></span>
+					<span ng-if="resultCtrl.sortCol === 'result.gapWeight'" class="{{'glyphicon ' + (resultCtrl.reverse ? 'glyphicon-sort-by-attributes-alt' : 'glyphicon-sort-by-attributes') }}"></span>
 				</th>
 				<th style="white-space:nowrap;" ng-if="resultCtrl.typeFilter != 1" ng-click="resultCtrl.sortByColumn('result.outWeight')">
 					{{ 'Outlier' | i18next }}
-					<span ng-if="resultCtrl.sortCol === 'result.outWeight'" class="glyphicon glyphicon-sort-by-attributes"></span>
+					<span ng-if="resultCtrl.sortCol === 'result.outWeight'" class="{{'glyphicon ' + (resultCtrl.reverse ? 'glyphicon-sort-by-attributes-alt' : 'glyphicon-sort-by-attributes') }}"></span>
 				</th>
 				<th style="white-space:nowrap;" ng-if="resultCtrl.typeFilter === 0" ng-click="resultCtrl.sortByColumn('result.totalWeight')">
 					{{ 'Total' | i18next }}
-					<span ng-if="resultCtrl.sortCol === 'result.totalWeight'" class="glyphicon glyphicon-sort-by-attributes"></span>
+					<span ng-if="resultCtrl.sortCol === 'result.totalWeight'" class="{{'glyphicon ' + (resultCtrl.reverse ? 'glyphicon-sort-by-attributes-alt' : 'glyphicon-sort-by-attributes') }}"></span>
 				</th>
 			</tr>
 			</thead>
