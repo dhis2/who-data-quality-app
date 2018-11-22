@@ -7,6 +7,7 @@
  */
 
 import "angular";
+
 const moment = require("moment");
 
 //Define module
@@ -93,6 +94,8 @@ angular.module("dashboard").controller("DashboardController",
 						trendChartData[0].key = $i18next.t("Completeness");
 						trendChartData[1].key = $i18next.t("Timeliness");
 
+						visualisationService.setChartYAxis(x.opts, 0, 100);
+
 						chartModel.trendChart = {
 							loading: false,
 							options: x.opts,
@@ -108,6 +111,8 @@ angular.module("dashboard").controller("DashboardController",
 						ouChartData[0].key = periodService.shortPeriodName(ouPeriod);
 						visualisationService.setChartLegend(x.opts, true);
 						visualisationService.setChartYAxis(x.opts, 0, 100);
+
+						x.opts.chart.color = () => "rgb(31, 119, 180)";
 
 						chartModel.ouChart = {
 							loading: false,

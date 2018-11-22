@@ -162,6 +162,7 @@ angular.module("outlierGapAnalysis").controller("OutlierGapAnalysisController",
 				var dxIDs = d2Utils.arrayProperties(dx, "id");
 				var periods = getPeriods();
 
+				self.loading = true;
 				dataAnalysisService.outlierGap(receiveResult, dxIDs, null, null, periods, [ouBoundary.id],
 					ouLevel ? ouLevel.level : null, ouGroup ? ouGroup.id : null, 2, 3.5, 1);
 
@@ -174,6 +175,7 @@ angular.module("outlierGapAnalysis").controller("OutlierGapAnalysisController",
 			self.resultControl = {};
 			function receiveResult(result) {
 				self.resultControl.receiveResult(result);
+				self.loading = false;
 			}
 
 			return self;

@@ -116,6 +116,8 @@ angular.module("consistencyAnalysis").controller("ConsistencyAnalysisController"
 
 			self.doAnalysis = function(boundary, level) {
 
+				self.loading = true;
+
 				//Collapse open panels
 				angular.element(".panel-collapse").removeClass("in");
 				angular.element(".panel-collapse").addClass("collapse");
@@ -231,6 +233,8 @@ angular.module("consistencyAnalysis").controller("ConsistencyAnalysisController"
 				if (self.results.length > 5) self.results.pop();
 
 				prepareResult();
+
+				self.loading = false;
 			}
 
 
@@ -269,7 +273,7 @@ angular.module("consistencyAnalysis").controller("ConsistencyAnalysisController"
 				self.chart.options.chart.height = 375;
 
 				//Look for click events in chart
-				window.$(document).on("click", "#mainChart", function(e) {
+				window.jQuery(document).on("click", "#mainChart", function(e) {
 					var item = e.target.__data__;
 					if( Object.prototype.toString.call(item) === "[object Object]" ) {
 						if (item.hasOwnProperty("series") && item.hasOwnProperty("point")) {

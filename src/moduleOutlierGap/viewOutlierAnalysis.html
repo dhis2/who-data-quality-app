@@ -147,10 +147,10 @@ immunities enjoyed by WHO under national or international law or submit to any n
   </uib-accordion>
 
 <button type="button" class="btn btn-primary pull-right" ng-click="aCtrl.doAnalysis();" style="margin-bottom:20px"
-	ng-disabled="!(aCtrl.selectedData.ds.length > 0 || aCtrl.selectedData.deg.length > 0 || aCtrl.selectedData.ig.length > 0) || !(aCtrl.selectedOrgunit.boundary)"
+	ng-disabled="aCtrl.loading || !(aCtrl.selectedData.ds.length > 0 || aCtrl.selectedData.deg.length > 0 || aCtrl.selectedData.ig.length > 0) || !(aCtrl.selectedOrgunit.boundary)"
 >{{ 'Analyze' | i18next }}</button>
 
-<hr style="clear: both;" />
+<hr style="clear: both; display: block;" /> 
 
 <div ng-if="aCtrl.processStatus.total > 0 && aCtrl.processStatus.progress != 100">
 <h5>{{ 'Loading data...' | i18next }}</h5>
@@ -158,4 +158,4 @@ immunities enjoyed by WHO under national or international law or submit to any n
 </div>
 
 <!-- RESULT -->
-<outlier-result result-control="aCtrl.resultControl"></outlier-result>
+<outlier-result ng-if="aCtrl.processStatus.progress == 100" result-control="aCtrl.resultControl"></outlier-result>

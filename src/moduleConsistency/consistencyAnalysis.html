@@ -124,16 +124,16 @@ immunities enjoyed by WHO under national or international law or submit to any n
 	<d2-select-orgunit default-level="1" max-level="3" ng-model="aCtrl.selectedOrgunit" on-select="aCtrl.selectedOrgunit = object;"></d2-select-orgunit> 
 </div>
 </uib-accordion> 
-<button type="button" class="btn btn-primary pull-right" ng-click="aCtrl.doAnalysis(null, null); aCtrl.updateCharts();" ng-disabled="(!aCtrl.periodSelected &amp;&amp; aCtrl.periodTypeSelected.id != 'Yearly') ||
+<button type="button" class="btn btn-primary pull-right" ng-click="aCtrl.doAnalysis(null, null); aCtrl.updateCharts();" ng-disabled="aCtrl.loading || (!aCtrl.periodSelected &amp;&amp; aCtrl.periodTypeSelected.id != 'Yearly') ||
 					!aCtrl.dataSelectedA ||
 					(aCtrl.type === 'data' &amp;&amp; !aCtrl.dataSelectedB)" style="margin-bottom:20px">{{ 'Analyze' | i18next }}</button> 
 
-<hr/> 
+<hr style="clear: both; display: block;" /> 
 
 <!-- PROGRESS -->
 <div ng-if="aCtrl.req">
 	<h5>
-		{{ 'Loading data' | i18next }}...'
+		{{ 'Loading data' | i18next }}...
 	</h5>
 	<uib-progressbar class="progress-striped active" value="100" type="default"><i ng-show="showWarning">{{ 'Processing' | i18next }}</i></uib-progressbar> 
 </div>
