@@ -278,3 +278,33 @@
 		content: counter(page);
 	}
 }
+
+
+.nvd3-chart-dotted {
+	display: inline-block; 
+	border: 1px dotted gray; 
+	height: 400px;
+}
+
+
+/* directive scope container */
+chart-loading-placeholder {
+	display: inline-block;
+	vertical-align: top;
+}
+/* directive template */
+.chart-placeholder {
+	vertical-align: top;
+	width: 100%;
+}
+.chart-placeholder-loading-notificator {
+	height: 400px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	flex-direction: column;
+}
+.chart-placeholder-loading-notificator img {
+	margin-bottom: 12px;
+}
+

@@ -19,31 +19,43 @@ export default function (requestService, d2Utils, $q) {
 
 	//Private variables
 	var _newRequests = [];		//Store new requests
-	var _requestBatches = [];	//Batches of requests are queued here
-	var _currentBatch;			//Batch currently being fetched
-	var _currentBatchMeta;
-
-	var _aggregationType = false;
-
-	var receivedData = [];
-	var mergedData;
+	let mergedData;
 
 
 	/**
-				 * === === === === === ===
-				 * PUBLIC FUNCTIONS
-				 * === === === === === ===
-				 */
+	 * === === === === === ===
+	 * PUBLIC FUNCTIONS
+	 * === === === === === ===
+	 */
+
 
 	/**
-				 * Add request for data to be fetched
-				 *
-				 * @param dx			(Array of) data IDs - data element, indicator, data element operand, dataset
-				 * @param pe			(Array of) periods in ISO format
-				 * @param ouBoundary	(Array of) boundary orgunit IDs
-				 * @param ouLevel		Optional - level (int) for orgunit disaggregation.
-				 * @param ouGroup		Optional - group (id) for orgunit disaggregation
-				 */
+	 * Look up names based on ID.
+	 */
+	function name(id) {
+		var items = mergedData.metaData.items;
+		var name;
+		//data element operand
+		if (id.length === 23) {
+			name = items[id.substr(0, 11)].name + " " + items[id.substr(12, 11)].name;
+		}
+		else {
+			name = items[id].name;
+		}
+		return name;
+	}
+
+
+
+	/**
+	 * Add request for data to be fetched
+	 *
+	 * @param dx			(Array of) data IDs - data element, indicator, data element operand, dataset
+	 * @param pe			(Array of) periods in ISO format
+	 * @param ouBoundary	(Array of) boundary orgunit IDs
+	 * @param ouLevel		Optional - level (int) for orgunit disaggregation.
+	 * @param ouGroup		Optional - group (id) for orgunit disaggregation
+	 */
 	function addRequest(dx, pe, ouBoundary, ouLevel, ouGroup, aggregationType) {
 
 		_newRequests = d2Utils.arrayMerge(_newRequests,
@@ -60,37 +72,35 @@ export default function (requestService, d2Utils, $q) {
 
 
 	/**
-				 * Fetch data, based on requests that have already been added
-				 *
-				 * @returns {* promise}
-				 */
+	 * Fetch data, based on requests that have already been added
+	 *
+	 * @returns {* promise}
+	 */
 	function fetch() {
-
 		var newBatch = new Batch(_newRequests);
-		_requestBatches.push(newBatch);
 		_newRequests = [];
 
-		if (!_currentBatch) fetchNextRequest();
+		newBatch.start();
 
 		return newBatch.promise();
 	}
 
 
 	/**
-				 * Look up individual data values from the current result.
-				 *
-				 * @param de, pe, ou, co	IDs
-				 * @param aggregationType
-				 * @returns float of datavalue, or null if not found
-				 */
+	 * Look up individual data values from the current result.
+	 *
+	 * @param de, pe, ou, co	IDs
+	 * @param aggregationType
+	 * @returns float of datavalue, or null if not found
+	 */
 	function dataValue(de, pe, ou, co, at) {
 		if (co === undefined) co = null;
 		if (at === undefined) at = null;
 
 		//Make it possible to work with both de and co separately, and in . format
 		if (de.length === 23) {
-			co = de.substr(12,11);
-			de = de.substr(0,11);
+			co = de.substr(12, 11);
+			de = de.substr(0, 11);
 		}
 
 		var header = mergedData.headers;
@@ -111,10 +121,10 @@ export default function (requestService, d2Utils, $q) {
 			data = dataValues[i];
 			if (
 				(dxi === undefined || data[dxi] === de) &&
-							(pei === undefined || data[pei] === pe.toString()) &&
-							(oui === undefined || data[oui] === ou) &&
-							(co === undefined || coi === undefined || data[coi] === co) &&
-							(at === undefined || ati === undefined || data[ati] === at)
+				(pei === undefined || data[pei] === pe.toString()) &&
+				(oui === undefined || data[oui] === ou) &&
+				(co === undefined || coi === undefined || data[coi] === co) &&
+				(at === undefined || ati === undefined || data[ati] === at)
 			)
 				return parseFloat(data[vali]);
 		}
@@ -124,11 +134,11 @@ export default function (requestService, d2Utils, $q) {
 
 
 	/**
-				 * Look up data values from the current result.
-				 *
-				 * @param de, pe, ou, co	IDs
-				 * @returns float of datavalue, or null if not found
-				 */
+	 * Look up data values from the current result.
+	 *
+	 * @param de, pe, ou, co	IDs
+	 * @returns float of datavalue, or null if not found
+	 */
 	function dataValues(de, pe, ou, co) {
 		var value, values = [];
 
@@ -166,42 +176,23 @@ export default function (requestService, d2Utils, $q) {
 
 
 
+	/**
+	 * === === === === === ===
+	 * PRIVATE FUNCTIONS
+	 * === === === === === ===
+	 */
 
 	/**
-				 * Look up names based on ID.
-				 */
-	function name(id) {
-		var items = mergedData.metaData.items;
-		var name;
-		//data element operand
-		if (id.length === 23) {
-			name = items[id.substr(0,11)].name + " " + items[id.substr(12,11)].name;
-		}
-		else {
-			name = items[id].name;
-		}
-		return name;
-	}
-
-
-
-	/**
-				 * === === === === === ===
-				 * PRIVATE FUNCTIONS
-				 * === === === === === ===
-				 */
-
-	/**
-				 * Makes DHIS 2 analytics request based on the given parameters.
-				 *
-				 * @param dxAll			Array of data IDs
-				 * @param pe			Array of ISO periods
-				 * @param ouBoundary	Array of boundary orgunit IDs
-				 * @param ouLevel		Orgunit level for disaggregation
-				 * @param ouGroup		Orgunit group for disaggregation
-				 * @param aggregationType Aggregation type for the request. Null = default
-				 * @returns {Array}		Array of requests
-				 */
+	 * Makes DHIS 2 analytics request based on the given parameters.
+	 *
+	 * @param dxAll			Array of data IDs
+	 * @param pe			Array of ISO periods
+	 * @param ouBoundary	Array of boundary orgunit IDs
+	 * @param ouLevel		Orgunit level for disaggregation
+	 * @param ouGroup		Orgunit group for disaggregation
+	 * @param aggregationType Aggregation type for the request. Null = default
+	 * @returns {Array}		Array of requests
+	 */
 	function makeRequestURLs(dxAll, pe, ouBoundary, ouLevel, ouGroup, aggregationType) {
 
 		var dx = [];
@@ -258,74 +249,139 @@ export default function (requestService, d2Utils, $q) {
 	}
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
 	/**
-				 * Fetch next request from the queue of requests.
-				 */
-	function fetchNextRequest() {
+	 * Call when data for the current batch has been fetched and merged.
+	 * Resolves the data promise, clears the current batch, and calls for more data
+	 */
+	/*function resolveCurrentBatch() {
+		//_currentBatch.resolve(_currentBatchMeta);
+		//_currentBatch = null;
+		fetchNextRequest();
+	}*/
 
 
-		//Need to get new batch
-		if (!_currentBatch) {
-			_currentBatch = _requestBatches.pop();
-			if (!_currentBatch) return;
+
+	/** === BATCH CLASS ===
+	 * Class used to store "batches" of requests. Has an array of requests and a promise, with methods
+	 * to query and access these.
+	 */
+
+	function Batch(requests) {
+		this._requests = requests;
+		this._deferred = $q.defer();
+		this._receivedData = [];
+		//this._mergedData = null;
+		this._started = false;
+		this._batchMeta = null;
+	}
+
+	Batch.prototype.promise = function () {
+		return this._deferred.promise;
+	};
+
+	Batch.prototype.resolve = function () {
+		this._deferred.resolve(this);
+	};
+
+	Batch.prototype.getMeta = function () {
+		return this._batchMeta;
+	};
+
+	Batch.prototype.request = function () {
+		return this._requests.pop();
+	};
+
+	Batch.prototype.done = function () {
+		return this._requests.length === 0 ? true : false;
+	};
+
+	Batch.prototype.id = function () {
+		return this._id;
+	};
+
+	Batch.prototype.start = function () {
+		if (!this._started) {
+			this._started = true;
+			this._fetchNext();
 		}
+	};
+
+	Batch.prototype._fetchNext = function () {
+
+		//console.log("Batch::_fetchNext");
+		let aggregationType = false;
 
 		//Get next request in batch
-		var request = _currentBatch.request();
+		var request = this.request();
 		if (!request) return;
 
 		//TODO: temporary fix
 		if (request.match("aggregationType=COUNT")) {
-			_aggregationType = "COUNT";
+			aggregationType = "COUNT";
 		}
 		else {
-			_aggregationType = false;
+			aggregationType = false;
 		}
-		requestService.getSingleData(request).then( function(data) {
 
-
+		var self = this;
+		requestService.getSingleData(request).then(function (data) {
 
 			if (data) {
-				if (_aggregationType) {
-					data = addAggregationInfo(data, _aggregationType);
+				if (aggregationType) {
+					data = self.addAggregationInfo(data, aggregationType);
 				}
-				receivedData.push(data);
+				self._receivedData.push(data);
 			}
 
 
 			//Current batch is done - merge the data we have so far, and fulfill the promise
-			if (_currentBatch.done()) {
-				mergeBatchMetaData();
-				mergeAnalyticsResults();
-				resolveCurrentBatch();
+			if (self.done()) {
+				self.mergeBatchMetaData();
+				self.mergeAnalyticsResults();
+				self.resolve();
 			}
 			//We are not done, so fetch the next
 			else {
-				fetchNextRequest();
+				self._fetchNext();
 			}
 
 		});
-	}
-
+	};
 
 	/**
-				 * Add info about aggregationtype to result
-				 */
+	 * Add info about aggregationtype to result
+	 */
+	Batch.prototype.addAggregationInfo = function (data, aggregationType) {
 
-	function addAggregationInfo(data, aggregationType) {
-		data.headers.push({"name": "at"});
+		data.headers.push({ "name": "at" });
 		for (let i = 0; i < data.rows.length; i++) {
 			data.rows[i].push(aggregationType);
 		}
 
 		return data;
-	}
+	};
 
 
 	/**
-				 * Merges the metadata from one or more request results into one result set.
-				 */
-	function mergeBatchMetaData() {
+	* Merges the metadata from one or more request results into one result set.
+	*/
+	Batch.prototype.mergeBatchMetaData = function () {
+
+		let receivedData = this._receivedData;
+
 		//Create "skeleton" if it does not exist
 		var meta = {
 			co: [],
@@ -359,30 +415,31 @@ export default function (requestService, d2Utils, $q) {
 		meta.pe = d2Utils.arrayRemoveDuplicates(meta.pe);
 
 		//Clear the data we have now merged
-		_currentBatchMeta = meta;
-	}
-
-
+		this._batchMeta = meta;
+	};
 
 	/**
-				 * Merges the data from the one or more request results into one global result set, which will be used
-				 * for any subsequent requests for additional data.
-				 *
-				 * In cases where the format is different (e.g. one request is disaggergated and the other not),
-				 * the "maximum" will be used and the missing fields will be empty.
-				 */
-	function mergeAnalyticsResults() {
+   * Merges the data from the one or more request results into one global result set, which will be used
+   * for any subsequent requests for additional data.
+   *
+   * In cases where the format is different (e.g. one request is disaggergated and the other not),
+   * the "maximum" will be used and the missing fields will be empty.
+   */
+	Batch.prototype.mergeAnalyticsResults = function () {
+
+		//let mergedData = this._mergedData;
+		let receivedData = this._receivedData;
 
 		//Create "skeleton" if it does not exist
 		if (!mergedData) {
 			mergedData = {
 				headers: [
-					{name: "dx"},
-					{name: "co"},
-					{name: "ou"},
-					{name: "pe"},
-					{name: "value"},
-					{name: "at"}
+					{ name: "dx" },
+					{ name: "co" },
+					{ name: "ou" },
+					{ name: "pe" },
+					{ name: "value" },
+					{ name: "at" }
 				],
 				metaData: {
 					co: [],
@@ -445,53 +502,8 @@ export default function (requestService, d2Utils, $q) {
 		mergedData.metaData.pe = d2Utils.arrayRemoveDuplicates(mergedData.metaData.pe);
 
 		//Clear the data we have now merged
-		receivedData = [];
-	}
-
-
-	/**
-				 * Call when data for the current batch has been fetched and merged.
-				 * Resolves the data promise, clears the current batch, and calls for more data
-				 */
-	function resolveCurrentBatch() {
-		_currentBatch.resolve(_currentBatchMeta);
-		_currentBatch = null;
-		fetchNextRequest();
-	}
-
-
-
-	/** === BATCH CLASS ===
-				 * Class used to store "batches" of requests. Has an array of requests and a promise, with methods
-				 * to query and access these.
-				 */
-
-	function Batch(requests) {
-		this._requests = requests;
-		this._deferred = $q.defer();
-	}
-
-	Batch.prototype.promise = function() {
-		return this._deferred.promise;
+		this._receivedData = [];
 	};
-
-	Batch.prototype.resolve = function(data) {
-		this._deferred.resolve(data);
-	};
-
-	Batch.prototype.request = function() {
-		return this._requests.pop();
-	};
-
-	Batch.prototype.done = function() {
-		return this._requests.length === 0 ? true : false;
-	};
-
-	Batch.prototype.id = function() {
-		return this._id;
-	};
-
 
 	return service;
-
 }

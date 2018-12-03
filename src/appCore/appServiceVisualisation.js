@@ -20,7 +20,8 @@ export default function (periodService, requestService, mathService, $q, d2Data,
 		var deferred = $q.defer();
 		d2Data.addRequest(dataIDs, periodIDs, orgunitIDs);
 		d2Data.fetch().then(
-			function (metadata) {
+			function (batch) {
+				let metadata = batch.getMeta();
 
 				orgunitIDs = metadata.ou;
 
@@ -233,7 +234,8 @@ export default function (periodService, requestService, mathService, $q, d2Data,
 
 		d2Data.addRequest(dataIDs, periodIDs, orgunitIDs, orgunitLevel, null);
 		d2Data.fetch().then(
-			function (metadata) {
+			function (batch) {
+				let metadata = batch.getMeta();
 
 				orgunitIDs = metadata.ou;
 
@@ -350,7 +352,10 @@ export default function (periodService, requestService, mathService, $q, d2Data,
 
 		//TODO: why isn't the loaded data used??
 		// eslint-disable-next-line no-unused-vars
-		d2Data.fetch().then(function (data) {
+		d2Data.fetch().then(function (batch) {
+			// eslint-disable-next-line no-unused-vars
+			let metadata = batch.getMeta();
+
 			var yLen = 0, xLen = 0;
 
 			//Get XAxis labels = periods from series[0]

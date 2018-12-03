@@ -455,7 +455,7 @@ export default function ($q, requestService, mathService, d2Meta, d2Map) {
 	function makeOuHierarchy(ouID, metaData) {
 
 		var hierarchyIDs = metaData.ouHierarchy[ouID].split("/");
-		hierarchyIDs.splice(0,2); //Get rid of leading "" and root, which is not needed
+		hierarchyIDs.splice(0,1); //Get rid of leading "" and root, which is not needed
 
 		var hierarchyNames = [];
 		for (let i = 0; i < hierarchyIDs.length; i++) {
@@ -1200,14 +1200,14 @@ export default function ($q, requestService, mathService, d2Meta, d2Map) {
 		if (status != 200) {
 
 			//TODO: Should split it instead
-			if (status === 409 && (data.indexOf("Table exceeds") > -1)) {
+			if (status === 409 && (data && data.indexOf("Table exceeds") > -1)) {
 				console.log("Query result too big");
 				requestSucceeded(requestURL);
 
 			}
 
 			//No children for this boundary ou - no worries..
-			else if (status === 409 && (data.indexOf("Dimension ou is present") > -1)) {
+			else if (status === 409 && (data && data.indexOf("Dimension ou is present") > -1)) {
 				console.log("Requested child data for a unit without children");
 				requestSucceeded(requestURL);
 			}

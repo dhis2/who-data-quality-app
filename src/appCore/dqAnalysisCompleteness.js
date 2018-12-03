@@ -253,11 +253,11 @@ export default function (d2Data, d2Meta, d2Utils, mathService, requestService, $
 
 
 	/**
-				 * Performs data consistency analysis on the subunits
-				 *
-				 * @param boundaryRatio
-				 * @returns {{ignored: Array, nonOutlierCount: number, outlierCount: number, outlierNames: Array, datapoints: Array}}
-				 */
+	 * Performs data consistency analysis on the subunits
+	 *
+	 * @param boundaryRatio
+	 * @returns {{ignored: Array, nonOutlierCount: number, outlierCount: number, outlierNames: Array, datapoints: Array}}
+	 */
 	function dataCompletenessAnalysisSubunits() {
 
 		var subunitData = {
