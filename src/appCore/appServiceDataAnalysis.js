@@ -455,7 +455,7 @@ export default function ($q, requestService, mathService, d2Meta, d2Map) {
 	function makeOuHierarchy(ouID, metaData) {
 
 		var hierarchyIDs = metaData.ouHierarchy[ouID].split("/");
-		hierarchyIDs.splice(0,2); //Get rid of leading "" and root, which is not needed
+		hierarchyIDs.splice(0,1); //Get rid of leading "" and root, which is not needed
 
 		var hierarchyNames = [];
 		for (let i = 0; i < hierarchyIDs.length; i++) {
