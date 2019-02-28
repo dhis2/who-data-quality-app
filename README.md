@@ -1,6 +1,6 @@
 # WHO Data Quality Tool
 
-[![Build Status](https://travis-ci.org/dhis2/data-quality-app-who.svg?branch=master)](https://travis-ci.org/dhis2/data-quality-app-who)
+[![Build Status](https://travis-ci.org/dhis2/data-quality-app-who.svg?branch=master)](https://travis-ci.org/dhis2/data-quality-app-who) [![Greenkeeper badge](https://badges.greenkeeper.io/dhis2/data-quality-app-who.svg)](https://greenkeeper.io/)
 
 ## License
 © Copyright 2017 the World Health Organization (WHO).
