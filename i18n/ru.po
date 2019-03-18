@@ -13,453 +13,465 @@ msgstr ""
 "Language: ru\n"
 
 msgid "Totals"
-msgstr ""
+msgstr "Итоги"
 
 msgid "Details"
-msgstr ""
+msgstr "Детали"
 
 msgid "Indicator group"
-msgstr ""
+msgstr "Индикаторная группа"
 
 msgid "Boundary"
-msgstr ""
+msgstr "Граница"
 
 msgid "Other"
-msgstr ""
+msgstr "Прочее"
 
 msgid "Disaggregation"
-msgstr ""
+msgstr "Дезагрегирование"
 
 msgid "Organisation unit level"
-msgstr ""
+msgstr "Уровень организационной единицы"
 
 msgid "Organisation unit group"
-msgstr ""
+msgstr "Группа организационной единицы"
 
 msgid "Selected"
-msgstr ""
+msgstr "Выбранный"
 
 msgid "Consistency"
-msgstr ""
+msgstr "Согласованность"
 
 msgid "Consistency analysis type"
-msgstr ""
+msgstr "Тип анализа согласованности"
 
 msgid "Between Indicators"
-msgstr ""
+msgstr "Между индикаторами"
 
 msgid "Over Time"
-msgstr ""
+msgstr "С течением времени"
 
 msgid "Compare organisation units to"
-msgstr ""
+msgstr "Сравнить организационные единицы с"
 
 msgid "Overall result"
-msgstr ""
+msgstr "Общий результат"
 
 msgid "Expected result"
-msgstr ""
+msgstr "Ожидаемый результат"
 
 msgid "Expected relationship"
-msgstr ""
+msgstr "Ожидаемые отношения"
 
 msgid "Dropout"
-msgstr ""
+msgstr "Выпадение"
 
 msgid "Expected trend"
-msgstr ""
+msgstr "Ожидаемый тренд"
 
 msgid "Increasing/decreasing"
-msgstr ""
+msgstr "Увеличение / уменьшение"
 
 msgid "Criteria"
-msgstr ""
+msgstr "Критерии"
 
 msgid "Data"
-msgstr ""
+msgstr "Данные"
 
 msgid "Select data element/indicator"
-msgstr ""
+msgstr "Выбрать элемент/индикатор данных"
 
 msgid "Data element"
-msgstr ""
+msgstr "Элемент данных"
 
 msgid "Indicator"
-msgstr ""
+msgstr "Индикатор"
 
 msgid "Select data element/indicator for comparison"
-msgstr ""
+msgstr "Выбрать элемент/индикатор данных для сравнения"
 
 msgid "Period"
-msgstr ""
+msgstr "Период"
 
 msgid "Period type"
-msgstr ""
+msgstr "Тип периода"
 
 msgid "Year"
-msgstr ""
+msgstr "Год"
 
 msgid "Select year"
-msgstr ""
+msgstr "Выбрать год"
 
 msgid "Select period"
-msgstr ""
+msgstr "Выбрать период"
 
 msgid "Reference periods"
-msgstr ""
+msgstr "Базовые периоды"
 
 msgid "No. of Preceding periods"
-msgstr ""
+msgstr "Количество предшествующих периодов"
 
 msgid "Orgunit"
-msgstr ""
+msgstr "Организационная единица"
 
 msgid "Analyze"
-msgstr ""
+msgstr "Анализировать"
 
 msgid "Loading data"
-msgstr ""
+msgstr "Загрузка данных"
 
 msgid "Processing"
-msgstr ""
+msgstr "Обработка"
 
 msgid "Download"
-msgstr ""
+msgstr "Скачать"
 
 msgid "Previous"
-msgstr ""
+msgstr "Предыдущий"
 
 msgid "Unit"
-msgstr ""
+msgstr "Единица"
 
 msgid "Current Period"
-msgstr ""
+msgstr "Текущий период"
 
 msgid "Average"
-msgstr ""
+msgstr "Среднее"
 
 msgid "Forecast"
-msgstr ""
+msgstr "Прогноз"
 
 msgid "Dropout rate"
-msgstr ""
+msgstr "Уровень выпадания"
 
 msgid "Ratio"
-msgstr ""
+msgstr "Коэффициент (отношение)"
 
 msgid "Weight"
-msgstr ""
+msgstr "Вес"
 
 msgid "Contact"
-msgstr ""
+msgstr "Контакт"
 
 msgid "Drill down"
-msgstr ""
+msgstr "Развернуть"
 
 msgid "Click on the graph or in the table see details."
-msgstr ""
+msgstr "Нажмите на график или таблицу для просмотра деталей."
 
 msgid "Dashboard"
-msgstr ""
+msgstr "Информационная панель"
 
 msgid "Completeness"
-msgstr ""
+msgstr "Завершённость"
 
 msgid "completeness"
-msgstr ""
+msgstr "завершённость"
 
 msgid "Consistency - time"
-msgstr ""
+msgstr "Согласованность - время"
 
 msgid "Consistency - data"
-msgstr ""
+msgstr "Согласованность - данные"
 
 msgid "Outliers"
-msgstr ""
+msgstr "Выбросы"
 
 msgid "Outliers and Missing Data"
-msgstr ""
+msgstr "Выбросы и отсутствующие данные"
 
 msgid "Data set"
-msgstr ""
+msgstr "Набор данных"
 
 msgid "Data elements"
-msgstr ""
+msgstr "Элементы данных"
 
 msgid "Indicators"
-msgstr ""
+msgstr "Индикаторы"
 
 msgid "Recent"
-msgstr ""
+msgstr "Недавний"
 
 msgid "By year"
-msgstr ""
+msgstr "По году"
 
 msgid "Custom"
-msgstr ""
+msgstr "Пользовательский"
 
 msgid "Select number of periods..."
-msgstr ""
+msgstr "Выбрать количество периодов ..."
 
 msgid "Select period type..."
-msgstr ""
+msgstr "Выбрать тип периода ..."
 
 msgid "Select year..."
-msgstr ""
+msgstr "Выбрать год ..."
 
 msgid "From"
-msgstr ""
+msgstr "с"
 
 msgid "To"
-msgstr ""
+msgstr "до"
 
 msgid "Loading data..."
-msgstr ""
+msgstr "Загрузка данных..."
 
 msgid "Annual Data Quality Report"
-msgstr ""
+msgstr "Годовой отчет качества данных"
 
 msgid "Select group"
-msgstr ""
+msgstr "Выбрать группу"
 
 msgid "Preceding years for reference"
-msgstr ""
+msgstr "Предыдущие годы для сравнения"
 
 msgid "Generate"
-msgstr ""
+msgstr "Генерировать"
 
 msgid "Print"
-msgstr ""
+msgstr "Печать"
 
 msgid "Assessment of Health Facility Data Quality"
-msgstr ""
+msgstr "Оценка качества данных медицинского учреждения"
 
 msgid "WHO Data Quality Review"
-msgstr ""
+msgstr "Проверка качества данных ВОЗ"
 
 msgid "SUMMARY"
-msgstr ""
+msgstr "Заключение"
 
 msgid "Domain 1 - Completeness"
-msgstr ""
+msgstr "Домен 1 — Завершённость"
 
 msgid "Completeness of facility reporting"
-msgstr ""
+msgstr "Завершённость отчетности учреждения"
 
 msgid ""
 "The percentage of expected reports that have been entered and completed."
-msgstr ""
+msgstr "Процент ожидаемых отчетов, которые были введены и завершены."
 
 msgid "Overall score"
-msgstr ""
+msgstr "Общая оценка"
 
 msgid "with divergent score"
-msgstr ""
+msgstr "с расходящейся оценкой"
 
 msgid "Number"
-msgstr ""
+msgstr "Число"
 
 msgid "Percent"
-msgstr ""
+msgstr "Процент"
 
 msgid "Not available"
-msgstr ""
+msgstr "Недоступно"
 
 msgid "Timeliness of facility reporting"
-msgstr ""
+msgstr "Своевременность отчетности учреждения"
 
 msgid ""
 "The percentage of expected reports that have been entered and completed on "
 "time."
-msgstr ""
+msgstr "Процент ожидаемых отчетов, которые были введены и завершены вовремя."
 
 msgid "Completeness of indicator data"
-msgstr ""
+msgstr "Целостность данных по показателям"
 
 msgid "Missing or zero values"
-msgstr ""
+msgstr "Отсутствующие или нулевые значения"
 
 msgid "compared to previous"
-msgstr ""
+msgstr "по сравнению с предыдущими"
 
 msgid "years."
-msgstr ""
+msgstr "годами."
 
 msgid "Domain 2 - Internal consistency"
-msgstr ""
+msgstr "Домен 2 - внутренняя согласованность"
 
 msgid "Extreme outliers, using the standard method."
-msgstr ""
+msgstr "Предельные выбросы, используя стандартный метод."
 
 msgid ""
 "are counted as divergent if they have one or more extreme outliers for an "
 "indicator."
 msgstr ""
+"считаются расходящимися, если они имеют один или несколько предельных "
+"выбросов для индикатора."
 
 msgid "Moderate outliers."
 msgstr ""
 
 msgid "Outliers relative to the mean."
-msgstr ""
+msgstr "Выбросы относительно среднего значения."
 
 msgid "Moderate outliers, using the standard method."
-msgstr ""
+msgstr "Умеренные выбросы, используя стандартный метод."
 
 msgid ""
 "are counted as divergent if they have two or more moderate outliers for an "
 "indicator."
 msgstr ""
+"считаются расходящимися, если они имеют два или более умеренных выброса для "
+"индикатора."
 
 msgid "Not applicable"
-msgstr ""
+msgstr "Не применим"
 
 msgid "Moderate outliers."
-msgstr ""
+msgstr "Выбросы умеренного уровня"
 
 msgid "Consistency over time."
-msgstr ""
+msgstr "Согласованность во времени."
 
 msgid ""
 "Difference between the current year and either the average of the 3 "
 "preceding years (if expected trend is constant), or the forecasted value."
 msgstr ""
+"Разница между текущим годом и средним значением за 3 предыдущих года (если "
+"ожидаемая тренд постоянный) или прогнозным значением."
 
 msgid "Subunits with divergent score"
-msgstr ""
+msgstr "Подразделения с расходящейся оценкой"
 
 msgid "Consistency with United Nations Population Projections"
-msgstr ""
+msgstr "Соответствие демографическим прогнозам Организации Объединенных Наций"
 
 msgid "Consistency of denominators"
-msgstr ""
+msgstr "Согласованность знаменателей"
 
 msgid "Quality threshold"
-msgstr ""
+msgstr "Порог качества"
 
 msgid "Interpretations"
-msgstr ""
+msgstr "Интерпретации"
 
 msgid "Values"
-msgstr ""
+msgstr "Значения"
 
 msgid "Expected"
-msgstr ""
+msgstr "Ожидаемый (предполагаемый)"
 
 msgid "Actual"
-msgstr ""
+msgstr "Фактический"
 
 msgid "Name"
-msgstr ""
+msgstr "Название"
 
 msgid "Consistency of dataset completeness over time"
-msgstr ""
+msgstr "Согласованность полноты набора данных с течением времени"
 
 msgid "Completeness of datasets in"
-msgstr ""
+msgstr "Целостность наборов данных в"
 
 msgid "Compare"
-msgstr ""
+msgstr "Сравнить"
 
 msgid "to"
-msgstr ""
+msgstr "с"
 
 msgid "Constant"
-msgstr ""
+msgstr "Постоянная величина"
 
 msgid "Decreasing"
-msgstr ""
+msgstr "Убывающий"
 
 msgid "Current vs average"
-msgstr ""
+msgstr "Текущее по сравнению со средним"
 
 msgid "Current vs forecast"
-msgstr ""
+msgstr "Текущее по сравнению с прогнозом"
 
 msgid "Reporting completeness over time"
-msgstr ""
+msgstr "Завершенность отчетности по времени"
 
 msgid "DOMAIN 2 - INTERNAL CONSISTENCY OF REPORTED DATA"
-msgstr ""
+msgstr "ДОМЕН 2 - ВНУТРЕННЯЯ СОГЛАСОВАННОСТЬ ОТЧЕТНЫХ ДАННЫХ"
 
 msgid ""
 "Extreme outliers, using the standard method. Threshold denotes the number of "
 "standard deviations from the mean."
 msgstr ""
+"Предельные выбросы, используя стандартный метод. Порог обозначает количество "
+"стандартных отклонений от среднего."
 
 msgid "Threshold"
-msgstr ""
+msgstr "Порог"
 
 msgid "Names"
-msgstr ""
+msgstr "Названия"
 
 msgid ""
 "Moderate outliers, using the standard method. Threshold denotes the number "
 "of standard deviations from the mean."
 msgstr ""
+"Умеренные выбросы, используя стандартный метод. Порог обозначает количество "
+"стандартных отклонений от среднего."
 
 msgid "Moderate outliers"
-msgstr ""
+msgstr "Умеренные выбросы"
 
 msgid "Increasing"
-msgstr ""
+msgstr "Увеличение"
 
 msgid "Number of"
-msgstr ""
+msgstr "Количество"
 
 msgid "Percent of"
-msgstr ""
+msgstr "Процент"
 
 msgid "Consistency between related indicators"
-msgstr ""
+msgstr "Согласованность между соответствующими показателями"
 
 msgid ""
 "Consistency between reported values for two related indicators within the "
 "same year."
 msgstr ""
+"Согласованность между отчетными значениями для двух связанных показателей в "
+"течение одного года."
 
 msgid "Indicator A"
-msgstr ""
+msgstr "Индикатор А"
 
 msgid "Indicator B"
-msgstr ""
+msgstr "Индикатор Б"
 
 msgid "Not negative"
-msgstr ""
+msgstr "Не отрицательный"
 
 msgid "DOMAIN 3 - EXTERNAL COMPARISON"
-msgstr ""
+msgstr "ДОМЕН 3 - ВНЕШНЕЕ СРАВНЕНИЕ"
 
 msgid "Comparison with external/survey data"
-msgstr ""
+msgstr "Сравнение с внешними данными / данными исследования"
 
 msgid "Survey value"
-msgstr ""
+msgstr "Значение опроса"
 
 msgid "Routine value"
-msgstr ""
+msgstr "Стандартное значение"
 
 msgid "Consistency with UN population projection."
-msgstr ""
+msgstr "Соответствие демографическим прогнозам ООН."
 
 msgid ""
 "Ratio of population projection from the Bureau of Statistics to a UN "
 "projection"
-msgstr ""
+msgstr "Соотношение демографического прогноза Бюро статистики с прогнозом ООН"
 
 msgid "Consistency of denominators within the same year."
-msgstr ""
+msgstr "Согласованность знаменателей в течение одного года."
 
 msgid "Denominator B"
-msgstr ""
+msgstr "Знаменатель Б"
 
 msgid "with poor score"
-msgstr ""
+msgstr "с плохим счетом"
 
 msgid "Remarks"
-msgstr ""
+msgstr "Замечания"
 
 msgid "Analysis type"
-msgstr ""
+msgstr "Тип анализа"
 
 msgid "Item"
-msgstr ""
+msgstr "Элемент"
