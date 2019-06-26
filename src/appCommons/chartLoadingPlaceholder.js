@@ -11,8 +11,8 @@ immunities enjoyed by WHO under national or international law or submit to any n
 
 	angular.module("appCommons")
 		.directive("chartLoadingPlaceholder", () => ({
-            restrict: "E",
-            template: require("./chartLoadingPlaceholder.html")
+			restrict: "E",
+			template: require("./chartLoadingPlaceholder.html")
 		}));
 
 })(angular);
