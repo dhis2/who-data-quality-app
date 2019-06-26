@@ -185,10 +185,10 @@ app.controller("NavigationController",
 
 app.run(["BASE_URL", "$http", function(BASE_URL, $http) {
 	console.log("Requesting profile");
-	$http.get( BASE_URL + "/api/me/profile.json").then(function (response) {
+	$http.get( BASE_URL + "/api/userSettings.json").then(function (response) {
 		console.log("Got profile: ", response);
-		if (response.data && response.data.settings && response.data.settings.keyUiLocale) {
-			i18next.changeLanguage(response.data.settings.keyUiLocale);
+		if (response.data && response.data && response.data.keyUiLocale) {
+			i18next.changeLanguage(response.data.keyUiLocale);
 		}
 	});
 }]);
