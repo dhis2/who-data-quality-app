@@ -353,24 +353,16 @@ export default function (requestService, periodService, d2Utils, $q) {
 	function dataElementDataSets(ids) {
 		var deferred = $q.defer();
 
-		var requestURL = "/dataElements.json?";
-		requestURL += "fields=displayName,id,dataSets[displayName,id,periodType,organisationUnits::size]";
-		requestURL += ",dataSetElements[dataSet[displayName,id,periodType,organisationUnits::size]";
-		requestURL += "&filter=id:in:[" + ids.join(",") + "]";
-		requestURL += "&paging=false";
-
+		var requestURL = `/dataSets.json?fields=displayName,id&filter=dataSetElements.dataElement.id:in:[${ids.join(",")}]&paging=false`;
 		requestService.getSingleData(requestURL).then(
 			function(data) {
 
 				var datasets = [];
-				var dataElements = data.dataElements;
-				for (let i = 0; i < dataElements.length; i++) {
-					var de = dataElements[i];
+				var fetchedDataSets = data.dataSets;
+				for (let i = 0; i < fetchedDataSets.length; i++) {
+					var ds = fetchedDataSets[i];
 
-					for (let j = 0; j < de.dataSetElements.length; j++) {
-						datasets.push(de.dataSetElements[j].dataSet);
-					}
-
+					datasets.push(ds);
 				}
 				d2Utils.arraySortByProperty(datasets, "name", false);
 				datasets = d2Utils.arrayRemoveDuplicates(datasets, "id");
