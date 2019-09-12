@@ -57,6 +57,10 @@ import "./moduleExport/export.js";
 //CSS
 import "./css/style.css";
 
+import "debug";
+
+
+
 var app = angular.module("dataQualityApp",
 	["ngAnimate", "ngSanitize", "ngRoute", "ui.select", "jm.i18next", "dqAnalysis", "dashboard", "review",
 		"consistencyAnalysis", "outlierGapAnalysis", "about", "dataExport",
