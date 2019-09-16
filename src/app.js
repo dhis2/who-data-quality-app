@@ -79,7 +79,7 @@ angular.element(document).ready(
 				//Not production => rely on webpack-dev-server proxy
 				// eslint-disable-next-line no-undef
 				const baseUrl = process.env.NODE_ENV === "production" ?
-					response.data.activities.dhis.href : "";
+					response.data.activities.dhis.href : dhisDevConfig.baseUrl;
 				app.constant("BASE_URL", baseUrl);
 				app.constant("API_VERSION", "29");
 				angular.bootstrap(document, ["dataQualityApp"]);
@@ -107,6 +107,12 @@ app.config(["uiSelectConfig", function(uiSelectConfig) {
 app.config(["$locationProvider", function($locationProvider) {
 	$locationProvider.hashPrefix("");
 }]);
+
+app.config(["$httpProvider", 
+	function ($httpProvider) {
+		$httpProvider.defaults.withCredentials = true;
+	}]
+);
 
 
 app.config(["$routeProvider",

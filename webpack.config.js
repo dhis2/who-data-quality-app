@@ -14,21 +14,13 @@ try {
 	// Failed to load config file - use default config
 	console.warn('\nWARNING! Failed to load DHIS config:', e.message);
 	dhisConfig = {
-		baseUrl: 'http://localhost:8080/',
+		baseUrl: 'http://localhost:8080',
 		authorization: 'Basic YWRtaW46ZGlzdHJpY3Q=', // admin:district
 	};
 }
 
-const devServerPort = 8081;
 const isDevBuild = process.argv[1].indexOf('webpack-dev-server') !== -1;
 const scriptPrefix = (isDevBuild ? dhisConfig.baseUrl : '..');
-
-function log(req, res, opt) {
-	req.headers.Authorization = dhisConfig.authorization; // eslint-disable-line
-	if (req.url.indexOf(opt.target)) {
-		console.log('[PROXY]'.cyan.bold, req.method.green.bold, req.url.magenta, '=>'.dim, opt.target.dim);
-	}
-}
 
 
 const webpackConfig = {
@@ -111,32 +103,7 @@ const webpackConfig = {
 			DHIS_CONFIG: JSON.stringify({}),
 		}),
 		isDevBuild ? undefined : new webpack.optimize.OccurrenceOrderPlugin()
-	].filter(v => v),
-	devServer: {
-		port: devServerPort,
-		inline: true,
-		compress: true,
-		proxy: [
-			{
-				path: '/polyfill.min.js',
-				target: `http://localhost:${devServerPort}/node_modules/babel-polyfill/dist`,
-				bypass: log,
-				secure: false
-			},
-			{
-				context: [
-					'/api/**',
-					'/dhis-web-commons/**',
-					'/dhis-web-commons-ajax-json/**',
-					'/icons/**',
-					'/dhis-web-core-resource/**',
-				],
-				target: dhisConfig.baseUrl,
-				bypass: log,
-				secure: false
-			}
-		]
-	}
+	].filter(v => v)
 }
 
 
