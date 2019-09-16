@@ -6,6 +6,11 @@
  immunities enjoyed by WHO under national or international law or submit to any national court jurisdiction.
  */
 
+import * as Debug from "debug";
+
+const debug = Debug("dqApp:outlierAnalysisResult");
+
+
 var app = angular.module("outlierGapAnalysis");
 
 app.directive("outlierResult", function () {
@@ -33,6 +38,8 @@ app.controller("OutlierResultController",
 		function(periodService, mathService, dataAnalysisService, requestService, visualisationService, $i18next, $uibModal) {
 			var self = this;
 
+			debug("OutlierResultController::init");
+
 			//"API" for sending result
 			self.results = [];
 			self.resultControl.receiveResult = receiveResult;
@@ -44,7 +51,7 @@ app.controller("OutlierResultController",
 				}
 				else {
 					self.alerts = [];
-					console.log("Received " + result.rows.length + " rows");
+					debug("Received " + result.rows.length + " rows");
 					if (result.trimmed) {
 						var message = $i18next.t("Due to its size, the result was trimmed down to ") + result.rows.length + $i18next.t(" rows. ");
 						message += $i18next.t("Rows were prioritized based on total weight (significance of missing data and outliers), with rows with the lowest weight being left out of the result.");
@@ -63,8 +70,10 @@ app.controller("OutlierResultController",
 
 
 			function prepareResult() {
-
+				
 				self.result = self.results[self.currentResult];
+
+				debug("prepareResult::result", self.result);
 
 				//Reset filter
 				self.typeFilter = 0;
@@ -258,11 +267,17 @@ app.controller("OutlierResultController",
 
 			self.drillDown = function (rowMetaData) {
 
+				debug("outlierAnalysisResult::drillDown", rowMetaData)
+
 				//TODO: Check that it has children, then use level in query rather
 				var requestURL = "/organisationUnits/" + rowMetaData.ou.id + ".json?fields=children[id]";
 				requestService.getSingle(requestURL).then(function (response) {
 
-					if (!requestService.validResponse(response)) return;
+					if (!requestService.validResponse(response)) {
+						debug("Invalid response");
+						return;
+					}
+
 					var children = response.data.children;
 					if (children.length > 0) {
 
@@ -271,15 +286,14 @@ app.controller("OutlierResultController",
 							orgunits.push(children[i].id);
 						}
 
-
+						debug("calling dataAnalysisService.outlierGap begin")
 						dataAnalysisService.outlierGap(receiveResult, self.result.metaData.dataIDs, self.result.metaData.coAll, self.result.metaData.coFilter, self.result.metaData.periods, orgunits, null, null, 2, 3.5, 1);
+						debug("calling dataAnalysisService.outlierGap end")
 
 
 						//Move currently shown result to front of results
-
 						self.result = undefined;
 						self.results.move(self.currentResult, 0);
-
 					}
 
 					else {
@@ -308,7 +322,7 @@ app.controller("OutlierResultController",
 
 				// eslint-disable-next-line no-unused-vars
 				modalInstance.result.then(function (result) {
-					console.log("Export done");
+					debug("Export done");
 				});
 
 			};
