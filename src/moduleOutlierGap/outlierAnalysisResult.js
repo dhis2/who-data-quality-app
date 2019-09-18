@@ -267,7 +267,7 @@ app.controller("OutlierResultController",
 
 			self.drillDown = function (rowMetaData) {
 
-				debug("outlierAnalysisResult::drillDown", rowMetaData)
+				debug("outlierAnalysisResult::drillDown", rowMetaData);
 
 				//TODO: Check that it has children, then use level in query rather
 				var requestURL = "/organisationUnits/" + rowMetaData.ou.id + ".json?fields=children[id]";
@@ -286,9 +286,9 @@ app.controller("OutlierResultController",
 							orgunits.push(children[i].id);
 						}
 
-						debug("calling dataAnalysisService.outlierGap begin")
+						debug("calling dataAnalysisService.outlierGap begin");
 						dataAnalysisService.outlierGap(receiveResult, self.result.metaData.dataIDs, self.result.metaData.coAll, self.result.metaData.coFilter, self.result.metaData.periods, orgunits, null, null, 2, 3.5, 1);
-						debug("calling dataAnalysisService.outlierGap end")
+						debug("calling dataAnalysisService.outlierGap end");
 
 
 						//Move currently shown result to front of results
