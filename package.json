@@ -54,9 +54,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "d2-manifest package.json manifest.webapp && npm run convert-po && webpack-dev-server   --mode=development",
-    "validate": "npm ls --depth 0",
     "lint-all": "eslint src; exit 0",
-    "prebuild": "rm -rf build && npm run validate && npm run lint-all",
+    "prebuild": "rm -rf build && npm run lint-all",
     "build": "npm run convert-po && webpack -p --progress",
     "postbuild": "cp -r i18n build/ && npm run manifest",
     "manifest": "d2-manifest package.json build/manifest.webapp",
