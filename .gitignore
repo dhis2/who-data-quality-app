@@ -1,19 +1,5 @@
-node_modules*/
-.sass-cache
-*.iml
-.idea
-
-.jshintignore
-.jshintrc
-
-build/
-target/
-manifest.webapp
-
-.DS_Store
-
-*.zip
-npm-debug.log
-
-# Do not include JS translation resources regenrated by po-converter.js
-i18n/resources.js
+# DHIS2 Platform
+node_modules
+.d2
+src/locales
+build

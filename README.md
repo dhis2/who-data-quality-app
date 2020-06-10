@@ -1,45 +1,37 @@
-# WHO Data Quality Tool
+This project was bootstrapped with [DHIS2 Application Platform](https://github.com/dhis2/app-platform).
 
-[![Build Status](https://travis-ci.com/dhis2/data-quality-app-who.svg?branch=master)](https://travis-ci.com/dhis2/data-quality-app-who)
+## Available Scripts
 
-## License
-© Copyright 2017 the World Health Organization (WHO).
-This software is distributed under the terms of the GNU General Public License version 3 (GPL Version 3),
-copied verbatim in the file “COPYING”.  In applying this license, WHO does not waive any of the privileges and
-immunities enjoyed by WHO under national or international law or submit to any national court jurisdiction.
+In the project directory, you can run:
 
-## Getting started
+### `yarn start`
 
-### Install dependencies
-To install app dependencies:
+Runs the app in the development mode.<br />
+Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
-```
-npm install
-```
+The page will reload if you make edits.<br />
+You will also see any lint errors in the console.
 
-### Compile to zip
-To compile the app to a .zip file:
+### `yarn test`
 
-```
-npm run zip
-```
+Launches the test runner and runs all available tests found in `/src`.<br />
 
-### Start dev server
-To start the webpack development server:
+See the section about [running tests](https://platform.dhis2.nu/#/scripts/test) for more information.
 
-```
-npm start
-```
+### `yarn build`
 
-By default, webpack will start on port 8081, and assumes DHIS2 is running on 
-http://localhost:8080/dhis with `admin:district` as the user and password.
+Builds the app for production to the `build` folder.<br />
+It correctly bundles React in production mode and optimizes the build for the best performance.
 
-A different DHIS2 instance can be used to develop against by setting the `DHIS2_HOME`
-environmental variable (e.g. `export DHIS2_HOME=/Users/Olav/dhis2/dq_d2home`). 
-Inside the folder `DHIS2_HOME` points to, create a file `config` with the url 
-and base64-encoded username:password like this:
+The build is minified and the filenames include the hashes.<br />
+A deployable `.zip` file can be found in `build/bundle`!
 
-```
-exports.baseUrl = 'http://localhost:8090/dqdev';
-exports.authorization = 'Basic YWRtaW46ZGlzdHJpY3QK='; //Based64 encoded
-```
+See the section about [building](https://platform.dhis2.nu/#/scripts/build) for more information.
+
+## Learn More
+
+You can learn more about the platform in the [DHIS2 Application Platform Documentation](https://platform.dhis2.nu/).
+
+You can learn more about the runtime in the [DHIS2 Application Runtime Documentation](https://runtime.dhis2.nu/).
+
+To learn React, check out the [React documentation](https://reactjs.org/).
