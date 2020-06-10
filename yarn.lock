@@ -4900,7 +4900,7 @@ cypress-cucumber-preprocessor@^2.0.1:
     minimist "^1.2.0"
     through "^2.3.8"
 
-cypress@^4.0.2, cypress@^4.8.0:
+cypress@^4.0.2:
   version "4.8.0"
   resolved "https://registry.yarnpkg.com/cypress/-/cypress-4.8.0.tgz#8fe731db77f39310511d83e81439d06ae3388554"
   integrity sha512-Lsff8lF8pq6k/ioNua783tCsxGSLp6gqGXecdIfqCkqjYiOA53XKuEf1CaQJLUVs1dHSf49eDUp/sb620oJjVQ==

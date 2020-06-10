@@ -20,7 +20,9 @@ const MyApp = () => (
                         <h1>
                             {i18n.t('Hello {{name}}', { name: data.me.name })}
                         </h1>
-                        <h3 className={classes.subHeader}>{i18n.t('Welcome to DHIS2!')}</h3>
+                        <h3 className={classes.subHeader}>
+                            {i18n.t('Welcome to DHIS2!')}
+                        </h3>
                     </>
                 )
             }}
