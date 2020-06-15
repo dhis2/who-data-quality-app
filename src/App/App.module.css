@@ -1,0 +1,27 @@
+body :global {
+    background-color: var(--colors-grey100);
+}
+
+.container {
+    display: grid;
+    height: 100%;
+    grid-gap: 20px;
+    grid-template-rows: auto;
+    grid-template-columns: [sidebar] 300px [content] 2fr;
+}
+
+.sidebar {
+    grid-column: sidebar;
+    height: 100%;
+    background-color: white;
+    border-right: 1px solid var(--colors-grey300);
+    padding-top: var(--spacers-dp16);
+}
+
+.content {
+    grid-column: content;
+    height: 100%;
+    padding: var(--spacers-dp16);
+    display: flex;
+    flex-direction: column;
+}
