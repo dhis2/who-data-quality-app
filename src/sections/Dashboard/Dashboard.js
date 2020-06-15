@@ -11,7 +11,7 @@ import Outliers from './Outliers.js'
 
 import TabLink from '../../components/TabLink.js'
 import sectionClasses from '../../components/Section.module.css'
-import { DASHBOARD } from '../../config/paths.js'
+import { DASHBOARD } from '../../config'
 import classes from './Dashboard.module.css'
 
 const PATHS = {
