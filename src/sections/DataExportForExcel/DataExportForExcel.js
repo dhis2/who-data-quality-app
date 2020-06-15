@@ -1,7 +1,7 @@
 import React from 'react'
 import i18n from '@dhis2/d2-i18n'
 
-import Section from '../components/Section.js'
+import Section from '../../components/Section.js'
 
 const DataExportForExcel = () => {
     return (

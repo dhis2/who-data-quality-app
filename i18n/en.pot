@@ -5,19 +5,40 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-06-14T19:20:47.311Z\n"
-"PO-Revision-Date: 2020-06-14T19:20:47.311Z\n"
+"POT-Creation-Date: 2020-06-15T09:27:40.427Z\n"
+"PO-Revision-Date: 2020-06-15T09:27:40.427Z\n"
 
-msgid "Administration"
+msgid "Page not found"
+msgstr ""
+
+msgid "Dashboard"
+msgstr ""
+
+msgid "Analysis"
+msgstr ""
+
+msgid "Outliers and missing data"
+msgstr ""
+
+msgid "Consistency"
 msgstr ""
 
 msgid "Annual report"
 msgstr ""
 
-msgid "Consistency analysis"
+msgid "More"
 msgstr ""
 
-msgid "Dashboard"
+msgid "Administration"
+msgstr ""
+
+msgid "Data export for Excel tool"
+msgstr ""
+
+msgid "User manual"
+msgstr ""
+
+msgid "Consistency analysis"
 msgstr ""
 
 msgid "Completeness"
@@ -36,25 +57,4 @@ msgid "Data export for excel"
 msgstr ""
 
 msgid "Outliers and missing data analysis"
-msgstr ""
-
-msgid "Page not found"
-msgstr ""
-
-msgid "Analysis"
-msgstr ""
-
-msgid "Outliers and missing data"
-msgstr ""
-
-msgid "Consistency"
-msgstr ""
-
-msgid "More"
-msgstr ""
-
-msgid "Data export for Excel tool"
-msgstr ""
-
-msgid "User manual"
 msgstr ""

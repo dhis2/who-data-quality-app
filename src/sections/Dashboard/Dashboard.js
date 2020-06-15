@@ -9,9 +9,9 @@ import ConsistencyTime from './ConsistencyTime.js'
 import ConsistencyData from './ConsistencyData.js'
 import Outliers from './Outliers.js'
 
-import TabLink from '../components/TabLink.js'
-import { DASHBOARD } from '../config/paths.js'
-import sectionClasses from '../components/Section.module.css'
+import TabLink from '../../components/TabLink.js'
+import sectionClasses from '../../components/Section.module.css'
+import { DASHBOARD } from '../../config/paths.js'
 import classes from './Dashboard.module.css'
 
 const PATHS = {
