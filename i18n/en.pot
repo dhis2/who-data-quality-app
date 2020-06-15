@@ -5,11 +5,56 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-06-10T07:49:43.690Z\n"
-"PO-Revision-Date: 2020-06-10T07:49:43.690Z\n"
+"POT-Creation-Date: 2020-06-15T09:27:40.427Z\n"
+"PO-Revision-Date: 2020-06-15T09:27:40.427Z\n"
 
-msgid "Hello {{name}}"
+msgid "Page not found"
 msgstr ""
 
-msgid "Welcome to DHIS2!"
+msgid "Dashboard"
+msgstr ""
+
+msgid "Analysis"
+msgstr ""
+
+msgid "Outliers and missing data"
+msgstr ""
+
+msgid "Consistency"
+msgstr ""
+
+msgid "Annual report"
+msgstr ""
+
+msgid "More"
+msgstr ""
+
+msgid "Administration"
+msgstr ""
+
+msgid "Data export for Excel tool"
+msgstr ""
+
+msgid "User manual"
+msgstr ""
+
+msgid "Consistency analysis"
+msgstr ""
+
+msgid "Completeness"
+msgstr ""
+
+msgid "Consistency - time"
+msgstr ""
+
+msgid "Consistency - data"
+msgstr ""
+
+msgid "Outliers"
+msgstr ""
+
+msgid "Data export for excel"
+msgstr ""
+
+msgid "Outliers and missing data analysis"
 msgstr ""
