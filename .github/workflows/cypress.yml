@@ -38,3 +38,5 @@ jobs:
               env:
                   CI: true
                   STORYBOOK_TESTING: true
+                  cypress_dhis2_base_url: http://localhost:8080
+                  cypress_dhis2_api_stub_mode: STUB

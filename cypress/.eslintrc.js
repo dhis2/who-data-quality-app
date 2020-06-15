@@ -6,5 +6,7 @@ module.exports = {
     globals: {
         Cypress: 'readonly',
         cy: 'readonly',
+        before: 'readonly',
+        after: 'readonly',
     },
 }
