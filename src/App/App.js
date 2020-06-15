@@ -11,7 +11,7 @@ import {
     Administration,
 } from '../sections'
 
-import * as PATHS from '../config/paths.js'
+import PATHS from '../config/paths.js'
 import SideNav from '../components/SideNav.js'
 import NoMatch from '../components/NoMatch.js'
 import classes from './App.module.css'

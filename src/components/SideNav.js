@@ -3,7 +3,7 @@ import i18n from '@dhis2/d2-i18n'
 import { Menu, MenuItem, MenuSectionHeader, MenuDivider } from '@dhis2/ui'
 
 import MenuItemLink from './MenuItemLink.js'
-import * as PATHS from '../config/paths.js'
+import PATHS from '../config/paths.js'
 
 const SideNav = () => (
     <nav>
