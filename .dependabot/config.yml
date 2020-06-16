@@ -5,7 +5,7 @@ update_configs:
       directory: '/'
       update_schedule: 'daily'
       version_requirement_updates: 'increase_versions'
-      target_branch: 'master'
+      target_branch: 'next'
       automerged_updates:
           - match:
                 dependency_name: '@dhis2/*'
