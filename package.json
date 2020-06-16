@@ -5,7 +5,7 @@
   "main": "./src/app.js",
   "dependencies": {
     "angular": "1.5.5",
-    "angular-animate": "1.5.5",
+    "angular-animate": "1.8.0",
     "angular-bootstrap-nav-tree": "0.2.1",
     "angular-nvd3": "1.0.9",
     "angular-route": "1.5.5",
