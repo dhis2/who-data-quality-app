@@ -1485,6 +1485,13 @@
   resolved "https://registry.yarnpkg.com/@dhis2/app-service-data/-/app-service-data-2.2.2.tgz#093d45b8bb71b5b1e81876281379cda52b6632a7"
   integrity sha512-QJrYTFj+vINcqvr27yLIKunbNJTVmDPGr9fUliUdmTkCikTwlnK8fu6TPz3rhkOUYX0VrwzFJXp3ofKQajZ9mQ==
 
+"@dhis2/app-service-datastore@^1.0.0-alpha.1":
+  version "1.0.0-alpha.1"
+  resolved "https://registry.yarnpkg.com/@dhis2/app-service-datastore/-/app-service-datastore-1.0.0-alpha.1.tgz#1d27b7d1461e47a1a30fce8c7b3d1408d84e1b02"
+  integrity sha512-SGtD4j+3MrikUGY9rugu6ACAWRUT6oogp54Cst6MrueTI8pbINeQxNa7VCXX00Mv+B4yFs4AfNDkz0LXANj6oQ==
+  dependencies:
+    uuid "^8.1.0"
+
 "@dhis2/app-shell@5.0.0-alpha.1":
   version "5.0.0-alpha.1"
   resolved "https://registry.yarnpkg.com/@dhis2/app-shell/-/app-shell-5.0.0-alpha.1.tgz#a4c715cc5fa7c10d03bb557dbaf24c72dd67a5a7"
@@ -14149,6 +14156,11 @@ uuid@^3.0.1, uuid@^3.3.2:
   version "3.4.0"
   resolved "https://registry.yarnpkg.com/uuid/-/uuid-3.4.0.tgz#b23e4358afa8a202fe7a100af1f5f883f02007ee"
   integrity sha512-HjSDRw6gZE5JMggctHBcjVak08+KEVhSIiDzFnT9S9aegmp85S/bReBVTb4QTFaRNptJ9kuYaNhnbNEOkbKb/A==
+
+uuid@^8.1.0:
+  version "8.2.0"
+  resolved "https://registry.yarnpkg.com/uuid/-/uuid-8.2.0.tgz#cb10dd6b118e2dada7d0cd9730ba7417c93d920e"
+  integrity sha512-CYpGiFTUrmI6OBMkAdjSDM0k5h8SkkiTP4WAjQgDgNB1S3Ou9VBEvr6q0Kv2H1mMk7IWfxYGpMH5sd5AvcIV2Q==
 
 v8-compile-cache@^2.0.3:
   version "2.1.1"
