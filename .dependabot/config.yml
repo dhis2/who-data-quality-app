@@ -6,6 +6,9 @@ update_configs:
       update_schedule: 'daily'
       version_requirement_updates: 'increase_versions'
       target_branch: 'next'
+      commit_message:
+          prefix: 'chore'
+          include_scope: true
       automerged_updates:
           - match:
                 dependency_name: '@dhis2/*'
