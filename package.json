@@ -22,13 +22,12 @@
         "cypress:capture-network-requests": "cypress_dhis2_api_stub_mode=CAPTURE yarn d2-utils-cypress run"
     },
     "devDependencies": {
-        "@dhis2/cli-app-scripts": "^4.0.9",
+        "@dhis2/cli-app-scripts": "^5.0.0-alpha.1",
         "@dhis2/cli-style": "^7.0.0",
         "@dhis2/cli-utils-cypress": "^2.2.1"
     },
     "dependencies": {
         "@dhis2/app-runtime": "^2.2.2",
-        "@dhis2/ui": "^5.0.5",
         "classnames": "^2.2.6",
         "react-router-dom": "^5.2.0"
     }
