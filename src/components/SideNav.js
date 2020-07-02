@@ -22,9 +22,9 @@ const SideNav = () => {
 
     let isAdmin = false
     if (data && data.me && data.me.authorities) {
-        isAdmin =
-            data.me.authorities.filter(auth => adminAuthorities.includes(auth))
-                .length > 0
+        isAdmin = data.me.authorities.some(auth =>
+            adminAuthorities.includes(auth)
+        )
     }
 
     return (
