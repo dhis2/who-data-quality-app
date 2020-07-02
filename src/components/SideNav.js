@@ -1,35 +1,17 @@
 import React from 'react'
 import i18n from '@dhis2/d2-i18n'
 import { Menu, MenuItem, MenuSectionHeader, MenuDivider } from '@dhis2/ui'
-import { useDataQuery } from '@dhis2/app-service-data'
 
 import MenuItemLink from './MenuItemLink.js'
 import { PATHS } from '../config'
 
-const query = {
-    me: {
-        resource: 'me',
-    },
-}
-const adminAuthorities = ['ALL', 'F_INDICATOR_PUBLIC_ADD']
+import { useAppContext } from '../App/AppContext'
 
 const SideNav = () => {
-    const { loading, error, data } = useDataQuery(query)
-
-    if (loading) {
-        return null
-    }
-
-    let isAdmin = false
-    if (data && data.me && data.me.authorities) {
-        isAdmin = data.me.authorities.some(auth =>
-            adminAuthorities.includes(auth)
-        )
-    }
+    const { currentUserIsAdmin } = useAppContext()
 
     return (
         <nav data-test="who-sidenav">
-            {error && <span>{`ERROR: ${error.message}`}</span>}
             <Menu>
                 <MenuItemLink
                     to={PATHS.DASHBOARD}
@@ -50,7 +32,7 @@ const SideNav = () => {
                     label={i18n.t('Annual report')}
                 />
                 <MenuSectionHeader label={i18n.t('More')} />
-                {isAdmin && (
+                {currentUserIsAdmin && (
                     <MenuItemLink
                         to={PATHS.ADMINISTRATION}
                         label={i18n.t('Administration')}
