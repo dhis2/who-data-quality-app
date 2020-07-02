@@ -12,7 +12,7 @@ Before(() => {
     cy.server()
 })
 
-Given('the user has authority ALL or F_INDICATOR_PUBLIC_ADD', () => {
+Given('the user has authority ALL and F_INDICATOR_PUBLIC_ADD', () => {
     cy.route({
         url: `${Cypress.env('dhis2_base_url')}/api/me`,
         response: {

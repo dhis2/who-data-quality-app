@@ -1,16 +1,16 @@
 Feature: Handle administration link visibility
     
-    Scenario: A user visits the page
-        Given the user has authority ALL or F_INDICATOR_PUBLIC_ADD
+    Scenario: A user with ALL and F_INDICATOR_PUBLIC_ADD visits the page
+        Given the user has authority ALL and F_INDICATOR_PUBLIC_ADD
         When the user accesses any page
         Then the administration link in the menu is visible
 
-    Scenario: A user visits the page
+    Scenario: A user with ALL authority visits the page
         Given the user has authority ALL
         When the user accesses any page
         Then the administration link in the menu is visible
 
-    Scenario: A user visits the page
+    Scenario: A user with F_INDICATOR_PUBLIC_ADD authority visits the page
         Given the user has authority F_INDICATOR_PUBLIC_ADD
         When the user accesses any page
         Then the administration link in the menu is visible
