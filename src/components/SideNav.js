@@ -11,6 +11,7 @@ const query = {
         resource: 'me',
     },
 }
+const adminAuthorities = ['ALL', 'F_INDICATOR_PUBLIC_ADD']
 
 const SideNav = () => {
     const { loading, error, data } = useDataQuery(query)
@@ -19,13 +20,16 @@ const SideNav = () => {
         return null
     }
 
-    const adminAuthorities = ['ALL', 'F_INDICATOR_PUBLIC_ADD']
-    const isAdmin =
-        data.me.authorities.filter(auth => adminAuthorities.includes(auth))
-            .length > 0
+    let isAdmin = false
+    if (data && data.me && data.me.authorities) {
+        isAdmin =
+            data.me.authorities.filter(auth => adminAuthorities.includes(auth))
+                .length > 0
+    }
 
     return (
-        <nav>
+        <nav data-test="who-sidenav">
+            {error && <span>{`ERROR: ${error.message}`}</span>}
             <Menu>
                 <MenuItemLink
                     to={PATHS.DASHBOARD}
@@ -48,7 +52,6 @@ const SideNav = () => {
                 <MenuSectionHeader label={i18n.t('More')} />
                 {isAdmin && (
                     <MenuItemLink
-                        dataTest="who-sidenav-adminlink"
                         to={PATHS.ADMINISTRATION}
                         label={i18n.t('Administration')}
                     />
