@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-06-29T11:05:08.210Z\n"
-"PO-Revision-Date: 2020-06-29T11:05:08.210Z\n"
+"POT-Creation-Date: 2020-06-30T07:06:42.377Z\n"
+"PO-Revision-Date: 2020-06-30T07:06:42.377Z\n"
 
 msgid "Page not found"
 msgstr ""
@@ -41,7 +41,10 @@ msgstr ""
 msgid "Consistency analysis"
 msgstr ""
 
-msgid "Filter"
+msgid "Hide filter"
+msgstr ""
+
+msgid "Show filter"
 msgstr ""
 
 msgid "Completeness"

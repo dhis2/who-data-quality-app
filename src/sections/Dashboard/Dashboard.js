@@ -3,6 +3,13 @@ import i18n from '@dhis2/d2-i18n'
 import cx from 'classnames'
 import { Route, Switch, Redirect } from 'react-router-dom'
 import { Button, Card, TabBar } from '@dhis2/ui'
+import {
+    useAllSettings,
+    useDataStore,
+    useSavedObject,
+    useSavedObjectList,
+    useSetting,
+} from '@dhis2/app-service-datastore'
 
 import Completeness from './Completeness.js'
 import ConsistencyTime from './ConsistencyTime.js'
@@ -23,7 +30,10 @@ const PATHS = {
 }
 
 const Dashboard = () => {
-    const [showFilter, setShowFilter] = useState(false)
+    const [showFilter, setShowFilter] = useState(true)
+
+    const [allSettings] = useAllSettings({ global: true })
+    console.log(allSettings)
 
     return (
         <>
@@ -36,7 +46,7 @@ const Dashboard = () => {
                     onClick={() => setShowFilter(!showFilter)}
                     primary
                 >
-                    {i18n.t('Filter')}
+                    {showFilter ? i18n.t('Hide filter') : i18n.t('Show filter')}
                 </Button>
             </h1>
             {showFilter && <Filter />}

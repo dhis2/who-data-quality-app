@@ -1,0 +1,8 @@
+.container {
+    height: auto;
+    margin-bottom: var(--spacers-dp16);
+}
+
+.card {
+    padding: var(--spacers-dp16);
+}
