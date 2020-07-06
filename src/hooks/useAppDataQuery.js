@@ -12,9 +12,11 @@ const useAppDataQuery = () => {
     return {
         loading,
         error,
-        data: {
-            userAuthorities: data?.me?.authorities ?? [],
-        },
+        data: data
+            ? {
+                  userAuthorities: data.me.authorities,
+              }
+            : undefined,
     }
 }
 
