@@ -8,12 +8,16 @@ import { ADMIN_AUTHORITIES } from '../config'
 import useAppDataQuery from '../hooks/useAppDataQuery'
 
 const App = () => {
-    //TODO: take care of error
-    const { loading, data } = useAppDataQuery(ADMIN_AUTHORITIES)
+    const { loading, error, data } = useAppDataQuery(ADMIN_AUTHORITIES)
 
     if (loading) {
         //TODO: add loading component when we implemented the deferred loading spinner with 700ms delay in @dhis2/ui
         return null
+    }
+
+    if (error) {
+        //TODO: improve error handling
+        return <span>{error.message}</span>
     }
 
     const currentUserIsAdmin = data.userAuthorities.some(auth =>
