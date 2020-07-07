@@ -2,6 +2,8 @@ import React from 'react'
 
 import { DataStoreProvider } from '@dhis2/app-service-datastore'
 
+import defaultConfig from '../config/defaultConfig'
+
 import { AppContextProvider } from './AppContext'
 import AppRouter from './AppRouter'
 import { ADMIN_AUTHORITIES } from '../config'
@@ -26,7 +28,10 @@ const App = () => {
 
     return (
         <AppContextProvider value={{ ...data, currentUserIsAdmin }}>
-            <DataStoreProvider namespace="dataQualityTool">
+            <DataStoreProvider
+                namespace="dataQualityTool"
+                defaultGlobalSettings={defaultConfig}
+            >
                 <AppRouter />
             </DataStoreProvider>
         </AppContextProvider>
