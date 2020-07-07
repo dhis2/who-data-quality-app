@@ -24,4 +24,5 @@ body :global {
     padding: var(--spacers-dp16);
     display: flex;
     flex-direction: column;
+    overflow: hidden;
 }

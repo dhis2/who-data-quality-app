@@ -44,7 +44,6 @@ const AppRouter = () => (
                         component={AnnualReport}
                     />
                     <Route
-                        exact
                         path={PATHS.ADMINISTRATION}
                         component={Administration}
                     />
