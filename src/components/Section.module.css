@@ -1,14 +1,10 @@
 .container {
     display: flex;
-    height: 100%;
     flex-direction: column;
 }
 .header {
     color: var(--colors-grey900);
     margin-top: 0;
-}
-.content {
-
 }
 .padding {
     padding: var(--spacers-dp16);

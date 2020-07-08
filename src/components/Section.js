@@ -10,7 +10,7 @@ const Section = ({ headerText, children, padding = true }) => (
     <div className={classes.container}>
         <h1 className={classes.header}>{headerText}</h1>
         <Card
-            className={cx([classes.content], {
+            className={cx({
                 [classes.padding]: padding,
             })}
         >
