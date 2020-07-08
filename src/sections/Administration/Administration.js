@@ -11,6 +11,8 @@ import TabLink from '../../components/TabLink.js'
 import Section from '../../components/Section.js'
 
 import Numerators from './Numerators.js'
+import NumeratorEdit from './NumeratorEdit.js'
+
 import NumeratorGroups from './NumeratorGroups.js'
 import NumeratorRelations from './NumeratorRelations.js'
 import NumeratorQuality from './NumeratorQuality.js'
@@ -20,8 +22,10 @@ import ExternalDataComparison from './ExternalDataComparison.js'
 
 import { PATHS as ROOT_PATHS } from '../../config'
 
-const PATHS = {
+export const PATHS = {
     NUMERATORS: `${ROOT_PATHS.ADMINISTRATION}/numerators`,
+    NUMERATOR_EDIT: `${ROOT_PATHS.ADMINISTRATION}/numerators/:code/edit`,
+
     NUMERATOR_GROUPS: `${ROOT_PATHS.ADMINISTRATION}/numerator-groups`,
     NUMERATOR_RELATIONS: `${ROOT_PATHS.ADMINISTRATION}/numerator-relations`,
     NUMERATOR_QUALITY: `${ROOT_PATHS.ADMINISTRATION}/numerator-quality`,
@@ -33,10 +37,6 @@ const PATHS = {
 
 const Administration = () => {
     const { currentUserIsAdmin } = useAppContext()
-
-    if (!currentUserIsAdmin) {
-        return
-    }
 
     return !currentUserIsAdmin ? (
         <Redirect to="/" />
@@ -67,6 +67,11 @@ const Administration = () => {
                 <Route exact path={PATHS.NUMERATORS} component={Numerators} />
                 <Route
                     exact
+                    path={PATHS.NUMERATOR_EDIT}
+                    component={NumeratorEdit}
+                />
+                <Route
+                    exact
                     path={PATHS.NUMERATOR_GROUPS}
                     component={NumeratorGroups}
                 />
@@ -95,8 +100,11 @@ const Administration = () => {
                     path={PATHS.EXTERNAL_DATA_COMPARISON}
                     component={ExternalDataComparison}
                 />
+                <Redirect
+                    from={ROOT_PATHS.ADMINISTRATION}
+                    to={PATHS.NUMERATORS}
+                />
             </Switch>
-            <Redirect from={ROOT_PATHS.ADMINISTRATION} to={PATHS.NUMERATORS} />
         </Section>
     )
 }

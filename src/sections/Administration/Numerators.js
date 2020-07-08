@@ -1,10 +1,13 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
 
 import i18n from '@dhis2/d2-i18n'
 import { useAllSettings } from '@dhis2/app-service-datastore'
 
 import classes from './AdministrationSubSection.module.css'
 import { useDataQuery } from '@dhis2/app-service-data'
+
+import { PATHS } from './Administration.js'
 
 import {
     Table,
@@ -14,9 +17,10 @@ import {
     TableCellHead,
     TableBody,
     TableRow,
+    Button,
 } from '@dhis2/ui'
 
-const makeQuery = ids => ({
+export const createDataElementIndicatorQuery = ids => ({
     dataElements: {
         resource: 'dataElements.json',
         params: {
@@ -24,14 +28,13 @@ const makeQuery = ids => ({
             paging: false,
         },
     },
-    /*dataSets: {
-        resource: 'dataSets.json',
+    indicators: {
+        resource: 'indicators.json',
         params: {
-            fields: 'displayName,id',
-            filter: `dataSetElements.dataElement.id:in:[${ids.join(',')}]`,
+            filter: `id:in:[${ids.join(',')}]`,
             paging: false,
         },
-    },*/
+    },
 })
 
 const transformConfig = config =>
@@ -68,17 +71,21 @@ const transformConfig = config =>
                 a.name.localeCompare(b.name)
         )
 
-const addDataElements = ({ numerators, dataElements }) => {
+const addMapping = ({ numerators, items }) => {
     numerators.map(numerator => {
-        let dataElementName = ''
+        let mappedItemName = ''
+        let mappedItemType = ''
+
         if (numerator.dataID !== null) {
-            const dataElement = dataElements.find(
-                el => numerator.dataID === el.id
-            )
-            dataElementName = dataElement.displayName
+            const mappedItem = items.find(el => numerator.dataID === el.id)
+            mappedItemName = mappedItem.displayName
+            mappedItemType = mappedItem.type
         }
 
-        numerator.dataElementName = dataElementName
+        numerator.mappedItem = {
+            name: mappedItemName,
+            type: mappedItemType,
+        }
     })
 }
 
@@ -96,15 +103,31 @@ const Numerators = () => {
 
     if (isConfigured) {
         //TODO: handle error
-        const { loading, data } = useDataQuery(makeQuery(dataElementIds))
+        const { loading, data } = useDataQuery(
+            createDataElementIndicatorQuery(dataElementIds)
+        )
 
         if (!loading && data) {
-            addDataElements({
+            const { dataElements, indicators } = data
+            const items = dataElements.dataElements
+                .map(de => ({ ...de, type: i18n.t('Data Element') }))
+                .concat(
+                    indicators.indicators.map(ind => ({
+                        ...ind,
+                        type: i18n.t('Indicator'),
+                    }))
+                )
+            addMapping({
                 numerators,
-                dataElements: data.dataElements.dataElements,
+                items,
             })
+        } else if (loading) {
+            //TODO: add loading
+            return null
         }
     }
+
+    const createEditLink = code => PATHS.NUMERATOR_EDIT.replace(':code', code)
 
     return (
         <div className={classes.subSection}>
@@ -121,10 +144,10 @@ const Numerators = () => {
                             {i18n.t('Reference numerator')}
                         </TableCellHead>
                         <TableCellHead>{i18n.t('Core')}</TableCellHead>
-                        <TableCellHead>
-                            {i18n.t('Data element/indicator')}
-                        </TableCellHead>
+                        <TableCellHead>{i18n.t('Mapping')}</TableCellHead>
+                        <TableCellHead>{i18n.t('Mapping type')}</TableCellHead>
                         <TableCellHead>{i18n.t('Dataset')}</TableCellHead>
+                        <TableCellHead></TableCellHead>
                     </TableRowHead>
                 </TableHead>
                 <TableBody>
@@ -133,9 +156,14 @@ const Numerators = () => {
                             <TableCell>{numerator.groupName}</TableCell>
                             <TableCell>{numerator.name}</TableCell>
                             <TableCell>{numerator.core}</TableCell>
-                            <TableCell>{numerator.dataElementName}</TableCell>
+                            <TableCell>{numerator.mappedItem.name}</TableCell>
+                            <TableCell>{numerator.mappedItem.type}</TableCell>
                             <TableCell>{numerator.dataSetName}</TableCell>
-                            <TableCell></TableCell>
+                            <TableCell>
+                                <Link to={createEditLink(numerator.code)}>
+                                    <Button small>{i18n.t('Edit')}</Button>
+                                </Link>
+                            </TableCell>
                         </TableRow>
                     ))}
                 </TableBody>
