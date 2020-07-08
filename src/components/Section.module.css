@@ -8,5 +8,8 @@
     margin-top: 0;
 }
 .content {
+
+}
+.padding {
     padding: var(--spacers-dp16);
 }

@@ -41,7 +41,7 @@ const Administration = () => {
     return !currentUserIsAdmin ? (
         <Redirect to="/" />
     ) : (
-        <Section headerText={i18n.t('Administration')}>
+        <Section headerText={i18n.t('Administration')} padding={false}>
             <TabBar scrollable>
                 <TabLink to={PATHS.NUMERATORS}>{i18n.t('Numerators')}</TabLink>
                 <TabLink to={PATHS.NUMERATOR_GROUPS}>
