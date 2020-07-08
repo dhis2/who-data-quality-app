@@ -3,13 +3,6 @@ import i18n from '@dhis2/d2-i18n'
 import cx from 'classnames'
 import { Route, Switch, Redirect } from 'react-router-dom'
 import { Button, Card, TabBar } from '@dhis2/ui'
-import {
-    useAllSettings,
-    useDataStore,
-    useSavedObject,
-    useSavedObjectList,
-    useSetting,
-} from '@dhis2/app-service-datastore'
 
 import Completeness from './Completeness.js'
 import ConsistencyTime from './ConsistencyTime.js'
@@ -18,7 +11,7 @@ import Outliers from './Outliers.js'
 
 import TabLink from '../../components/TabLink.js'
 import sectionClasses from '../../components/Section.module.css'
-import { DASHBOARD } from '../../config'
+import { DASHBOARD, DASHBOARD_FILTER_KEYS as FILTER_KEYS } from '../../config'
 import Filter from './Filter/Filter.js'
 import classes from './Dashboard.module.css'
 
@@ -29,11 +22,19 @@ const PATHS = {
     OUTLIERS: `${DASHBOARD}/outliers`,
 }
 
+const getTodaysMonthlyPeriod = () => {
+    const today = new Date()
+    return `${today.getFullYear()}${today.getMonth() + 1}`
+}
+
 const Dashboard = () => {
     const [showFilter, setShowFilter] = useState(true)
-
-    const [allSettings] = useAllSettings({ global: true })
-    console.log(allSettings)
+    const [filterConfig, setFilterConfig] = useState({
+        [FILTER_KEYS.DATA]: 'core',
+        [FILTER_KEYS.PERIOD]: getTodaysMonthlyPeriod(),
+        [FILTER_KEYS.ORG_UNIT_BOUNDARY]: '',
+        [FILTER_KEYS.DISSAGREGATION_LEVEL]: '',
+    })
 
     return (
         <>
@@ -49,7 +50,9 @@ const Dashboard = () => {
                     {showFilter ? i18n.t('Hide filter') : i18n.t('Show filter')}
                 </Button>
             </h1>
-            {showFilter && <Filter />}
+            {showFilter && (
+                <Filter config={filterConfig} update={setFilterConfig} />
+            )}
             <Card>
                 <TabBar fixed>
                     <TabLink to={PATHS.COMPLETENESS}>

@@ -1,8 +1,15 @@
 .container {
     height: auto;
     margin-bottom: var(--spacers-dp16);
+    display: flex;
 }
 
-.card {
-    padding: var(--spacers-dp16);
+.container .card {
+    padding: var(--spacers-dp16) var(--spacers-dp8);
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.segment {
+    margin: 0 var(--spacers-dp8);
 }
