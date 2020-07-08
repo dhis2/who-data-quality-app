@@ -27,7 +27,8 @@ const NumeratorEdit = () => {
 
     const [settings] = useAllSettings({ global: true })
 
-    const { loading, error, data } = useDataQuery(query)
+    //TODO: handle error
+    const { loading, data } = useDataQuery(query)
 
     if (loading) {
         //TODO: add loading spinner
