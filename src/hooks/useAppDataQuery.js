@@ -3,6 +3,14 @@ import { useDataQuery } from '@dhis2/app-service-data'
 const query = {
     me: {
         resource: 'me',
+        params: {
+            fields: [
+                'authorities',
+                'organisationUnits[id,displayName,path]',
+                'dataViewOrganisationUnits',
+                'dataSets',
+            ],
+        },
     },
 }
 
@@ -15,6 +23,10 @@ const useAppDataQuery = () => {
         data: data
             ? {
                   userAuthorities: data.me.authorities,
+                  userOrganisationUnits: data.me.organisationUnits,
+                  userDataViewOrganisationUnits:
+                      data.me.dataViewOrganisationUnits,
+                  userDataSets: data.me.dataSets,
               }
             : undefined,
     }

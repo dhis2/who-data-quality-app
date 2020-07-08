@@ -1,4 +1,6 @@
-export const DATA = 'data'
-export const PERIOD = 'period'
-export const ORG_UNIT_BOUNDARY = 'orgUnitBoundary'
-export const DISSAGREGATION_LEVEL = 'dissagregationLevel'
+export default {
+    DATA: 'data',
+    PERIOD: 'period',
+    ORG_UNIT_BOUNDARY: 'orgUnitBoundary',
+    DISSAGREGATION_LEVEL: 'dissagregationLevel',
+}
