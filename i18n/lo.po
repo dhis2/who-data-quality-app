@@ -1,0 +1,67 @@
+# 
+# Translators:
+# Somkhit Bouavong <bouavongk@gmail.com>, 2020
+# 
+msgid ""
+msgstr ""
+"Project-Id-Version: i18next-conv\n"
+"POT-Creation-Date: 2020-06-15T09:27:40.427Z\n"
+"PO-Revision-Date: 2020-07-07 09:55+0000\n"
+"Last-Translator: Somkhit Bouavong <bouavongk@gmail.com>, 2020\n"
+"Language-Team: Lao (https://www.transifex.com/hisp-uio/teams/100509/lo/)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: lo\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+msgid "Page not found"
+msgstr "ບໍ່ພົບໜ້າເວບທີ່ທ່ານຕ້ອງການ"
+
+msgid "Dashboard"
+msgstr "ກະດານຂ່າວ"
+
+msgid "Analysis"
+msgstr "ການວິເຄາະ"
+
+msgid "Outliers and missing data"
+msgstr "ຄ່າຜິດປົກກະຕິ ແລະ ຂໍ້ມູນທີ່ຂາດຫາຍ"
+
+msgid "Consistency"
+msgstr "ຄວາມສອດຄ່ອງ"
+
+msgid "Annual report"
+msgstr "ບົດລາຍງານປະຈຳປີ"
+
+msgid "More"
+msgstr "ອື່ນໆອີກ"
+
+msgid "Administration"
+msgstr "ການບໍລິຫານ"
+
+msgid "Data export for Excel tool"
+msgstr "ສົ່ງຂໍ້ມູນໄປທີ່ເຄື່ອງມື Excel"
+
+msgid "User manual"
+msgstr "ຄູ່ມືສຳລັບຜູ້ນຳໃຊ້"
+
+msgid "Consistency analysis"
+msgstr "ການວິເຄາະຄວາມສອດຄ່ອງ"
+
+msgid "Completeness"
+msgstr "ຄວາມຄົບຖ້ວນ"
+
+msgid "Consistency - time"
+msgstr "ຄວາມສອດຄ່ອງ - ເວລາ"
+
+msgid "Consistency - data"
+msgstr "ຄວາມສອດຄ່ອງ - ຂໍ້ມູນ"
+
+msgid "Outliers"
+msgstr "ຄ່າຜິດປົກກະຕິ"
+
+msgid "Data export for excel"
+msgstr "ສົ່ງຂໍ້ມູນໄປທີ່ Excel"
+
+msgid "Outliers and missing data analysis"
+msgstr "ການວິເຄາະຄ່າຜິດປົກກະຕິ ແລະ ຂໍ້ມູນທີ່ຂາດຫາຍ"
