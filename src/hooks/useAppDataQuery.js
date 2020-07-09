@@ -7,7 +7,7 @@ const query = {
             fields: [
                 'authorities',
                 'organisationUnits[id,displayName,path]',
-                'dataViewOrganisationUnits',
+                'dataViewOrganisationUnits[id,displayName,ancestors,path]',
                 'dataSets',
             ],
         },

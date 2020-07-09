@@ -9,28 +9,34 @@ import DisaggregationLevel from '../../../components/DisaggregationLevel.js'
 import { DASHBOARD_FILTER_KEYS as FILTER_KEYS } from '../../../config'
 
 const Filter = ({ config, update }) => {
-    const updateByKey = (key, payload) => {
-        const value = payload.selected || payload.value
-
+    const updateByKey = (key, value) =>
         update({
             ...config,
             [key]: value,
         })
-    }
+
+    console.log('filter config:\n', JSON.stringify(config, null, 4))
 
     return (
         <div className={classes.container}>
             <Card className={classes.card}>
                 <DataSelect
                     className={classes.segment}
-                    value={config[FILTER_KEYS.DATA]}
+                    value={config[FILTER_KEYS.DATA]?.code}
                     onChange={updateByKey.bind(null, FILTER_KEYS.DATA)}
                 />
                 <InputField
                     className={classes.segment}
                     label="I will be replaced by the FixedPeriodSelect"
                 />
-                <OrgUnitBoundary />
+                <OrgUnitBoundary
+                    className={classes.segment}
+                    value={config[FILTER_KEYS.ORG_UNIT_BOUNDARY]}
+                    onChange={updateByKey.bind(
+                        null,
+                        FILTER_KEYS.ORG_UNIT_BOUNDARY
+                    )}
+                />
                 <DisaggregationLevel />
             </Card>
         </div>

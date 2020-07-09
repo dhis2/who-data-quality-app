@@ -1,4 +1,5 @@
 import { useAllSettings } from '@dhis2/app-service-datastore'
+import { CORE_DATA_GROUP } from '../config'
 
 export default function useConfiguredGroups() {
     /*
@@ -21,6 +22,6 @@ export default function useConfiguredGroups() {
             }
             return acc
         },
-        [{ displayName: '[ Core ]', code: 'core' }]
+        [CORE_DATA_GROUP]
     )
 }

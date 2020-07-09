@@ -11,9 +11,10 @@ import Outliers from './Outliers.js'
 
 import TabLink from '../../components/TabLink.js'
 import sectionClasses from '../../components/Section.module.css'
-import { DASHBOARD, DASHBOARD_FILTER_KEYS as FILTER_KEYS } from '../../config'
+import { DASHBOARD } from '../../config'
 import Filter from './Filter/Filter.js'
 import classes from './Dashboard.module.css'
+import useInitialFilterState from '../../hooks/useInitialFilterState.js'
 
 const PATHS = {
     COMPLETENESS: `${DASHBOARD}/completeness`,
@@ -22,19 +23,9 @@ const PATHS = {
     OUTLIERS: `${DASHBOARD}/outliers`,
 }
 
-const getTodaysMonthlyPeriod = () => {
-    const today = new Date()
-    return `${today.getFullYear()}${today.getMonth() + 1}`
-}
-
 const Dashboard = () => {
     const [showFilter, setShowFilter] = useState(true)
-    const [filterConfig, setFilterConfig] = useState({
-        [FILTER_KEYS.DATA]: 'core',
-        [FILTER_KEYS.PERIOD]: getTodaysMonthlyPeriod(),
-        [FILTER_KEYS.ORG_UNIT_BOUNDARY]: '',
-        [FILTER_KEYS.DISSAGREGATION_LEVEL]: '',
-    })
+    const [filterConfig, setFilterConfig] = useState(useInitialFilterState())
 
     return (
         <>

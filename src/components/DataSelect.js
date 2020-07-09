@@ -7,11 +7,17 @@ import useConfiguredGroups from '../hooks/useConfiguredGroups'
 
 const DataSelect = ({ onChange, className, value }) => {
     const options = useConfiguredGroups()
+
+    const onSelectChange = ({ selected }) => {
+        const selectedOption = options.find(option => option.code === selected)
+        onChange(selectedOption)
+    }
+
     return (
         <SingleSelectField
             className={className}
             selected={value}
-            onChange={onChange}
+            onChange={onSelectChange}
             label={i18n.t('Data')}
         >
             {options.map(option => (

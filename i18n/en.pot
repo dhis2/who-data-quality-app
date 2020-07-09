@@ -5,13 +5,19 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2020-07-08T06:21:48.874Z\n"
-"PO-Revision-Date: 2020-07-08T06:21:48.874Z\n"
+"POT-Creation-Date: 2020-07-09T13:28:18.909Z\n"
+"PO-Revision-Date: 2020-07-09T13:28:18.909Z\n"
 
 msgid "Data"
 msgstr ""
 
 msgid "Page not found"
+msgstr ""
+
+msgid "Other"
+msgstr ""
+
+msgid "Organisation unit boundary"
 msgstr ""
 
 msgid "Dashboard"
@@ -39,6 +45,42 @@ msgid "Data export for Excel tool"
 msgstr ""
 
 msgid "User manual"
+msgstr ""
+
+msgid "January"
+msgstr ""
+
+msgid "February"
+msgstr ""
+
+msgid "March"
+msgstr ""
+
+msgid "April"
+msgstr ""
+
+msgid "May"
+msgstr ""
+
+msgid "June"
+msgstr ""
+
+msgid "July"
+msgstr ""
+
+msgid "August"
+msgstr ""
+
+msgid "September"
+msgstr ""
+
+msgid "October"
+msgstr ""
+
+msgid "November"
+msgstr ""
+
+msgid "December"
 msgstr ""
 
 msgid "Consistency analysis"

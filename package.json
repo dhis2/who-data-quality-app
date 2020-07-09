@@ -29,7 +29,16 @@
     "dependencies": {
         "@dhis2/app-runtime": "^2.2.2",
         "@dhis2/app-service-datastore": "^1.0.0-alpha.1",
+        "@dhis2/ui": "^5.1.0",
         "classnames": "^2.2.6",
         "react-router-dom": "^5.2.0"
+    },
+    "resolutions": {
+        "@dhis2/ui": "5.1.0",
+        "@dhis2/ui-constants": "5.1.0",
+        "@dhis2/ui-icons": "5.1.0",
+        "@dhis2/ui-core": "5.1.0",
+        "@dhis2/ui-forms": "5.1.0",
+        "@dhis2/ui-widgets": "5.1.0"
     }
 }
