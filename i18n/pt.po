@@ -1,0 +1,67 @@
+# 
+# Translators:
+# Ge Joao <gsimango@saudigitus.org>, 2020
+# 
+msgid ""
+msgstr ""
+"Project-Id-Version: i18next-conv\n"
+"POT-Creation-Date: 2020-06-15T09:27:40.427Z\n"
+"PO-Revision-Date: 2020-07-07 09:55+0000\n"
+"Last-Translator: Ge Joao <gsimango@saudigitus.org>, 2020\n"
+"Language-Team: Portuguese (https://www.transifex.com/hisp-uio/teams/100509/pt/)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: pt\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "Page not found"
+msgstr "página não encontrada"
+
+msgid "Dashboard"
+msgstr ""
+
+msgid "Analysis"
+msgstr "Análise"
+
+msgid "Outliers and missing data"
+msgstr "Dados atípicos e em falta"
+
+msgid "Consistency"
+msgstr "Consistência"
+
+msgid "Annual report"
+msgstr "Relatório anual "
+
+msgid "More"
+msgstr "Mais "
+
+msgid "Administration"
+msgstr "Administração "
+
+msgid "Data export for Excel tool"
+msgstr "Ferramenta de exportação de dados para Excel"
+
+msgid "User manual"
+msgstr "Manual de utilizador  "
+
+msgid "Consistency analysis"
+msgstr "Análise de consistência "
+
+msgid "Completeness"
+msgstr "Completude"
+
+msgid "Consistency - time"
+msgstr "Consistência de tempo "
+
+msgid "Consistency - data"
+msgstr "Consistência de dados "
+
+msgid "Outliers"
+msgstr "Completude"
+
+msgid "Data export for excel"
+msgstr "Exportação de dados para o Excel"
+
+msgid "Outliers and missing data analysis"
+msgstr "Outliers e análise de dados inexistentes "
