@@ -1,0 +1,67 @@
+# 
+# Translators:
+# easylin <lin_xd@126.com>, 2020
+# 
+msgid ""
+msgstr ""
+"Project-Id-Version: i18next-conv\n"
+"POT-Creation-Date: 2020-06-15T09:27:40.427Z\n"
+"PO-Revision-Date: 2020-07-07 09:55+0000\n"
+"Last-Translator: easylin <lin_xd@126.com>, 2020\n"
+"Language-Team: Chinese (https://www.transifex.com/hisp-uio/teams/100509/zh/)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: zh\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+msgid "Page not found"
+msgstr "页面没有找到"
+
+msgid "Dashboard"
+msgstr "仪表盘"
+
+msgid "Analysis"
+msgstr "分析"
+
+msgid "Outliers and missing data"
+msgstr "离群值和缺失数据"
+
+msgid "Consistency"
+msgstr "一致性"
+
+msgid "Annual report"
+msgstr "年度报告"
+
+msgid "More"
+msgstr "更多"
+
+msgid "Administration"
+msgstr "管理"
+
+msgid "Data export for Excel tool"
+msgstr "Excel数据导出工具"
+
+msgid "User manual"
+msgstr "用户手册"
+
+msgid "Consistency analysis"
+msgstr "一致性分析"
+
+msgid "Completeness"
+msgstr "完整性"
+
+msgid "Consistency - time"
+msgstr "一致性-时间"
+
+msgid "Consistency - data"
+msgstr "一致性-数据"
+
+msgid "Outliers"
+msgstr "离群值"
+
+msgid "Data export for excel"
+msgstr "excel数据导出"
+
+msgid "Outliers and missing data analysis"
+msgstr "离群值和缺失数据分析"
