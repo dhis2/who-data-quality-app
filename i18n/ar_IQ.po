@@ -1,0 +1,67 @@
+# 
+# Translators:
+# KRG HIS <antonia.bezenchek@informa.pro>, 2020
+# 
+msgid ""
+msgstr ""
+"Project-Id-Version: i18next-conv\n"
+"POT-Creation-Date: 2020-06-15T09:27:40.427Z\n"
+"PO-Revision-Date: 2020-07-07 09:55+0000\n"
+"Last-Translator: KRG HIS <antonia.bezenchek@informa.pro>, 2020\n"
+"Language-Team: Arabic (Iraq) (https://www.transifex.com/hisp-uio/teams/100509/ar_IQ/)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: ar_IQ\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
+
+msgid "Page not found"
+msgstr ""
+
+msgid "Dashboard"
+msgstr "لوحة المعلومات"
+
+msgid "Analysis"
+msgstr ""
+
+msgid "Outliers and missing data"
+msgstr ""
+
+msgid "Consistency"
+msgstr ""
+
+msgid "Annual report"
+msgstr ""
+
+msgid "More"
+msgstr ""
+
+msgid "Administration"
+msgstr ""
+
+msgid "Data export for Excel tool"
+msgstr ""
+
+msgid "User manual"
+msgstr ""
+
+msgid "Consistency analysis"
+msgstr ""
+
+msgid "Completeness"
+msgstr ""
+
+msgid "Consistency - time"
+msgstr ""
+
+msgid "Consistency - data"
+msgstr ""
+
+msgid "Outliers"
+msgstr ""
+
+msgid "Data export for excel"
+msgstr ""
+
+msgid "Outliers and missing data analysis"
+msgstr ""

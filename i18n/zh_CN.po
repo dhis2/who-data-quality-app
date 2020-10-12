@@ -1,0 +1,68 @@
+# 
+# Translators:
+# easylin <lin_xd@126.com>, 2020
+# 晓东 林 <13981924470@126.com>, 2020
+# 
+msgid ""
+msgstr ""
+"Project-Id-Version: i18next-conv\n"
+"POT-Creation-Date: 2020-06-15T09:27:40.427Z\n"
+"PO-Revision-Date: 2020-07-07 09:55+0000\n"
+"Last-Translator: 晓东 林 <13981924470@126.com>, 2020\n"
+"Language-Team: Chinese (China) (https://www.transifex.com/hisp-uio/teams/100509/zh_CN/)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: zh_CN\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+msgid "Page not found"
+msgstr ""
+
+msgid "Dashboard"
+msgstr "状态面板"
+
+msgid "Analysis"
+msgstr ""
+
+msgid "Outliers and missing data"
+msgstr ""
+
+msgid "Consistency"
+msgstr ""
+
+msgid "Annual report"
+msgstr ""
+
+msgid "More"
+msgstr "更多"
+
+msgid "Administration"
+msgstr ""
+
+msgid "Data export for Excel tool"
+msgstr ""
+
+msgid "User manual"
+msgstr ""
+
+msgid "Consistency analysis"
+msgstr ""
+
+msgid "Completeness"
+msgstr ""
+
+msgid "Consistency - time"
+msgstr ""
+
+msgid "Consistency - data"
+msgstr ""
+
+msgid "Outliers"
+msgstr ""
+
+msgid "Data export for excel"
+msgstr ""
+
+msgid "Outliers and missing data analysis"
+msgstr ""
