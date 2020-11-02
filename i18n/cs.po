@@ -1,0 +1,67 @@
+# 
+# Translators:
+# trendspotter, 2020
+# 
+msgid ""
+msgstr ""
+"Project-Id-Version: i18next-conv\n"
+"POT-Creation-Date: 2020-06-15T09:27:40.427Z\n"
+"PO-Revision-Date: 2020-07-07 09:55+0000\n"
+"Last-Translator: trendspotter, 2020\n"
+"Language-Team: Czech (https://www.transifex.com/hisp-uio/teams/100509/cs/)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: cs\n"
+"Plural-Forms: nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n >= 2 && n <= 4 && n % 1 == 0) ? 1: (n % 1 != 0 ) ? 2 : 3;\n"
+
+msgid "Page not found"
+msgstr "Stránka nenalezena"
+
+msgid "Dashboard"
+msgstr "Ovládací panel"
+
+msgid "Analysis"
+msgstr "Analýza"
+
+msgid "Outliers and missing data"
+msgstr "Odlehlé hodnoty a chybějící data"
+
+msgid "Consistency"
+msgstr "Konzistence"
+
+msgid "Annual report"
+msgstr "Výroční zpráva"
+
+msgid "More"
+msgstr "Více"
+
+msgid "Administration"
+msgstr "Administrace"
+
+msgid "Data export for Excel tool"
+msgstr "nástroj pro export dat do Excelu"
+
+msgid "User manual"
+msgstr "Uživatelský manuál"
+
+msgid "Consistency analysis"
+msgstr "Analýza konzistence"
+
+msgid "Completeness"
+msgstr "Úplnost"
+
+msgid "Consistency - time"
+msgstr "Konzistence - čas"
+
+msgid "Consistency - data"
+msgstr "Konzistence - data"
+
+msgid "Outliers"
+msgstr "Odlehlé hodnoty"
+
+msgid "Data export for excel"
+msgstr "Export dat do aplikace Excel"
+
+msgid "Outliers and missing data analysis"
+msgstr "Odlehlé hodnoty a analýza chybějících dat"
