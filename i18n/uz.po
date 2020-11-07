@@ -16,52 +16,52 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=0;\n"
 
 msgid "Page not found"
-msgstr ""
+msgstr "Саҳифа топилмади"
 
 msgid "Dashboard"
 msgstr "Бошқарув панели"
 
 msgid "Analysis"
-msgstr ""
+msgstr "Таҳлил"
 
 msgid "Outliers and missing data"
-msgstr ""
+msgstr "Ортиқча ва етишмаётган маълумотлар"
 
 msgid "Consistency"
-msgstr ""
+msgstr "Мувофиқлик"
 
 msgid "Annual report"
-msgstr ""
+msgstr "Йиллик ҳисобот"
 
 msgid "More"
 msgstr "Кўпроқ"
 
 msgid "Administration"
-msgstr ""
+msgstr "Администрация"
 
 msgid "Data export for Excel tool"
-msgstr ""
+msgstr "Excel  иловаси учун маълумотлар экспорти"
 
 msgid "User manual"
-msgstr ""
+msgstr "Фойдаланувчи учун қўлланма"
 
 msgid "Consistency analysis"
-msgstr ""
+msgstr "Мувофиқликни таҳлил қилиш"
 
 msgid "Completeness"
-msgstr ""
+msgstr "Тўлиқлик"
 
 msgid "Consistency - time"
-msgstr ""
+msgstr "Мувофиқлик - вақт"
 
 msgid "Consistency - data"
-msgstr ""
+msgstr "Мувофиқлик - маълумотлар"
 
 msgid "Outliers"
-msgstr ""
+msgstr "Чекинишлар"
 
 msgid "Data export for excel"
-msgstr ""
+msgstr "Excel учун маълумотлар экспорти"
 
 msgid "Outliers and missing data analysis"
-msgstr ""
+msgstr "Маълумотлар таҳлилларида чекланишлар ва хатоликлар"
