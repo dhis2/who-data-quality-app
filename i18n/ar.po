@@ -17,34 +17,34 @@ msgstr ""
 "Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
 
 msgid "Page not found"
-msgstr ""
+msgstr "الصفحة غير موجودة"
 
 msgid "Dashboard"
 msgstr "لوحة المعلومات"
 
 msgid "Analysis"
-msgstr ""
+msgstr "تحليل"
 
 msgid "Outliers and missing data"
-msgstr ""
+msgstr "القيم المتطرفة والبيانات المفقودة"
 
 msgid "Consistency"
 msgstr ""
 
 msgid "Annual report"
-msgstr ""
+msgstr "تقرير سنوي"
 
 msgid "More"
 msgstr "مزيد"
 
 msgid "Administration"
-msgstr ""
+msgstr "الادارة"
 
 msgid "Data export for Excel tool"
-msgstr ""
+msgstr "أداة تصدير البيانات لبرنامج Excel"
 
 msgid "User manual"
-msgstr ""
+msgstr "دليل المستخدم"
 
 msgid "Consistency analysis"
 msgstr ""
@@ -59,10 +59,10 @@ msgid "Consistency - data"
 msgstr ""
 
 msgid "Outliers"
-msgstr ""
+msgstr "القيم المتطرفة"
 
 msgid "Data export for excel"
-msgstr ""
+msgstr "تصدير البيانات لبرنامج Excel"
 
 msgid "Outliers and missing data analysis"
-msgstr ""
+msgstr "تحليل القيم المتطرفة و البيانات المفقودة"
