@@ -144,7 +144,7 @@ jobs:
                   CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
                   COMMIT_INFO_MESSAGE: ${{ github.event.pull_request.title }}
                   STORYBOOK_TESTING: true
-                  SERVER_START_CMD: 'yarn cy:server'
+                  SERVER_START_CMD: 'yarn cypress:server'
                   SERVER_URL: 'http://localhost:3000'
                   cypress_dhis2_base_url: http://localhost:8080
                   cypress_dhis2_api_stub_mode: STUB
