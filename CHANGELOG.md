@@ -1,3 +1,10 @@
+## [1.0.1](https://github.com/dhis2/who-data-quality-app/compare/v1.0.0...v1.0.1) (2021-01-18)
+
+
+### Bug Fixes
+
+* **translations:** sync translations from transifex (next) ([486e99d](https://github.com/dhis2/who-data-quality-app/commit/486e99d464f002ffab5d5ff819ced5b84cded654))
+
 # 1.0.0 (2020-12-02)
 
 
