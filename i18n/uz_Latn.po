@@ -1,0 +1,67 @@
+# 
+# Translators:
+# Yury Rogachev <yury@dhis2.org>, 2021
+# 
+msgid ""
+msgstr ""
+"Project-Id-Version: i18next-conv\n"
+"POT-Creation-Date: 2020-06-15T09:27:40.427Z\n"
+"PO-Revision-Date: 2020-07-07 09:55+0000\n"
+"Last-Translator: Yury Rogachev <yury@dhis2.org>, 2021\n"
+"Language-Team: Uzbek (Latin) (https://www.transifex.com/hisp-uio/teams/100509/uz@Latn/)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: uz@Latn\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+msgid "Page not found"
+msgstr "Sahifa topilmadi"
+
+msgid "Dashboard"
+msgstr "Boshqaruv paneli"
+
+msgid "Analysis"
+msgstr "Tahlil"
+
+msgid "Outliers and missing data"
+msgstr "Ortiqcha va yetishmayotgan maʼlumotlar"
+
+msgid "Consistency"
+msgstr "Muvofiqlik"
+
+msgid "Annual report"
+msgstr "Yillik hisobot"
+
+msgid "More"
+msgstr "Koʼproq"
+
+msgid "Administration"
+msgstr "Аdministratsiya"
+
+msgid "Data export for Excel tool"
+msgstr "Excel ilovasi uchun maʼlumotlar eksporti"
+
+msgid "User manual"
+msgstr "Foydalanuvchi uchun qoʼllanma"
+
+msgid "Consistency analysis"
+msgstr "Muvofiqlikni tahlil qilish"
+
+msgid "Completeness"
+msgstr "Toʼliqlik"
+
+msgid "Consistency - time"
+msgstr "Muvofiqlik - vaqt"
+
+msgid "Consistency - data"
+msgstr "Muvofiqlik - maʼlumotlar"
+
+msgid "Outliers"
+msgstr "Chekinishlar"
+
+msgid "Data export for excel"
+msgstr "Excel uchun maʼlumotlar eksporti"
+
+msgid "Outliers and missing data analysis"
+msgstr "Maʼlumotlar tahlillarida cheklanishlar va xatoliklar"
