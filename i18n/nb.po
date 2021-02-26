@@ -1,13 +1,14 @@
 # 
 # Translators:
 # Caroline Hesthagen Holen <caroline@devotta.no>, 2020
+# Karoline Tufte Lien <karoline@dhis2.org>, 2021
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
 "POT-Creation-Date: 2020-06-15T09:27:40.427Z\n"
 "PO-Revision-Date: 2020-07-07 09:55+0000\n"
-"Last-Translator: Caroline Hesthagen Holen <caroline@devotta.no>, 2020\n"
+"Last-Translator: Karoline Tufte Lien <karoline@dhis2.org>, 2021\n"
 "Language-Team: Norwegian Bokmål (https://www.transifex.com/hisp-uio/teams/100509/nb/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -58,7 +59,7 @@ msgid "Consistency - data"
 msgstr ""
 
 msgid "Outliers"
-msgstr ""
+msgstr "Uteliggere"
 
 msgid "Data export for excel"
 msgstr ""
