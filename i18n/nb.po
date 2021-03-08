@@ -59,7 +59,7 @@ msgid "Consistency - data"
 msgstr ""
 
 msgid "Outliers"
-msgstr "Uteliggere"
+msgstr "Utliggere"
 
 msgid "Data export for excel"
 msgstr ""
