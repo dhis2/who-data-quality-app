@@ -51,7 +51,7 @@ msgid "Consistency analysis"
 msgstr ""
 
 msgid "Completeness"
-msgstr ""
+msgstr "Etat terminé"
 
 msgid "Consistency - time"
 msgstr ""
