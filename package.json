@@ -23,7 +23,7 @@
     },
     "devDependencies": {
         "@dhis2/cli-app-scripts": "^5.0.0-alpha.1",
-        "@dhis2/cli-style": "^7.0.0",
+        "@dhis2/cli-style": "^9.0.1",
         "@dhis2/cli-utils-cypress": "^2.2.1"
     },
     "dependencies": {
