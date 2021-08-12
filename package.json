@@ -24,7 +24,7 @@
     "devDependencies": {
         "@dhis2/cli-app-scripts": "^5.0.0-alpha.1",
         "@dhis2/cli-style": "^7.0.0",
-        "@dhis2/cli-utils-cypress": "^2.2.1"
+        "@dhis2/cli-utils-cypress": "^8.0.1"
     },
     "dependencies": {
         "@dhis2/app-runtime": "^2.2.2",
