@@ -1485,11 +1485,17 @@
   resolved "https://registry.yarnpkg.com/@dhis2/app-service-data/-/app-service-data-2.2.2.tgz#093d45b8bb71b5b1e81876281379cda52b6632a7"
   integrity sha512-QJrYTFj+vINcqvr27yLIKunbNJTVmDPGr9fUliUdmTkCikTwlnK8fu6TPz3rhkOUYX0VrwzFJXp3ofKQajZ9mQ==
 
-"@dhis2/app-service-datastore@^1.0.0-alpha.1":
-  version "1.0.0-alpha.1"
-  resolved "https://registry.yarnpkg.com/@dhis2/app-service-datastore/-/app-service-datastore-1.0.0-alpha.1.tgz#1d27b7d1461e47a1a30fce8c7b3d1408d84e1b02"
-  integrity sha512-SGtD4j+3MrikUGY9rugu6ACAWRUT6oogp54Cst6MrueTI8pbINeQxNa7VCXX00Mv+B4yFs4AfNDkz0LXANj6oQ==
+"@dhis2/app-service-data@^2.1.1":
+  version "2.12.4"
+  resolved "https://registry.yarnpkg.com/@dhis2/app-service-data/-/app-service-data-2.12.4.tgz#3445a113592444100f66849f522f5270b9302fbd"
+  integrity sha512-4DofkrKq3pwDm5me1Sj6X1/RklV0NYzrigwp0dnvF4JmjCmURCBXeVpKnWa1hiKnJ1qOuUclYaYUSswmC2yWug==
+
+"@dhis2/app-service-datastore@^1.0.0-alpha.2":
+  version "1.0.0-alpha.2"
+  resolved "https://registry.yarnpkg.com/@dhis2/app-service-datastore/-/app-service-datastore-1.0.0-alpha.2.tgz#727ca8e0ecb7d7425b84217b16c651e4d7dda476"
+  integrity sha512-7HuFngvDvTLE7CqMJGwumE3aBO7smChLEXnn/cZkFCEp58aZkKgaPVOYzhR4Ao6icOTM0JY6Z2y4eMXRnS5+fw==
   dependencies:
+    "@dhis2/app-service-data" "^2.1.1"
     uuid "^8.1.0"
 
 "@dhis2/app-shell@5.0.0-alpha.1":
