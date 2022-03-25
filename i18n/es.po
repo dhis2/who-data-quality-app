@@ -2,13 +2,14 @@
 # Translators:
 # phil_dhis2, 2020
 # Viktor Varland <viktor@dhis2.org>, 2020
+# Janeth Cruz, 2022
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
 "POT-Creation-Date: 2020-06-15T09:27:40.427Z\n"
 "PO-Revision-Date: 2020-07-07 09:55+0000\n"
-"Last-Translator: Viktor Varland <viktor@dhis2.org>, 2020\n"
+"Last-Translator: Janeth Cruz, 2022\n"
 "Language-Team: Spanish (https://www.transifex.com/hisp-uio/teams/100509/es/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -17,52 +18,52 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 msgid "Page not found"
-msgstr ""
+msgstr "Página no encontrada"
 
 msgid "Dashboard"
 msgstr "Tablero"
 
 msgid "Analysis"
-msgstr ""
+msgstr "Análisis"
 
 msgid "Outliers and missing data"
-msgstr ""
+msgstr "Datos atípicos y faltantes"
 
 msgid "Consistency"
-msgstr ""
+msgstr "Consistencia"
 
 msgid "Annual report"
-msgstr ""
+msgstr "Reporte anual"
 
 msgid "More"
 msgstr "Más"
 
 msgid "Administration"
-msgstr ""
+msgstr "Administración"
 
 msgid "Data export for Excel tool"
-msgstr ""
+msgstr "Herramienta de exportación de datos para Excel"
 
 msgid "User manual"
-msgstr ""
+msgstr "Manual de usuario"
 
 msgid "Consistency analysis"
-msgstr ""
+msgstr "Análisis de consistencia"
 
 msgid "Completeness"
-msgstr ""
+msgstr "Completitud"
 
 msgid "Consistency - time"
-msgstr ""
+msgstr "Consistencia - tiempo"
 
 msgid "Consistency - data"
-msgstr ""
+msgstr "Consistencia - datos"
 
 msgid "Outliers"
-msgstr ""
+msgstr "Valores atípicos"
 
 msgid "Data export for excel"
-msgstr ""
+msgstr "Exportación de datos para excel"
 
 msgid "Outliers and missing data analysis"
-msgstr ""
+msgstr "Análisis de datos atípicos y faltantes"
