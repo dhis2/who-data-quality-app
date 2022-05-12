@@ -1,7 +1,9 @@
+import { CssVariables } from '@dhis2/ui'
 import React from 'react'
-
+import { HashRouter as Router, Route, Switch, Redirect } from 'react-router-dom'
+import NoMatch from '../components/NoMatch.js'
+import SideNav from '../components/SideNav.js'
 import { PATHS } from '../config'
-
 import {
     Dashboard,
     DataExportForExcel,
@@ -10,12 +12,6 @@ import {
     AnnualReport,
     Administration,
 } from '../sections'
-
-import { HashRouter as Router, Route, Switch, Redirect } from 'react-router-dom'
-import { CssVariables } from '@dhis2/ui'
-
-import SideNav from '../components/SideNav.js'
-import NoMatch from '../components/NoMatch.js'
 import classes from './App.module.css'
 
 const AppRouter = () => (

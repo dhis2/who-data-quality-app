@@ -1,7 +1,7 @@
-import React from 'react'
 import propTypes from '@dhis2/prop-types'
-import { useHistory, useRouteMatch } from 'react-router-dom'
 import { MenuItem } from '@dhis2/ui'
+import React from 'react'
+import { useHistory, useRouteMatch } from 'react-router-dom'
 
 const MenuItemLink = ({ to, label }) => {
     const history = useHistory()

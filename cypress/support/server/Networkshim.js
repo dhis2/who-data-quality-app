@@ -16,7 +16,7 @@ export default class NetworkShim {
     }
 
     initStubMode() {
-        cy.readFile(getFileName()).then(file => {
+        cy.readFile(getFileName()).then((file) => {
             this.state = {
                 requests: this.parseFileRequests(file.requests),
             }
@@ -42,7 +42,7 @@ export default class NetworkShim {
 
     createStubRoutes() {
         cy.server()
-        Object.values(this.state.requests).forEach(stub => {
+        Object.values(this.state.requests).forEach((stub) => {
             cy.route({
                 url: Cypress.env('dhis2_base_url') + stub.path,
                 method: stub.method,
@@ -61,7 +61,7 @@ export default class NetworkShim {
     }
 
     processRequest(xhr) {
-        const host = this.hosts.find(host => xhr.url.indexOf(host) === 0)
+        const host = this.hosts.find((host) => xhr.url.indexOf(host) === 0)
         const path = xhr.url.substr(host.length)
         const key = this.createKey(xhr.method, path, xhr.request.body)
 

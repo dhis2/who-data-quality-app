@@ -1,7 +1,7 @@
-import React from 'react'
 import propTypes from '@dhis2/prop-types'
-import { useHistory, useRouteMatch } from 'react-router-dom'
 import { Tab } from '@dhis2/ui'
+import React from 'react'
+import { useHistory, useRouteMatch } from 'react-router-dom'
 
 const TabLink = ({ to, children }) => {
     const history = useHistory()

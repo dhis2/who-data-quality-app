@@ -5,7 +5,7 @@ Given('the user accesses the app at the root URL', () => {
 })
 
 Then('the user is redirected to the first tab of the dashboard section', () => {
-    cy.url().should(url => {
+    cy.url().should((url) => {
         const baseUrl = Cypress.config('baseUrl')
         const expectedUrl = `${baseUrl}/#/dashboard/completeness`
 

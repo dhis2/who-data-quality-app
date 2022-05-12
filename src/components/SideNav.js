@@ -1,11 +1,9 @@
-import React from 'react'
 import i18n from '@dhis2/d2-i18n'
 import { Menu, MenuItem, MenuSectionHeader, MenuDivider } from '@dhis2/ui'
-
-import MenuItemLink from './MenuItemLink.js'
-import { PATHS } from '../config'
-
+import React from 'react'
 import { useAppContext } from '../App/AppContext'
+import { PATHS } from '../config'
+import MenuItemLink from './MenuItemLink.js'
 
 const SideNav = () => {
     const { currentUserIsAdmin } = useAppContext()

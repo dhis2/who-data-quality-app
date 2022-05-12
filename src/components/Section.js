@@ -1,7 +1,6 @@
-import React from 'react'
 import propTypes from '@dhis2/prop-types'
 import { Card } from '@dhis2/ui'
-
+import React from 'react'
 import classes from './Section.module.css'
 
 const Section = ({ headerText, children }) => (

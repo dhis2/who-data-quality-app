@@ -1,18 +1,16 @@
-import React from 'react'
 import i18n from '@dhis2/d2-i18n'
-import cx from 'classnames'
-import { Route, Switch, Redirect } from 'react-router-dom'
 import { Button, Card, TabBar } from '@dhis2/ui'
-
-import Completeness from './Completeness.js'
-import ConsistencyTime from './ConsistencyTime.js'
-import ConsistencyData from './ConsistencyData.js'
-import Outliers from './Outliers.js'
-
-import TabLink from '../../components/TabLink.js'
+import cx from 'classnames'
+import React from 'react'
+import { Route, Switch, Redirect } from 'react-router-dom'
 import sectionClasses from '../../components/Section.module.css'
+import TabLink from '../../components/TabLink.js'
 import { DASHBOARD } from '../../config'
+import Completeness from './Completeness.js'
+import ConsistencyData from './ConsistencyData.js'
+import ConsistencyTime from './ConsistencyTime.js'
 import classes from './Dashboard.module.css'
+import Outliers from './Outliers.js'
 
 const PATHS = {
     COMPLETENESS: `${DASHBOARD}/completeness`,
