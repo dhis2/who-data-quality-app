@@ -1,6 +1,6 @@
 {
     "name": "who-data-quality-app",
-    "version": "1.0.13",
+    "version": "1.0.14",
     "description": "WHO Data Quality Tool",
     "license": "BSD-3-Clause",
     "private": true,
