@@ -4,6 +4,9 @@ on:
     pull_request:
         types: ['opened', 'edited', 'reopened', 'synchronize']
 
+# The commitlint config for the jobs below should be fetched
+# from cli-style as soon as that lib has been updated to 10.4.1+
+
 jobs:
     lint-pr-title:
         runs-on: ubuntu-latest
