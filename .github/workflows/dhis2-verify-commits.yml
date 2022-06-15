@@ -1,0 +1,27 @@
+name: 'dhis2: verify (commits)'
+
+on:
+    pull_request:
+        types: ['opened', 'edited', 'reopened', 'synchronize']
+
+# The commitlint config for the jobs below should be fetched
+# from cli-style as soon as that lib has been updated to 10.4.1+
+
+jobs:
+    lint-pr-title:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v2
+            - uses: c-hive/gha-yarn-cache@v1
+            - run: yarn install --frozen-lockfile
+            - uses: JulienKode/pull-request-name-linter-action@v0.5.0
+
+    lint-commits:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v2
+              with:
+                  fetch-depth: 0
+            - uses: c-hive/gha-yarn-cache@v1
+            - run: yarn install --frozen-lockfile
+            - uses: wagoid/commitlint-github-action@v4
