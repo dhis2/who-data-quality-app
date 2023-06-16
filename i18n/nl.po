@@ -34,7 +34,7 @@ msgid "Annual report"
 msgstr ""
 
 msgid "More"
-msgstr ""
+msgstr "Meer"
 
 msgid "Administration"
 msgstr ""
