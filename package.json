@@ -29,7 +29,7 @@
     "@babel/preset-env": "^7.1.0",
     "babel-loader": "^8.0.4",
     "copy-webpack-plugin": "^4.5.2",
-    "css-loader": "^0.28.7",
+    "css-loader": "^6.8.1",
     "d2-manifest": "^1.0.0",
     "eslint": "^4.19.1",
     "file-loader": "^2.0.0",
