@@ -253,7 +253,7 @@ export default function ($q, requestService, mathService, d2Meta, d2Map) {
 
 		var baseRequest;
 		baseRequest = "/analytics.json?";
-		baseRequest += "hideEmptyRows=true&ignoreLimit=true&hierarchyMeta=true";
+		baseRequest += "hideEmptyRows=true&ignoreLimit=true&showHierarchy=true&hierarchyMeta=true";
 		baseRequest += "&tableLayout=true&columns=pe&rows=dx;ou";
 		baseRequest += "&dimension=pe:" + self.og.periods.join(";");
 		baseRequest += "&dimension=ou:" + boundary.join(";");
