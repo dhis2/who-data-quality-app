@@ -34,6 +34,7 @@ export default function (BASE_URL, API_VERSION, $http, $q, notificationService, 
 		//			if (requestURL.indexOf("api/analytics") > -1); cache = true;
 		
 		var fullURL = BASE_URL + "/api/" + API_VERSION + requestURL;
+		fullURL = 
 		fullURL = encodeURI(fullURL);
 		return $http.get(fullURL, {"cache": cache});
 	};
