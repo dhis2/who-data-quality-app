@@ -1,15 +1,15 @@
 # 
 # Translators:
-# phil_dhis2, 2020
 # Viktor Varland <viktor@dhis2.org>, 2020
+# Thuy Nguyen <thuynguyen@hispvietnam.org>, 2024
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
 "POT-Creation-Date: 2020-06-15T09:27:40.427Z\n"
 "PO-Revision-Date: 2020-07-07 09:55+0000\n"
-"Last-Translator: Viktor Varland <viktor@dhis2.org>, 2020\n"
-"Language-Team: Vietnamese (https://www.transifex.com/hisp-uio/teams/100509/vi/)\n"
+"Last-Translator: Thuy Nguyen <thuynguyen@hispvietnam.org>, 2024\n"
+"Language-Team: Vietnamese (https://app.transifex.com/hisp-uio/teams/100509/vi/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -20,49 +20,49 @@ msgid "Page not found"
 msgstr ""
 
 msgid "Dashboard"
-msgstr "Bảng điều khiển"
+msgstr "Bảng thông tin"
 
 msgid "Analysis"
-msgstr ""
+msgstr "Phân tích"
 
 msgid "Outliers and missing data"
-msgstr ""
+msgstr "Các ngoại lệ và dữ liệu bị thiếu"
 
 msgid "Consistency"
-msgstr ""
+msgstr "Tính nhất quán"
 
 msgid "Annual report"
-msgstr ""
+msgstr "Báo cáo hàng năm"
 
 msgid "More"
 msgstr "Thêm"
 
 msgid "Administration"
-msgstr ""
+msgstr "Quản trị"
 
 msgid "Data export for Excel tool"
-msgstr ""
+msgstr "Xuất dữ liệu cho Excel"
 
 msgid "User manual"
-msgstr ""
+msgstr "Hướng dẫn người dùng"
 
 msgid "Consistency analysis"
-msgstr ""
+msgstr "Phân tích tính nhất quán"
 
 msgid "Completeness"
-msgstr ""
+msgstr "Hoàn tất"
 
 msgid "Consistency - time"
-msgstr ""
+msgstr "Tính nhất quán theo thời gian"
 
 msgid "Consistency - data"
-msgstr ""
+msgstr "Tính nhất quán theo dữ liệu"
 
 msgid "Outliers"
-msgstr ""
+msgstr "Các ngoại lệ"
 
 msgid "Data export for excel"
-msgstr ""
+msgstr "Xuất dữ liệu cho công cụ Excel"
 
 msgid "Outliers and missing data analysis"
-msgstr ""
+msgstr "Phân tích các ngoại lệ và dữ liệu bị thiếu"
