@@ -123,9 +123,10 @@
 						self.selectedOrgunit = orgunit;
 					}
 					else {
-						if (!d2Utils.isNumber(self.selectionType)) console.log("No selectionType");
+						if (!d2Utils.isNumber(self.selectionType)){
+							//
+						}
 						if (!self.userOrgunits) {
-							console.log("No userOrgunits");
 							return;
 						}
 						self.selectedOrgunit = self.userOrgunits[self.selectionType];

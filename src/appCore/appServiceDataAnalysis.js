@@ -97,7 +97,6 @@ export default function ($q, requestService, mathService, d2Meta, d2Map) {
 			indicatorOutlierAnalysis(queueItem.parameters);
 		}
 		else if (queueItem.type === "outlierGap") {
-			console.log("outlierGapAnalysis");
 			outlierGapAnalysis(queueItem.parameters);
 		}
 	}
@@ -253,7 +252,7 @@ export default function ($q, requestService, mathService, d2Meta, d2Map) {
 
 		var baseRequest;
 		baseRequest = "/analytics.json?";
-		baseRequest += "hideEmptyRows=true&ignoreLimit=true&hierarchyMeta=true";
+		baseRequest += "hideEmptyRows=true&ignoreLimit=true&showHierarchy=true&hierarchyMeta=true";
 		baseRequest += "&tableLayout=true&columns=pe&rows=dx;ou";
 		baseRequest += "&dimension=pe:" + self.og.periods.join(";");
 		baseRequest += "&dimension=ou:" + boundary.join(";");
@@ -453,15 +452,16 @@ export default function ($q, requestService, mathService, d2Meta, d2Map) {
 
 	/** Return OU hierarchy as array of names based on result metadata*/
 	function makeOuHierarchy(ouID, metaData) {
-
 		var hierarchyIDs = metaData.ouHierarchy[ouID].split("/");
 		hierarchyIDs.splice(0,1); //Get rid of leading "" and root, which is not needed
-
 		var hierarchyNames = [];
-		for (let i = 0; i < hierarchyIDs.length; i++) {
-
-			hierarchyNames.push(metaData.items[hierarchyIDs[i]].name);
-
+		if(metaData && metaData.ouNameHierarchy){
+			hierarchyNames =  metaData.ouNameHierarchy[ouID].split("/");
+			hierarchyNames.splice(0,1);
+		}else{
+			for (let i = 0; i < hierarchyIDs.length; i++) {
+				hierarchyNames.push(metaData.items[hierarchyIDs[i]].name);
+			}
 		}
 		return hierarchyNames;
 	}

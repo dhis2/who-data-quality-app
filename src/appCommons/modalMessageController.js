@@ -154,8 +154,6 @@ angular.module("appCommons").controller("ModalMessageController",
 
 				var postURL = "/messageConversations";
 
-				console.log(message);
-
 				requestService.post(postURL, message).
 					// eslint-disable-next-line no-unused-vars
 					success(function(data, status, headers, config) {

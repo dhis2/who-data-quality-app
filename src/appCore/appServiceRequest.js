@@ -17,8 +17,8 @@ export default function (BASE_URL, API_VERSION, $http, $q, notificationService, 
 			//Cache analytics requests
 			var cache = false;
 			//				if (request.indexOf("api/analytics") > -1); cache = true;
-
-			var fullURL = BASE_URL + "/api/" + API_VERSION + request;
+			
+			var fullURL =API_VERSION !== "" ?	BASE_URL + "/api/" + API_VERSION + request : BASE_URL + "/api"  + request;
 			fullURL = encodeURI(fullURL);
 			return $http.get(fullURL, {"cache": cache});
 		});
@@ -33,7 +33,8 @@ export default function (BASE_URL, API_VERSION, $http, $q, notificationService, 
 		var cache = false;
 		//			if (requestURL.indexOf("api/analytics") > -1); cache = true;
 		
-		var fullURL = BASE_URL + "/api/" + API_VERSION + requestURL;
+		var fullURL = API_VERSION !== "" ? BASE_URL + "/api/" + API_VERSION + requestURL : BASE_URL + "/api"  + requestURL;
+		fullURL = 
 		fullURL = encodeURI(fullURL);
 		return $http.get(fullURL, {"cache": cache});
 	};
@@ -46,7 +47,7 @@ export default function (BASE_URL, API_VERSION, $http, $q, notificationService, 
 		var cache = false;
 		//if (requestURL.indexOf("api/analytics") > -1); cache = true;
 
-		var fullURL = BASE_URL + "/api/" + API_VERSION + requestURL;
+		var fullURL = API_VERSION !== "" ? BASE_URL + "/api/" + API_VERSION + requestURL : BASE_URL + "/api"  + requestURL;
 		fullURL = encodeURI(fullURL);
 		$http.get(fullURL, {"cache": cache}).then(function(response) {
 			if (self.validResponse(response)) {
@@ -72,13 +73,13 @@ export default function (BASE_URL, API_VERSION, $http, $q, notificationService, 
 
 
 	self.post = function(postURL, data) {
-		var fullURL = BASE_URL + "/api/" + API_VERSION + postURL;
+		var fullURL = API_VERSION !== "" ? BASE_URL + "/api/" + API_VERSION + postURL : BASE_URL + "/api"  + postURL;
 		fullURL = encodeURI(fullURL);
 		return $http.post(fullURL, data);
 	};
 
 	self.put = function(postURL, data) {
-		var fullURL = BASE_URL + "/api/" + API_VERSION + postURL;
+		var fullURL = API_VERSION !== "" ? BASE_URL + "/api/" + API_VERSION + postURL : BASE_URL + "/api"  + postURL;
 		fullURL = encodeURI(fullURL);
 		return $http.put(fullURL, data);
 	};
