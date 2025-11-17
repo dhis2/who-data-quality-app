@@ -81,7 +81,7 @@ angular.element(document).ready(
 				const baseUrl = process.env.NODE_ENV === "production" ?
 					response.data.activities.dhis.href : dhisDevConfig.baseUrl;
 				app.constant("BASE_URL", baseUrl);
-				app.constant("API_VERSION", "29");
+				app.constant("API_VERSION", "");
 				angular.bootstrap(document, ["dataQualityApp"]);
 			}
 		);
@@ -194,9 +194,7 @@ app.controller("NavigationController",
 
 
 app.run(["BASE_URL", "$http", function(BASE_URL, $http) {
-	console.log("Requesting profile");
 	$http.get( BASE_URL + "/api/userSettings.json").then(function (response) {
-		console.log("Got profile: ", response);
 		if (response.data && response.data && response.data.keyUiLocale) {
 			i18next.changeLanguage(response.data.keyUiLocale);
 		}
