@@ -1,67 +1,66 @@
 # Translators:
-# 晓东 林 <13981924470@126.com>, 2020
-# easylin <lin_xd@126.com>, 2025
+# Pablo Del Médico, 2024
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
 "POT-Creation-Date: 2020-06-15T09:27:40.427Z\n"
 "PO-Revision-Date: 2020-07-07 09:55+0000\n"
-"Last-Translator: easylin <lin_xd@126.com>, 2025\n"
-"Language-Team: Chinese (China) (https://app.transifex.com/hisp-uio/teams/100509/zh_CN/)\n"
+"Last-Translator: Pablo Del Médico, 2024\n"
+"Language-Team: Spanish (Latin America) (https://app.transifex.com/hisp-uio/teams/100509/es_419/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: zh_CN\n"
-"Plural-Forms: nplurals=1; plural=0;\n"
+"Language: es_419\n"
+"Plural-Forms: nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;\n"
 
 msgid "Page not found"
-msgstr "页面未找到"
+msgstr ""
 
 msgid "Dashboard"
-msgstr "状态面板"
+msgstr ""
 
 msgid "Analysis"
-msgstr "分析"
+msgstr ""
 
 msgid "Outliers and missing data"
-msgstr "异常值和缺失数据"
+msgstr ""
 
 msgid "Consistency"
-msgstr "一致性"
+msgstr ""
 
 msgid "Annual report"
-msgstr "年度报告"
+msgstr ""
 
 msgid "More"
-msgstr "更多"
+msgstr "Más"
 
 msgid "Administration"
-msgstr "行政部门"
+msgstr ""
 
 msgid "Data export for Excel tool"
-msgstr "为 Excel 工具导出数据"
+msgstr ""
 
 msgid "User manual"
-msgstr "用户手册"
+msgstr ""
 
 msgid "Consistency analysis"
-msgstr "一致性分析"
+msgstr ""
 
 msgid "Completeness"
-msgstr "完整性"
+msgstr ""
 
 msgid "Consistency - time"
-msgstr "一致性 - 时间"
+msgstr ""
 
 msgid "Consistency - data"
-msgstr "一致性 - 数据"
+msgstr ""
 
 msgid "Outliers"
-msgstr "异常值"
+msgstr ""
 
 msgid "Data export for excel"
-msgstr "数据导出为 excel"
+msgstr ""
 
 msgid "Outliers and missing data analysis"
-msgstr "异常值和缺失数据分析"
+msgstr ""
