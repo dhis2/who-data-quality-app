@@ -1,69 +1,69 @@
-# 
 # Translators:
-# phil_dhis2, 2020
+# Philip Larsen Donnelly, 2020
 # Viktor Varland <viktor@dhis2.org>, 2020
 # Yayra Gomado <ygomado@hispwca.org>, 2021
+# Yao Selom SAKA (HISP WCA) <ysaka@hispwca.org>, 2025
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
 "POT-Creation-Date: 2020-06-15T09:27:40.427Z\n"
 "PO-Revision-Date: 2020-07-07 09:55+0000\n"
-"Last-Translator: Yayra Gomado <ygomado@hispwca.org>, 2021\n"
-"Language-Team: French (https://www.transifex.com/hisp-uio/teams/100509/fr/)\n"
+"Last-Translator: Yao Selom SAKA (HISP WCA) <ysaka@hispwca.org>, 2025\n"
+"Language-Team: French (https://app.transifex.com/hisp-uio/teams/100509/fr/)\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Language: fr\n"
 "Plural-Forms: nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;\n"
 
 msgid "Page not found"
-msgstr ""
+msgstr "Page introuvable"
 
 msgid "Dashboard"
 msgstr "Tableau de bord"
 
 msgid "Analysis"
-msgstr ""
+msgstr "Analyse"
 
 msgid "Outliers and missing data"
-msgstr ""
+msgstr "Valeurs atypiques et données manquantes"
 
 msgid "Consistency"
-msgstr ""
+msgstr "Cohérence"
 
 msgid "Annual report"
-msgstr ""
+msgstr "Rapport annuel"
 
 msgid "More"
 msgstr "Plus"
 
 msgid "Administration"
-msgstr ""
+msgstr "Administration"
 
 msgid "Data export for Excel tool"
-msgstr ""
+msgstr "Outil d'exportation de données pour Excel"
 
 msgid "User manual"
-msgstr ""
+msgstr "Guide de l'utilisateur"
 
 msgid "Consistency analysis"
-msgstr ""
+msgstr "Analyse de cohérence"
 
 msgid "Completeness"
-msgstr "Etat terminé"
+msgstr "Complétude"
 
 msgid "Consistency - time"
-msgstr ""
+msgstr "Cohérence - temps"
 
 msgid "Consistency - data"
-msgstr ""
+msgstr "Cohérence - données"
 
 msgid "Outliers"
 msgstr "Valeurs atypiques"
 
 msgid "Data export for excel"
-msgstr ""
+msgstr "Exportation de données pour Excel"
 
 msgid "Outliers and missing data analysis"
-msgstr ""
+msgstr "Analyse des valeurs atypiques et des données manquantes"
